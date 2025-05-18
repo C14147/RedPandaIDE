@@ -1,0 +1,1152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{184CEB54-3B0F-32A4-8554-966B1057A376}</ProjectGuid>
+    <RootNamespace>RedPandaIDE</RootNamespace>
+    <Keyword>QtVS_v304</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.26100.0</WindowsTargetPlatformMinVersion>
+    <QtMsBuild Condition="'$(QtMsBuild)'=='' OR !Exists('$(QtMsBuild)\qt.targets')">$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <PlatformToolset>v143</PlatformToolset>
+    <OutputDirectory>release\</OutputDirectory>
+    <ATLMinimizesCRunTimeLibraryUsage>false</ATLMinimizesCRunTimeLibraryUsage>
+    <CharacterSet>NotSet</CharacterSet>
+    <ConfigurationType>Application</ConfigurationType>
+    <IntermediateDirectory>release\</IntermediateDirectory>
+    <PrimaryOutput>RedPandaIDE</PrimaryOutput>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <PlatformToolset>v143</PlatformToolset>
+    <OutputDirectory>debug\</OutputDirectory>
+    <ATLMinimizesCRunTimeLibraryUsage>false</ATLMinimizesCRunTimeLibraryUsage>
+    <CharacterSet>NotSet</CharacterSet>
+    <ConfigurationType>Application</ConfigurationType>
+    <IntermediateDirectory>debug\</IntermediateDirectory>
+    <PrimaryOutput>RedPandaIDE</PrimaryOutput>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <Import Project="$(QtMsBuild)\qt_defaults.props" Condition="Exists('$(QtMsBuild)\qt_defaults.props')" />
+  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <QtInstall>6.9.0_msvc2022_64</QtInstall>
+    <QtModules>core;gui;network;widgets;printsupport;svg;xml</QtModules>
+  </PropertyGroup>
+  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <QtInstall>6.9.0_msvc2022_64</QtInstall>
+    <QtModules>core;gui;network;widgets;printsupport;svg;xml</QtModules>
+  </PropertyGroup>
+  <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') OR !Exists('$(QtMsBuild)\Qt.props')">
+    <Message Importance="High" Text="QtMsBuild: could not locate qt.targets, qt.props; project may not build correctly." />
+  </Target>
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+    <Import Project="$(QtMsBuild)\Qt.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+    <Import Project="$(QtMsBuild)\Qt.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">RedPandaIDE</TargetName>
+    <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</IgnoreImportLibrary>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">RedPandaIDE</TargetName>
+    <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</IgnoreImportLibrary>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>GeneratedFiles\$(ConfigurationName);GeneratedFiles;.;..\libs\qsynedit;..\libs\redpanda_qt_utils;..\libs\lua;release;/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -permissive- -Zc:__cplusplus -Zc:externConstexpr -utf-8 -w34100 -w34189 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
+      <AssemblerListingLocation>release\</AssemblerListingLocation>
+      <BrowseInformation>false</BrowseInformation>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <DisableSpecificWarnings>4577;4467;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <ObjectFileName>release\</ObjectFileName>
+      <Optimization>MaxSpeed</Optimization>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;ARCH_X86_64=1;_WIN32_WINNT=0x0501;LIBEXECDIR="libexec";APP_NAME="RedPandaCPP";APP_VERSION_SUFFIX="RC2";REDPANDA_CPP_VERSION="3.3";NOMINMAX;ENABLE_SDCC;NDEBUG;QT_NO_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <ProgramDataBaseFileName></ProgramDataBaseFileName>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>advapi32.lib;psapi.lib;shlwapi.lib;user32.lib;qsynedit.lib;redpanda_qt_utils.lib;lua.lib;$(QTDIR)\lib\Qt6EntryPoint.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>F:\WorkFlow Corporation\Projects\RedPandaIDE\libs\qsynedit\release;F:\WorkFlow Corporation\Projects\RedPandaIDE\libs\redpanda_qt_utils\release;F:\WorkFlow Corporation\Projects\RedPandaIDE\libs\lua\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
+      <DataExecutionPrevention>true</DataExecutionPrevention>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreImportLibrary>true</IgnoreImportLibrary>
+      <LinkIncremental>false</LinkIncremental>
+      <OptimizeReferences>true</OptimizeReferences>
+      <OutputFile>$(OutDir)\RedPandaIDE.exe</OutputFile>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
+      <SubSystem>Windows</SubSystem>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <Version>3.3</Version>
+    </Link>
+    <Midl>
+      <DefaultCharType>Unsigned</DefaultCharType>
+      <EnableErrorChecks>None</EnableErrorChecks>
+      <WarningLevel>0</WarningLevel>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;ARCH_X86_64=1;_WIN32_WINNT=0x0501;LIBEXECDIR=\"libexec\";APP_NAME=\"RedPandaCPP\";APP_VERSION_SUFFIX=\"RC2\";REDPANDA_CPP_VERSION=\"3.3\";NOMINMAX;ENABLE_SDCC;NDEBUG;QT_NO_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <QtMoc>
+      <CompilerFlavor>msvc</CompilerFlavor>
+      <Include>F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/$(Configuration)/moc_predefs.h</Include>
+      <ExecutionDescription>Moc'ing %(Identity)...</ExecutionDescription>
+      <DynamicSource>output</DynamicSource>
+      <QtMocDir>$(Configuration)</QtMocDir>
+      <QtMocFileName>moc_%(Filename).cpp</QtMocFileName>
+    </QtMoc>
+    <QtRcc>
+      <NoZstd>true</NoZstd>
+      <Compression>default</Compression>
+      <ExecutionDescription>Rcc'ing %(Identity)...</ExecutionDescription>
+      <QtRccDir>$(Configuration)</QtRccDir>
+      <QtRccFileName>qrc_%(Filename).cpp</QtRccFileName>
+    </QtRcc>
+    <QtUic>
+      <ExecutionDescription>Uic'ing %(Identity)...</ExecutionDescription>
+      <QtUicDir>$(ProjectDir)</QtUicDir>
+      <QtUicFileName>ui_%(Filename).h</QtUicFileName>
+    </QtUic>
+    <QtTranslation>
+      <QmOutputFile>$(Configuration)\%(Filename).qm</QmOutputFile>
+      <BuildAction>lrelease</BuildAction>
+      <ReleaseDescription>lrelease %(Identity)</ReleaseDescription>
+      <InputFile>%(FullPath)</InputFile>
+    </QtTranslation>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>GeneratedFiles\$(ConfigurationName);GeneratedFiles;.;..\libs\qsynedit;..\libs\redpanda_qt_utils;..\libs\lua;debug;/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -permissive- -Zc:__cplusplus -Zc:externConstexpr -utf-8 -w34100 -w34189 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
+      <AssemblerListingLocation>debug\</AssemblerListingLocation>
+      <BrowseInformation>false</BrowseInformation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4577;4467;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <ObjectFileName>debug\</ObjectFileName>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;ARCH_X86_64=1;_WIN32_WINNT=0x0501;LIBEXECDIR="libexec";APP_NAME="RedPandaCPP";APP_VERSION_SUFFIX="RC2";REDPANDA_CPP_VERSION="3.3";NOMINMAX;ENABLE_SDCC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>advapi32.lib;psapi.lib;shlwapi.lib;user32.lib;qsynedit.lib;redpanda_qt_utils.lib;lua.lib;$(QTDIR)\lib\Qt6EntryPointd.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>F:\WorkFlow Corporation\Projects\RedPandaIDE\libs\qsynedit\debug;F:\WorkFlow Corporation\Projects\RedPandaIDE\libs\redpanda_qt_utils\debug;F:\WorkFlow Corporation\Projects\RedPandaIDE\libs\lua\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
+      <DataExecutionPrevention>true</DataExecutionPrevention>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreImportLibrary>true</IgnoreImportLibrary>
+      <OutputFile>$(OutDir)\RedPandaIDE.exe</OutputFile>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
+      <SubSystem>Windows</SubSystem>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <Version>3.3</Version>
+    </Link>
+    <Midl>
+      <DefaultCharType>Unsigned</DefaultCharType>
+      <EnableErrorChecks>None</EnableErrorChecks>
+      <WarningLevel>0</WarningLevel>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;ARCH_X86_64=1;_WIN32_WINNT=0x0501;LIBEXECDIR=\"libexec\";APP_NAME=\"RedPandaCPP\";APP_VERSION_SUFFIX=\"RC2\";REDPANDA_CPP_VERSION=\"3.3\";NOMINMAX;ENABLE_SDCC;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <QtRcc>
+      <NoZstd>true</NoZstd>
+      <Compression>default</Compression>
+      <ExecutionDescription>Rcc'ing %(Identity)...</ExecutionDescription>
+      <QtRccDir>$(Configuration)</QtRccDir>
+      <QtRccFileName>qrc_%(Filename).cpp</QtRccFileName>
+    </QtRcc>
+    <QtMoc>
+      <CompilerFlavor>msvc</CompilerFlavor>
+      <Include>F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/$(Configuration)/moc_predefs.h</Include>
+      <ExecutionDescription>Moc'ing %(Identity)...</ExecutionDescription>
+      <DynamicSource>output</DynamicSource>
+      <QtMocDir>$(Configuration)</QtMocDir>
+      <QtMocFileName>moc_%(Filename).cpp</QtMocFileName>
+    </QtMoc>
+    <QtUic>
+      <ExecutionDescription>Uic'ing %(Identity)...</ExecutionDescription>
+      <QtUicDir>$(ProjectDir)</QtUicDir>
+      <QtUicFileName>ui_%(Filename).h</QtUicFileName>
+    </QtUic>
+    <QtTranslation>
+      <QmOutputFile>$(Configuration)\%(Filename).qm</QmOutputFile>
+      <ReleaseDescription>lrelease %(Identity)</ReleaseDescription>
+      <BuildAction>lrelease</BuildAction>
+      <InputFile>%(FullPath)</InputFile>
+    </QtTranslation>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="widgets\aboutdialog.cpp" />
+    <ClCompile Include="autolinkmanager.cpp" />
+    <ClCompile Include="widgets\bookmarkmodel.cpp" />
+    <ClCompile Include="caretlist.cpp" />
+    <ClCompile Include="widgets\choosethemedialog.cpp" />
+    <ClCompile Include="widgets\classbrowser.cpp" />
+    <ClCompile Include="widgets\codecompletionlistview.cpp" />
+    <ClCompile Include="widgets\codecompletionpopup.cpp" />
+    <ClCompile Include="codesnippetsmanager.cpp" />
+    <ClCompile Include="widgets\coloredit.cpp" />
+    <ClCompile Include="colorscheme.cpp" />
+    <ClCompile Include="problems\competitivecompenionhandler.cpp" />
+    <ClCompile Include="widgets\compileargumentswidget.cpp" />
+    <ClCompile Include="compiler\compiler.cpp" />
+    <ClCompile Include="settingsdialog\compilerautolinkwidget.cpp" />
+    <ClCompile Include="compiler\compilerinfo.cpp" />
+    <ClCompile Include="compiler\compilermanager.cpp" />
+    <ClCompile Include="settingsdialog\compilersetdirectorieswidget.cpp" />
+    <ClCompile Include="settingsdialog\compilersetoptionwidget.cpp" />
+    <ClCompile Include="parser\cppparser.cpp" />
+    <ClCompile Include="parser\cpppreprocessor.cpp" />
+    <ClCompile Include="cpprefacter.cpp" />
+    <ClCompile Include="parser\cpptokenizer.cpp" />
+    <ClCompile Include="widgets\cpudialog.cpp" />
+    <ClCompile Include="widgets\customdisablediconengine.cpp" />
+    <ClCompile Include="customfileiconprovider.cpp" />
+    <ClCompile Include="widgets\customfilesystemmodel.cpp" />
+    <ClCompile Include="widgets\custommakefileinfodialog.cpp" />
+    <ClCompile Include="widgets\darkfusionstyle.cpp" />
+    <ClCompile Include="settingsdialog\debuggeneralwidget.cpp" />
+    <ClCompile Include="debugger\debugger.cpp" />
+    <ClCompile Include="editor.cpp" />
+    <ClCompile Include="settingsdialog\editorautosavewidget.cpp" />
+    <ClCompile Include="settingsdialog\editorclipboardwidget.cpp" />
+    <ClCompile Include="settingsdialog\editorcodecompletionwidget.cpp" />
+    <ClCompile Include="settingsdialog\editorcolorschemewidget.cpp" />
+    <ClCompile Include="settingsdialog\editorcustomctypekeywords.cpp" />
+    <ClCompile Include="widgets\editorfontdialog.cpp" />
+    <ClCompile Include="settingsdialog\editorfontwidget.cpp" />
+    <ClCompile Include="settingsdialog\editorgeneralwidget.cpp" />
+    <ClCompile Include="editorlist.cpp" />
+    <ClCompile Include="settingsdialog\editormiscwidget.cpp" />
+    <ClCompile Include="settingsdialog\editorsnippetwidget.cpp" />
+    <ClCompile Include="widgets\editorstabwidget.cpp" />
+    <ClCompile Include="settingsdialog\editorsymbolcompletionwidget.cpp" />
+    <ClCompile Include="settingsdialog\editorsyntaxcheckwidget.cpp" />
+    <ClCompile Include="settingsdialog\editortooltipswidget.cpp" />
+    <ClCompile Include="settingsdialog\environmentappearancewidget.cpp" />
+    <ClCompile Include="settingsdialog\environmentfileassociationwidget.cpp" />
+    <ClCompile Include="settingsdialog\environmentfolderswidget.cpp" />
+    <ClCompile Include="settingsdialog\environmentperformancewidget.cpp" />
+    <ClCompile Include="settingsdialog\environmentprogramswidget.cpp" />
+    <ClCompile Include="settingsdialog\environmentshortcutwidget.cpp" />
+    <ClCompile Include="utils\escape.cpp" />
+    <ClCompile Include="compiler\executablerunner.cpp" />
+    <ClCompile Include="settingsdialog\executorgeneralwidget.cpp" />
+    <ClCompile Include="settingsdialog\executorproblemsetwidget.cpp" />
+    <ClCompile Include="compiler\filecompiler.cpp" />
+    <ClCompile Include="widgets\filenameeditdelegate.cpp" />
+    <ClCompile Include="widgets\filepropertiesdialog.cpp" />
+    <ClCompile Include="utils\font.cpp" />
+    <ClCompile Include="settingsdialog\formattergeneralwidget.cpp" />
+    <ClCompile Include="settingsdialog\formatterpathwidget.cpp" />
+    <ClCompile Include="problems\freeprojectsetformat.cpp" />
+    <ClCompile Include="widgets\functiontooltipwidget.cpp" />
+    <ClCompile Include="debugger\gdbmidebugger.cpp" />
+    <ClCompile Include="debugger\gdbmiresultparser.cpp" />
+    <ClCompile Include="widgets\headercompletionpopup.cpp" />
+    <ClCompile Include="iconsmanager.cpp" />
+    <ClCompile Include="widgets\infomessagebox.cpp" />
+    <ClCompile Include="widgets\issuestable.cpp" />
+    <ClCompile Include="widgets\labelwithmenu.cpp" />
+    <ClCompile Include="settingsdialog\languageasmgenerationwidget.cpp" />
+    <ClCompile Include="widgets\lightfusionstyle.cpp" />
+    <ClCompile Include="widgets\linenumbertexteditor.cpp" />
+    <ClCompile Include="widgets\macroinfomodel.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="mainwindow.cpp" />
+    <ClCompile Include="widgets\newclassdialog.cpp" />
+    <ClCompile Include="widgets\newheaderdialog.cpp" />
+    <ClCompile Include="widgets\newprojectdialog.cpp" />
+    <ClCompile Include="widgets\newprojectunitdialog.cpp" />
+    <ClCompile Include="widgets\newtemplatedialog.cpp" />
+    <ClCompile Include="compiler\ojproblemcasesrunner.cpp" />
+    <ClCompile Include="widgets\ojproblempropertywidget.cpp" />
+    <ClCompile Include="problems\ojproblemset.cpp" />
+    <ClCompile Include="widgets\ojproblemsetmodel.cpp" />
+    <ClCompile Include="utils\parsearg.cpp" />
+    <ClCompile Include="parser\parserutils.cpp" />
+    <ClCompile Include="problems\problemcasevalidator.cpp" />
+    <ClCompile Include="project.cpp" />
+    <ClCompile Include="widgets\projectalreadyopendialog.cpp" />
+    <ClCompile Include="settingsdialog\projectcompileparamaterswidget.cpp" />
+    <ClCompile Include="compiler\projectcompiler.cpp" />
+    <ClCompile Include="settingsdialog\projectcompilerwidget.cpp" />
+    <ClCompile Include="settingsdialog\projectdirectorieswidget.cpp" />
+    <ClCompile Include="settingsdialog\projectdllhostwidget.cpp" />
+    <ClCompile Include="settingsdialog\projectfileswidget.cpp" />
+    <ClCompile Include="settingsdialog\projectgeneralwidget.cpp" />
+    <ClCompile Include="settingsdialog\projectmakefilewidget.cpp" />
+    <ClCompile Include="projectoptions.cpp" />
+    <ClCompile Include="settingsdialog\projectoutputwidget.cpp" />
+    <ClCompile Include="settingsdialog\projectprecompilewidget.cpp" />
+    <ClCompile Include="projecttemplate.cpp" />
+    <ClCompile Include="settingsdialog\projectversioninfowidget.cpp" />
+    <ClCompile Include="widgets\qconsole.cpp" />
+    <ClCompile Include="widgets\qpatchedcombobox.cpp" />
+    <ClCompile Include="compiler\runner.cpp" />
+    <ClCompile Include="compiler\sdccfilecompiler.cpp" />
+    <ClCompile Include="compiler\sdccprojectcompiler.cpp" />
+    <ClCompile Include="widgets\searchdialog.cpp" />
+    <ClCompile Include="widgets\searchinfiledialog.cpp" />
+    <ClCompile Include="widgets\searchresultview.cpp" />
+    <ClCompile Include="settings.cpp" />
+    <ClCompile Include="settingsdialog\settingsdialog.cpp" />
+    <ClCompile Include="settingsdialog\settingswidget.cpp" />
+    <ClCompile Include="widgets\shortcutinputedit.cpp" />
+    <ClCompile Include="shortcutmanager.cpp" />
+    <ClCompile Include="widgets\shrinkabletabwidget.cpp" />
+    <ClCompile Include="widgets\signalmessagedialog.cpp" />
+    <ClCompile Include="parser\statementmodel.cpp" />
+    <ClCompile Include="compiler\stdincompiler.cpp" />
+    <ClCompile Include="symbolusagemanager.cpp" />
+    <ClCompile Include="syntaxermanager.cpp" />
+    <ClCompile Include="systemconsts.cpp" />
+    <ClCompile Include="thememanager.cpp" />
+    <ClCompile Include="todoparser.cpp" />
+    <ClCompile Include="settingsdialog\toolsgeneralwidget.cpp" />
+    <ClCompile Include="toolsmanager.cpp" />
+    <ClCompile Include="utils.cpp" />
+    <ClCompile Include="visithistorymanager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SimpleIni.h" />
+    <QtMoc Include="widgets\aboutdialog.h" />
+    <ClInclude Include="autolinkmanager.h" />
+    <QtMoc Include="widgets\bookmarkmodel.h" />
+    <QtMoc Include="caretlist.h" />
+    <QtMoc Include="widgets\choosethemedialog.h" />
+    <QtMoc Include="widgets\classbrowser.h" />
+    <QtMoc Include="widgets\codecompletionlistview.h" />
+    <QtMoc Include="widgets\codecompletionpopup.h" />
+    <QtMoc Include="codesnippetsmanager.h" />
+    <QtMoc Include="widgets\coloredit.h" />
+    <ClInclude Include="colorscheme.h" />
+    <ClInclude Include="common.h" />
+    <QtMoc Include="problems\competitivecompenionhandler.h" />
+    <QtMoc Include="widgets\compileargumentswidget.h" />
+    <QtMoc Include="compiler\compiler.h" />
+    <QtMoc Include="settingsdialog\compilerautolinkwidget.h" />
+    <ClInclude Include="compiler\compilerinfo.h" />
+    <QtMoc Include="compiler\compilermanager.h" />
+    <QtMoc Include="settingsdialog\compilersetdirectorieswidget.h" />
+    <QtMoc Include="settingsdialog\compilersetoptionwidget.h" />
+    <QtMoc Include="parser\cppparser.h" />
+    <ClInclude Include="parser\cpppreprocessor.h" />
+    <QtMoc Include="cpprefacter.h" />
+    <ClInclude Include="parser\cpptokenizer.h" />
+    <QtMoc Include="widgets\cpudialog.h" />
+    <ClInclude Include="widgets\customdisablediconengine.h" />
+    <ClInclude Include="customfileiconprovider.h" />
+    <QtMoc Include="widgets\customfilesystemmodel.h" />
+    <QtMoc Include="widgets\custommakefileinfodialog.h" />
+    <QtMoc Include="widgets\darkfusionstyle.h" />
+    <QtMoc Include="settingsdialog\debuggeneralwidget.h" />
+    <QtMoc Include="debugger\debugger.h" />
+    <QtMoc Include="editor.h" />
+    <QtMoc Include="settingsdialog\editorautosavewidget.h" />
+    <QtMoc Include="settingsdialog\editorclipboardwidget.h" />
+    <QtMoc Include="settingsdialog\editorcodecompletionwidget.h" />
+    <QtMoc Include="settingsdialog\editorcolorschemewidget.h" />
+    <QtMoc Include="settingsdialog\editorcustomctypekeywords.h" />
+    <QtMoc Include="widgets\editorfontdialog.h" />
+    <QtMoc Include="settingsdialog\editorfontwidget.h" />
+    <QtMoc Include="settingsdialog\editorgeneralwidget.h" />
+    <QtMoc Include="editorlist.h" />
+    <QtMoc Include="settingsdialog\editormiscwidget.h" />
+    <QtMoc Include="settingsdialog\editorsnippetwidget.h" />
+    <QtMoc Include="widgets\editorstabwidget.h" />
+    <QtMoc Include="settingsdialog\editorsymbolcompletionwidget.h" />
+    <QtMoc Include="settingsdialog\editorsyntaxcheckwidget.h" />
+    <QtMoc Include="settingsdialog\editortooltipswidget.h" />
+    <QtMoc Include="settingsdialog\environmentappearancewidget.h" />
+    <QtMoc Include="settingsdialog\environmentfileassociationwidget.h" />
+    <QtMoc Include="settingsdialog\environmentfolderswidget.h" />
+    <QtMoc Include="settingsdialog\environmentperformancewidget.h" />
+    <QtMoc Include="settingsdialog\environmentprogramswidget.h" />
+    <QtMoc Include="settingsdialog\environmentshortcutwidget.h" />
+    <ClInclude Include="utils\escape.h" />
+    <QtMoc Include="compiler\executablerunner.h" />
+    <QtMoc Include="settingsdialog\executorgeneralwidget.h" />
+    <QtMoc Include="settingsdialog\executorproblemsetwidget.h" />
+    <QtMoc Include="compiler\filecompiler.h" />
+    <QtMoc Include="widgets\filenameeditdelegate.h" />
+    <QtMoc Include="widgets\filepropertiesdialog.h" />
+    <ClInclude Include="utils\font.h" />
+    <QtMoc Include="settingsdialog\formattergeneralwidget.h" />
+    <QtMoc Include="settingsdialog\formatterpathwidget.h" />
+    <ClInclude Include="problems\freeprojectsetformat.h" />
+    <QtMoc Include="widgets\functiontooltipwidget.h" />
+    <QtMoc Include="debugger\gdbmidebugger.h" />
+    <ClInclude Include="debugger\gdbmiresultparser.h" />
+    <QtMoc Include="widgets\headercompletionpopup.h" />
+    <QtMoc Include="iconsmanager.h" />
+    <QtMoc Include="widgets\infomessagebox.h" />
+    <QtMoc Include="widgets\issuestable.h" />
+    <QtMoc Include="widgets\labelwithmenu.h" />
+    <QtMoc Include="settingsdialog\languageasmgenerationwidget.h" />
+    <QtMoc Include="widgets\lightfusionstyle.h" />
+    <QtMoc Include="widgets\linenumbertexteditor.h" />
+    <ClInclude Include="addon\luaapi.h" />
+    <ClInclude Include="addon\luaexecutor.h" />
+    <ClInclude Include="addon\luaruntime.h" />
+    <QtMoc Include="widgets\macroinfomodel.h" />
+    <QtMoc Include="main.h" />
+    <QtMoc Include="mainwindow.h" />
+    <QtMoc Include="widgets\newclassdialog.h" />
+    <QtMoc Include="widgets\newheaderdialog.h" />
+    <QtMoc Include="widgets\newprojectdialog.h" />
+    <QtMoc Include="widgets\newprojectunitdialog.h" />
+    <QtMoc Include="widgets\newtemplatedialog.h" />
+    <QtMoc Include="compiler\ojproblemcasesrunner.h" />
+    <QtMoc Include="widgets\ojproblempropertywidget.h" />
+    <ClInclude Include="problems\ojproblemset.h" />
+    <QtMoc Include="widgets\ojproblemsetmodel.h" />
+    <ClInclude Include="utils\parsearg.h" />
+    <ClInclude Include="parser\parserutils.h" />
+    <ClInclude Include="problems\problemcasevalidator.h" />
+    <QtMoc Include="project.h" />
+    <QtMoc Include="widgets\projectalreadyopendialog.h" />
+    <QtMoc Include="settingsdialog\projectcompileparamaterswidget.h" />
+    <QtMoc Include="compiler\projectcompiler.h" />
+    <QtMoc Include="settingsdialog\projectcompilerwidget.h" />
+    <QtMoc Include="settingsdialog\projectdirectorieswidget.h" />
+    <QtMoc Include="settingsdialog\projectdllhostwidget.h" />
+    <QtMoc Include="settingsdialog\projectfileswidget.h" />
+    <QtMoc Include="settingsdialog\projectgeneralwidget.h" />
+    <QtMoc Include="settingsdialog\projectmakefilewidget.h" />
+    <ClInclude Include="projectoptions.h" />
+    <QtMoc Include="settingsdialog\projectoutputwidget.h" />
+    <QtMoc Include="settingsdialog\projectprecompilewidget.h" />
+    <QtMoc Include="projecttemplate.h" />
+    <QtMoc Include="settingsdialog\projectversioninfowidget.h" />
+    <QtMoc Include="widgets\qconsole.h" />
+    <QtMoc Include="widgets\qpatchedcombobox.h" />
+    <QtMoc Include="compiler\runner.h" />
+    <QtMoc Include="compiler\sdccfilecompiler.h" />
+    <QtMoc Include="compiler\sdccprojectcompiler.h" />
+    <QtMoc Include="widgets\searchdialog.h" />
+    <QtMoc Include="widgets\searchinfiledialog.h" />
+    <QtMoc Include="widgets\searchresultview.h" />
+    <ClInclude Include="settings.h" />
+    <QtMoc Include="settingsdialog\settingsdialog.h" />
+    <QtMoc Include="settingsdialog\settingswidget.h" />
+    <QtMoc Include="widgets\shortcutinputedit.h" />
+    <QtMoc Include="shortcutmanager.h" />
+    <QtMoc Include="widgets\shrinkabletabwidget.h" />
+    <QtMoc Include="widgets\signalmessagedialog.h" />
+    <QtMoc Include="parser\statementmodel.h" />
+    <QtMoc Include="compiler\stdincompiler.h" />
+    <QtMoc Include="symbolusagemanager.h" />
+    <ClInclude Include="syntaxermanager.h" />
+    <ClInclude Include="systemconsts.h" />
+    <QtMoc Include="thememanager.h" />
+    <QtMoc Include="todoparser.h" />
+    <QtMoc Include="settingsdialog\toolsgeneralwidget.h" />
+    <QtMoc Include="toolsmanager.h" />
+    <ClInclude Include="utils.h" />
+    <ClInclude Include="visithistorymanager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="debug\moc_predefs.h.cbt">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\mkspecs\features\data\dummy.cpp;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">cl -Bx"$(QTDIR)\bin\qmake.exe" -nologo -Zc:wchar_t -FS -Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -permissive- -Zc:__cplusplus -Zc:externConstexpr -Zi -MDd -std:c++17 -utf-8 -W3 -w34100 -w34189 -w44456 -w44457 -w44458 -wd4577 -wd4467 -E $(QTDIR)\mkspecs\features\data\dummy.cpp 2&gt;NUL &gt;$(IntDir)\moc_predefs.h</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generate moc_predefs.h</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)\moc_predefs.h;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="release\moc_predefs.h.cbt">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\mkspecs\features\data\dummy.cpp;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">cl -Bx"$(QTDIR)\bin\qmake.exe" -nologo -Zc:wchar_t -FS -Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -permissive- -Zc:__cplusplus -Zc:externConstexpr -O2 -MD -std:c++17 -utf-8 -W3 -w34100 -w34189 -w44456 -w44457 -w44458 -wd4577 -wd4467 -E $(QTDIR)\mkspecs\features\data\dummy.cpp 2&gt;NUL &gt;$(IntDir)\moc_predefs.h</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generate moc_predefs.h</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)\moc_predefs.h;%(Outputs)</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <QtTranslation Include="translations\RedPandaIDE_pt_BR.ts" />
+    <QtTranslation Include="translations\RedPandaIDE_ru_RU.ts" />
+    <QtTranslation Include="translations\RedPandaIDE_zh_CN.ts" />
+    <QtTranslation Include="translations\RedPandaIDE_zh_TW.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="widgets\aboutdialog.ui" />
+    <QtUic Include="widgets\choosethemedialog.ui" />
+    <QtUic Include="settingsdialog\compilerautolinkwidget.ui" />
+    <QtUic Include="settingsdialog\compilersetdirectorieswidget.ui" />
+    <QtUic Include="settingsdialog\compilersetoptionwidget.ui" />
+    <QtUic Include="widgets\cpudialog.ui" />
+    <QtUic Include="widgets\custommakefileinfodialog.ui" />
+    <QtUic Include="settingsdialog\debuggeneralwidget.ui" />
+    <QtUic Include="settingsdialog\editorautosavewidget.ui" />
+    <QtUic Include="settingsdialog\editorclipboardwidget.ui" />
+    <QtUic Include="settingsdialog\editorcodecompletionwidget.ui" />
+    <QtUic Include="settingsdialog\editorcolorschemewidget.ui" />
+    <QtUic Include="settingsdialog\editorcustomctypekeywords.ui" />
+    <QtUic Include="widgets\editorfontdialog.ui" />
+    <QtUic Include="settingsdialog\editorfontwidget.ui" />
+    <QtUic Include="settingsdialog\editorgeneralwidget.ui" />
+    <QtUic Include="settingsdialog\editormiscwidget.ui" />
+    <QtUic Include="settingsdialog\editorsnippetwidget.ui" />
+    <QtUic Include="settingsdialog\editorsymbolcompletionwidget.ui" />
+    <QtUic Include="settingsdialog\editorsyntaxcheckwidget.ui" />
+    <QtUic Include="settingsdialog\editortooltipswidget.ui" />
+    <QtUic Include="settingsdialog\environmentappearancewidget.ui" />
+    <QtUic Include="settingsdialog\environmentfileassociationwidget.ui" />
+    <QtUic Include="settingsdialog\environmentfolderswidget.ui" />
+    <QtUic Include="settingsdialog\environmentperformancewidget.ui" />
+    <QtUic Include="settingsdialog\environmentprogramswidget.ui" />
+    <QtUic Include="settingsdialog\environmentshortcutwidget.ui" />
+    <QtUic Include="settingsdialog\executorgeneralwidget.ui" />
+    <QtUic Include="settingsdialog\executorproblemsetwidget.ui" />
+    <QtUic Include="widgets\filepropertiesdialog.ui" />
+    <QtUic Include="settingsdialog\formattergeneralwidget.ui" />
+    <QtUic Include="settingsdialog\formatterpathwidget.ui" />
+    <QtUic Include="widgets\infomessagebox.ui" />
+    <QtUic Include="settingsdialog\languageasmgenerationwidget.ui" />
+    <QtUic Include="mainwindow.ui" />
+    <QtUic Include="widgets\newclassdialog.ui" />
+    <QtUic Include="widgets\newheaderdialog.ui" />
+    <QtUic Include="widgets\newprojectdialog.ui" />
+    <QtUic Include="widgets\newprojectunitdialog.ui" />
+    <QtUic Include="widgets\newtemplatedialog.ui" />
+    <QtUic Include="widgets\ojproblempropertywidget.ui" />
+    <QtUic Include="widgets\projectalreadyopendialog.ui" />
+    <QtUic Include="settingsdialog\projectcompileparamaterswidget.ui" />
+    <QtUic Include="settingsdialog\projectcompilerwidget.ui" />
+    <QtUic Include="settingsdialog\projectdirectorieswidget.ui" />
+    <QtUic Include="settingsdialog\projectdllhostwidget.ui" />
+    <QtUic Include="settingsdialog\projectfileswidget.ui" />
+    <QtUic Include="settingsdialog\projectgeneralwidget.ui" />
+    <QtUic Include="settingsdialog\projectmakefilewidget.ui" />
+    <QtUic Include="settingsdialog\projectoutputwidget.ui" />
+    <QtUic Include="settingsdialog\projectprecompilewidget.ui" />
+    <QtUic Include="settingsdialog\projectversioninfowidget.ui" />
+    <QtUic Include="widgets\searchdialog.ui" />
+    <QtUic Include="widgets\searchinfiledialog.ui" />
+    <QtUic Include="settingsdialog\settingsdialog.ui" />
+    <QtUic Include="widgets\signalmessagedialog.ui" />
+    <QtUic Include="settingsdialog\toolsgeneralwidget.ui" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\iconsets\bluesky\actions\00Misc-01Back.svg" />
+    <None Include="resources\iconsets\contrast\actions\00Misc-01Back.svg" />
+    <None Include="resources\iconsets\newlook\actions\00Misc-01Back.svg" />
+    <None Include="resources\iconsets\bluesky\actions\00Misc-02Forward.svg" />
+    <None Include="resources\iconsets\contrast\actions\00Misc-02Forward.svg" />
+    <None Include="resources\iconsets\newlook\actions\00Misc-02Forward.svg" />
+    <None Include="resources\iconsets\bluesky\actions\00Misc-03Add.svg" />
+    <None Include="resources\iconsets\contrast\actions\00Misc-03Add.svg" />
+    <None Include="resources\iconsets\newlook\actions\00Misc-03Add.svg" />
+    <None Include="resources\iconsets\bluesky\actions\00Misc-04Remove.svg" />
+    <None Include="resources\iconsets\contrast\actions\00Misc-04Remove.svg" />
+    <None Include="resources\iconsets\newlook\actions\00Misc-04Remove.svg" />
+    <None Include="resources\iconsets\bluesky\actions\00Misc-05Gear.svg" />
+    <None Include="resources\iconsets\contrast\actions\00Misc-05Gear.svg" />
+    <None Include="resources\iconsets\newlook\actions\00Misc-05Gear.svg" />
+    <None Include="resources\iconsets\bluesky\actions\00Misc-06Cross.svg" />
+    <None Include="resources\iconsets\contrast\actions\00Misc-06Cross.svg" />
+    <None Include="resources\iconsets\newlook\actions\00Misc-06Cross.svg" />
+    <None Include="resources\iconsets\bluesky\actions\00Misc-07Folder.svg" />
+    <None Include="resources\iconsets\contrast\actions\00Misc-07Folder.svg" />
+    <None Include="resources\iconsets\newlook\actions\00Misc-07Folder.svg" />
+    <None Include="resources\iconsets\bluesky\actions\00Misc-08Term.svg" />
+    <None Include="resources\iconsets\contrast\actions\00Misc-08Term.svg" />
+    <None Include="resources\iconsets\newlook\actions\00Misc-08Term.svg" />
+    <None Include="resources\iconsets\bluesky\actions\00Misc-09Clean.svg" />
+    <None Include="resources\iconsets\contrast\actions\00Misc-09Clean.svg" />
+    <None Include="resources\iconsets\newlook\actions\00Misc-09Clean.svg" />
+    <None Include="resources\iconsets\bluesky\actions\00Misc-10Check.svg" />
+    <None Include="resources\iconsets\contrast\actions\00Misc-10Check.svg" />
+    <None Include="resources\iconsets\newlook\actions\00Misc-10Check.svg" />
+    <None Include="resources\iconsets\bluesky\actions\00Misc-11Rename.svg" />
+    <None Include="resources\iconsets\contrast\actions\00Misc-11Rename.svg" />
+    <None Include="resources\iconsets\newlook\actions\00Misc-11Rename.svg" />
+    <None Include="resources\iconsets\bluesky\actions\00Misc-12Help.svg" />
+    <None Include="resources\iconsets\contrast\actions\00Misc-12Help.svg" />
+    <None Include="resources\iconsets\newlook\actions\00Misc-12Help.svg" />
+    <None Include="resources\iconsets\bluesky\actions\00Misc-13Filter.svg" />
+    <None Include="resources\iconsets\contrast\actions\00Misc-13Filter.svg" />
+    <None Include="resources\iconsets\newlook\actions\00Misc-13Filter.svg" />
+    <None Include="resources\iconsets\bluesky\actions\00Misc-14MoveUp.svg" />
+    <None Include="resources\iconsets\contrast\actions\00Misc-14MoveUp.svg" />
+    <None Include="resources\iconsets\newlook\actions\00Misc-14MoveUp.svg" />
+    <None Include="resources\iconsets\bluesky\actions\00Misc-15MoveDown.svg" />
+    <None Include="resources\iconsets\contrast\actions\00Misc-15MoveDown.svg" />
+    <None Include="resources\iconsets\newlook\actions\00Misc-15MoveDown.svg" />
+    <None Include="resources\iconsets\bluesky\actions\00Misc-16Reset.svg" />
+    <None Include="resources\iconsets\contrast\actions\00Misc-16Reset.svg" />
+    <None Include="resources\iconsets\newlook\actions\00Misc-16Reset.svg" />
+    <None Include="resources\iconsets\bluesky\actions\00Misc-17MoveTop.svg" />
+    <None Include="resources\iconsets\contrast\actions\00Misc-17MoveTop.svg" />
+    <None Include="resources\iconsets\newlook\actions\00Misc-17MoveTop.svg" />
+    <None Include="resources\iconsets\bluesky\actions\00Misc-18MoveBottom.svg" />
+    <None Include="resources\iconsets\contrast\actions\00Misc-18MoveBottom.svg" />
+    <None Include="resources\iconsets\newlook\actions\00Misc-18MoveBottom.svg" />
+    <None Include="resources\iconsets\bluesky\actions\01File-01New.svg" />
+    <None Include="resources\iconsets\contrast\actions\01File-01New.svg" />
+    <None Include="resources\iconsets\newlook\actions\01File-01New.svg" />
+    <None Include="resources\iconsets\bluesky\actions\01File-02Open.svg" />
+    <None Include="resources\iconsets\contrast\actions\01File-02Open.svg" />
+    <None Include="resources\iconsets\newlook\actions\01File-02Open.svg" />
+    <None Include="resources\iconsets\bluesky\actions\01File-03Save.svg" />
+    <None Include="resources\iconsets\contrast\actions\01File-03Save.svg" />
+    <None Include="resources\iconsets\newlook\actions\01File-03Save.svg" />
+    <None Include="resources\iconsets\bluesky\actions\01File-04SaveAs.svg" />
+    <None Include="resources\iconsets\contrast\actions\01File-04SaveAs.svg" />
+    <None Include="resources\iconsets\newlook\actions\01File-04SaveAs.svg" />
+    <None Include="resources\iconsets\bluesky\actions\01File-05SaveAll.svg" />
+    <None Include="resources\iconsets\contrast\actions\01File-05SaveAll.svg" />
+    <None Include="resources\iconsets\newlook\actions\01File-05SaveAll.svg" />
+    <None Include="resources\iconsets\bluesky\actions\01File-06Close.svg" />
+    <None Include="resources\iconsets\contrast\actions\01File-06Close.svg" />
+    <None Include="resources\iconsets\newlook\actions\01File-06Close.svg" />
+    <None Include="resources\iconsets\bluesky\actions\01File-07CloseAll.svg" />
+    <None Include="resources\iconsets\contrast\actions\01File-07CloseAll.svg" />
+    <None Include="resources\iconsets\newlook\actions\01File-07CloseAll.svg" />
+    <None Include="resources\iconsets\bluesky\actions\01File-08Print.svg" />
+    <None Include="resources\iconsets\contrast\actions\01File-08Print.svg" />
+    <None Include="resources\iconsets\newlook\actions\01File-08Print.svg" />
+    <None Include="resources\iconsets\bluesky\actions\01File-09Open_Folder.svg" />
+    <None Include="resources\iconsets\contrast\actions\01File-09Open_Folder.svg" />
+    <None Include="resources\iconsets\newlook\actions\01File-09Open_Folder.svg" />
+    <None Include="resources\iconsets\bluesky\actions\01File-10FileProperties.svg" />
+    <None Include="resources\iconsets\contrast\actions\01File-10FileProperties.svg" />
+    <None Include="resources\iconsets\newlook\actions\01File-10FileProperties.svg" />
+    <None Include="resources\iconsets\bluesky\actions\01File-11Locate.svg" />
+    <None Include="resources\iconsets\contrast\actions\01File-11Locate.svg" />
+    <None Include="resources\iconsets\newlook\actions\01File-11Locate.svg" />
+    <None Include="resources\iconsets\bluesky\actions\02Project-01New.svg" />
+    <None Include="resources\iconsets\contrast\actions\02Project-01New.svg" />
+    <None Include="resources\iconsets\newlook\actions\02Project-01New.svg" />
+    <None Include="resources\iconsets\bluesky\actions\02Project-02Save.svg" />
+    <None Include="resources\iconsets\contrast\actions\02Project-02Save.svg" />
+    <None Include="resources\iconsets\newlook\actions\02Project-02Save.svg" />
+    <None Include="resources\iconsets\bluesky\actions\02Project-03Close.svg" />
+    <None Include="resources\iconsets\contrast\actions\02Project-03Close.svg" />
+    <None Include="resources\iconsets\newlook\actions\02Project-03Close.svg" />
+    <None Include="resources\iconsets\bluesky\actions\02Project-04NewFile.svg" />
+    <None Include="resources\iconsets\contrast\actions\02Project-04NewFile.svg" />
+    <None Include="resources\iconsets\newlook\actions\02Project-04NewFile.svg" />
+    <None Include="resources\iconsets\bluesky\actions\02Project-05AddFile.svg" />
+    <None Include="resources\iconsets\contrast\actions\02Project-05AddFile.svg" />
+    <None Include="resources\iconsets\newlook\actions\02Project-05AddFile.svg" />
+    <None Include="resources\iconsets\bluesky\actions\02Project-06RemoveFile.svg" />
+    <None Include="resources\iconsets\contrast\actions\02Project-06RemoveFile.svg" />
+    <None Include="resources\iconsets\newlook\actions\02Project-06RemoveFile.svg" />
+    <None Include="resources\iconsets\bluesky\actions\02Project-07Properties.svg" />
+    <None Include="resources\iconsets\contrast\actions\02Project-07Properties.svg" />
+    <None Include="resources\iconsets\newlook\actions\02Project-07Properties.svg" />
+    <None Include="resources\iconsets\bluesky\actions\03Edit-01Undo.svg" />
+    <None Include="resources\iconsets\contrast\actions\03Edit-01Undo.svg" />
+    <None Include="resources\iconsets\newlook\actions\03Edit-01Undo.svg" />
+    <None Include="resources\iconsets\bluesky\actions\03Edit-02Redo.svg" />
+    <None Include="resources\iconsets\contrast\actions\03Edit-02Redo.svg" />
+    <None Include="resources\iconsets\newlook\actions\03Edit-02Redo.svg" />
+    <None Include="resources\iconsets\bluesky\actions\03Edit-03Cut.svg" />
+    <None Include="resources\iconsets\contrast\actions\03Edit-03Cut.svg" />
+    <None Include="resources\iconsets\newlook\actions\03Edit-03Cut.svg" />
+    <None Include="resources\iconsets\bluesky\actions\03Edit-04Copy.svg" />
+    <None Include="resources\iconsets\contrast\actions\03Edit-04Copy.svg" />
+    <None Include="resources\iconsets\newlook\actions\03Edit-04Copy.svg" />
+    <None Include="resources\iconsets\bluesky\actions\03Edit-05Paste.svg" />
+    <None Include="resources\iconsets\contrast\actions\03Edit-05Paste.svg" />
+    <None Include="resources\iconsets\newlook\actions\03Edit-05Paste.svg" />
+    <None Include="resources\iconsets\bluesky\actions\03Edit-06Indent.svg" />
+    <None Include="resources\iconsets\contrast\actions\03Edit-06Indent.svg" />
+    <None Include="resources\iconsets\newlook\actions\03Edit-06Indent.svg" />
+    <None Include="resources\iconsets\bluesky\actions\03Edit-07Unindent.svg" />
+    <None Include="resources\iconsets\contrast\actions\03Edit-07Unindent.svg" />
+    <None Include="resources\iconsets\newlook\actions\03Edit-07Unindent.svg" />
+    <None Include="resources\iconsets\bluesky\actions\03Edit-08Search.svg" />
+    <None Include="resources\iconsets\contrast\actions\03Edit-08Search.svg" />
+    <None Include="resources\iconsets\newlook\actions\03Edit-08Search.svg" />
+    <None Include="resources\iconsets\bluesky\actions\03Edit-09Replace.svg" />
+    <None Include="resources\iconsets\contrast\actions\03Edit-09Replace.svg" />
+    <None Include="resources\iconsets\newlook\actions\03Edit-09Replace.svg" />
+    <None Include="resources\iconsets\bluesky\actions\03Edit-10SearchInFiles.svg" />
+    <None Include="resources\iconsets\contrast\actions\03Edit-10SearchInFiles.svg" />
+    <None Include="resources\iconsets\newlook\actions\03Edit-10SearchInFiles.svg" />
+    <None Include="resources\iconsets\bluesky\actions\03Edit-11SortByName.svg" />
+    <None Include="resources\iconsets\contrast\actions\03Edit-11SortByName.svg" />
+    <None Include="resources\iconsets\newlook\actions\03Edit-11SortByName.svg" />
+    <None Include="resources\iconsets\bluesky\actions\03Edit-12ShowInherited.svg" />
+    <None Include="resources\iconsets\contrast\actions\03Edit-12ShowInherited.svg" />
+    <None Include="resources\iconsets\newlook\actions\03Edit-12ShowInherited.svg" />
+    <None Include="resources\iconsets\bluesky\actions\03Edit-12SortByType.svg" />
+    <None Include="resources\iconsets\contrast\actions\03Edit-12SortByType.svg" />
+    <None Include="resources\iconsets\newlook\actions\03Edit-12SortByType.svg" />
+    <None Include="resources\iconsets\bluesky\actions\03Edit-13ShowInherited.svg" />
+    <None Include="resources\iconsets\contrast\actions\03Edit-13ShowInherited.svg" />
+    <None Include="resources\iconsets\newlook\actions\03Edit-13ShowInherited.svg" />
+    <None Include="resources\iconsets\bluesky\actions\04Code-01Back.svg" />
+    <None Include="resources\iconsets\contrast\actions\04Code-01Back.svg" />
+    <None Include="resources\iconsets\newlook\actions\04Code-01Back.svg" />
+    <None Include="resources\iconsets\bluesky\actions\04Code-02Forward.svg" />
+    <None Include="resources\iconsets\contrast\actions\04Code-02Forward.svg" />
+    <None Include="resources\iconsets\newlook\actions\04Code-02Forward.svg" />
+    <None Include="resources\iconsets\bluesky\actions\04Code-03AddBookmark.svg" />
+    <None Include="resources\iconsets\contrast\actions\04Code-03AddBookmark.svg" />
+    <None Include="resources\iconsets\newlook\actions\04Code-03AddBookmark.svg" />
+    <None Include="resources\iconsets\bluesky\actions\04Code-04RemoveBookmark.svg" />
+    <None Include="resources\iconsets\contrast\actions\04Code-04RemoveBookmark.svg" />
+    <None Include="resources\iconsets\newlook\actions\04Code-04RemoveBookmark.svg" />
+    <None Include="resources\iconsets\bluesky\actions\04Code-05Reformat.svg" />
+    <None Include="resources\iconsets\contrast\actions\04Code-05Reformat.svg" />
+    <None Include="resources\iconsets\newlook\actions\04Code-05Reformat.svg" />
+    <None Include="resources\iconsets\bluesky\actions\05Run-01Compile.svg" />
+    <None Include="resources\iconsets\contrast\actions\05Run-01Compile.svg" />
+    <None Include="resources\iconsets\newlook\actions\05Run-01Compile.svg" />
+    <None Include="resources\iconsets\bluesky\actions\05Run-02CompileRun.svg" />
+    <None Include="resources\iconsets\contrast\actions\05Run-02CompileRun.svg" />
+    <None Include="resources\iconsets\newlook\actions\05Run-02CompileRun.svg" />
+    <None Include="resources\iconsets\bluesky\actions\05Run-03Run.svg" />
+    <None Include="resources\iconsets\contrast\actions\05Run-03Run.svg" />
+    <None Include="resources\iconsets\newlook\actions\05Run-03Run.svg" />
+    <None Include="resources\iconsets\bluesky\actions\05Run-04Rebuild.svg" />
+    <None Include="resources\iconsets\contrast\actions\05Run-04Rebuild.svg" />
+    <None Include="resources\iconsets\newlook\actions\05Run-04Rebuild.svg" />
+    <None Include="resources\iconsets\bluesky\actions\05Run-05Options.svg" />
+    <None Include="resources\iconsets\contrast\actions\05Run-05Options.svg" />
+    <None Include="resources\iconsets\newlook\actions\05Run-05Options.svg" />
+    <None Include="resources\iconsets\bluesky\actions\05Run-06Debug.svg" />
+    <None Include="resources\iconsets\contrast\actions\05Run-06Debug.svg" />
+    <None Include="resources\iconsets\newlook\actions\05Run-06Debug.svg" />
+    <None Include="resources\iconsets\bluesky\actions\05Run-07StepOver.svg" />
+    <None Include="resources\iconsets\contrast\actions\05Run-07StepOver.svg" />
+    <None Include="resources\iconsets\newlook\actions\05Run-07StepOver.svg" />
+    <None Include="resources\iconsets\bluesky\actions\05Run-08StepInto.svg" />
+    <None Include="resources\iconsets\contrast\actions\05Run-08StepInto.svg" />
+    <None Include="resources\iconsets\newlook\actions\05Run-08StepInto.svg" />
+    <None Include="resources\iconsets\bluesky\actions\05Run-08StepOut.svg" />
+    <None Include="resources\iconsets\contrast\actions\05Run-08StepOut.svg" />
+    <None Include="resources\iconsets\newlook\actions\05Run-08StepOut.svg" />
+    <None Include="resources\iconsets\bluesky\actions\05Run-09RunToCursor.svg" />
+    <None Include="resources\iconsets\contrast\actions\05Run-09RunToCursor.svg" />
+    <None Include="resources\iconsets\newlook\actions\05Run-09RunToCursor.svg" />
+    <None Include="resources\iconsets\bluesky\actions\05Run-10Continue.svg" />
+    <None Include="resources\iconsets\contrast\actions\05Run-10Continue.svg" />
+    <None Include="resources\iconsets\newlook\actions\05Run-10Continue.svg" />
+    <None Include="resources\iconsets\bluesky\actions\05Run-11Stop.svg" />
+    <None Include="resources\iconsets\contrast\actions\05Run-11Stop.svg" />
+    <None Include="resources\iconsets\newlook\actions\05Run-11Stop.svg" />
+    <None Include="resources\iconsets\bluesky\actions\05Run-12AddWatch.svg" />
+    <None Include="resources\iconsets\contrast\actions\05Run-12AddWatch.svg" />
+    <None Include="resources\iconsets\newlook\actions\05Run-12AddWatch.svg" />
+    <None Include="resources\iconsets\bluesky\actions\05Run-13RemoveWatch.svg" />
+    <None Include="resources\iconsets\contrast\actions\05Run-13RemoveWatch.svg" />
+    <None Include="resources\iconsets\newlook\actions\05Run-13RemoveWatch.svg" />
+    <None Include="resources\iconsets\bluesky\actions\05Run-14StepOverInstruction.svg" />
+    <None Include="resources\iconsets\contrast\actions\05Run-14StepOverInstruction.svg" />
+    <None Include="resources\iconsets\newlook\actions\05Run-14StepOverInstruction.svg" />
+    <None Include="resources\iconsets\bluesky\actions\05Run-15StepIntoInstruction.svg" />
+    <None Include="resources\iconsets\contrast\actions\05Run-15StepIntoInstruction.svg" />
+    <None Include="resources\iconsets\newlook\actions\05Run-15StepIntoInstruction.svg" />
+    <None Include="resources\iconsets\bluesky\actions\05Run-16Interrupt.svg" />
+    <None Include="resources\iconsets\contrast\actions\05Run-16Interrupt.svg" />
+    <None Include="resources\iconsets\newlook\actions\05Run-16Interrupt.svg" />
+    <None Include="resources\iconsets\bluesky\actions\05Run-17CompilerOptions.svg" />
+    <None Include="resources\iconsets\contrast\actions\05Run-17CompilerOptions.svg" />
+    <None Include="resources\iconsets\newlook\actions\05Run-17CompilerOptions.svg" />
+    <None Include="resources\iconsets\bluesky\actions\06View-01Maximum.svg" />
+    <None Include="resources\iconsets\contrast\actions\06View-01Maximum.svg" />
+    <None Include="resources\iconsets\newlook\actions\06View-01Maximum.svg" />
+    <None Include="resources\iconsets\bluesky\actions\06View-02ClassBrowser.svg" />
+    <None Include="resources\iconsets\contrast\actions\06View-02ClassBrowser.svg" />
+    <None Include="resources\iconsets\newlook\actions\06View-02ClassBrowser.svg" />
+    <None Include="resources\iconsets\bluesky\actions\06View-03Files.svg" />
+    <None Include="resources\iconsets\contrast\actions\06View-03Files.svg" />
+    <None Include="resources\iconsets\newlook\actions\06View-03Files.svg" />
+    <None Include="resources\iconsets\bluesky\actions\06View-04CompileLog.svg" />
+    <None Include="resources\iconsets\contrast\actions\06View-04CompileLog.svg" />
+    <None Include="resources\iconsets\newlook\actions\06View-04CompileLog.svg" />
+    <None Include="resources\iconsets\bluesky\actions\06View-05Bookmark.svg" />
+    <None Include="resources\iconsets\contrast\actions\06View-05Bookmark.svg" />
+    <None Include="resources\iconsets\newlook\actions\06View-05Bookmark.svg" />
+    <None Include="resources\iconsets\bluesky\actions\06View-06Todo.svg" />
+    <None Include="resources\iconsets\contrast\actions\06View-06Todo.svg" />
+    <None Include="resources\iconsets\newlook\actions\06View-06Todo.svg" />
+    <None Include="resources\iconsets\bluesky\actions\07Help-01About.svg" />
+    <None Include="resources\iconsets\contrast\actions\07Help-01About.svg" />
+    <None Include="resources\iconsets\newlook\actions\07Help-01About.svg" />
+    <None Include="resources\iconsets\bluesky\actions\08Problem-01Problem.svg" />
+    <None Include="resources\iconsets\contrast\actions\08Problem-01Problem.svg" />
+    <None Include="resources\iconsets\newlook\actions\08Problem-01Problem.svg" />
+    <None Include="resources\iconsets\bluesky\actions\08Problem-02ProblemSet.svg" />
+    <None Include="resources\iconsets\contrast\actions\08Problem-02ProblemSet.svg" />
+    <None Include="resources\iconsets\newlook\actions\08Problem-02ProblemSet.svg" />
+    <None Include="resources\iconsets\bluesky\actions\08Problem-03Properties.svg" />
+    <None Include="resources\iconsets\contrast\actions\08Problem-03Properties.svg" />
+    <None Include="resources\iconsets\newlook\actions\08Problem-03Properties.svg" />
+    <None Include="resources\iconsets\bluesky\actions\08Problem-04EditSource.svg" />
+    <None Include="resources\iconsets\contrast\actions\08Problem-04EditSource.svg" />
+    <None Include="resources\iconsets\newlook\actions\08Problem-04EditSource.svg" />
+    <None Include="resources\iconsets\bluesky\actions\08Problem-05RunCases.svg" />
+    <None Include="resources\iconsets\contrast\actions\08Problem-05RunCases.svg" />
+    <None Include="resources\iconsets\newlook\actions\08Problem-05RunCases.svg" />
+    <None Include="resources\iconsets\bluesky\actions\08Problem-06Correct.svg" />
+    <None Include="resources\iconsets\contrast\actions\08Problem-06Correct.svg" />
+    <None Include="resources\iconsets\newlook\actions\08Problem-06Correct.svg" />
+    <None Include="resources\iconsets\bluesky\actions\08Problem-07Wrong.svg" />
+    <None Include="resources\iconsets\contrast\actions\08Problem-07Wrong.svg" />
+    <None Include="resources\iconsets\newlook\actions\08Problem-07Wrong.svg" />
+    <None Include="resources\iconsets\bluesky\actions\08Problem-08Running.svg" />
+    <None Include="resources\iconsets\contrast\actions\08Problem-08Running.svg" />
+    <None Include="resources\iconsets\newlook\actions\08Problem-08Running.svg" />
+    <None Include="resources\colorschemes\Adaptive.scheme" />
+    <None Include="resources\colorschemes\Classic_Plus.scheme" />
+    <None Include="resources\colorschemes\E-ink.scheme" />
+    <None Include="resources\colorschemes\GSS_Hacker.scheme" />
+    <None Include="images\associations\IDE2.ico" />
+    <None Include="resources\colorschemes\Intellij_Classic.scheme" />
+    <None Include="resources\colorschemes\Matrix.scheme" />
+    <None Include="resources\colorschemes\MoLo_CBLight.scheme" />
+    <None Include="resources\colorschemes\MoLo_CodeBlack.scheme" />
+    <None Include="resources\colorschemes\MoLo_Mia.scheme" />
+    <None Include="resources\colorschemes\Monokai.scheme" />
+    <None Include="resources\colorschemes\Obsidian.scheme" />
+    <None Include="resources\colorschemes\Obvilion.scheme" />
+    <None Include="resources\colorschemes\Ochre_Butter.scheme" />
+    <None Include="resources\colorschemes\One_Dark.scheme" />
+    <None Include="resources\colorschemes\Plastic_Code_Wrap.scheme" />
+    <None Include="debug\RedPandaIDE_pt_BR.qm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="release\RedPandaIDE_pt_BR.qm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="debug\RedPandaIDE_ru_RU.qm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="release\RedPandaIDE_ru_RU.qm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="debug\RedPandaIDE_zh_CN.qm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="release\RedPandaIDE_zh_CN.qm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="debug\RedPandaIDE_zh_TW.qm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="release\RedPandaIDE_zh_TW.qm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="resources\colorschemes\Sea_Lite.scheme" />
+    <None Include="resources\colorschemes\Twilight.scheme" />
+    <None Include="resources\colorschemes\VS_Code.scheme" />
+    <None Include="resources\fonts\asciicontrol.ttf" />
+    <None Include="resources\autolink-xdg.json" />
+    <None Include="resources\autolink.json" />
+    <None Include="resources\iconsets\bluesky\editor\bookmark.svg" />
+    <None Include="resources\iconsets\contrast\editor\bookmark.svg" />
+    <None Include="resources\iconsets\newlook\editor\bookmark.svg" />
+    <None Include="resources\iconsets\bluesky\editor\breakpoint.svg" />
+    <None Include="resources\iconsets\contrast\editor\breakpoint.svg" />
+    <None Include="resources\iconsets\newlook\editor\breakpoint.svg" />
+    <None Include="images\associations\c.ico" />
+    <None Include="resources\iconsets\bluesky\filesystem\cfile-vcs-changed.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\cfile-vcs-changed.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\cfile-vcs-changed.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\cfile-vcs-conflict.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\cfile-vcs-conflict.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\cfile-vcs-conflict.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\cfile-vcs-nochange.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\cfile-vcs-nochange.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\cfile-vcs-nochange.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\cfile-vcs-staged.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\cfile-vcs-staged.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\cfile-vcs-staged.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\cfile.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\cfile.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\cfile.svg" />
+    <None Include="resources\iconsets\bluesky\classparser\class.svg" />
+    <None Include="resources\iconsets\contrast\classparser\class.svg" />
+    <None Include="resources\iconsets\newlook\classparser\class.svg" />
+    <None Include="resources\iconsets\bluesky\classparser\code_snippet.svg" />
+    <None Include="resources\iconsets\contrast\classparser\code_snippet.svg" />
+    <None Include="resources\iconsets\newlook\classparser\code_snippet.svg" />
+    <QtRcc Include="codes.qrc">
+      <InitFuncName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">codes</InitFuncName>
+      <InitFuncName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">codes</InitFuncName>
+    </QtRcc>
+    <None Include="resources\codesnippets.json" />
+    <None Include="resources\themes\contrast.json" />
+    <None Include="resources\themes\contrast_close.png" />
+    <None Include="images\associations\cpp.ico" />
+    <None Include="resources\iconsets\bluesky\filesystem\cppfile-vcs-changed.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\cppfile-vcs-changed.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\cppfile-vcs-changed.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\cppfile-vcs-conflict.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\cppfile-vcs-conflict.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\cppfile-vcs-conflict.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\cppfile-vcs-nochange.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\cppfile-vcs-nochange.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\cppfile-vcs-nochange.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\cppfile-vcs-staged.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\cppfile-vcs-staged.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\cppfile-vcs-staged.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\cppfile.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\cppfile.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\cppfile.svg" />
+    <None Include="resources\iconsets\bluesky\editor\currentline.svg" />
+    <None Include="resources\iconsets\contrast\editor\currentline.svg" />
+    <None Include="resources\iconsets\newlook\editor\currentline.svg" />
+    <None Include="images\dark-close.svg" />
+    <None Include="resources\themes\dark.json" />
+    <None Include="images\demos\dark.png" />
+    <None Include="resources\themes\dark_close.png" />
+    <None Include="resources\themes\default.json" />
+    <QtRcc Include="defaultconfigs.qrc">
+      <InitFuncName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">defaultconfigs</InitFuncName>
+      <InitFuncName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">defaultconfigs</InitFuncName>
+    </QtRcc>
+    <None Include="resources\iconsets\bluesky\classparser\define.svg" />
+    <None Include="resources\iconsets\contrast\classparser\define.svg" />
+    <None Include="resources\iconsets\newlook\classparser\define.svg" />
+    <None Include="images\associations\dev.ico" />
+    <None Include="images\devcpp.ico" />
+    <None Include="images\associations\devpackage.ico" />
+    <None Include="images\associations\devpak.ico" />
+    <None Include="resources\templates\empty.ico" />
+    <None Include="resources\templates\empty.template" />
+    <None Include="resources\iconsets\bluesky\classparser\enum.svg" />
+    <None Include="resources\iconsets\contrast\classparser\enum.svg" />
+    <None Include="resources\iconsets\newlook\classparser\enum.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\file-vcs-changed.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\file-vcs-changed.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\file-vcs-changed.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\file-vcs-conflict.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\file-vcs-conflict.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\file-vcs-conflict.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\file-vcs-nochange.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\file-vcs-nochange.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\file-vcs-nochange.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\file-vcs-staged.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\file-vcs-staged.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\file-vcs-staged.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\file.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\file.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\file.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\folder-vcs-changed.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\folder-vcs-changed.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\folder-vcs-changed.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\folder-vcs-conflict.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\folder-vcs-conflict.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\folder-vcs-conflict.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\folder-vcs-nochange.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\folder-vcs-nochange.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\folder-vcs-nochange.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\folder-vcs-staged.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\folder-vcs-staged.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\folder-vcs-staged.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\folder.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\folder.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\folder.svg" />
+    <QtRcc Include="fonts.qrc">
+      <InitFuncName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">fonts</InitFuncName>
+      <InitFuncName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">fonts</InitFuncName>
+    </QtRcc>
+    <None Include="resources\formatdemo.cpp" />
+    <None Include="resources\iconsets\bluesky\filesystem\git.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\git.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\git.svg" />
+    <None Include="resources\iconsets\bluesky\classparser\global.svg" />
+    <None Include="resources\iconsets\contrast\classparser\global.svg" />
+    <None Include="resources\iconsets\newlook\classparser\global.svg" />
+    <None Include="resources\iconsets\bluesky\classparser\global_method.svg" />
+    <None Include="resources\iconsets\contrast\classparser\global_method.svg" />
+    <None Include="resources\iconsets\newlook\classparser\global_method.svg" />
+    <None Include="images\associations\h.ico" />
+    <None Include="resources\iconsets\bluesky\filesystem\headerfolder.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\headerfolder.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\headerfolder.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\hfile-vcs-changed.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\hfile-vcs-changed.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\hfile-vcs-changed.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\hfile-vcs-conflict.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\hfile-vcs-conflict.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\hfile-vcs-conflict.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\hfile-vcs-nochange.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\hfile-vcs-nochange.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\hfile-vcs-nochange.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\hfile-vcs-staged.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\hfile-vcs-staged.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\hfile-vcs-staged.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\hfile.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\hfile.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\hfile.svg" />
+    <None Include="images\associations\hpp.ico" />
+    <QtRcc Include="icons.qrc">
+      <InitFuncName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">icons</InitFuncName>
+      <InitFuncName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">icons</InitFuncName>
+    </QtRcc>
+    <None Include="images\associations\ide.ico" />
+    <None Include="resources\iconsets\bluesky\info.json" />
+    <None Include="resources\iconsets\contrast\info.json" />
+    <None Include="resources\iconsets\newlook\info.json" />
+    <None Include="resources\iconsets\bluesky\classparser\keyword.svg" />
+    <None Include="resources\iconsets\contrast\classparser\keyword.svg" />
+    <None Include="resources\iconsets\newlook\classparser\keyword.svg" />
+    <None Include="images\demos\light.png" />
+    <None Include="resources\iconsets\bluesky\classparser\method_inherited.svg" />
+    <None Include="resources\iconsets\contrast\classparser\method_inherited.svg" />
+    <None Include="resources\iconsets\newlook\classparser\method_inherited.svg" />
+    <None Include="resources\iconsets\bluesky\classparser\method_inherited_protected.svg" />
+    <None Include="resources\iconsets\contrast\classparser\method_inherited_protected.svg" />
+    <None Include="resources\iconsets\newlook\classparser\method_inherited_protected.svg" />
+    <None Include="resources\iconsets\bluesky\classparser\method_private.svg" />
+    <None Include="resources\iconsets\contrast\classparser\method_private.svg" />
+    <None Include="resources\iconsets\newlook\classparser\method_private.svg" />
+    <None Include="resources\iconsets\bluesky\classparser\method_protected.svg" />
+    <None Include="resources\iconsets\contrast\classparser\method_protected.svg" />
+    <None Include="resources\iconsets\newlook\classparser\method_protected.svg" />
+    <None Include="resources\iconsets\bluesky\classparser\method_public.svg" />
+    <None Include="resources\iconsets\contrast\classparser\method_public.svg" />
+    <None Include="resources\iconsets\newlook\classparser\method_public.svg" />
+    <None Include="resources\themes\molo.json" />
+    <None Include="resources\iconsets\bluesky\classparser\namespace.svg" />
+    <None Include="resources\iconsets\contrast\classparser\namespace.svg" />
+    <None Include="resources\iconsets\newlook\classparser\namespace.svg" />
+    <None Include="images\associations\o.ico" />
+    <None Include="images\associations\obj.ico" />
+    <None Include="resources\themes\one_dark.json" />
+    <None Include="resources\iconsets\bluesky\filesystem\projectfile-vcs-changed.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\projectfile-vcs-changed.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\projectfile-vcs-changed.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\projectfile-vcs-conflict.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\projectfile-vcs-conflict.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\projectfile-vcs-conflict.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\projectfile-vcs-nochange.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\projectfile-vcs-nochange.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\projectfile-vcs-nochange.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\projectfile-vcs-staged.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\projectfile-vcs-staged.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\projectfile-vcs-staged.svg" />
+    <None Include="resources\iconsets\bluesky\filesystem\projectfile.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\projectfile.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\projectfile.svg" />
+    <QtRcc Include="projecttemplates.qrc">
+      <InitFuncName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">projecttemplates</InitFuncName>
+      <InitFuncName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">projecttemplates</InitFuncName>
+    </QtRcc>
+    <QtRcc Include="debug\qmake_colorscheme_files.qrc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <InitFuncName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">qmake_colorscheme_files</InitFuncName>
+    </QtRcc>
+    <QtRcc Include="release\qmake_colorscheme_files.qrc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <InitFuncName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">qmake_colorscheme_files</InitFuncName>
+    </QtRcc>
+    <QtRcc Include="debug\qmake_iconsets_files.qrc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <InitFuncName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">qmake_iconsets_files</InitFuncName>
+    </QtRcc>
+    <QtRcc Include="release\qmake_iconsets_files.qrc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <InitFuncName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">qmake_iconsets_files</InitFuncName>
+    </QtRcc>
+    <QtRcc Include="debug\qmake_qmake_qm_files.qrc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <InitFuncName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">qmake_qmake_qm_files</InitFuncName>
+    </QtRcc>
+    <QtRcc Include="release\qmake_qmake_qm_files.qrc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <InitFuncName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">qmake_qmake_qm_files</InitFuncName>
+    </QtRcc>
+    <QtRcc Include="debug\qmake_theme_files.qrc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <InitFuncName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">qmake_theme_files</InitFuncName>
+    </QtRcc>
+    <QtRcc Include="release\qmake_theme_files.qrc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <InitFuncName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">qmake_theme_files</InitFuncName>
+    </QtRcc>
+    <None Include="resources\themes\random_light.lua" />
+    <None Include="images\associations\rc.ico" />
+    <None Include="resources\iconsets\bluesky\filesystem\sourcefolder.svg" />
+    <None Include="resources\iconsets\contrast\filesystem\sourcefolder.svg" />
+    <None Include="resources\iconsets\newlook\filesystem\sourcefolder.svg" />
+    <None Include="resources\iconsets\bluesky\classparser\static_method.svg" />
+    <None Include="resources\iconsets\contrast\classparser\static_method.svg" />
+    <None Include="resources\iconsets\newlook\classparser\static_method.svg" />
+    <None Include="resources\iconsets\bluesky\classparser\static_var.svg" />
+    <None Include="resources\iconsets\contrast\classparser\static_var.svg" />
+    <None Include="resources\iconsets\newlook\classparser\static_var.svg" />
+    <None Include="resources\iconsets\bluesky\editor\syntaxerror.svg" />
+    <None Include="resources\iconsets\contrast\editor\syntaxerror.svg" />
+    <None Include="resources\iconsets\newlook\editor\syntaxerror.svg" />
+    <None Include="resources\iconsets\bluesky\editor\syntaxwarning.svg" />
+    <None Include="resources\iconsets\contrast\editor\syntaxwarning.svg" />
+    <None Include="resources\iconsets\newlook\editor\syntaxwarning.svg" />
+    <None Include="resources\themes\system.lua" />
+    <None Include="images\associations\template.ico" />
+    <None Include="resources\terminal-unix.json" />
+    <None Include="resources\terminal-windows.json" />
+    <None Include="resources\iconsets\bluesky\classparser\type.svg" />
+    <None Include="resources\iconsets\contrast\classparser\type.svg" />
+    <None Include="resources\iconsets\newlook\classparser\type.svg" />
+    <None Include="resources\iconsets\bluesky\classparser\var.svg" />
+    <None Include="resources\iconsets\contrast\classparser\var.svg" />
+    <None Include="resources\iconsets\newlook\classparser\var.svg" />
+    <None Include="resources\iconsets\bluesky\classparser\var_inherited.svg" />
+    <None Include="resources\iconsets\contrast\classparser\var_inherited.svg" />
+    <None Include="resources\iconsets\newlook\classparser\var_inherited.svg" />
+    <None Include="resources\iconsets\bluesky\classparser\var_inherited_protected.svg" />
+    <None Include="resources\iconsets\contrast\classparser\var_inherited_protected.svg" />
+    <None Include="resources\iconsets\newlook\classparser\var_inherited_protected.svg" />
+    <None Include="resources\iconsets\bluesky\classparser\var_private.svg" />
+    <None Include="resources\iconsets\contrast\classparser\var_private.svg" />
+    <None Include="resources\iconsets\newlook\classparser\var_private.svg" />
+    <None Include="resources\iconsets\bluesky\classparser\var_protected.svg" />
+    <None Include="resources\iconsets\contrast\classparser\var_protected.svg" />
+    <None Include="resources\iconsets\newlook\classparser\var_protected.svg" />
+    <None Include="resources\iconsets\bluesky\classparser\var_public.svg" />
+    <None Include="resources\iconsets\contrast\classparser\var_public.svg" />
+    <None Include="resources\iconsets\newlook\classparser\var_public.svg" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="F:\WorkFlow Corporation\Projects\RedPandaIDE\RedPandaIDE\RedPandaIDE_resource.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Import Project="$(QtMsBuild)\qt.targets" Condition="Exists('$(QtMsBuild)\qt.targets')" />
+  <ImportGroup Label="ExtensionTargets" />
+</Project>

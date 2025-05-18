@@ -1,0 +1,680 @@
+<FlowDocument xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" FontFamily="Segoe UI" FontSize="12">
+  <FlowDocument.Tag><![CDATA[{
+  "timestamp": "2025-05-18 21:38:43",
+  "files": {
+    "F:\\WorkFlow Corporation\\Projects\\RedPandaIDE\\tools\\consolepauser\\consolepauser.vcxproj": {
+      "before": "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",
+      "after": "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"
+    }
+  }
+}]]></FlowDocument.Tag>
+  <Section Margin="0,24" TextAlignment="Center">
+    <Paragraph FontSize="24" FontWeight="Bold" Margin="12,0">
+      <LineBreak />
+      <Span Foreground="Gray">Qt Visual Studio Tools</Span>
+    </Paragraph>
+    <Paragraph FontSize="42" Margin="12,0" FontWeight="Bold">
+      <Span TextDecorations="Underline">Project Format Conversion</Span>
+    </Paragraph>
+    <Paragraph Margin="12,8" FontSize="18">
+      <Span>Report generated on 2025-05-18 21:38:43</Span>
+    </Paragraph>
+  </Section>
+  <Section>
+    <Paragraph FontSize="32" FontWeight="Bold" Margin="12,0">
+      <Span>Files</Span>
+    </Paragraph>
+    <Paragraph Margin="24,12,0,0">
+      <Span FontFamily="Consolas" FontSize="14" Background="WhiteSmoke"><![CDATA[F:\WorkFlow Corporation\Projects\RedPandaIDE\tools\consolepauser\consolepauser.vcxproj]]></Span>
+      <LineBreak />
+      <Hyperlink NavigateUri="file://F:\WorkFlow Corporation\Projects\RedPandaIDE\tools\consolepauser\consolepauser.vcxproj?before">[Before]</Hyperlink>
+      <Hyperlink NavigateUri="file://F:\WorkFlow Corporation\Projects\RedPandaIDE\tools\consolepauser\consolepauser.vcxproj?after">[After]</Hyperlink>
+      <Hyperlink NavigateUri="file://F:\WorkFlow Corporation\Projects\RedPandaIDE\tools\consolepauser\consolepauser.vcxproj?diff&amp;before&amp;after">
+                        [Diff before/after]
+                    </Hyperlink>
+      <Hyperlink NavigateUri="file://F:\WorkFlow Corporation\Projects\RedPandaIDE\tools\consolepauser\consolepauser.vcxproj?diff&amp;before&amp;current">
+                        [Diff before/current]
+                    </Hyperlink>
+      <Hyperlink NavigateUri="file://F:\WorkFlow Corporation\Projects\RedPandaIDE\tools\consolepauser\consolepauser.vcxproj?diff&amp;after&amp;current">
+                        [Diff after/current]
+                    </Hyperlink>
+      <LineBreak />
+    </Paragraph>
+  </Section>
+  <Section>
+    <Paragraph FontSize="32" FontWeight="Bold" Margin="12,0">
+      <Span>Changes</Span>
+    </Paragraph>
+    <Paragraph FontSize="20" FontWeight="Bold" Margin="12">
+      <Span><![CDATA[🡺 Replacing paths with "$(QTDIR)"]]></Span>
+    </Paragraph>
+    <Table CellSpacing="0" BorderBrush="Gray" BorderThickness="0.5">
+      <Table.Columns>
+        <TableColumn />
+        <TableColumn />
+      </Table.Columns>
+      <TableRowGroup>
+        <TableRow Background="Orange">
+          <TableCell ColumnSpan="2" BorderThickness="0.5" BorderBrush="Gray">
+            <Paragraph Margin="10,5" FontWeight="Bold">
+              <Span><![CDATA[F:\WorkFlow Corporation\Projects\RedPandaIDE\tools\consolepauser\consolepauser.vcxproj]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span><![CDATA[      <AdditionalIncludeDirectories>.;]]></Span><Span Background="LightCoral"><![CDATA[F:\Qt\6.9.0\msvc2022_64\mkspecs\win32-msvc]]></Span><Span><![CDATA[;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>]]></Span>
+            </Paragraph>
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span><![CDATA[      <AdditionalIncludeDirectories>.;]]></Span><Span Background="LightGreen"><![CDATA[$(QTDIR)\mkspecs\win32-msvc]]></Span><Span><![CDATA[;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span><![CDATA[      <AdditionalIncludeDirectories>.;]]></Span><Span Background="LightCoral"><![CDATA[F:\Qt\6.9.0\msvc2022_64\mkspecs\win32-msvc]]></Span><Span><![CDATA[;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>]]></Span>
+            </Paragraph>
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span><![CDATA[      <AdditionalIncludeDirectories>.;]]></Span><Span Background="LightGreen"><![CDATA[$(QTDIR)\mkspecs\win32-msvc]]></Span><Span><![CDATA[;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+      </TableRowGroup>
+    </Table>
+    <Paragraph FontSize="20" FontWeight="Bold" Margin="12">
+      <Span><![CDATA[🡺 Converting custom build steps to Qt/MSBuild items]]></Span>
+    </Paragraph>
+    <Table CellSpacing="0" BorderBrush="Gray" BorderThickness="0.5">
+      <Table.Columns>
+        <TableColumn />
+        <TableColumn />
+      </Table.Columns>
+      <TableRowGroup>
+        <TableRow Background="Orange">
+          <TableCell ColumnSpan="2" BorderThickness="0.5" BorderBrush="Gray">
+            <Paragraph Margin="10,5" FontWeight="Bold">
+              <Span><![CDATA[F:\WorkFlow Corporation\Projects\RedPandaIDE\tools\consolepauser\consolepauser.vcxproj]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span><![CDATA[      ]]></Span><Span Background="LightCoral"><![CDATA[<AdditionalIncludeDirectories>.;]]></Span><Span><![CDATA[$(QTDIR)\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>]]></Span>
+            </Paragraph>
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span><![CDATA[      ]]></Span><Span Background="LightGreen"><![CDATA[<AdditionalIncludeDirectories>GeneratedFiles\$(ConfigurationName);GeneratedFiles;.;]]></Span><Span><![CDATA[$(QTDIR)\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span><![CDATA[      ]]></Span><Span Background="LightCoral"><![CDATA[<AdditionalIncludeDirectories>.;]]></Span><Span><![CDATA[$(QTDIR)\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>]]></Span>
+            </Paragraph>
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span><![CDATA[      ]]></Span><Span Background="LightGreen"><![CDATA[<AdditionalIncludeDirectories>GeneratedFiles\$(ConfigurationName);GeneratedFiles;.;]]></Span><Span><![CDATA[$(QTDIR)\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+      </TableRowGroup>
+    </Table>
+    <Paragraph FontSize="20" FontWeight="Bold" Margin="12">
+      <Span><![CDATA[🡺 Enabling multi-processor compilation]]></Span>
+    </Paragraph>
+    <Table CellSpacing="0" BorderBrush="Gray" BorderThickness="0.5">
+      <Table.Columns>
+        <TableColumn />
+        <TableColumn />
+      </Table.Columns>
+      <TableRowGroup>
+        <TableRow Background="Orange">
+          <TableCell ColumnSpan="2" BorderThickness="0.5" BorderBrush="Gray">
+            <Paragraph Margin="10,5" FontWeight="Bold">
+              <Span><![CDATA[F:\WorkFlow Corporation\Projects\RedPandaIDE\tools\consolepauser\consolepauser.vcxproj]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[      <MultiProcessorCompilation>true</MultiProcessorCompilation>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[      <MultiProcessorCompilation>true</MultiProcessorCompilation>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+      </TableRowGroup>
+    </Table>
+    <Paragraph FontSize="20" FontWeight="Bold" Margin="12">
+      <Span><![CDATA[🡺 Project format version]]></Span>
+    </Paragraph>
+    <Table CellSpacing="0" BorderBrush="Gray" BorderThickness="0.5">
+      <Table.Columns>
+        <TableColumn />
+        <TableColumn />
+      </Table.Columns>
+      <TableRowGroup>
+        <TableRow Background="Orange">
+          <TableCell ColumnSpan="2" BorderThickness="0.5" BorderBrush="Gray">
+            <Paragraph Margin="10,5" FontWeight="Bold">
+              <Span><![CDATA[F:\WorkFlow Corporation\Projects\RedPandaIDE\tools\consolepauser\consolepauser.vcxproj]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span><![CDATA[    ]]></Span><Span Background="LightCoral"><![CDATA[<Keyword>Qt4VSv1.0</Keyword>]]></Span>
+            </Paragraph>
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span><![CDATA[    ]]></Span><Span Background="LightGreen"><![CDATA[<Keyword>QtVS_v304</Keyword>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+      </TableRowGroup>
+    </Table>
+    <Paragraph FontSize="20" FontWeight="Bold" Margin="12">
+      <Span><![CDATA[🡺 Fallback for QTMSBUILD environment variable]]></Span>
+    </Paragraph>
+    <Table CellSpacing="0" BorderBrush="Gray" BorderThickness="0.5">
+      <Table.Columns>
+        <TableColumn />
+        <TableColumn />
+      </Table.Columns>
+      <TableRowGroup>
+        <TableRow Background="Orange">
+          <TableCell ColumnSpan="2" BorderThickness="0.5" BorderBrush="Gray">
+            <Paragraph Margin="10,5" FontWeight="Bold">
+              <Span><![CDATA[F:\WorkFlow Corporation\Projects\RedPandaIDE\tools\consolepauser\consolepauser.vcxproj]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[    <QtMsBuild Condition="'$(QtMsBuild)'=='' OR !Exists('$(QtMsBuild)\qt.targets')">$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+      </TableRowGroup>
+    </Table>
+    <Paragraph FontSize="20" FontWeight="Bold" Margin="12">
+      <Span><![CDATA[🡺 Default Qt properties]]></Span>
+    </Paragraph>
+    <Table CellSpacing="0" BorderBrush="Gray" BorderThickness="0.5">
+      <Table.Columns>
+        <TableColumn />
+        <TableColumn />
+      </Table.Columns>
+      <TableRowGroup>
+        <TableRow Background="Orange">
+          <TableCell ColumnSpan="2" BorderThickness="0.5" BorderBrush="Gray">
+            <Paragraph Margin="10,5" FontWeight="Bold">
+              <Span><![CDATA[F:\WorkFlow Corporation\Projects\RedPandaIDE\tools\consolepauser\consolepauser.vcxproj]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[  <Import Project="$(QtMsBuild)\qt_defaults.props" Condition="Exists('$(QtMsBuild)\qt_defaults.props')" />]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+      </TableRowGroup>
+    </Table>
+    <Paragraph FontSize="20" FontWeight="Bold" Margin="12">
+      <Span><![CDATA[🡺 Qt build settings]]></Span>
+    </Paragraph>
+    <Table CellSpacing="0" BorderBrush="Gray" BorderThickness="0.5">
+      <Table.Columns>
+        <TableColumn />
+        <TableColumn />
+      </Table.Columns>
+      <TableRowGroup>
+        <TableRow Background="Orange">
+          <TableCell ColumnSpan="2" BorderThickness="0.5" BorderBrush="Gray">
+            <Paragraph Margin="10,5" FontWeight="Bold">
+              <Span><![CDATA[F:\WorkFlow Corporation\Projects\RedPandaIDE\tools\consolepauser\consolepauser.vcxproj]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+      </TableRowGroup>
+    </Table>
+    <Paragraph FontSize="20" FontWeight="Bold" Margin="12">
+      <Span><![CDATA[🡺 Warn if Qt/MSBuild is not found]]></Span>
+    </Paragraph>
+    <Table CellSpacing="0" BorderBrush="Gray" BorderThickness="0.5">
+      <Table.Columns>
+        <TableColumn />
+        <TableColumn />
+      </Table.Columns>
+      <TableRowGroup>
+        <TableRow Background="Orange">
+          <TableCell ColumnSpan="2" BorderThickness="0.5" BorderBrush="Gray">
+            <Paragraph Margin="10,5" FontWeight="Bold">
+              <Span><![CDATA[F:\WorkFlow Corporation\Projects\RedPandaIDE\tools\consolepauser\consolepauser.vcxproj]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[  <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') OR !Exists('$(QtMsBuild)\Qt.props')">]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[    <Message Importance="High" Text="QtMsBuild: could not locate qt.targets, qt.props; project may not build correctly." />]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[  </Target>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+      </TableRowGroup>
+    </Table>
+    <Paragraph FontSize="20" FontWeight="Bold" Margin="12">
+      <Span><![CDATA[🡺 Qt property sheet]]></Span>
+    </Paragraph>
+    <Table CellSpacing="0" BorderBrush="Gray" BorderThickness="0.5">
+      <Table.Columns>
+        <TableColumn />
+        <TableColumn />
+      </Table.Columns>
+      <TableRowGroup>
+        <TableRow Background="Orange">
+          <TableCell ColumnSpan="2" BorderThickness="0.5" BorderBrush="Gray">
+            <Paragraph Margin="10,5" FontWeight="Bold">
+              <Span><![CDATA[F:\WorkFlow Corporation\Projects\RedPandaIDE\tools\consolepauser\consolepauser.vcxproj]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[    <Import Project="$(QtMsBuild)\Qt.props" />]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[    <Import Project="$(QtMsBuild)\Qt.props" />]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+      </TableRowGroup>
+    </Table>
+    <Paragraph FontSize="20" FontWeight="Bold" Margin="12">
+      <Span><![CDATA[🡺 Qt targets]]></Span>
+    </Paragraph>
+    <Table CellSpacing="0" BorderBrush="Gray" BorderThickness="0.5">
+      <Table.Columns>
+        <TableColumn />
+        <TableColumn />
+      </Table.Columns>
+      <TableRowGroup>
+        <TableRow Background="Orange">
+          <TableCell ColumnSpan="2" BorderThickness="0.5" BorderBrush="Gray">
+            <Paragraph Margin="10,5" FontWeight="Bold">
+              <Span><![CDATA[F:\WorkFlow Corporation\Projects\RedPandaIDE\tools\consolepauser\consolepauser.vcxproj]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[  <Import Project="$(QtMsBuild)\qt.targets" Condition="Exists('$(QtMsBuild)\qt.targets')" />]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+      </TableRowGroup>
+    </Table>
+    <Paragraph FontSize="20" FontWeight="Bold" Margin="12">
+      <Span><![CDATA[🡺 Copying Qt build reference to QtInstall project property]]></Span>
+    </Paragraph>
+    <Table CellSpacing="0" BorderBrush="Gray" BorderThickness="0.5">
+      <Table.Columns>
+        <TableColumn />
+        <TableColumn />
+      </Table.Columns>
+      <TableRowGroup>
+        <TableRow Background="Orange">
+          <TableCell ColumnSpan="2" BorderThickness="0.5" BorderBrush="Gray">
+            <Paragraph Margin="10,5" FontWeight="Bold">
+              <Span><![CDATA[F:\WorkFlow Corporation\Projects\RedPandaIDE\tools\consolepauser\consolepauser.vcxproj]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span><![CDATA[  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)]]></Span><Span Background="LightCoral"><![CDATA['=='Release|x64'" />]]></Span>
+            </Paragraph>
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span><![CDATA[  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)]]></Span><Span Background="LightGreen"><![CDATA['=='Release|x64'">]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span><![CDATA[  ]]></Span><Span Background="LightCoral"><![CDATA[<PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />]]></Span>
+            </Paragraph>
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span><![CDATA[    ]]></Span><Span Background="LightGreen"><![CDATA[<QtInstall>6.9.0_msvc2022_64</QtInstall>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[  </PropertyGroup>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[    <QtInstall>6.9.0_msvc2022_64</QtInstall>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[  </PropertyGroup>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+      </TableRowGroup>
+    </Table>
+    <Paragraph FontSize="20" FontWeight="Bold" Margin="12">
+      <Span><![CDATA[🡺 Removing Qt module include paths from compiler properties]]></Span>
+    </Paragraph>
+    <Table CellSpacing="0" BorderBrush="Gray" BorderThickness="0.5">
+      <Table.Columns>
+        <TableColumn />
+        <TableColumn />
+      </Table.Columns>
+      <TableRowGroup>
+        <TableRow Background="Orange">
+          <TableCell ColumnSpan="2" BorderThickness="0.5" BorderBrush="Gray">
+            <Paragraph Margin="10,5" FontWeight="Bold">
+              <Span><![CDATA[F:\WorkFlow Corporation\Projects\RedPandaIDE\tools\consolepauser\consolepauser.vcxproj]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span><![CDATA[      <AdditionalIncludeDirectories>GeneratedFiles\$(ConfigurationName);GeneratedFiles;.;]]></Span><Span Background="LightCoral"><![CDATA[$(QTDIR)\mkspecs\win32-msvc;]]></Span><Span><![CDATA[%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>]]></Span>
+            </Paragraph>
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span><![CDATA[      <AdditionalIncludeDirectories>GeneratedFiles\$(ConfigurationName);GeneratedFiles;.;]]></Span><Span><![CDATA[%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span><![CDATA[      <AdditionalIncludeDirectories>GeneratedFiles\$(ConfigurationName);GeneratedFiles;.;]]></Span><Span Background="LightCoral"><![CDATA[$(QTDIR)\mkspecs\win32-msvc;]]></Span><Span><![CDATA[%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>]]></Span>
+            </Paragraph>
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span><![CDATA[      <AdditionalIncludeDirectories>GeneratedFiles\$(ConfigurationName);GeneratedFiles;.;]]></Span><Span><![CDATA[%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+      </TableRowGroup>
+    </Table>
+    <Paragraph FontSize="20" FontWeight="Bold" Margin="12">
+      <Span><![CDATA[🡺 Removing Qt lib path from linker properties]]></Span>
+    </Paragraph>
+    <Table CellSpacing="0" BorderBrush="Gray" BorderThickness="0.5">
+      <Table.Columns>
+        <TableColumn />
+        <TableColumn />
+      </Table.Columns>
+      <TableRowGroup>
+        <TableRow Background="Orange">
+          <TableCell ColumnSpan="2" BorderThickness="0.5" BorderBrush="Gray">
+            <Paragraph Margin="10,5" FontWeight="Bold">
+              <Span><![CDATA[F:\WorkFlow Corporation\Projects\RedPandaIDE\tools\consolepauser\consolepauser.vcxproj]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span><![CDATA[      ]]></Span><Span Background="LightCoral"><![CDATA[<AdditionalLibraryDirectories>$(QTDIR)\lib;%]]></Span><Span><![CDATA[(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>]]></Span>
+            </Paragraph>
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span><![CDATA[      ]]></Span><Span Background="LightGreen"><![CDATA[<AdditionalLibraryDirectories>%]]></Span><Span><![CDATA[(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span><![CDATA[      ]]></Span><Span Background="LightCoral"><![CDATA[<AdditionalLibraryDirectories>$(QTDIR)\lib;%]]></Span><Span><![CDATA[(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>]]></Span>
+            </Paragraph>
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span><![CDATA[      ]]></Span><Span Background="LightGreen"><![CDATA[<AdditionalLibraryDirectories>%]]></Span><Span><![CDATA[(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+      </TableRowGroup>
+    </Table>
+    <Paragraph FontSize="20" FontWeight="Bold" Margin="12">
+      <Span><![CDATA[🡺 Adding Qt module names to QtModules project property]]></Span>
+    </Paragraph>
+    <Table CellSpacing="0" BorderBrush="Gray" BorderThickness="0.5">
+      <Table.Columns>
+        <TableColumn />
+        <TableColumn />
+      </Table.Columns>
+      <TableRowGroup>
+        <TableRow Background="Orange">
+          <TableCell ColumnSpan="2" BorderThickness="0.5" BorderBrush="Gray">
+            <Paragraph Margin="10,5" FontWeight="Bold">
+              <Span><![CDATA[F:\WorkFlow Corporation\Projects\RedPandaIDE\tools\consolepauser\consolepauser.vcxproj]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[    <QtModules></QtModules>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[    <QtModules></QtModules>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+      </TableRowGroup>
+    </Table>
+  </Section>
+  <Section>
+    <Paragraph />
+  </Section>
+</FlowDocument>
+<!--3fzSKmaVVEwCt53afh12LkvOE5RWymO4Ci1F3HSMXHw=-->

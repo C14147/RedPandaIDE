@@ -1,0 +1,8 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="i18n">
+<file alias="RedPandaIDE_zh_CN.qm">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/debug/RedPandaIDE_zh_CN.qm</file>
+<file alias="RedPandaIDE_zh_TW.qm">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/debug/RedPandaIDE_zh_TW.qm</file>
+<file alias="RedPandaIDE_ru_RU.qm">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/debug/RedPandaIDE_ru_RU.qm</file>
+<file alias="RedPandaIDE_pt_BR.qm">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/debug/RedPandaIDE_pt_BR.qm</file>
+</qresource>
+</RCC>

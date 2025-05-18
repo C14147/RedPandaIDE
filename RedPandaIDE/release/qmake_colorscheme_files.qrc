@@ -1,0 +1,22 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+<file alias="resources/colorschemes/Adaptive.scheme">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/colorschemes/Adaptive.scheme</file>
+<file alias="resources/colorschemes/Classic_Plus.scheme">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/colorschemes/Classic_Plus.scheme</file>
+<file alias="resources/colorschemes/E-ink.scheme">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/colorschemes/E-ink.scheme</file>
+<file alias="resources/colorschemes/GSS_Hacker.scheme">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/colorschemes/GSS_Hacker.scheme</file>
+<file alias="resources/colorschemes/Intellij_Classic.scheme">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/colorschemes/Intellij_Classic.scheme</file>
+<file alias="resources/colorschemes/Matrix.scheme">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/colorschemes/Matrix.scheme</file>
+<file alias="resources/colorschemes/MoLo_CBLight.scheme">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/colorschemes/MoLo_CBLight.scheme</file>
+<file alias="resources/colorschemes/MoLo_CodeBlack.scheme">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/colorschemes/MoLo_CodeBlack.scheme</file>
+<file alias="resources/colorschemes/MoLo_Mia.scheme">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/colorschemes/MoLo_Mia.scheme</file>
+<file alias="resources/colorschemes/Monokai.scheme">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/colorschemes/Monokai.scheme</file>
+<file alias="resources/colorschemes/Obsidian.scheme">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/colorschemes/Obsidian.scheme</file>
+<file alias="resources/colorschemes/Obvilion.scheme">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/colorschemes/Obvilion.scheme</file>
+<file alias="resources/colorschemes/Ochre_Butter.scheme">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/colorschemes/Ochre_Butter.scheme</file>
+<file alias="resources/colorschemes/One_Dark.scheme">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/colorschemes/One_Dark.scheme</file>
+<file alias="resources/colorschemes/Plastic_Code_Wrap.scheme">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/colorschemes/Plastic_Code_Wrap.scheme</file>
+<file alias="resources/colorschemes/Sea_Lite.scheme">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/colorschemes/Sea_Lite.scheme</file>
+<file alias="resources/colorschemes/Twilight.scheme">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/colorschemes/Twilight.scheme</file>
+<file alias="resources/colorschemes/VS_Code.scheme">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/colorschemes/VS_Code.scheme</file>
+</qresource>
+</RCC>

@@ -1,0 +1,6 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="i18n">
+<file alias="qsynedit_zh_CN.qm">F:/WorkFlow Corporation/Projects/RedPandaIDE/libs/qsynedit/release/qsynedit_zh_CN.qm</file>
+<file alias="qsynedit_ru_RU.qm">F:/WorkFlow Corporation/Projects/RedPandaIDE/libs/qsynedit/release/qsynedit_ru_RU.qm</file>
+</qresource>
+</RCC>

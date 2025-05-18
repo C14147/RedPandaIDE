@@ -1,0 +1,47 @@
+#include <windows.h>
+
+IDI_ICON1	ICON	"F:\\WorkFlow Corporation\\Projects\\RedPandaIDE\\RedPandaIDE\\images\\devcpp.ico"
+IDI_ICON2	ICON	"F:\\WorkFlow Corporation\\Projects\\RedPandaIDE\\RedPandaIDE\\images\\associations\\c.ico"
+IDI_ICON3	ICON	"F:\\WorkFlow Corporation\\Projects\\RedPandaIDE\\RedPandaIDE\\images\\associations\\cpp.ico"
+IDI_ICON4	ICON	"F:\\WorkFlow Corporation\\Projects\\RedPandaIDE\\RedPandaIDE\\images\\associations\\dev.ico"
+IDI_ICON5	ICON	"F:\\WorkFlow Corporation\\Projects\\RedPandaIDE\\RedPandaIDE\\images\\associations\\c.ico"
+IDI_ICON6	ICON	"F:\\WorkFlow Corporation\\Projects\\RedPandaIDE\\RedPandaIDE\\images\\associations\\cpp.ico"
+IDI_ICON7	ICON	"F:\\WorkFlow Corporation\\Projects\\RedPandaIDE\\RedPandaIDE\\images\\associations\\h.ico"
+IDI_ICON8	ICON	"F:\\WorkFlow Corporation\\Projects\\RedPandaIDE\\RedPandaIDE\\images\\associations\\hpp.ico"
+
+VS_VERSION_INFO VERSIONINFO
+	FILEVERSION 3,3,0,0
+	PRODUCTVERSION 3,3,0,0
+	FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+	FILEFLAGS VS_FF_DEBUG
+#else
+	FILEFLAGS 0x0L
+#endif
+	FILEOS VOS_NT_WINDOWS32
+	FILETYPE VFT_DLL
+	FILESUBTYPE VFT2_UNKNOWN
+	BEGIN
+		BLOCK "StringFileInfo"
+		BEGIN
+			BLOCK "040904b0"
+			BEGIN
+				VALUE "CompanyName", "\0"
+				VALUE "FileDescription", "\0"
+				VALUE "FileVersion", "3.3.0.0\0"
+				VALUE "LegalCopyright", "\0"
+				VALUE "OriginalFilename", "RedPandaIDE.exe\0"
+				VALUE "ProductName", "RedPandaIDE\0"
+				VALUE "ProductVersion", "3.3.0.0\0"
+				VALUE "InternalName", "\0"
+				VALUE "Comments", "\0"
+				VALUE "LegalTrademarks", "\0"
+			END
+		END
+		BLOCK "VarFileInfo"
+		BEGIN
+			VALUE "Translation", 0x0409, 1200
+		END
+	END
+/* End of Version info */
+

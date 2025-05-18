@@ -1,0 +1,13 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+<file alias="resources/themes/random_light.lua">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/themes/random_light.lua</file>
+<file alias="resources/themes/system.lua">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/themes/system.lua</file>
+<file alias="resources/themes/contrast.json">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/themes/contrast.json</file>
+<file alias="resources/themes/dark.json">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/themes/dark.json</file>
+<file alias="resources/themes/default.json">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/themes/default.json</file>
+<file alias="resources/themes/molo.json">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/themes/molo.json</file>
+<file alias="resources/themes/one_dark.json">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/themes/one_dark.json</file>
+<file alias="resources/themes/contrast_close.png">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/themes/contrast_close.png</file>
+<file alias="resources/themes/dark_close.png">F:/WorkFlow Corporation/Projects/RedPandaIDE/RedPandaIDE/resources/themes/dark_close.png</file>
+</qresource>
+</RCC>

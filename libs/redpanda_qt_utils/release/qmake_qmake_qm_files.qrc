@@ -1,0 +1,6 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="i18n">
+<file alias="qt_utils_zh_CN.qm">F:/WorkFlow Corporation/Projects/RedPandaIDE/libs/redpanda_qt_utils/release/qt_utils_zh_CN.qm</file>
+<file alias="qt_utils_ru_RU.qm">F:/WorkFlow Corporation/Projects/RedPandaIDE/libs/redpanda_qt_utils/release/qt_utils_ru_RU.qm</file>
+</qresource>
+</RCC>

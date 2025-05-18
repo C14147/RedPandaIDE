@@ -65,6 +65,7 @@ using DefineMap = QHash<QString,PDefine>;
 using PDefineMap = std::shared_ptr<DefineMap>;
 
 enum class KeywordType {
+    Attributes, // new feature of ISO C++11: [[attributes]]
     SkipItself,  // skip itself
     SkipNextSemicolon, // move to ; and skip it
     SkipNextColon, // move to : and skip it

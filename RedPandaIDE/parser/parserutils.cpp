@@ -168,6 +168,18 @@ void initParser()
     CppKeywords.insert("void",KeywordType::None);
     CppKeywords.insert("wchar_t",KeywordType::None);
 
+    // C++ Attributes
+    CppKeywords.insert("[[noreturn]]",KeywordType::None);
+    CppKeywords.insert("[[carries_dependency]]",KeywordType::None);
+    CppKeywords.insert("[[deprecated]]",KeywordType::None);
+    CppKeywords.insert("[[fallthrough]]",KeywordType::None);
+    CppKeywords.insert("[[nodiscard]]",KeywordType::None);
+    CppKeywords.insert("[[maybe_unused]]",KeywordType::None);
+    CppKeywords.insert("[[likely]]",KeywordType::None);
+    CppKeywords.insert("[[unlikely]]",KeywordType::None);
+    CppKeywords.insert("[[no_unique_address]]",KeywordType::None);
+
+
 #ifdef ENABLE_SDCC
     SDCCKeywords.insert("__sfr",KeywordType::None);
     SDCCKeywords.insert("__sfr16",KeywordType::None);

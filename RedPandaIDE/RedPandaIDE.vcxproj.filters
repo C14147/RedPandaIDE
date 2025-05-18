@@ -1,0 +1,2627 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;moc;h;def;odl;idl;res;</Extensions>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;moc;h;def;odl;idl;res;</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Translation Files">
+      <UniqueIdentifier>{639EADAA-A684-42e4-A9AD-28FC9BCB8F7C}</UniqueIdentifier>
+      <Extensions>ts;xlf</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Translation Files">
+      <UniqueIdentifier>{639EADAA-A684-42e4-A9AD-28FC9BCB8F7C}</UniqueIdentifier>
+      <Extensions>ts;xlf</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="widgets\aboutdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="autolinkmanager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\bookmarkmodel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="caretlist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\choosethemedialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\classbrowser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\codecompletionlistview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\codecompletionpopup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="codesnippetsmanager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\coloredit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="colorscheme.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="problems\competitivecompenionhandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\compileargumentswidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="compiler\compiler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\compilerautolinkwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="compiler\compilerinfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="compiler\compilermanager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\compilersetdirectorieswidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\compilersetoptionwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="parser\cppparser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="parser\cpppreprocessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cpprefacter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="parser\cpptokenizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\cpudialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\customdisablediconengine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="customfileiconprovider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\customfilesystemmodel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\custommakefileinfodialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\darkfusionstyle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\debuggeneralwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debugger\debugger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="editor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\editorautosavewidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\editorclipboardwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\editorcodecompletionwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\editorcolorschemewidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\editorcustomctypekeywords.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\editorfontdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\editorfontwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\editorgeneralwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="editorlist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\editormiscwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\editorsnippetwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\editorstabwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\editorsymbolcompletionwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\editorsyntaxcheckwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\editortooltipswidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\environmentappearancewidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\environmentfileassociationwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\environmentfolderswidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\environmentperformancewidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\environmentprogramswidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\environmentshortcutwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\escape.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="compiler\executablerunner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\executorgeneralwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\executorproblemsetwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="compiler\filecompiler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\filenameeditdelegate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\filepropertiesdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\font.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\formattergeneralwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\formatterpathwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="problems\freeprojectsetformat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\functiontooltipwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debugger\gdbmidebugger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debugger\gdbmiresultparser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\headercompletionpopup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="iconsmanager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\infomessagebox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\issuestable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\labelwithmenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\languageasmgenerationwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\lightfusionstyle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\linenumbertexteditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\macroinfomodel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mainwindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\newclassdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\newheaderdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\newprojectdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\newprojectunitdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\newtemplatedialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="compiler\ojproblemcasesrunner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\ojproblempropertywidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="problems\ojproblemset.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\ojproblemsetmodel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\parsearg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="parser\parserutils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="problems\problemcasevalidator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="project.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\projectalreadyopendialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\projectcompileparamaterswidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="compiler\projectcompiler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\projectcompilerwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\projectdirectorieswidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\projectdllhostwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\projectfileswidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\projectgeneralwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\projectmakefilewidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="projectoptions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\projectoutputwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\projectprecompilewidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="projecttemplate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\projectversioninfowidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\qconsole.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\qpatchedcombobox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="compiler\runner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="compiler\sdccfilecompiler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="compiler\sdccprojectcompiler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\searchdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\searchinfiledialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\searchresultview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\settingsdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\settingswidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\shortcutinputedit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="shortcutmanager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\shrinkabletabwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="widgets\signalmessagedialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="parser\statementmodel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="compiler\stdincompiler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="symbolusagemanager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="syntaxermanager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="systemconsts.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="thememanager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="todoparser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog\toolsgeneralwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="toolsmanager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="visithistorymanager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SimpleIni.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="widgets\aboutdialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="autolinkmanager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="widgets\bookmarkmodel.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="caretlist.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\choosethemedialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\classbrowser.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\codecompletionlistview.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\codecompletionpopup.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="codesnippetsmanager.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\coloredit.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="colorscheme.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="problems\competitivecompenionhandler.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\compileargumentswidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="compiler\compiler.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\compilerautolinkwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="compiler\compilerinfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="compiler\compilermanager.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\compilersetdirectorieswidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\compilersetoptionwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="parser\cppparser.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="parser\cpppreprocessor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="cpprefacter.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="parser\cpptokenizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="widgets\cpudialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="widgets\customdisablediconengine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="customfileiconprovider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="widgets\customfilesystemmodel.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\custommakefileinfodialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\darkfusionstyle.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\debuggeneralwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="debugger\debugger.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="editor.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\editorautosavewidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\editorclipboardwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\editorcodecompletionwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\editorcolorschemewidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\editorcustomctypekeywords.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\editorfontdialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\editorfontwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\editorgeneralwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="editorlist.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\editormiscwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\editorsnippetwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\editorstabwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\editorsymbolcompletionwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\editorsyntaxcheckwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\editortooltipswidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\environmentappearancewidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\environmentfileassociationwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\environmentfolderswidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\environmentperformancewidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\environmentprogramswidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\environmentshortcutwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="utils\escape.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="compiler\executablerunner.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\executorgeneralwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\executorproblemsetwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="compiler\filecompiler.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\filenameeditdelegate.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\filepropertiesdialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="utils\font.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="settingsdialog\formattergeneralwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\formatterpathwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="problems\freeprojectsetformat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="widgets\functiontooltipwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="debugger\gdbmidebugger.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="debugger\gdbmiresultparser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="widgets\headercompletionpopup.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="iconsmanager.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\infomessagebox.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\issuestable.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\labelwithmenu.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\languageasmgenerationwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\lightfusionstyle.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\linenumbertexteditor.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="addon\luaapi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="addon\luaexecutor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="addon\luaruntime.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="widgets\macroinfomodel.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="main.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="mainwindow.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\newclassdialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\newheaderdialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\newprojectdialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\newprojectunitdialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\newtemplatedialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="compiler\ojproblemcasesrunner.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\ojproblempropertywidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="problems\ojproblemset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="widgets\ojproblemsetmodel.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="utils\parsearg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="parser\parserutils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="problems\problemcasevalidator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="project.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\projectalreadyopendialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\projectcompileparamaterswidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="compiler\projectcompiler.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\projectcompilerwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\projectdirectorieswidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\projectdllhostwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\projectfileswidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\projectgeneralwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\projectmakefilewidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="projectoptions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="settingsdialog\projectoutputwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\projectprecompilewidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="projecttemplate.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\projectversioninfowidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\qconsole.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\qpatchedcombobox.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="compiler\runner.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="compiler\sdccfilecompiler.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="compiler\sdccprojectcompiler.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\searchdialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\searchinfiledialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\searchresultview.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="settings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="settingsdialog\settingsdialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\settingswidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\shortcutinputedit.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="shortcutmanager.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\shrinkabletabwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="widgets\signalmessagedialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="parser\statementmodel.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="compiler\stdincompiler.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="symbolusagemanager.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="syntaxermanager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="systemconsts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="thememanager.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="todoparser.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog\toolsgeneralwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="toolsmanager.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="visithistorymanager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="debug\moc_predefs.h.cbt">
+      <Filter>Generated Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="release\moc_predefs.h.cbt">
+      <Filter>Generated Files</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <QtTranslation Include="translations\RedPandaIDE_pt_BR.ts">
+      <Filter>Translation Files</Filter>
+    </QtTranslation>
+    <QtTranslation Include="translations\RedPandaIDE_ru_RU.ts">
+      <Filter>Translation Files</Filter>
+    </QtTranslation>
+    <QtTranslation Include="translations\RedPandaIDE_zh_CN.ts">
+      <Filter>Translation Files</Filter>
+    </QtTranslation>
+    <QtTranslation Include="translations\RedPandaIDE_zh_TW.ts">
+      <Filter>Translation Files</Filter>
+    </QtTranslation>
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="widgets\aboutdialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="widgets\choosethemedialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\compilerautolinkwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\compilersetdirectorieswidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\compilersetoptionwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="widgets\cpudialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="widgets\custommakefileinfodialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\debuggeneralwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\editorautosavewidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\editorclipboardwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\editorcodecompletionwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\editorcolorschemewidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\editorcustomctypekeywords.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="widgets\editorfontdialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\editorfontwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\editorgeneralwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\editormiscwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\editorsnippetwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\editorsymbolcompletionwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\editorsyntaxcheckwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\editortooltipswidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\environmentappearancewidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\environmentfileassociationwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\environmentfolderswidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\environmentperformancewidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\environmentprogramswidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\environmentshortcutwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\executorgeneralwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\executorproblemsetwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="widgets\filepropertiesdialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\formattergeneralwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\formatterpathwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="widgets\infomessagebox.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\languageasmgenerationwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="mainwindow.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="widgets\newclassdialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="widgets\newheaderdialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="widgets\newprojectdialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="widgets\newprojectunitdialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="widgets\newtemplatedialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="widgets\ojproblempropertywidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="widgets\projectalreadyopendialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\projectcompileparamaterswidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\projectcompilerwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\projectdirectorieswidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\projectdllhostwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\projectfileswidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\projectgeneralwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\projectmakefilewidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\projectoutputwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\projectprecompilewidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\projectversioninfowidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="widgets\searchdialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="widgets\searchinfiledialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\settingsdialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="widgets\signalmessagedialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="settingsdialog\toolsgeneralwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\iconsets\bluesky\actions\00Misc-01Back.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\00Misc-01Back.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\00Misc-01Back.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\00Misc-02Forward.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\00Misc-02Forward.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\00Misc-02Forward.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\00Misc-03Add.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\00Misc-03Add.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\00Misc-03Add.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\00Misc-04Remove.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\00Misc-04Remove.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\00Misc-04Remove.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\00Misc-05Gear.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\00Misc-05Gear.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\00Misc-05Gear.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\00Misc-06Cross.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\00Misc-06Cross.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\00Misc-06Cross.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\00Misc-07Folder.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\00Misc-07Folder.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\00Misc-07Folder.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\00Misc-08Term.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\00Misc-08Term.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\00Misc-08Term.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\00Misc-09Clean.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\00Misc-09Clean.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\00Misc-09Clean.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\00Misc-10Check.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\00Misc-10Check.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\00Misc-10Check.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\00Misc-11Rename.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\00Misc-11Rename.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\00Misc-11Rename.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\00Misc-12Help.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\00Misc-12Help.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\00Misc-12Help.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\00Misc-13Filter.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\00Misc-13Filter.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\00Misc-13Filter.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\00Misc-14MoveUp.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\00Misc-14MoveUp.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\00Misc-14MoveUp.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\00Misc-15MoveDown.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\00Misc-15MoveDown.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\00Misc-15MoveDown.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\00Misc-16Reset.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\00Misc-16Reset.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\00Misc-16Reset.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\00Misc-17MoveTop.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\00Misc-17MoveTop.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\00Misc-17MoveTop.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\00Misc-18MoveBottom.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\00Misc-18MoveBottom.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\00Misc-18MoveBottom.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\01File-01New.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\01File-01New.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\01File-01New.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\01File-02Open.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\01File-02Open.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\01File-02Open.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\01File-03Save.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\01File-03Save.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\01File-03Save.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\01File-04SaveAs.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\01File-04SaveAs.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\01File-04SaveAs.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\01File-05SaveAll.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\01File-05SaveAll.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\01File-05SaveAll.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\01File-06Close.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\01File-06Close.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\01File-06Close.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\01File-07CloseAll.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\01File-07CloseAll.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\01File-07CloseAll.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\01File-08Print.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\01File-08Print.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\01File-08Print.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\01File-09Open_Folder.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\01File-09Open_Folder.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\01File-09Open_Folder.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\01File-10FileProperties.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\01File-10FileProperties.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\01File-10FileProperties.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\01File-11Locate.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\01File-11Locate.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\01File-11Locate.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\02Project-01New.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\02Project-01New.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\02Project-01New.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\02Project-02Save.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\02Project-02Save.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\02Project-02Save.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\02Project-03Close.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\02Project-03Close.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\02Project-03Close.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\02Project-04NewFile.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\02Project-04NewFile.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\02Project-04NewFile.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\02Project-05AddFile.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\02Project-05AddFile.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\02Project-05AddFile.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\02Project-06RemoveFile.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\02Project-06RemoveFile.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\02Project-06RemoveFile.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\02Project-07Properties.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\02Project-07Properties.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\02Project-07Properties.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\03Edit-01Undo.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\03Edit-01Undo.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\03Edit-01Undo.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\03Edit-02Redo.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\03Edit-02Redo.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\03Edit-02Redo.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\03Edit-03Cut.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\03Edit-03Cut.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\03Edit-03Cut.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\03Edit-04Copy.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\03Edit-04Copy.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\03Edit-04Copy.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\03Edit-05Paste.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\03Edit-05Paste.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\03Edit-05Paste.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\03Edit-06Indent.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\03Edit-06Indent.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\03Edit-06Indent.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\03Edit-07Unindent.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\03Edit-07Unindent.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\03Edit-07Unindent.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\03Edit-08Search.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\03Edit-08Search.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\03Edit-08Search.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\03Edit-09Replace.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\03Edit-09Replace.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\03Edit-09Replace.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\03Edit-10SearchInFiles.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\03Edit-10SearchInFiles.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\03Edit-10SearchInFiles.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\03Edit-11SortByName.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\03Edit-11SortByName.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\03Edit-11SortByName.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\03Edit-12ShowInherited.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\03Edit-12ShowInherited.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\03Edit-12ShowInherited.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\03Edit-12SortByType.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\03Edit-12SortByType.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\03Edit-12SortByType.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\03Edit-13ShowInherited.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\03Edit-13ShowInherited.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\03Edit-13ShowInherited.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\04Code-01Back.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\04Code-01Back.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\04Code-01Back.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\04Code-02Forward.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\04Code-02Forward.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\04Code-02Forward.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\04Code-03AddBookmark.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\04Code-03AddBookmark.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\04Code-03AddBookmark.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\04Code-04RemoveBookmark.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\04Code-04RemoveBookmark.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\04Code-04RemoveBookmark.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\04Code-05Reformat.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\04Code-05Reformat.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\04Code-05Reformat.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\05Run-01Compile.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\05Run-01Compile.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\05Run-01Compile.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\05Run-02CompileRun.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\05Run-02CompileRun.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\05Run-02CompileRun.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\05Run-03Run.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\05Run-03Run.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\05Run-03Run.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\05Run-04Rebuild.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\05Run-04Rebuild.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\05Run-04Rebuild.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\05Run-05Options.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\05Run-05Options.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\05Run-05Options.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\05Run-06Debug.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\05Run-06Debug.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\05Run-06Debug.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\05Run-07StepOver.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\05Run-07StepOver.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\05Run-07StepOver.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\05Run-08StepInto.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\05Run-08StepInto.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\05Run-08StepInto.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\05Run-08StepOut.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\05Run-08StepOut.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\05Run-08StepOut.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\05Run-09RunToCursor.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\05Run-09RunToCursor.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\05Run-09RunToCursor.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\05Run-10Continue.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\05Run-10Continue.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\05Run-10Continue.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\05Run-11Stop.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\05Run-11Stop.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\05Run-11Stop.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\05Run-12AddWatch.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\05Run-12AddWatch.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\05Run-12AddWatch.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\05Run-13RemoveWatch.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\05Run-13RemoveWatch.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\05Run-13RemoveWatch.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\05Run-14StepOverInstruction.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\05Run-14StepOverInstruction.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\05Run-14StepOverInstruction.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\05Run-15StepIntoInstruction.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\05Run-15StepIntoInstruction.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\05Run-15StepIntoInstruction.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\05Run-16Interrupt.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\05Run-16Interrupt.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\05Run-16Interrupt.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\05Run-17CompilerOptions.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\05Run-17CompilerOptions.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\05Run-17CompilerOptions.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\06View-01Maximum.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\06View-01Maximum.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\06View-01Maximum.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\06View-02ClassBrowser.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\06View-02ClassBrowser.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\06View-02ClassBrowser.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\06View-03Files.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\06View-03Files.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\06View-03Files.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\06View-04CompileLog.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\06View-04CompileLog.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\06View-04CompileLog.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\06View-05Bookmark.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\06View-05Bookmark.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\06View-05Bookmark.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\06View-06Todo.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\06View-06Todo.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\06View-06Todo.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\07Help-01About.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\07Help-01About.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\07Help-01About.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\08Problem-01Problem.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\08Problem-01Problem.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\08Problem-01Problem.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\08Problem-02ProblemSet.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\08Problem-02ProblemSet.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\08Problem-02ProblemSet.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\08Problem-03Properties.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\08Problem-03Properties.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\08Problem-03Properties.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\08Problem-04EditSource.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\08Problem-04EditSource.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\08Problem-04EditSource.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\08Problem-05RunCases.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\08Problem-05RunCases.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\08Problem-05RunCases.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\08Problem-06Correct.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\08Problem-06Correct.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\08Problem-06Correct.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\08Problem-07Wrong.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\08Problem-07Wrong.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\08Problem-07Wrong.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\actions\08Problem-08Running.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\actions\08Problem-08Running.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\actions\08Problem-08Running.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\colorschemes\Adaptive.scheme">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\colorschemes\Classic_Plus.scheme">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\colorschemes\E-ink.scheme">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\colorschemes\GSS_Hacker.scheme">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="images\associations\IDE2.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\colorschemes\Intellij_Classic.scheme">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\colorschemes\Matrix.scheme">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\colorschemes\MoLo_CBLight.scheme">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\colorschemes\MoLo_CodeBlack.scheme">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\colorschemes\MoLo_Mia.scheme">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\colorschemes\Monokai.scheme">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\colorschemes\Obsidian.scheme">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\colorschemes\Obvilion.scheme">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\colorschemes\Ochre_Butter.scheme">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\colorschemes\One_Dark.scheme">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\colorschemes\Plastic_Code_Wrap.scheme">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="debug\RedPandaIDE_pt_BR.qm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="release\RedPandaIDE_pt_BR.qm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="debug\RedPandaIDE_ru_RU.qm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="release\RedPandaIDE_ru_RU.qm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="debug\RedPandaIDE_zh_CN.qm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="release\RedPandaIDE_zh_CN.qm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="debug\RedPandaIDE_zh_TW.qm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="release\RedPandaIDE_zh_TW.qm">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\colorschemes\Sea_Lite.scheme">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\colorschemes\Twilight.scheme">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\colorschemes\VS_Code.scheme">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\fonts\asciicontrol.ttf">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\autolink-xdg.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\autolink.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\editor\bookmark.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\editor\bookmark.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\editor\bookmark.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\editor\breakpoint.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\editor\breakpoint.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\editor\breakpoint.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="images\associations\c.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\cfile-vcs-changed.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\cfile-vcs-changed.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\cfile-vcs-changed.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\cfile-vcs-conflict.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\cfile-vcs-conflict.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\cfile-vcs-conflict.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\cfile-vcs-nochange.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\cfile-vcs-nochange.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\cfile-vcs-nochange.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\cfile-vcs-staged.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\cfile-vcs-staged.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\cfile-vcs-staged.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\cfile.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\cfile.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\cfile.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\classparser\class.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\classparser\class.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\classparser\class.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\classparser\code_snippet.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\classparser\code_snippet.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\classparser\code_snippet.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <QtRcc Include="codes.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+    <None Include="resources\codesnippets.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\themes\contrast.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\themes\contrast_close.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="images\associations\cpp.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\cppfile-vcs-changed.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\cppfile-vcs-changed.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\cppfile-vcs-changed.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\cppfile-vcs-conflict.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\cppfile-vcs-conflict.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\cppfile-vcs-conflict.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\cppfile-vcs-nochange.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\cppfile-vcs-nochange.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\cppfile-vcs-nochange.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\cppfile-vcs-staged.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\cppfile-vcs-staged.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\cppfile-vcs-staged.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\cppfile.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\cppfile.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\cppfile.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\editor\currentline.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\editor\currentline.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\editor\currentline.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="images\dark-close.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\themes\dark.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="images\demos\dark.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\themes\dark_close.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\themes\default.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <QtRcc Include="defaultconfigs.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+    <None Include="resources\iconsets\bluesky\classparser\define.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\classparser\define.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\classparser\define.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="images\associations\dev.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="images\devcpp.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="images\associations\devpackage.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="images\associations\devpak.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\templates\empty.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\templates\empty.template">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\classparser\enum.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\classparser\enum.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\classparser\enum.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\file-vcs-changed.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\file-vcs-changed.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\file-vcs-changed.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\file-vcs-conflict.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\file-vcs-conflict.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\file-vcs-conflict.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\file-vcs-nochange.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\file-vcs-nochange.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\file-vcs-nochange.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\file-vcs-staged.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\file-vcs-staged.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\file-vcs-staged.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\file.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\file.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\file.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\folder-vcs-changed.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\folder-vcs-changed.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\folder-vcs-changed.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\folder-vcs-conflict.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\folder-vcs-conflict.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\folder-vcs-conflict.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\folder-vcs-nochange.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\folder-vcs-nochange.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\folder-vcs-nochange.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\folder-vcs-staged.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\folder-vcs-staged.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\folder-vcs-staged.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\folder.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\folder.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\folder.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <QtRcc Include="fonts.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+    <None Include="resources\formatdemo.cpp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\git.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\git.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\git.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\classparser\global.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\classparser\global.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\classparser\global.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\classparser\global_method.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\classparser\global_method.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\classparser\global_method.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="images\associations\h.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\headerfolder.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\headerfolder.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\headerfolder.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\hfile-vcs-changed.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\hfile-vcs-changed.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\hfile-vcs-changed.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\hfile-vcs-conflict.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\hfile-vcs-conflict.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\hfile-vcs-conflict.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\hfile-vcs-nochange.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\hfile-vcs-nochange.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\hfile-vcs-nochange.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\hfile-vcs-staged.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\hfile-vcs-staged.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\hfile-vcs-staged.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\hfile.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\hfile.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\hfile.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="images\associations\hpp.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <QtRcc Include="icons.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+    <None Include="images\associations\ide.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\info.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\info.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\info.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\classparser\keyword.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\classparser\keyword.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\classparser\keyword.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="images\demos\light.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\classparser\method_inherited.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\classparser\method_inherited.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\classparser\method_inherited.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\classparser\method_inherited_protected.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\classparser\method_inherited_protected.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\classparser\method_inherited_protected.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\classparser\method_private.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\classparser\method_private.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\classparser\method_private.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\classparser\method_protected.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\classparser\method_protected.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\classparser\method_protected.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\classparser\method_public.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\classparser\method_public.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\classparser\method_public.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\themes\molo.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\classparser\namespace.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\classparser\namespace.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\classparser\namespace.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="images\associations\o.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="images\associations\obj.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\themes\one_dark.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\projectfile-vcs-changed.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\projectfile-vcs-changed.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\projectfile-vcs-changed.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\projectfile-vcs-conflict.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\projectfile-vcs-conflict.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\projectfile-vcs-conflict.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\projectfile-vcs-nochange.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\projectfile-vcs-nochange.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\projectfile-vcs-nochange.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\projectfile-vcs-staged.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\projectfile-vcs-staged.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\projectfile-vcs-staged.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\projectfile.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\projectfile.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\projectfile.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <QtRcc Include="projecttemplates.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+    <QtRcc Include="debug\qmake_colorscheme_files.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+    <QtRcc Include="release\qmake_colorscheme_files.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+    <QtRcc Include="debug\qmake_iconsets_files.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+    <QtRcc Include="release\qmake_iconsets_files.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+    <QtRcc Include="debug\qmake_qmake_qm_files.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+    <QtRcc Include="release\qmake_qmake_qm_files.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+    <QtRcc Include="debug\qmake_theme_files.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+    <QtRcc Include="release\qmake_theme_files.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+    <None Include="resources\themes\random_light.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="images\associations\rc.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\filesystem\sourcefolder.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\filesystem\sourcefolder.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\filesystem\sourcefolder.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\classparser\static_method.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\classparser\static_method.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\classparser\static_method.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\classparser\static_var.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\classparser\static_var.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\classparser\static_var.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\editor\syntaxerror.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\editor\syntaxerror.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\editor\syntaxerror.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\editor\syntaxwarning.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\editor\syntaxwarning.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\editor\syntaxwarning.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\themes\system.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="images\associations\template.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\terminal-unix.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\terminal-windows.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\classparser\type.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\classparser\type.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\classparser\type.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\classparser\var.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\classparser\var.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\classparser\var.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\classparser\var_inherited.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\classparser\var_inherited.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\classparser\var_inherited.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\classparser\var_inherited_protected.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\classparser\var_inherited_protected.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\classparser\var_inherited_protected.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\classparser\var_private.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\classparser\var_private.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\classparser\var_private.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\classparser\var_protected.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\classparser\var_protected.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\classparser\var_protected.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\bluesky\classparser\var_public.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\contrast\classparser\var_public.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\iconsets\newlook\classparser\var_public.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="F:\WorkFlow Corporation\Projects\RedPandaIDE\RedPandaIDE\RedPandaIDE_resource.rc" />
+  </ItemGroup>
+</Project>
