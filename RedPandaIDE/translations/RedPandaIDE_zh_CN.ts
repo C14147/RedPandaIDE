@@ -10859,7 +10859,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+81"/>
         <source>From caret</source>
-        <translation type="unfinished">光标处</translation>
+        <translation>光标处</translation>
     </message>
     <message>
         <location line="+20"/>
