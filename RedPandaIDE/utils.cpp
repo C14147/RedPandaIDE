@@ -382,7 +382,7 @@ bool isGreenEdition()
     if (!gIsGreenEditionInited) {
         QString appPath = QApplication::instance()->applicationDirPath();
         appPath = excludeTrailingPathDelimiter(localizePath(appPath));
-        QString keyString = R"(Software\Microsoft\Windows\CurrentVersion\Uninstall\RedPanda-C++)";
+        QString keyString = R"(Software\Microsoft\Windows\CurrentVersion\Uninstall\RedPandaIDE-CE)";
         QString systemInstallPath;
         readRegistry(HKEY_LOCAL_MACHINE, keyString, "InstallLocation", systemInstallPath);
         if (systemInstallPath.isEmpty()) {

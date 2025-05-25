@@ -33,6 +33,7 @@
 #include <QFontDatabase>
 #include <QLibraryInfo>
 #include <QComboBox>
+#include <QSplashScreen>
 #include "common.h"
 #include "colorscheme.h"
 #include "iconsmanager.h"

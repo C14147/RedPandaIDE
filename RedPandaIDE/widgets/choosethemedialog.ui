@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1041</width>
-    <height>629</height>
+    <height>652</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,40 +15,33 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
+    <widget class="QLabel" name="label">
+     <property name="styleSheet">
+      <string notr="true">font: 25px &quot;Microsoft YaHei UI&quot;;
+font-weight: bold;</string>
+     </property>
+     <property name="text">
+      <string>Getting Started</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Nice to meet you! Please set your usage preferences. You can also change them later in the settings.</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QGroupBox" name="grpTheme">
      <property name="title">
       <string>Choose Theme</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="2" column="1">
-       <widget class="QLabel" name="lblLight">
-        <property name="frameShape">
-         <enum>QFrame::Box</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Sunken</enum>
-        </property>
+      <item row="1" column="1">
+       <widget class="QRadioButton" name="rbLight">
         <property name="text">
-         <string/>
-        </property>
-        <property name="pixmap">
-         <pixmap resource="../icons.qrc">:/demos/light.png</pixmap>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="lblDark">
-        <property name="frameShape">
-         <enum>QFrame::Box</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Sunken</enum>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="pixmap">
-         <pixmap resource="../icons.qrc">:/demos/dark.png</pixmap>
+         <string>Light Theme</string>
         </property>
        </widget>
       </item>
@@ -59,10 +52,35 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QRadioButton" name="rbLight">
+      <item row="2" column="0">
+       <widget class="QLabel" name="lblDark">
+        <property name="frameShape">
+         <enum>QFrame::Shape::Box</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Shadow::Sunken</enum>
+        </property>
         <property name="text">
-         <string>Light Theme</string>
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="../icons.qrc">:/demos/dark.png</pixmap>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLabel" name="lblLight">
+        <property name="frameShape">
+         <enum>QFrame::Shape::Box</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Shadow::Sunken</enum>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="../icons.qrc">:/demos/light.png</pixmap>
         </property>
        </widget>
       </item>
@@ -70,6 +88,13 @@
        <widget class="QRadioButton" name="rbAuto">
         <property name="text">
          <string>System Theme</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="2">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>&gt; You can use other themes in the Configuration Manager later .</string>
         </property>
        </widget>
       </item>
@@ -109,7 +134,7 @@
       <item>
        <spacer name="horizontalSpacer_2">
         <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+         <enum>Qt::Orientation::Horizontal</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
@@ -121,19 +146,6 @@
       </item>
      </layout>
     </widget>
-   </item>
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>77</height>
-      </size>
-     </property>
-    </spacer>
    </item>
    <item>
     <widget class="QWidget" name="widget" native="true">
@@ -153,7 +165,7 @@
       <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+         <enum>Qt::Orientation::Horizontal</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>

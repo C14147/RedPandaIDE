@@ -7,3 +7,16 @@
 build/
 *.bak
 *.pro.user
+/RedPandaIDE/debug
+/RedPandaIDE/release
+/debug
+*.tlog
+/libs/lua/release
+/libs/lua/debug
+/libs/qsynedit/debug
+/libs/qsynedit/release
+/libs/redpanda_qt_utils/debug
+/libs/redpanda_qt_utils/release
+/tools/consolepauser/debug
+/tools/consolepauser/release
+/libs/lua/debug

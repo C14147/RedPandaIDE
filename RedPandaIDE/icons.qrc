@@ -17,6 +17,7 @@
         <file>images/dark-close.svg</file>
         <file>images/devcpp-gray.ico</file>
         <file>images/devcpp-gray.png</file>
+        <file>images/SplashScreen.png</file>
     </qresource>
     <qresource prefix="/demos">
         <file alias="dark.png">images/demos/dark.png</file>

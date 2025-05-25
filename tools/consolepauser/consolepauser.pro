@@ -4,7 +4,7 @@ CONFIG += c++17 console
 CONFIG -= app_bundle
 
 isEmpty(APP_NAME) {
-    APP_NAME = RedPandaCPP
+    APP_NAME = RedPandaIDE-CE
 }
 
 # You can make your code fail to compile if it uses deprecated APIs.

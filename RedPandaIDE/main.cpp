@@ -254,6 +254,16 @@ int main(int argc, char *argv[])
 #if QT_VERSION_MAJOR < 6
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif
+
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect screenRect = screen->availableGeometry() ;
+
+    QPixmap splash =
+        QPixmap(":/icons/images/SplashScreen.png")
+                         .scaled(screenRect.width(),screenRect.height());
+    QSplashScreen splashw(splash);
+    splashw.show();
+
     ExternalResource resource;
 
     QLockFile lockFile(QDir::tempPath()+QDir::separator()+"RedPandaDevCppStartUp.lock");
@@ -292,6 +302,8 @@ int main(int argc, char *argv[])
         }
     }
     //Translation must be loaded first
+    splashw.showMessage("Loading translation...");
+    app.processEvents();
     QTranslator trans,transQt,transUtils;
     bool firstRun;
     QString settingFilename = getSettingFilename(QString(), firstRun);
@@ -334,6 +346,8 @@ int main(int argc, char *argv[])
 
     initParser();
 
+    splashw.showMessage("Loading settings...");
+    app.processEvents();
     try {
 
         SystemConsts systemConsts;
@@ -352,28 +366,23 @@ int main(int argc, char *argv[])
         }
         pSettings->load();
         if (firstRun) {
-            /* Change description:
-             * Abandon the theme selection dialog box and set the theme
-             * automatically according to the system.
-             */
-
-            //set theme
-            // ChooseThemeDialog themeDialog;
-            // themeDialog.setFont(QFont(defaultUiFont(),11));
-            // themeDialog.exec();
-            // switch (themeDialog.theme()) {
-            // case ChooseThemeDialog::Theme::AutoFollowSystem:
-            setTheme("system");
-            //     break;
-            // case ChooseThemeDialog::Theme::Dark:
-            //     setTheme("dark");
-            //     break;
-            // case ChooseThemeDialog::Theme::Light:
-            //     setTheme("default");
-            //     break;
-            // default:
-            //     setTheme("default");
-            // }
+            // set theme
+            ChooseThemeDialog themeDialog;
+            themeDialog.setFont(QFont(defaultUiFont(),11));
+            themeDialog.exec();
+            switch (themeDialog.theme()) {
+            case ChooseThemeDialog::Theme::AutoFollowSystem:
+                setTheme("system");
+                break;
+            case ChooseThemeDialog::Theme::Dark:
+                setTheme("dark");
+                break;
+            case ChooseThemeDialog::Theme::Light:
+                setTheme("default");
+                break;
+            default:
+                setTheme("default");
+            }
 
             pSettings->editor().setDefaultFileCpp(true);
             pSettings->editor().save();
@@ -403,12 +412,15 @@ int main(int argc, char *argv[])
 
         QDir::setCurrent(pSettings->environment().defaultOpenFolder());
 
+        splashw.showMessage("Creating window...");
+        app.processEvents();
         MainWindow mainWindow;
         pMainWindow = &mainWindow;
         if (mainWindow.screen())
             setScreenDPI(mainWindow.screen()->logicalDotsPerInch());
 
         mainWindow.show();
+        splashw.finish(pMainWindow);
 
         QStringList filesToOpen = app.arguments();
         filesToOpen.pop_front();

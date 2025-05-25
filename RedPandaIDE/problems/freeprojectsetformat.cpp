@@ -111,7 +111,7 @@ void exportFreeProblemSet(const QList<POJProblem> &problems, const QString &file
         writer.writeAttribute("url","https://github.com/zhblue/freeproblemset/");
        {
             writer.writeStartElement("generator");
-            writer.writeAttribute("name","RedPanda-C++");
+            writer.writeAttribute("name","RedPandaIDE-CE");
             writer.writeAttribute("url","http://royqh.net/redpandacpp/");
             writer.writeEndElement(); // generator
         }
