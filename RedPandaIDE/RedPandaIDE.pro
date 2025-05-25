@@ -16,7 +16,7 @@ CONFIG += ENABLE_SDCC
 # uncomment the following line to enable Lua-based add-on support
 # CONFIG += ENABLE_LUA_ADDON
 
-APP_NAME = RedPandaCPP
+APP_NAME = RedPandaIDE-CE
 
 include(../version.inc)
 

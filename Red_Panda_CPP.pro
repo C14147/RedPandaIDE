@@ -17,7 +17,7 @@ lua.subdir = libs/lua
 RedPandaIDE.depends = consolepauser qsynedit lua
 qsynedit.depends = redpanda_qt_utils
 
-APP_NAME = RedPandaIDE-CE
+APP_NAME = RedPandaCPP-CE
 include(version.inc)
 
 !isEmpty(APP_VERSION_SUFFIX): {
