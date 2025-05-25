@@ -20,3 +20,5 @@ build/
 /tools/consolepauser/debug
 /tools/consolepauser/release
 /libs/lua/debug
+/RedPandaIDE/release/qt/qmake
+/libs/lua/release/qt/qmake

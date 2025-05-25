@@ -260,7 +260,7 @@ int main(int argc, char *argv[])
 
     QPixmap splash =
         QPixmap(":/icons/images/SplashScreen.png")
-                         .scaled(screenRect.width(),screenRect.height());
+                         .scaled((int)screenRect.width()/2.5,(int)screenRect.width()/3.33);
     QSplashScreen splashw(splash);
     splashw.show();
 
