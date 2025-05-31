@@ -1,3 +1,7 @@
+Red Panda C++ Version 3.4
+  - enhancement: Auto hide option "Auto clear parsed symbols when editor hidden" if "editors share one parser" is unchecked.
+  - fix: Syntax color doesn't work in the code snippet option page.
+  
 Red Panda C++ Version 3.3
   - enhancement: Auto indent contents in parenthesis.
   - fix: Use "/" instead of "\" in the path of compile target. 
