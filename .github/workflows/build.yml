@@ -178,7 +178,7 @@ jobs:
       - name: Build
         run: |
           $JOM = "${Env:RUNNER_WORKSPACE}/Qt/Tools/QtCreator/bin/jom/jom.exe"
-          $VS_INSTALL_PATH = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
+          $VS_INSTALL_PATH = "C:\Program Files\Microsoft Visual Studio\2019\Enterprise"
           Import-Module "$VS_INSTALL_PATH\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
           Enter-VsDevShell -VsInstallPath "$VS_INSTALL_PATH" -SkipAutomaticLocation -DevCmdArguments -arch=amd64
           mkdir build && pushd build
