@@ -195,6 +195,44 @@ jobs:
           name: Windows MSVC x64
           path: pkg/
 
+    name: Windows MSVC x64 with Qt6
+    runs-on: windows-2022
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: '6.9.0'
+          host: windows
+          target: desktop
+          arch: win64_msvc2022_64
+          archives: qtbase qtsvg qttools
+          tools: tools_qtcreator,qt.tools.qtcreator
+
+      - name: Build
+        run: |
+          $JOM = "${Env:RUNNER_WORKSPACE}/Qt/Tools/QtCreator/bin/jom/jom.exe"
+          $VS_INSTALL_PATH = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise"
+          Import-Module "$VS_INSTALL_PATH\Common7\Tools\Microsoft.VisualStudio.DevShell.dll"
+          Enter-VsDevShell -VsInstallPath "$VS_INSTALL_PATH" -SkipAutomaticLocation -DevCmdArguments -arch=amd64
+          mkdir build && pushd build
+          qmake PREFIX=${Env:GITHUB_WORKSPACE}/pkg ${Env:GITHUB_WORKSPACE}/Red_Panda_CPP.pro
+          & $JOM "-j${Env:NUMBER_OF_PROCESSORS}"
+          & $JOM install
+          windeployqt ${Env:GITHUB_WORKSPACE}/pkg/RedPandaIDE.exe
+          rm ${Env:GITHUB_WORKSPACE}/pkg/vc_redist.x64.exe
+          popd
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: Windows MSVC x64 with Qt6
+          path: pkg/
+
   debian:
     name: Debian
     strategy:
