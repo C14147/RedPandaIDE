@@ -131,6 +131,12 @@ namespace QSynedit {
                         indentSpaces = editor->leftSpaces(editor->lineText(info.line+1))+editor->tabSize();
                     } else
                         indentSpaces = 0;
+                } else if (firstToken=="else") {
+                    IndentInfo matchingIndents = rangeAfterFirstToken.getLastIndent();
+                    if (matchingIndents.line ==line-1 && rangeAfterFirstToken.indents.count()>=2){
+                        IndentInfo info =  rangeAfterFirstToken.indents[rangeAfterFirstToken.indents.count()-2];
+                        indentSpaces = editor->leftSpaces(editor->lineText(info.line+1))+editor->tabSize();
+                    }
                 } else if (rangePreceeding.getLastIndentType()!=IndentType::None) {
                     IndentInfo matchingIndents = rangePreceeding.getLastIndent();
                     indentSpaces = editor->leftSpaces(editor->lineText(matchingIndents.line+1))+editor->tabSize();
@@ -165,15 +171,16 @@ namespace QSynedit {
 
     int CppFormatter::findLastParenthesis(int line, const QSynEdit *editor)
     {
-        if (line == 1)
-            editor->syntaxer()->resetState();
-        else {
-            SyntaxState rangeState = editor->document()->getSyntaxState(line-2);
-            editor->syntaxer()->setState(rangeState);
-        }
         QString lineText = editor->lineText(line);
         int leading = editor->leftSpaces(lineText);
-        editor->syntaxer()->setLine(lineText.trimmed(),line);
+        editor->prepareSyntaxerState(*(editor->syntaxer()), line-1, lineText.trimmed());
+//        if (line == 1)
+//            editor->syntaxer()->resetState();
+//        else {
+//            SyntaxState rangeState = editor->document()->getSyntaxState(line-2);
+//            editor->syntaxer()->setState(rangeState);
+//        }
+//        editor->syntaxer()->setLine(lineText.trimmed(),line);
         QList<int> posList;
         while (!editor->syntaxer()->eol()) {
             if (editor->syntaxer()->getTokenAttribute() == editor->syntaxer()->symbolAttribute()) {
