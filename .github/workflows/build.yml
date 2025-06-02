@@ -194,7 +194,7 @@ jobs:
         with:
           name: Windows MSVC x64
           path: pkg/
-
+  windows_msvc_x64_with_qt6:
     name: Windows MSVC x64 with Qt6
     runs-on: windows-2022
 
