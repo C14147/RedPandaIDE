@@ -7,8 +7,8 @@
 !endif
 Unicode True
 
-!define APP_NAME_EN "Red Panda C++"
-!define APP_NAME_ZH_CN "小熊猫C++"
+!define APP_NAME_EN "Red Panda IDE"
+!define APP_NAME_ZH_CN "小熊猫IDE"
 !define DISPLAY_NAME "$(StrAppName) ${APP_VERSION} (${ARCH})"
 
 !define INSTALL_NAME "RedPanda-Cpp"
