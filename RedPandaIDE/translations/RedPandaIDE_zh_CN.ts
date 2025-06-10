@@ -1298,13 +1298,13 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../cpprefacter.cpp" line="+131"/>
         <location line="+13"/>
-        <location line="+196"/>
-        <location line="+50"/>
+        <location line="+198"/>
+        <location line="+51"/>
         <source>Rename Symbol Error</source>
         <translation>重命名符号失败</translation>
     </message>
     <message>
-        <location line="-258"/>
+        <location line="-261"/>
         <source>Can&apos;t rename symbols not defined in this file.</source>
         <translation>无法重命名不在本文件中定义的符号</translation>
     </message>
@@ -1743,7 +1743,7 @@ p, li { white-space: pre-wrap; }
         <translation>打印文档</translation>
     </message>
     <message>
-        <location line="+749"/>
+        <location line="+750"/>
         <location line="+25"/>
         <location line="+46"/>
         <source>Ctrl+click for more info</source>
@@ -1754,7 +1754,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">未找到符号&apos;%1&apos;!</translation>
     </message>
     <message>
-        <location line="+1054"/>
+        <location line="+1055"/>
         <source>astyle not found</source>
         <translation>找不到astyle程序</translation>
     </message>
@@ -1790,7 +1790,7 @@ p, li { white-space: pre-wrap; }
         <translation>输入当前断点的生效条件:</translation>
     </message>
     <message>
-        <location line="+263"/>
+        <location line="+276"/>
         <source>Readonly</source>
         <translation>只读</translation>
     </message>
@@ -4804,14 +4804,15 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+1433"/>
+        <location filename="../mainwindow.ui" line="+14"/>
+        <location filename="../mainwindow.cpp" line="+1435"/>
         <source>Red Panda C++</source>
         <translation>小熊猫IDE CE</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="+968"/>
-        <location line="+1831"/>
-        <location filename="../mainwindow.cpp" line="+4646"/>
+        <location line="+946"/>
+        <location line="+1832"/>
+        <location filename="../mainwindow.cpp" line="+4647"/>
         <location line="+3"/>
         <location line="+4"/>
         <location line="+3"/>
@@ -4824,7 +4825,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">编译日志</translation>
     </message>
     <message>
-        <location line="-2665"/>
+        <location line="-2667"/>
         <location filename="../mainwindow.cpp" line="-456"/>
         <location line="+1"/>
         <location line="+1"/>
@@ -4833,43 +4834,43 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+19"/>
-        <location filename="../mainwindow.cpp" line="-4318"/>
+        <location filename="../mainwindow.cpp" line="-4319"/>
         <source>Tools</source>
         <translation>工具</translation>
     </message>
     <message>
-        <location line="+1977"/>
+        <location line="+1979"/>
         <location line="+3"/>
         <source>Run</source>
         <translation>运行</translation>
     </message>
     <message>
-        <location line="-1947"/>
+        <location line="-1949"/>
         <source>Edit</source>
         <translation>编辑</translation>
     </message>
     <message>
-        <location line="+101"/>
+        <location line="+102"/>
         <location line="+328"/>
-        <location line="+2144"/>
+        <location line="+2145"/>
         <source>Project</source>
         <translation>项目</translation>
     </message>
     <message>
-        <location line="-2094"/>
-        <location line="+2102"/>
+        <location line="-2095"/>
+        <location line="+2103"/>
         <source>Watch</source>
         <translation>监视</translation>
     </message>
     <message>
-        <location line="-2061"/>
-        <location line="+2069"/>
+        <location line="-2062"/>
+        <location line="+2070"/>
         <source>Structure</source>
         <translation>结构</translation>
     </message>
     <message>
-        <location line="-2241"/>
-        <location line="+2249"/>
+        <location line="-2242"/>
+        <location line="+2250"/>
         <source>Files</source>
         <translation>文件</translation>
     </message>
@@ -4878,17 +4879,17 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">资源</translation>
     </message>
     <message>
-        <location line="-2329"/>
-        <location line="+598"/>
+        <location line="-2330"/>
+        <location line="+599"/>
         <location line="+1258"/>
         <location line="+3"/>
         <location line="+502"/>
-        <location filename="../mainwindow.cpp" line="-3159"/>
+        <location filename="../mainwindow.cpp" line="-3161"/>
         <location line="+1"/>
         <location line="+1"/>
         <location line="+1"/>
         <location line="+1"/>
-        <location line="+7464"/>
+        <location line="+7467"/>
         <source>Debug</source>
         <translation>调试</translation>
     </message>
@@ -4899,7 +4900,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+41"/>
-        <location filename="../mainwindow.cpp" line="-5902"/>
+        <location filename="../mainwindow.cpp" line="-5903"/>
         <source>Debug Console</source>
         <translation>调试主控台</translation>
     </message>
@@ -4919,10 +4920,10 @@ p, li { white-space: pre-wrap; }
         <translation>局部变量</translation>
     </message>
     <message>
-        <location line="-998"/>
-        <location line="+1072"/>
+        <location line="-999"/>
+        <location line="+1073"/>
         <location line="+1508"/>
-        <location filename="../mainwindow.cpp" line="+5899"/>
+        <location filename="../mainwindow.cpp" line="+5900"/>
         <source>Search</source>
         <translation>查找</translation>
     </message>
@@ -4952,12 +4953,12 @@ p, li { white-space: pre-wrap; }
         <translation>关闭</translation>
     </message>
     <message>
-        <location line="-2336"/>
+        <location line="-2338"/>
         <source>Execute</source>
         <translation>运行</translation>
     </message>
     <message>
-        <location line="+95"/>
+        <location line="+96"/>
         <location line="+163"/>
         <location filename="../mainwindow.cpp" line="+4"/>
         <location line="+1"/>
@@ -4981,7 +4982,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">工具栏2</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-7718"/>
+        <location filename="../mainwindow.cpp" line="-7721"/>
         <source>New</source>
         <translation>新建</translation>
     </message>
@@ -5113,7 +5114,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../mainwindow.cpp" line="+2820"/>
+        <location filename="../mainwindow.cpp" line="+2822"/>
         <location line="+28"/>
         <location line="+200"/>
         <source>Copy</source>
@@ -5253,29 +5254,29 @@ p, li { white-space: pre-wrap; }
         <translation>单步进入</translation>
     </message>
     <message>
-        <location line="-2147"/>
+        <location line="-2149"/>
         <source>Move Caret</source>
         <translation>移动光标</translation>
     </message>
     <message>
-        <location line="+554"/>
+        <location line="+555"/>
         <location line="+24"/>
-        <location line="+2023"/>
+        <location line="+2024"/>
         <source>Problem Set</source>
         <translation>试题集</translation>
     </message>
     <message>
-        <location line="-1995"/>
+        <location line="-1996"/>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="-382"/>
-        <location line="+5930"/>
+        <location line="+5931"/>
         <source>New Problem Set</source>
         <translation>新建试题集</translation>
     </message>
     <message>
         <location line="+12"/>
         <location line="+3"/>
-        <location filename="../mainwindow.cpp" line="-5894"/>
+        <location filename="../mainwindow.cpp" line="-5895"/>
         <source>Add Problem</source>
         <translation>添加试题</translation>
     </message>
@@ -5290,15 +5291,15 @@ p, li { white-space: pre-wrap; }
         <location line="+12"/>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="-30"/>
-        <location line="+5979"/>
+        <location line="+5980"/>
         <source>Save Problem Set</source>
         <translation>保存试题集</translation>
     </message>
     <message>
         <location line="+12"/>
         <location line="+3"/>
-        <location filename="../mainwindow.cpp" line="-5973"/>
-        <location line="+6010"/>
+        <location filename="../mainwindow.cpp" line="-5974"/>
+        <location line="+6011"/>
         <source>Load Problem Set</source>
         <translation>载入试题集</translation>
     </message>
@@ -5334,7 +5335,7 @@ p, li { white-space: pre-wrap; }
         <location line="-1277"/>
         <location line="+43"/>
         <location line="+1242"/>
-        <location filename="../mainwindow.cpp" line="-5926"/>
+        <location filename="../mainwindow.cpp" line="-5927"/>
         <location line="+7"/>
         <location line="+7"/>
         <source>Problem</source>
@@ -5432,14 +5433,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+366"/>
         <location filename="../mainwindow.cpp" line="-69"/>
-        <location line="+7172"/>
+        <location line="+7173"/>
         <source>Import FPS Problem Set</source>
         <translation>导入FPS试题集</translation>
     </message>
     <message>
         <location line="+12"/>
-        <location filename="../mainwindow.cpp" line="-7166"/>
-        <location line="+7197"/>
+        <location filename="../mainwindow.cpp" line="-7167"/>
+        <location line="+7198"/>
         <source>Export FPS Problem Set</source>
         <translation>导出FPS试题集</translation>
     </message>
@@ -5760,11 +5761,16 @@ p, li { white-space: pre-wrap; }
         <translation>预处理</translation>
     </message>
     <message>
+        <location line="+5"/>
+        <source>Paste indentation</source>
+        <translation>粘贴原缩进</translation>
+    </message>
+    <message>
         <source>Ctrl+Shift+G</source>
         <translation type="vanished">Ctrl+Shift+G</translation>
     </message>
     <message>
-        <location line="-794"/>
+        <location line="-799"/>
         <source>Goto Definition</source>
         <translation>跳转到定义处</translation>
     </message>
@@ -5809,17 +5815,12 @@ p, li { white-space: pre-wrap; }
         <translation>打开命令行窗口</translation>
     </message>
     <message>
-        <location line="-2573"/>
-        <source>Red Panda C++ CE</source>
-        <translation>小熊猫IDE CE</translation>
-    </message>
-    <message>
-        <location line="+189"/>
+        <location line="-2386"/>
         <source>File Type</source>
         <translation>文件类型</translation>
     </message>
     <message>
-        <location line="+2392"/>
+        <location line="+2394"/>
         <source>File Properties...</source>
         <translation>文件属性...</translation>
     </message>
@@ -6137,7 +6138,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">保存为模板...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-3804"/>
+        <location filename="../mainwindow.cpp" line="-3805"/>
         <source>New File</source>
         <translation>新建文件</translation>
     </message>
@@ -6178,7 +6179,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+5"/>
-        <location filename="../mainwindow.cpp" line="+5127"/>
+        <location filename="../mainwindow.cpp" line="+5128"/>
         <source>Rename Symbol</source>
         <translation>重命名符号</translation>
     </message>
@@ -6458,17 +6459,17 @@ p, li { white-space: pre-wrap; }
         <translation>运行参数...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-4848"/>
+        <location filename="../mainwindow.cpp" line="-4849"/>
         <source>File Encoding</source>
         <translation>文件编码</translation>
     </message>
     <message>
-        <location line="-3546"/>
+        <location line="-3548"/>
         <source>Recent Files</source>
         <translation>文件历史</translation>
     </message>
     <message>
-        <location line="+1170"/>
+        <location line="+1172"/>
         <location line="+2"/>
         <location line="+30"/>
         <location line="+2"/>
@@ -6553,27 +6554,27 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+102"/>
         <location line="+207"/>
-        <location line="+3428"/>
+        <location line="+3429"/>
         <location line="+7"/>
         <source>Wrong Compiler Settings</source>
         <translation>错误的编译器设置</translation>
     </message>
     <message>
-        <location line="-3641"/>
+        <location line="-3642"/>
         <location line="+207"/>
-        <location line="+3428"/>
+        <location line="+3429"/>
         <location line="+7"/>
         <source>Compiler is set not to generate executable.</source>
         <translation>编译器被设置为不生成可执行文件。</translation>
     </message>
     <message>
-        <location line="-3641"/>
-        <location line="+3635"/>
+        <location line="-3642"/>
+        <location line="+3636"/>
         <source>We need the executabe to run problem case.</source>
         <translation>我们需要可执行文件来运行试题案例。</translation>
     </message>
     <message>
-        <location line="-3620"/>
+        <location line="-3621"/>
         <source>No compiler set</source>
         <translation>无编译器设置</translation>
     </message>
@@ -6630,7 +6631,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+97"/>
-        <location line="+3435"/>
+        <location line="+3436"/>
         <source>Please correct this before start debugging</source>
         <translation>请在调试前改正设置。</translation>
     </message>
@@ -6639,7 +6640,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">重新编译？</translation>
     </message>
     <message>
-        <location line="-2688"/>
+        <location line="-2689"/>
         <location line="+8"/>
         <source>Save last open info error</source>
         <translation>保存上次打开信息失败</translation>
@@ -6686,12 +6687,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+867"/>
         <location line="+123"/>
-        <location line="+2673"/>
+        <location line="+2674"/>
         <source>Correct compile settings for debug</source>
         <translation>纠正调试用编译设置</translation>
     </message>
     <message>
-        <location line="-2795"/>
+        <location line="-2796"/>
         <location line="+123"/>
         <source>The generated executable won&apos;t have debug symbol infos, and can&apos;t be debugged.</source>
         <translation>生成的可执行文件中会缺少调试符号信息，因此无法编译。</translation>
@@ -6703,48 +6704,48 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-119"/>
         <location line="+123"/>
-        <location line="+2673"/>
+        <location line="+2674"/>
         <source>Or you can manually change the following settings in the options dialog&apos;s compiler set page:</source>
         <translation>您也可以手动在选项对话框的编译器设置页中修正下列选项：</translation>
     </message>
     <message>
-        <location line="-2794"/>
+        <location line="-2795"/>
         <location line="+123"/>
-        <location line="+2673"/>
+        <location line="+2674"/>
         <source> - Turned on the &quot;Generate debug info (-g3)&quot; option.</source>
         <translation> - 打开“生成调试信息(-g3)&quot;选项.</translation>
     </message>
     <message>
-        <location line="-2794"/>
+        <location line="-2795"/>
         <location line="+123"/>
-        <location line="+2673"/>
+        <location line="+2674"/>
         <source> - Turned off the &quot;Strip executable (-s)&quot; option.</source>
         <translation> - 关闭&quot;剥除附加信息(-s)&quot;选项.</translation>
     </message>
     <message>
-        <location line="-2794"/>
+        <location line="-2795"/>
         <location line="+123"/>
-        <location line="+2673"/>
+        <location line="+2674"/>
         <source> - Turned off the &quot;Optimization level (-O)&quot; option or set it to &quot;Debug (-Og)&quot;.</source>
         <translation> - 关闭&quot;优化级别(-O)选项，或将其设置为&quot;调试(-Og)&quot;级别.</translation>
     </message>
     <message>
-        <location line="-2794"/>
+        <location line="-2795"/>
         <location line="+123"/>
-        <location line="+2673"/>
+        <location line="+2674"/>
         <location line="+2"/>
         <source>You should recompile after change the compiler set or it&apos;s settings.</source>
         <translation>在更换编译器设置集或修改其设置后，需要重新编译.</translation>
     </message>
     <message>
-        <location line="-2796"/>
+        <location line="-2797"/>
         <location line="+123"/>
-        <location line="+2675"/>
+        <location line="+2676"/>
         <source>Do you want to mannually change the compiler set settings now?</source>
         <translation>您现在就要手动修改编译器设置集的设置吗？</translation>
     </message>
     <message>
-        <location line="-2359"/>
+        <location line="-2360"/>
         <location line="+1476"/>
         <source>Batch Set Cases</source>
         <translation>批量设置案例</translation>
@@ -6765,7 +6766,7 @@ p, li { white-space: pre-wrap; }
         <translation>收到试题&quot;%1&quot;. (%2/%3)</translation>
     </message>
     <message>
-        <location line="+5466"/>
+        <location line="+5467"/>
         <source>Go to Line</source>
         <translation>跳转到行</translation>
     </message>
@@ -6788,14 +6789,14 @@ p, li { white-space: pre-wrap; }
         <location filename="../mainwindow.ui" line="-878"/>
         <location line="+98"/>
         <location line="+3"/>
-        <location filename="../mainwindow.cpp" line="-6949"/>
+        <location filename="../mainwindow.cpp" line="-6950"/>
         <location line="+21"/>
         <location line="+181"/>
         <source>Clear</source>
         <translation>清除</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-3030"/>
+        <location filename="../mainwindow.cpp" line="-3032"/>
         <source>Export</source>
         <translation>导出</translation>
     </message>
@@ -6806,7 +6807,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+82"/>
-        <location line="+8498"/>
+        <location line="+8501"/>
         <source>Problem Set %1</source>
         <translation>试题集%1</translation>
     </message>
@@ -6835,7 +6836,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">项目已经被修改过，是否需要重新构建？</translation>
     </message>
     <message>
-        <location line="-5949"/>
+        <location line="-5950"/>
         <source>Auto Save Error</source>
         <translation>自动保存出错</translation>
     </message>
@@ -6901,14 +6902,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+1808"/>
-        <location line="+3888"/>
+        <location line="+3889"/>
         <location line="+1714"/>
         <source>Bookmark Description</source>
         <translation>书签描述</translation>
     </message>
     <message>
-        <location line="-5601"/>
-        <location line="+3888"/>
+        <location line="-5602"/>
+        <location line="+3889"/>
         <location line="+1714"/>
         <source>Description:</source>
         <translation>描述：</translation>
@@ -6918,7 +6919,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">在调试主控台中显示调试器输出</translation>
     </message>
     <message>
-        <location line="-7348"/>
+        <location line="-7349"/>
         <source>Remove this search</source>
         <translation>清除这次搜索</translation>
     </message>
@@ -6933,7 +6934,7 @@ p, li { white-space: pre-wrap; }
         <translation>断点条件...</translation>
     </message>
     <message>
-        <location line="+4795"/>
+        <location line="+4796"/>
         <source>Break point condition</source>
         <translation>断点条件</translation>
     </message>
@@ -6943,7 +6944,7 @@ p, li { white-space: pre-wrap; }
         <translation>输入当前断点的生效条件:</translation>
     </message>
     <message>
-        <location line="-4790"/>
+        <location line="-4791"/>
         <source>Remove All Breakpoints</source>
         <oldsource>Remove all breakpoints</oldsource>
         <translation>删除所有断点</translation>
@@ -7138,12 +7139,12 @@ p, li { white-space: pre-wrap; }
         <location line="+1484"/>
         <location line="+7"/>
         <location line="+6"/>
-        <location line="+3066"/>
+        <location line="+3067"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location line="-4555"/>
+        <location line="-4556"/>
         <source>Open in Editor</source>
         <translation>在编辑器中打开</translation>
     </message>
@@ -7202,7 +7203,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">收到试题&quot;%1&quot;.</translation>
     </message>
     <message>
-        <location line="+1081"/>
+        <location line="+1082"/>
         <source>Watchpoint hitted</source>
         <translation>变量断点被触发</translation>
     </message>
@@ -7286,7 +7287,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">C/C++源代码文件 (*.c *.cpp *.cc *.cxx)</translation>
     </message>
     <message>
-        <location line="-5475"/>
+        <location line="-5476"/>
         <source>New Folder %1</source>
         <translation>新建文件夹%1</translation>
     </message>
@@ -7318,7 +7319,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">变量&quot;%1&quot;有改动：</translation>
     </message>
     <message>
-        <location line="+686"/>
+        <location line="+687"/>
         <source>Old value: %1</source>
         <translation>旧值: %1</translation>
     </message>
@@ -7382,8 +7383,8 @@ p, li { white-space: pre-wrap; }
         <translation>改变项目的编译器配置集会导致所有的自定义编译器选项被重置。</translation>
     </message>
     <message>
-        <location line="-1470"/>
-        <location line="+1472"/>
+        <location line="-1471"/>
+        <location line="+1473"/>
         <source>Do you really want to do that?</source>
         <translation>你真的想要那么做吗？</translation>
     </message>
@@ -7392,7 +7393,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">批量设置案例</translation>
     </message>
     <message>
-        <location line="-1463"/>
+        <location line="-1464"/>
         <source>Choose input files</source>
         <translation>选择输入数据文件</translation>
     </message>
@@ -7406,7 +7407,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">无标题%1</translation>
     </message>
     <message>
-        <location line="+2389"/>
+        <location line="+2390"/>
         <source>Modify Watch</source>
         <translation>修改监视表达式</translation>
     </message>
@@ -7641,7 +7642,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">请在工具栏中选择Debug编译器配置集，或者在“编译器配置集”设置的“编译/链接选项”页中&lt;b&gt;启用&lt;/b&gt;“生成调试信息(-g3)”、&lt;b&gt;禁用&lt;/b&gt;“剥除附件信息(-3)”。</translation>
     </message>
     <message>
-        <location line="-3001"/>
+        <location line="-3002"/>
         <source>C/C++ Source Files (*.c *.cpp *.cc *.cxx)</source>
         <translation>C/C++源代码文件 (*.c *.cpp *.cc *.cxx)</translation>
     </message>
@@ -7655,7 +7656,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">调试失败</translation>
     </message>
     <message>
-        <location line="+866"/>
+        <location line="+867"/>
         <source>The executable doesn&apos;t have symbol table, and can&apos;t be debugged.</source>
         <translation>可执行文件中没有符号表信息，无法调试。</translation>
     </message>
@@ -7788,16 +7789,16 @@ p, li { white-space: pre-wrap; }
         <translation>试题案例%1</translation>
     </message>
     <message>
-        <location line="-8736"/>
+        <location line="-8739"/>
         <location line="+62"/>
         <location line="+9"/>
         <location line="+8"/>
         <location line="+9"/>
         <location line="+65"/>
-        <location line="+1462"/>
+        <location line="+1464"/>
         <location line="+1836"/>
         <location line="+117"/>
-        <location line="+1795"/>
+        <location line="+1796"/>
         <location line="+150"/>
         <location line="+712"/>
         <location line="+12"/>
@@ -7806,12 +7807,12 @@ p, li { white-space: pre-wrap; }
         <translation>错误</translation>
     </message>
     <message>
-        <location line="-9678"/>
+        <location line="-9681"/>
         <source>Recent Projects</source>
         <translation>项目历史</translation>
     </message>
     <message>
-        <location line="+800"/>
+        <location line="+802"/>
         <location line="+7"/>
         <source>Load Theme Error</source>
         <translation>载入主题失败</translation>
@@ -7837,7 +7838,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">请在工具栏中选用Debug编译器配置集，或者在选项对话框的编辑器配置集页中勾选“生成调试信息(-g3)&quot;选项。</translation>
     </message>
     <message>
-        <location line="+1345"/>
+        <location line="+1346"/>
         <source>File &apos;%1&apos; was changed.</source>
         <translation>磁盘文件&apos;%1&apos;已被修改。</translation>
     </message>
@@ -7873,15 +7874,15 @@ p, li { white-space: pre-wrap; }
         <translation>运行失败</translation>
     </message>
     <message>
-        <location line="-2409"/>
-        <location line="+2655"/>
+        <location line="-2410"/>
+        <location line="+2656"/>
         <location line="+14"/>
         <location line="+3420"/>
         <source>Confirm Convertion</source>
         <translation>确认转换</translation>
     </message>
     <message>
-        <location line="-9781"/>
+        <location line="-9784"/>
         <source>Exact</source>
         <translation>完全一致</translation>
     </message>
@@ -7900,15 +7901,15 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">行: %1 列: %2 (%3个字符) 总行数: %4</translation>
     </message>
     <message>
-        <location line="+2432"/>
+        <location line="+2434"/>
         <location line="+123"/>
-        <location line="+2673"/>
+        <location line="+2674"/>
         <source>If you are using the Release compiler set, please use choose the Debug version from toolbar.</source>
         <translation>如果你正在使用Release版的编译器设置集，请在工具栏中将其改为Debug版本。</translation>
     </message>
     <message>
-        <location line="-1537"/>
-        <location line="+2655"/>
+        <location line="-1538"/>
+        <location line="+2656"/>
         <location line="+14"/>
         <location line="+3420"/>
         <source>The editing file will be saved using %1 encoding. &lt;br /&gt;This operation can&apos;t be reverted. &lt;br /&gt;Are you sure to continue?</source>
@@ -9379,7 +9380,7 @@ p, li { white-space: pre-wrap; }
     <name>QObject</name>
     <message>
         <location filename="../editorlist.cpp" line="+179"/>
-        <location filename="../mainwindow.cpp" line="-3257"/>
+        <location filename="../mainwindow.cpp" line="-3258"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
@@ -11525,7 +11526,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../mainwindow.cpp" line="-865"/>
         <location line="+123"/>
-        <location line="+7236"/>
+        <location line="+7237"/>
         <location line="+5"/>
         <location filename="../settingsdialog/settingsdialog.cpp" line="+10"/>
         <location line="+95"/>
@@ -11533,8 +11534,8 @@ p, li { white-space: pre-wrap; }
         <translation>编译器配置集</translation>
     </message>
     <message>
-        <location line="-7240"/>
-        <location line="+7236"/>
+        <location line="-7241"/>
+        <location line="+7237"/>
         <location filename="../settingsdialog/settingsdialog.cpp" line="-95"/>
         <location line="+3"/>
         <source>Compiler</source>
@@ -11689,8 +11690,8 @@ p, li { white-space: pre-wrap; }
         <translation>项目选项</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-6654"/>
-        <location line="+7364"/>
+        <location filename="../mainwindow.cpp" line="-6655"/>
+        <location line="+7365"/>
         <location filename="../settingsdialog/settingsdialog.cpp" line="+2"/>
         <location line="+3"/>
         <location line="+3"/>

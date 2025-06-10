@@ -3,6 +3,8 @@ Red Panda C++ Version 3.4
   - fix: Syntax color doesn't work in the code snippet option page.
   - fix: GAS template page dosen't has syntax color. (by xccfcpd@github.com)
   - fix: Autoindent not correct for else clause.
+  - enhancement: "Paste indentation" in edit menu.
+  - fix: In project panel's Custom View mode, file may be wrongly displayed as folder after add new unit.
   
 Red Panda C++ Version 3.3
   - enhancement: Auto indent contents in parenthesis.

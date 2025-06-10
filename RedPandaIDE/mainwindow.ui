@@ -215,6 +215,7 @@
     <addaction name="actionCut"/>
     <addaction name="actionCopy"/>
     <addaction name="actionPaste"/>
+    <addaction name="actionPaste_indentation"/>
     <addaction name="separator"/>
     <addaction name="actionIndent"/>
     <addaction name="actionUnIndent"/>
@@ -3358,6 +3359,11 @@
   <action name="actionPreprocess">
    <property name="text">
     <string>Preprocess</string>
+   </property>
+  </action>
+  <action name="actionPaste_indentation">
+   <property name="text">
+    <string>Paste indentation</string>
    </property>
   </action>
  </widget>
