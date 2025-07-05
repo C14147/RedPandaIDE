@@ -1,5 +1,5 @@
 /*
- *  This file is part of Red Panda C++
+ *  This file is part of RedPandaIDE
  *  Copyright (C) 2020-2022 Roy Qu (royqh1979@gmail.com)
  *
  * This program is free software: you can redistribute it and/or modify

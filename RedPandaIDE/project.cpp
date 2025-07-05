@@ -1170,7 +1170,7 @@ void Project::saveOptions()
     ini.SetValue("Project","FileName", toByteArray(extractRelativePath(directory(), mFilename)));
     ini.SetValue("Project","Name", toByteArray(mName));
     ini.SetLongValue("Project","Type", static_cast<int>(mOptions.type));
-    ini.SetLongValue("Project","Ver", 3); // Is 3 as of Red Panda C++.0
+    ini.SetLongValue("Project","Ver", 3); // Is 3 as of RedPandaIDE.0
     ini.SetValue("Project","Includes", toByteArray(relativePaths(mOptions.includeDirs).join(";")));
     ini.SetValue("Project","Libs", toByteArray(relativePaths(mOptions.libDirs).join(";")));
     ini.SetValue("Project","Bins", toByteArray(relativePaths(mOptions.binDirs).join(";")));
@@ -1410,7 +1410,7 @@ void Project::buildPrivateResource()
     rcFile.replace(' ','_');
 
     QStringList contents;
-    contents.append("/* THIS FILE WILL BE OVERWRITTEN BY Red Panda C++ */");
+    contents.append("/* THIS FILE WILL BE OVERWRITTEN BY RedPandaIDE */");
     contents.append("/* DO NOT EDIT! */");
     contents.append("");
 
@@ -1584,7 +1584,7 @@ void Project::buildPrivateResource()
     def = def.toUpper();
     if (def.front().isDigit())
         def = "PROJECT_"+def;
-    contents.append("/* THIS FILE WILL BE OVERWRITTEN BY Red Panda C++ */");
+    contents.append("/* THIS FILE WILL BE OVERWRITTEN BY RedPandaIDE */");
     contents.append("/* DO NOT EDIT ! */");
     contents.append("");
     contents.append("#ifndef " + def);
@@ -1971,7 +1971,7 @@ void Project::loadOptions(SimpleIni& ini)
             mOptions.version = 3;
             QMessageBox::information(nullptr,
                                      tr("Settings need update"),
-                                     tr("The compiler settings format of Red Panda C++ has changed.")
+                                     tr("The compiler settings format of RedPandaIDE has changed.")
                                      +"<BR /><BR />"
                                      +tr("Please update your settings at Project >> Project Options >> Compiler and save your project."),
                                      QMessageBox::Ok);
@@ -2111,7 +2111,7 @@ void Project::loadOptions(SimpleIni& ini)
         mOptions.versionInfo.companyName = fromByteArray(ini.GetValue("VersionInfo", "CompanyName", ""));
         mOptions.versionInfo.fileVersion = fromByteArray(ini.GetValue("VersionInfo", "FileVersion", "0.1"));
         mOptions.versionInfo.fileDescription = fromByteArray(ini.GetValue("VersionInfo", "FileDescription",
-          toByteArray(tr("Developed using the Red Panda C++ IDE"))));
+          toByteArray(tr("Developed using the RedPandaIDE"))));
         mOptions.versionInfo.internalName = fromByteArray(ini.GetValue("VersionInfo", "InternalName", ""));
         mOptions.versionInfo.legalCopyright = fromByteArray(ini.GetValue("VersionInfo", "LegalCopyright", ""));
         mOptions.versionInfo.legalTrademarks = fromByteArray(ini.GetValue("VersionInfo", "LegalTrademarks", ""));

@@ -47,7 +47,7 @@ enum class FileType{
     PreprocessedSource, //(.p)
     GIMPLE, // gcc gimple file (.gimple)
     WindowsResourceSource, // resource source (.res)
-    Project, //Red Panda C++ Project (.dev)
+    Project, //RedPandaIDE Project (.dev)
     Text, // text file
     FragmentShader,
     VerticeShader,

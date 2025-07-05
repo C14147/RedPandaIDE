@@ -98,7 +98,7 @@ void SDCCProjectCompiler::newMakeFile(QFile& file)
 void SDCCProjectCompiler::writeMakeHeader(QFile &file)
 {
     writeln(file,"# Project: " + mProject->name());
-    writeln(file,QString("# Makefile created by Red Panda C++ ") + REDPANDA_CPP_VERSION);
+    writeln(file,QString("# Makefile created by RedPandaIDE") + REDPANDA_CPP_VERSION);
     writeln(file);
 }
 

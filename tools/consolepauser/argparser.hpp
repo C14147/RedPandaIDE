@@ -204,7 +204,7 @@ struct ArgParser
     static String HelpMessage()
     {
         return StringFromAsciiLiteral(
-R"(Red Panda C++ console pauser - run program and pause console after exit.
+R"(RedPandaIDE-CE Console Pauser - run program and pause console after exit.
 
 Usage: consolepauser [options] -- program [args...]
 

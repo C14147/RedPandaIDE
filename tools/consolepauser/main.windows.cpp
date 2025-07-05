@@ -1,5 +1,5 @@
 /*
- *  This file is part of Red Panda C++
+ *  This file is part of RedPandaIDE
  *  Copyright (C) 2020-2022 Roy Qu (royqh1979@gmail.com)
  *
  * This program is free software: you can redistribute it and/or modify
@@ -375,7 +375,7 @@ DWORD ExecuteCommand(wstring& command,bool reInp, LONGLONG &peakMemory, double &
 DWORD ExecuteWslCommand(wstring &command, bool reInp, LONGLONG &peakMemory, double &cpuMilliSeconds)
 {
     const wchar_t *wslDistro = L"redpanda-cpp-linux-runner-v0";
-    const wchar_t *wslDistroName = L"Red Panda C++ Linux Runner V0";
+    const wchar_t *wslDistroName = L"RedPandaIDE Linux Runner V0";
     const wstring_view wslRootfsArchive = L"alpine-minirootfs.tar";
 
     if (!WslApi::Init()) {

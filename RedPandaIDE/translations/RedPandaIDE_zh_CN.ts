@@ -55,7 +55,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;基于 Qt %1 (%2)&lt;/p&gt;&lt;p&gt;构建时间： %3 %4&lt;/p&gt;&lt;p&gt;Copyright 2020-2021 royqh1979@gmail.com&lt;/p&gt;&lt;p&gt;主页： &lt;a href=&quot;https://royqh.net/devcpp/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#007af4;&quot;&gt;https://royqh.net/devcpp/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;h1 style=&quot; margin-top:18px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:xx-large; font-weight:600;&quot;&gt;Red Panda C++&lt;/span&gt;&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;h1 style=&quot; margin-top:18px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:xx-large; font-weight:600;&quot;&gt;RedPandaIDE&lt;/span&gt;&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <oldsource>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;h1 style=&quot; margin-top:18px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:xx-large; font-weight:600;&quot;&gt;Red-Panda C++&lt;/span&gt;&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
         <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;h1 style=&quot; margin-top:18px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:xx-large; font-weight:600;&quot;&gt;小熊猫C++&lt;/span&gt;&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -1154,7 +1154,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="-8"/>
-        <source>Red Panda C++ will clear previously found compiler list and search for compilers in the following locations:&lt;br /&gt; &apos;%1&apos;&lt;br /&gt; &apos;%2&apos;&lt;br /&gt;Do you really want to continue?</source>
+        <source>RedPandaIDE will clear previously found compiler list and search for compilers in the following locations:&lt;br /&gt; &apos;%1&apos;&lt;br /&gt; &apos;%2&apos;&lt;br /&gt;Do you really want to continue?</source>
         <translation>小熊猫C++ 将会清除以前搜索到的编译器配置列表，然后在下列文件夹中搜索编译器:&lt;br/&gt; &apos;%1&apos;&lt;br/&gt; &apos;%2&apos;&lt;br /&gt;你确定要继续吗？</translation>
     </message>
     <message>
@@ -1178,7 +1178,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+238"/>
-        <source>Red Panda C++ will clear previously found compiler list and search for compilers in the the PATH. &lt;br /&gt;Do you really want to continue?</source>
+        <source>RedPandaIDE will clear previously found compiler list and search for compilers in the the PATH. &lt;br /&gt;Do you really want to continue?</source>
         <translation>小熊猫C++ 将会清除以前搜索到的编译器配置列表，然后在PATH路径中搜索gcc编译器.&lt;br /&gt;你确定要继续吗？</translation>
     </message>
     <message>
@@ -1339,7 +1339,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+33"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Red Panda C++&apos;s Makefile has two important targets:&lt;/p&gt;&lt;p&gt;- all (which builds the executable)&lt;/p&gt;&lt;p&gt;- clean (which cleans up object files)&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&amp;quot;all&amp;quot; depends on 2 targets: all-before and all-after. All-before&lt;/p&gt;&lt;p&gt;gets called before the compilation process, and all-after gets&lt;/p&gt;&lt;p&gt;called after the compilation process.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&amp;quot;clean&amp;quot; depends on the target clean-custom, which gets called&lt;/p&gt;&lt;p&gt;before the cleaning process.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;You can change the Makefile&apos;s behavior by defining the targets&lt;/p&gt;&lt;p&gt;that &amp;quot;all&amp;quot; and &amp;quot;clean&amp;quot; depend on.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;RedPandaIDE&apos;s Makefile has two important targets:&lt;/p&gt;&lt;p&gt;- all (which builds the executable)&lt;/p&gt;&lt;p&gt;- clean (which cleans up object files)&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&amp;quot;all&amp;quot; depends on 2 targets: all-before and all-after. All-before&lt;/p&gt;&lt;p&gt;gets called before the compilation process, and all-after gets&lt;/p&gt;&lt;p&gt;called after the compilation process.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&amp;quot;clean&amp;quot; depends on the target clean-custom, which gets called&lt;/p&gt;&lt;p&gt;before the cleaning process.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;You can change the Makefile&apos;s behavior by defining the targets&lt;/p&gt;&lt;p&gt;that &amp;quot;all&amp;quot; and &amp;quot;clean&amp;quot; depend on.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <oldsource>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Red Panda Dev-C++&apos;s Makefile has two important targets:&lt;/p&gt;&lt;p&gt;- all (which builds the executable)&lt;/p&gt;&lt;p&gt;- clean (which cleans up object files)&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&amp;quot;all&amp;quot; depends on 2 targets: all-before and all-after. All-before&lt;/p&gt;&lt;p&gt;gets called before the compilation process, and all-after gets&lt;/p&gt;&lt;p&gt;called after the compilation process.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&amp;quot;clean&amp;quot; depends on the target clean-custom, which gets called&lt;/p&gt;&lt;p&gt;before the cleaning process.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;You can change the Makefile&apos;s behavior by defining the targets&lt;/p&gt;&lt;p&gt;that &amp;quot;all&amp;quot; and &amp;quot;clean&amp;quot; depend on.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;小熊猫C++的Makefile包括两个重要的目标（target）：&lt;/p&gt;&lt;p&gt;- all (用来构建可执行文件)&lt;/p&gt;&lt;p&gt;- clean (用来清理构建文件)&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&amp;quot;all&amp;quot; 依赖于2个目标：all-before 和all-after. &lt;/p&gt;&lt;p&gt;构建前会调用all-before目标，构建后会调用all-after目标。&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&amp;quot;clean&amp;quot; 依赖于目标clean-custom, 它在执行清理前被调用。&lt;br/&gt;&lt;/p&gt;&lt;p&gt;你可以通过自定义这些目标来改变构建行为。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -2449,7 +2449,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+7"/>
-        <source>Auto load files being open when Red Panda C++ last exited.</source>
+        <source>Auto load files being open when RedPandaIDE last exited.</source>
         <translation>自动打开上次退出时打开的文件</translation>
     </message>
     <message>
@@ -2881,12 +2881,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+6"/>
-        <source>Independent Red Panda C++ applications</source>
+        <source>Independent RedPandaIDE applications</source>
         <translation>独立的小熊猫C++程序进程</translation>
     </message>
     <message>
         <location line="+7"/>
-        <source>The same Red Panda C++ application</source>
+        <source>The same RedPandaIDE application</source>
         <translation>同一个小熊猫C++程序进程</translation>
     </message>
     <message>
@@ -2896,7 +2896,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+16"/>
-        <source>Just check or uncheck for which file types Red Panda C++ wil be registered as the default application to open them ... </source>
+        <source>Just check or uncheck for which file types RedPandaIDE wil be registered as the default application to open them ... </source>
         <oldsource>Just check or uncheck for which file types RedPand C++ wil be registered as the default application to open them ... </oldsource>
         <translation>选择想要使用小熊猫C++打开的文件类型（可能需要管理员权限）</translation>
     </message>
@@ -4717,17 +4717,17 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+1"/>
-        <source>Path to the Red Panda C++&apos;s executable file.</source>
+        <source>Path to the RedPandaIDE&apos;s executable file.</source>
         <translation>小熊猫C++可执行文件的完整路径</translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Version of the Red Panda C++</source>
+        <source>Version of the RedPandaIDE</source>
         <translation>小熊猫C++的版本</translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>PATH to the Red Panda C++&apos;s installation folder.</source>
+        <source>PATH to the RedPandaIDE&apos;s installation folder.</source>
         <translation>小熊猫C++的安装文件夹</translation>
     </message>
     <message>
@@ -4806,7 +4806,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../mainwindow.ui" line="+14"/>
         <location filename="../mainwindow.cpp" line="+1435"/>
-        <source>Red Panda C++</source>
+        <source>RedPandaIDE</source>
         <translation>小熊猫IDE CE</translation>
     </message>
     <message>
@@ -7692,7 +7692,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+1145"/>
-        <source>Red Panda C++ project file (*.dev)</source>
+        <source>RedPandaIDE project file (*.dev)</source>
         <translation>小熊猫C++项目文件(*.dev)</translation>
     </message>
     <message>
@@ -8474,7 +8474,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+1"/>
-        <source>The compiler settings format of Red Panda C++ has changed.</source>
+        <source>The compiler settings format of RedPandaIDE has changed.</source>
         <oldsource>The compiler settings format of Dev-C++ has changed.</oldsource>
         <translation>小熊猫C++的编译器设置格式已发生改变。</translation>
     </message>
@@ -8500,7 +8500,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+94"/>
-        <source>Developed using the Red Panda C++ IDE</source>
+        <source>Developed using the RedPandaIDE IDE</source>
         <oldsource>Developed using the Red Panda Dev-C++ IDE</oldsource>
         <translation>使用小熊猫C++编辑器开发</translation>
     </message>
@@ -9572,7 +9572,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../settings.cpp" line="+3461"/>
-        <source>Would you like Red Panda C++ to search for compilers in PATH?</source>
+        <source>Would you like RedPandaIDE to search for compilers in PATH?</source>
         <translation>您同意小熊猫C++在PATH路径中寻找gcc编译器吗？</translation>
     </message>
     <message>
@@ -9825,7 +9825,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">在配置中保留这些文件夹可能会导致编译出错。</translation>
     </message>
     <message>
-        <source>Would you like Red Panda C++ to remove them for you and add the default paths to the valid paths?</source>
+        <source>Would you like RedPandaIDE to remove them for you and add the default paths to the valid paths?</source>
         <translation type="vanished">是否让小熊猫C++删除这些配置，并尝试重新建立配置？</translation>
     </message>
     <message>
@@ -9860,7 +9860,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="-4"/>
-        <source>Would you like Red Panda C++ to search for compilers in the following locations: &lt;BR /&gt;&apos;%1&apos;&lt;BR /&gt;&apos;%2&apos;? </source>
+        <source>Would you like RedPandaIDE to search for compilers in the following locations: &lt;BR /&gt;&apos;%1&apos;&lt;BR /&gt;&apos;%2&apos;? </source>
         <translation>您需要小熊猫C++在下列位置搜索编译器吗：&lt;br /&gt;%1&lt;br /&gt;%2</translation>
     </message>
     <message>

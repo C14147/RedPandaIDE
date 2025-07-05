@@ -23,14 +23,14 @@
       <item>
        <widget class="QRadioButton" name="rbOpenInMultiApplication">
         <property name="text">
-         <string>Independent Red Panda C++ applications</string>
+         <string>Independent RedPandaIDE applications</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QRadioButton" name="rbOpenInSingleApplication">
         <property name="text">
-         <string>The same Red Panda C++ application</string>
+         <string>The same RedPandaIDE application</string>
         </property>
        </widget>
       </item>
@@ -56,7 +56,7 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Just check or uncheck for which file types Red Panda C++ wil be registered as the default application to open them ... </string>
+      <string>Just check or uncheck for which file types RedPandaIDE wil be registered as the default application to open them ... </string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>

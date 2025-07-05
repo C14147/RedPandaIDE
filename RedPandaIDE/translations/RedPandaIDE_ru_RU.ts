@@ -9,7 +9,7 @@
         <translation>О программе</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;h1 style=&quot; margin-top:18px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:xx-large; font-weight:600;&quot;&gt;Red Panda C++&lt;/span&gt;&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;h1 style=&quot; margin-top:18px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:xx-large; font-weight:600;&quot;&gt;RedPandaIDE&lt;/span&gt;&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;h1 style=&quot; margin-top:18px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:xx-large; font-weight:600;&quot;&gt;Красная Панда Си++&lt;/span&gt;&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
@@ -900,12 +900,12 @@
     </message>
     <message>
         <location filename="../settingsdialog/compilersetoptionwidget.cpp" line="304"/>
-        <source>Red Panda C++ will clear previously found compiler list and search for compilers in the following locations:&lt;br /&gt; &apos;%1&apos;&lt;br /&gt; &apos;%2&apos;&lt;br /&gt;Do you really want to continue?</source>
+        <source>RedPandaIDE will clear previously found compiler list and search for compilers in the following locations:&lt;br /&gt; &apos;%1&apos;&lt;br /&gt; &apos;%2&apos;&lt;br /&gt;Do you really want to continue?</source>
         <translation>Красная Панда Си++ очистит список ранее найденных компиляторов и выполнит поиск компиляторов в следующих местах:&lt;br /&gt; &apos;%1&apos;&lt;br /&gt; &apos;%2&apos;&lt;br /&gt; Вы действительно хотите продолжить?</translation>
     </message>
     <message>
         <location filename="../settingsdialog/compilersetoptionwidget.cpp" line="309"/>
-        <source>Red Panda C++ will clear previously found compiler list and search for compilers in the the PATH. &lt;br /&gt;Do you really want to continue?</source>
+        <source>RedPandaIDE will clear previously found compiler list and search for compilers in the the PATH. &lt;br /&gt;Do you really want to continue?</source>
         <translation>Красная Панда Си++ очистит список ранее найденных компиляторов и выполнит поиск компиляторов в PATH&lt;br /&gt; Вы действительно хотите продолжить?</translation>
     </message>
     <message>
@@ -1050,8 +1050,8 @@
     </message>
     <message>
         <location filename="../widgets/custommakefileinfodialog.ui" line="53"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Red Panda C++&apos;s Makefile has two important targets:&lt;/p&gt;&lt;p&gt;- all (which builds the executable)&lt;/p&gt;&lt;p&gt;- clean (which cleans up object files)&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&amp;quot;all&amp;quot; depends on 2 targets: all-before and all-after. All-before&lt;/p&gt;&lt;p&gt;gets called before the compilation process, and all-after gets&lt;/p&gt;&lt;p&gt;called after the compilation process.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&amp;quot;clean&amp;quot; depends on the target clean-custom, which gets called&lt;/p&gt;&lt;p&gt;before the cleaning process.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;You can change the Makefile&apos;s behavior by defining the targets&lt;/p&gt;&lt;p&gt;that &amp;quot;all&amp;quot; and &amp;quot;clean&amp;quot; depend on.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;У Red Panda C++&apos;s Makefile есть две основных цели:&lt;/p&gt;&lt;p&gt;- all (которая собирает исполняемый файл)&lt;/p&gt;&lt;p&gt;- clean (которая удаляет объектные файлы)&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&amp;quot;all&amp;quot; зависит от выполнения двух целей: all-before и all-after. All-before вызывается перед процессом компиляции, all-after вызывается после завершения процесса компиляции.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&amp;quot;clean&amp;quot; зависит от выполнения цели clean-custom, которая вызывается&lt;/p&gt;&lt;p&gt;перед процессом очистки.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Вы можете изменить поведение Makefile с помощью переопределния целей&lt;/p&gt;&lt;p&gt;от которых зависят &amp;quot;all&amp;quot; и &amp;quot;clean&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;RedPandaIDE&apos;s Makefile has two important targets:&lt;/p&gt;&lt;p&gt;- all (which builds the executable)&lt;/p&gt;&lt;p&gt;- clean (which cleans up object files)&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&amp;quot;all&amp;quot; depends on 2 targets: all-before and all-after. All-before&lt;/p&gt;&lt;p&gt;gets called before the compilation process, and all-after gets&lt;/p&gt;&lt;p&gt;called after the compilation process.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&amp;quot;clean&amp;quot; depends on the target clean-custom, which gets called&lt;/p&gt;&lt;p&gt;before the cleaning process.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;You can change the Makefile&apos;s behavior by defining the targets&lt;/p&gt;&lt;p&gt;that &amp;quot;all&amp;quot; and &amp;quot;clean&amp;quot; depend on.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;У RedPandaIDE&apos;s Makefile есть две основных цели:&lt;/p&gt;&lt;p&gt;- all (которая собирает исполняемый файл)&lt;/p&gt;&lt;p&gt;- clean (которая удаляет объектные файлы)&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&amp;quot;all&amp;quot; зависит от выполнения двух целей: all-before и all-after. All-before вызывается перед процессом компиляции, all-after вызывается после завершения процесса компиляции.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&amp;quot;clean&amp;quot; зависит от выполнения цели clean-custom, которая вызывается&lt;/p&gt;&lt;p&gt;перед процессом очистки.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Вы можете изменить поведение Makefile с помощью переопределния целей&lt;/p&gt;&lt;p&gt;от которых зависят &amp;quot;all&amp;quot; и &amp;quot;clean&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -1971,8 +1971,8 @@
     </message>
     <message>
         <location filename="../settingsdialog/editormiscwidget.ui" line="27"/>
-        <source>Auto load files being open when Red Panda C++ last exited.</source>
-        <translation>Автозагрузка файлов, открытых при последнем завершении работы Red Panda C++.</translation>
+        <source>Auto load files being open when RedPandaIDE last exited.</source>
+        <translation>Автозагрузка файлов, открытых при последнем завершении работы RedPandaIDE.</translation>
     </message>
     <message>
         <location filename="../settingsdialog/editormiscwidget.ui" line="34"/>
@@ -2330,13 +2330,13 @@
     </message>
     <message>
         <location filename="../settingsdialog/environmentfileassociationwidget.ui" line="26"/>
-        <source>Independent Red Panda C++ applications</source>
-        <translation>Отдельных приложениях Red Panda C++</translation>
+        <source>Independent RedPandaIDE applications</source>
+        <translation>Отдельных приложениях RedPandaIDE</translation>
     </message>
     <message>
         <location filename="../settingsdialog/environmentfileassociationwidget.ui" line="33"/>
-        <source>The same Red Panda C++ application</source>
-        <translation>В одном приложении Red Panda C++</translation>
+        <source>The same RedPandaIDE application</source>
+        <translation>В одном приложении RedPandaIDE</translation>
     </message>
     <message>
         <location filename="../settingsdialog/environmentfileassociationwidget.ui" line="43"/>
@@ -2345,8 +2345,8 @@
     </message>
     <message>
         <location filename="../settingsdialog/environmentfileassociationwidget.ui" line="59"/>
-        <source>Just check or uncheck for which file types Red Panda C++ wil be registered as the default application to open them ... </source>
-        <translation>Просто установите или снимите флажок, для открытия каких типов файлов Red Panda C++ будет зарегистрирован в качестве приложения по умолчанию ... </translation>
+        <source>Just check or uncheck for which file types RedPandaIDE wil be registered as the default application to open them ... </source>
+        <translation>Просто установите или снимите флажок, для открытия каких типов файлов RedPandaIDE будет зарегистрирован в качестве приложения по умолчанию ... </translation>
     </message>
 </context>
 <context>
@@ -4041,18 +4041,18 @@
     </message>
     <message>
         <location filename="../widgets/macroinfomodel.cpp" line="22"/>
-        <source>Path to the Red Panda C++&apos;s executable file.</source>
-        <translation>Путь к исполнимому файлу Red Panda C++.</translation>
+        <source>Path to the RedPandaIDE&apos;s executable file.</source>
+        <translation>Путь к исполнимому файлу RedPandaIDE.</translation>
     </message>
     <message>
         <location filename="../widgets/macroinfomodel.cpp" line="23"/>
-        <source>Version of the Red Panda C++</source>
-        <translation>Версия Red Panda C++</translation>
+        <source>Version of the RedPandaIDE</source>
+        <translation>Версия RedPandaIDE</translation>
     </message>
     <message>
         <location filename="../widgets/macroinfomodel.cpp" line="24"/>
-        <source>PATH to the Red Panda C++&apos;s installation folder.</source>
-        <translation>ПУТЬ к каталогу установки Red Panda C++.</translation>
+        <source>PATH to the RedPandaIDE&apos;s installation folder.</source>
+        <translation>ПУТЬ к каталогу установки RedPandaIDE.</translation>
     </message>
     <message>
         <location filename="../widgets/macroinfomodel.cpp" line="25"/>
@@ -4130,8 +4130,8 @@
     <message>
         <location filename="../mainwindow.ui" line="14"/>
         <location filename="../mainwindow.cpp" line="1435"/>
-        <source>Red Panda C++</source>
-        <translation>Red Panda C++</translation>
+        <source>RedPandaIDE</source>
+        <translation>RedPandaIDE</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="125"/>
@@ -6569,8 +6569,8 @@
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="7290"/>
-        <source>Red Panda C++ project file (*.dev)</source>
-        <translation>Файл проекта Red Panda C++ (*.dev)</translation>
+        <source>RedPandaIDE project file (*.dev)</source>
+        <translation>Файл проекта RedPandaIDE (*.dev)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="7302"/>
@@ -7328,8 +7328,8 @@
     </message>
     <message>
         <location filename="../project.cpp" line="1970"/>
-        <source>The compiler settings format of Red Panda C++ has changed.</source>
-        <translation>Изменился формат настроек компилятора Red Panda C++.</translation>
+        <source>The compiler settings format of RedPandaIDE has changed.</source>
+        <translation>Изменился формат настроек компилятора RedPandaIDE.</translation>
     </message>
     <message>
         <location filename="../project.cpp" line="1972"/>
@@ -7353,8 +7353,8 @@
     </message>
     <message>
         <location filename="../project.cpp" line="2110"/>
-        <source>Developed using the Red Panda C++ IDE</source>
-        <translation>Разработано с использованием Red Panda C++ IDE</translation>
+        <source>Developed using the RedPandaIDE IDE</source>
+        <translation>Разработано с использованием RedPandaIDE IDE</translation>
     </message>
 </context>
 <context>
@@ -8722,12 +8722,12 @@
     </message>
     <message>
         <location filename="../settings.cpp" line="3455"/>
-        <source>Would you like Red Panda C++ to search for compilers in the following locations: &lt;BR /&gt;&apos;%1&apos;&lt;BR /&gt;&apos;%2&apos;? </source>
+        <source>Would you like RedPandaIDE to search for compilers in the following locations: &lt;BR /&gt;&apos;%1&apos;&lt;BR /&gt;&apos;%2&apos;? </source>
         <translation>Вы хотели бы, чтобы Красная Панда Си++ поискала компиляторы в следующих местах: &lt;BR /&gt;&apos;%1&apos;&lt;BR /&gt;&apos;%2&apos;? </translation>
     </message>
     <message>
         <location filename="../settings.cpp" line="3461"/>
-        <source>Would you like Red Panda C++ to search for compilers in PATH?</source>
+        <source>Would you like RedPandaIDE to search for compilers in PATH?</source>
         <translation>Вы хотели бы, чтобы Красная Панда Си++ поискала компиляторы в PATH?</translation>
     </message>
     <message>

@@ -3427,7 +3427,7 @@ void Settings::CompilerSets::loadSets()
 //                                     +"<br /><br />"
 //                                     +QObject::tr("Leaving those directories will lead to problems during compilation.")
 //                                     +"<br /><br />"
-//                                     +QObject::tr("Would you like Red Panda C++ to remove them for you and add the default paths to the valid paths?")
+//                                     +QObject::tr("Would you like RedPandaIDE to remove them for you and add the default paths to the valid paths?")
 //                                     ,
 //                                     QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes) {
 //                return;
@@ -3452,13 +3452,13 @@ void Settings::CompilerSets::loadSets()
 #ifdef Q_OS_WIN
         QString msg = QObject::tr("Compiler set not configuared.")
                 +"<br /><br />"
-                +QObject::tr("Would you like Red Panda C++ to search for compilers in the following locations: <BR />'%1'<BR />'%2'? ")
+                +QObject::tr("Would you like RedPandaIDE to search for compilers in the following locations: <BR />'%1'<BR />'%2'? ")
                 .arg(getFilePath(pSettings->dirs().appDir(), "mingw32"))
                 .arg(getFilePath(pSettings->dirs().appDir(), + "mingw64"));
 #else
         QString msg = QObject::tr("Compiler set not configuared.")
                 +"<br /><br />"
-                +QObject::tr("Would you like Red Panda C++ to search for compilers in PATH?");
+                +QObject::tr("Would you like RedPandaIDE to search for compilers in PATH?");
 #endif
         if (QMessageBox::warning(nullptr,QObject::tr("Confirm"),
                    msg,

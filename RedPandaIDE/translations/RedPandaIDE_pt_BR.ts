@@ -9,8 +9,8 @@
         <translation>Sobre</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;h1 style=&quot; margin-top:18px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:xx-large; font-weight:600;&quot;&gt;Red Panda C++&lt;/span&gt;&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;h1 style=&quot; margin-top:18px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:xx-large; font-weight:600;&quot;&gt;Red Panda C++&lt;/span&gt;&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;h1 style=&quot; margin-top:18px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:xx-large; font-weight:600;&quot;&gt;RedPandaIDE&lt;/span&gt;&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;h1 style=&quot; margin-top:18px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:xx-large; font-weight:600;&quot;&gt;RedPandaIDE&lt;/span&gt;&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Based on Qt %1 (%2) rodando em %3</source>
@@ -960,13 +960,13 @@
     </message>
     <message>
         <location line="+233"/>
-        <source>Red Panda C++ will clear previously found compiler list and search for compilers in the following locations:&lt;br /&gt; &apos;%1&apos;&lt;br /&gt; &apos;%2&apos;&lt;br /&gt;Do you really want to continue?</source>
-        <translation>Red Panda C++ irá limpar a atual lista de compiladores encontrada anteriormente e irá procurar por compiladores em &lt;br /&gt; &apos;%1&apos;&lt;br /&gt; &apos;%2&apos;&lt;br /&gt;Quer mesmo continuar?</translation>
+        <source>RedPandaIDE will clear previously found compiler list and search for compilers in the following locations:&lt;br /&gt; &apos;%1&apos;&lt;br /&gt; &apos;%2&apos;&lt;br /&gt;Do you really want to continue?</source>
+        <translation>RedPandaIDE irá limpar a atual lista de compiladores encontrada anteriormente e irá procurar por compiladores em &lt;br /&gt; &apos;%1&apos;&lt;br /&gt; &apos;%2&apos;&lt;br /&gt;Quer mesmo continuar?</translation>
     </message>
     <message>
         <location line="+5"/>
-        <source>Red Panda C++ will clear previously found compiler list and search for compilers in the the PATH. &lt;br /&gt;Do you really want to continue?</source>
-        <translation>Red Panda C++ irá limpar a atual lista de compiladores encontrada anteriormente e irá procurar por compiladores no PATH. &lt;br /&gt;Quer mesmo continuar</translation>
+        <source>RedPandaIDE will clear previously found compiler list and search for compilers in the the PATH. &lt;br /&gt;Do you really want to continue?</source>
+        <translation>RedPandaIDE irá limpar a atual lista de compiladores encontrada anteriormente e irá procurar por compiladores no PATH. &lt;br /&gt;Quer mesmo continuar</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1161,8 +1161,8 @@
     </message>
     <message>
         <location line="+33"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Red Panda C++&apos;s Makefile has two important targets:&lt;/p&gt;&lt;p&gt;- all (which builds the executable)&lt;/p&gt;&lt;p&gt;- clean (which cleans up object files)&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&amp;quot;all&amp;quot; depends on 2 targets: all-before and all-after. All-before&lt;/p&gt;&lt;p&gt;gets called before the compilation process, and all-after gets&lt;/p&gt;&lt;p&gt;called after the compilation process.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&amp;quot;clean&amp;quot; depends on the target clean-custom, which gets called&lt;/p&gt;&lt;p&gt;before the cleaning process.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;You can change the Makefile&apos;s behavior by defining the targets&lt;/p&gt;&lt;p&gt;that &amp;quot;all&amp;quot; and &amp;quot;clean&amp;quot; depend on.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt; O arquivo Makefile do Red Panda C++ tem dois alvos importantes: &lt;/p&gt;&lt;p&gt;- all(que compilará o executável)&lt;/p&gt;&lt;p&gt;- clean (que limpará o arquivo objeto)&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&amp;quot;all&amp;quot; depende de dois alvos: all-before e all-after. All-before&lt;/p&gt;&lt;p&gt; será chamado antes de iniciar a compilação, e all-after &lt;/p&gt;&lt;p&gt; será chamado após a compilação.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&amp;quot;clean&amp;quot; depende do alvo clean-custom, que será chamado&lt;/p&gt;&lt;p&gt; antes de iniciar a limpeza.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;É possível alterar o comportamento do Makefile ao definir os alvos&lt;/p&gt;&lt;p&gt; que &amp;quot;all&amp;quot; e &amp;quot;clean&amp;quot; dependem.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;RedPandaIDE&apos;s Makefile has two important targets:&lt;/p&gt;&lt;p&gt;- all (which builds the executable)&lt;/p&gt;&lt;p&gt;- clean (which cleans up object files)&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&amp;quot;all&amp;quot; depends on 2 targets: all-before and all-after. All-before&lt;/p&gt;&lt;p&gt;gets called before the compilation process, and all-after gets&lt;/p&gt;&lt;p&gt;called after the compilation process.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&amp;quot;clean&amp;quot; depends on the target clean-custom, which gets called&lt;/p&gt;&lt;p&gt;before the cleaning process.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;You can change the Makefile&apos;s behavior by defining the targets&lt;/p&gt;&lt;p&gt;that &amp;quot;all&amp;quot; and &amp;quot;clean&amp;quot; depend on.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt; O arquivo Makefile do RedPandaIDE tem dois alvos importantes: &lt;/p&gt;&lt;p&gt;- all(que compilará o executável)&lt;/p&gt;&lt;p&gt;- clean (que limpará o arquivo objeto)&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&amp;quot;all&amp;quot; depende de dois alvos: all-before e all-after. All-before&lt;/p&gt;&lt;p&gt; será chamado antes de iniciar a compilação, e all-after &lt;/p&gt;&lt;p&gt; será chamado após a compilação.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&amp;quot;clean&amp;quot; depende do alvo clean-custom, que será chamado&lt;/p&gt;&lt;p&gt; antes de iniciar a limpeza.&lt;br/&gt;&lt;/p&gt;&lt;p&gt;É possível alterar o comportamento do Makefile ao definir os alvos&lt;/p&gt;&lt;p&gt; que &amp;quot;all&amp;quot; e &amp;quot;clean&amp;quot; dependem.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -2166,8 +2166,8 @@
     </message>
     <message>
         <location line="+7"/>
-        <source>Auto load files being open when Red Panda C++ last exited.</source>
-        <translation>Carregar automaticamente arquivos abertos quando o Red Panda C++ foi fechado da última vez.</translation>
+        <source>Auto load files being open when RedPandaIDE last exited.</source>
+        <translation>Carregar automaticamente arquivos abertos quando o RedPandaIDE foi fechado da última vez.</translation>
     </message>
     <message>
         <location line="+93"/>
@@ -2553,13 +2553,13 @@
     </message>
     <message>
         <location line="+6"/>
-        <source>Independent Red Panda C++ applications</source>
-        <translation>Aplicativos independentes do Red Panda C++</translation>
+        <source>Independent RedPandaIDE applications</source>
+        <translation>Aplicativos independentes do RedPandaIDE</translation>
     </message>
     <message>
         <location line="+7"/>
-        <source>The same Red Panda C++ application</source>
-        <translation>Aplicativo como o Red Panda C++</translation>
+        <source>The same RedPandaIDE application</source>
+        <translation>Aplicativo como o RedPandaIDE</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -2568,8 +2568,8 @@
     </message>
     <message>
         <location line="+16"/>
-        <source>Just check or uncheck for which file types Red Panda C++ wil be registered as the default application to open them ... </source>
-        <translation>Basta marcar ou desmarcar quais tipos de arquivos o Red Panda C++ irá registrar como aplicativos padrões para abrí-los ...</translation>
+        <source>Just check or uncheck for which file types RedPandaIDE wil be registered as the default application to open them ... </source>
+        <translation>Basta marcar ou desmarcar quais tipos de arquivos o RedPandaIDE irá registrar como aplicativos padrões para abrí-los ...</translation>
     </message>
 </context>
 <context>
@@ -4299,18 +4299,18 @@
     </message>
     <message>
         <location line="+1"/>
-        <source>Path to the Red Panda C++&apos;s executable file.</source>
-        <translation>Caminho para o arquivo executável do Red Panda C++.</translation>
+        <source>Path to the RedPandaIDE&apos;s executable file.</source>
+        <translation>Caminho para o arquivo executável do RedPandaIDE.</translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Version of the Red Panda C++</source>
-        <translation>Versão do Red Panda C++</translation>
+        <source>Version of the RedPandaIDE</source>
+        <translation>Versão do RedPandaIDE</translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>PATH to the Red Panda C++&apos;s installation folder.</source>
-        <translation>Caminho para a pasta de instalação do Red Panda C++</translation>
+        <source>PATH to the RedPandaIDE&apos;s installation folder.</source>
+        <translation>Caminho para a pasta de instalação do RedPandaIDE</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4388,8 +4388,8 @@
     <message>
         <location filename="../mainwindow.ui" line="+14"/>
         <location filename="../mainwindow.cpp" line="+1435"/>
-        <source>Red Panda C++</source>
-        <translation>Red Panda C++</translation>
+        <source>RedPandaIDE</source>
+        <translation>RedPandaIDE</translation>
     </message>
     <message>
         <location line="+512"/>
@@ -6419,8 +6419,8 @@
     </message>
     <message>
         <location line="+2"/>
-        <source>Red Panda C++ project file (*.dev)</source>
-        <translation>Arquivo de projeto Red Panda C++ (*.dev)</translation>
+        <source>RedPandaIDE project file (*.dev)</source>
+        <translation>Arquivo de projeto RedPandaIDE (*.dev)</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -7752,8 +7752,8 @@
     </message>
     <message>
         <location line="+1"/>
-        <source>The compiler settings format of Red Panda C++ has changed.</source>
-        <translation>Alterado o formato das configurações do compilador do Red Panda C++. </translation>
+        <source>The compiler settings format of RedPandaIDE has changed.</source>
+        <translation>Alterado o formato das configurações do compilador do RedPandaIDE. </translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7777,8 +7777,8 @@
     </message>
     <message>
         <location line="+94"/>
-        <source>Developed using the Red Panda C++ IDE</source>
-        <translation>Desenvolvido com uso da IDE Red Panda C++</translation>
+        <source>Developed using the RedPandaIDE IDE</source>
+        <translation>Desenvolvido com uso da IDE RedPandaIDE</translation>
     </message>
     <message>
         <location line="-1068"/>
@@ -9163,8 +9163,8 @@
         <translation type="vanished">Os seguintes problemas foram encontrados durante a validação do compilador &quot;%1&quot;:</translation>
     </message>
     <message>
-        <source>Would you like Red Panda C++ to remove them for you and add the default paths to the valid paths?</source>
-        <translation type="vanished">Gostaria que o Red Panda C++ os removesse e acrescentasse caminhos padrões para validar?</translation>
+        <source>Would you like RedPandaIDE to remove them for you and add the default paths to the valid paths?</source>
+        <translation type="vanished">Gostaria que o RedPandaIDE os removesse e acrescentasse caminhos padrões para validar?</translation>
     </message>
     <message>
         <source>Compiler set not configured.</source>
@@ -9192,13 +9192,13 @@
     </message>
     <message>
         <location line="+365"/>
-        <source>Would you like Red Panda C++ to search for compilers in the following locations: &lt;BR /&gt;&apos;%1&apos;&lt;BR /&gt;&apos;%2&apos;? </source>
-        <translation>Gostaria que o Red Panda C++ procurasse por compiladores nos seguintes locais: &lt;BR /&gt;&apos;%1&apos;&lt;BR /&gt;&apos;%2&apos;? </translation>
+        <source>Would you like RedPandaIDE to search for compilers in the following locations: &lt;BR /&gt;&apos;%1&apos;&lt;BR /&gt;&apos;%2&apos;? </source>
+        <translation>Gostaria que o RedPandaIDE procurasse por compiladores nos seguintes locais: &lt;BR /&gt;&apos;%1&apos;&lt;BR /&gt;&apos;%2&apos;? </translation>
     </message>
     <message>
         <location line="+6"/>
-        <source>Would you like Red Panda C++ to search for compilers in PATH?</source>
-        <translation>Gostaria que o Red Panda C++ procurasse por compiladores no PATH?</translation>
+        <source>Would you like RedPandaIDE to search for compilers in PATH?</source>
+        <translation>Gostaria que o RedPandaIDE procurasse por compiladores no PATH?</translation>
     </message>
     <message>
         <location line="+11"/>

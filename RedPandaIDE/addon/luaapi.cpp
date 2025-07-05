@@ -453,7 +453,7 @@ extern "C" int luaApi_System_supportedAppArchList(lua_State *L) noexcept {
                 break;
             case PROCESSOR_ARCHITECTURE_IA32_ON_WIN64: // undocumented but found in Qt source
             case PROCESSOR_ARCHITECTURE_IA64:
-                // does Red Panda C++ run on IA-64?
+                // does RedPandaIDE run on IA-64?
                 arches.insert("i386");
                 arches.insert("ia64");
                 break;

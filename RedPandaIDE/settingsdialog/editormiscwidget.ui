@@ -24,7 +24,7 @@
    <item>
     <widget class="QCheckBox" name="chkLoadLastFiles">
      <property name="text">
-      <string>Auto load files being open when Red Panda C++ last exited.</string>
+      <string>Auto load files being open when RedPandaIDE last exited.</string>
      </property>
     </widget>
    </item>
