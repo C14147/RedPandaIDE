@@ -193,7 +193,7 @@ void CompilerInfo::prepareCompilerOptions()
     addOption(CC_CMD_OPT_DEBUG_INFO, QObject::tr("Generate debugging information (-g3)"), groupName, true, true, false, "-g3");
     addOption(CC_CMD_OPT_PROFILE_INFO, QObject::tr("Generate profiling info for analysis (-pg)"), groupName, true, true, true, "-pg");
     addOption(CC_CMD_OPT_SYNTAX_ONLY, QObject::tr("Only check the code for syntax errors (-fsyntax-only)"), groupName, true, true, false, "-fsyntax-only");
-    addOption(CC_CMD_OPT_ENABLE_GCC_IMPORT_STD, QObject::tr("Enable experimental support for GCC standard library modules (-fmodules)"), groupName, false, true, false, "-fmodules");
+    addOption(CC_CMD_OPT_ENABLE_GCC_IMPORT_STD, QObject::tr("Enable experimental support for GCC standard library modules (-fmodules-ts)"), groupName, false, true, false, "-fmodules-ts");
 
     // Warnings
     groupName = QObject::tr("Warnings");
