@@ -46,17 +46,16 @@ NonExclusiveTemporaryFileOwner::~NonExclusiveTemporaryFileOwner()
         QFile::remove(filename);
 }
 
-FileType getFileType(const QString &filename)
+FileType getFileType(const QString &ffilename)
 {
-    if (filename.isEmpty())
+    if (ffilename.isEmpty())
         return FileType::None;
+
+    const QString filename = ffilename.toLower();
     if (filename.startsWith("makefile", PATH_SENSITIVITY)) {
         return FileType::MakeFile;
     }
     if (filename.endsWith(".s",PATH_SENSITIVITY)) {
-        return FileType::ATTASM;
-    }
-    if (filename.endsWith(".S",PATH_SENSITIVITY)) {
         return FileType::ATTASM;
     }
     if (filename.endsWith(".asm",PATH_SENSITIVITY)) {
@@ -64,12 +63,6 @@ FileType getFileType(const QString &filename)
     }
     if (filename.endsWith(".dev",PATH_SENSITIVITY)) {
         return FileType::Project;
-    }
-    if (filename.endsWith(".C")) {
-        return FileType::CppSource;
-    }
-    if (filename.endsWith(".CPP")) {
-        return FileType::CppSource;
     }
     if (filename.endsWith(".c",PATH_SENSITIVITY)) {
         return FileType::CSource;
@@ -85,9 +78,6 @@ FileType getFileType(const QString &filename)
     }
     if (filename.endsWith(".c++",PATH_SENSITIVITY)) {
         return FileType::CppSource;
-    }
-    if (filename.endsWith(".H")) {
-        return FileType::CCppHeader;
     }
     if (filename.endsWith(".h",PATH_SENSITIVITY)) {
         return FileType::CCppHeader;
@@ -116,24 +106,24 @@ FileType getFileType(const QString &filename)
     if (filename.endsWith(".rc",PATH_SENSITIVITY)) {
         return FileType::WindowsResourceSource;
     }
-    if (filename.endsWith(".in",PATH_SENSITIVITY)) {
-        return FileType::Text;
-    }
-    if (filename.endsWith(".out",PATH_SENSITIVITY)) {
-        return FileType::Text;
-    }
-    if (filename.endsWith(".txt",PATH_SENSITIVITY)) {
-        return FileType::Text;
-    }
-    if (filename.endsWith(".md",PATH_SENSITIVITY)) {
-        return FileType::Text;
-    }
-    if (filename.endsWith(".info",PATH_SENSITIVITY)) {
-        return FileType::Text;
-    }
-    if (filename.endsWith(".dat",PATH_SENSITIVITY)) {
-        return FileType::Text;
-    }
+    // if (filename.endsWith(".in",PATH_SENSITIVITY)) {
+    //     return FileType::Text;
+    // }
+    // if (filename.endsWith(".out",PATH_SENSITIVITY)) {
+    //     return FileType::Text;
+    // }
+    // if (filename.endsWith(".txt",PATH_SENSITIVITY)) {
+    //     return FileType::Text;
+    // }
+    // if (filename.endsWith(".md",PATH_SENSITIVITY)) {
+    //     return FileType::Text;
+    // }
+    // if (filename.endsWith(".info",PATH_SENSITIVITY)) {
+    //     return FileType::Text;
+    // }
+    // if (filename.endsWith(".dat",PATH_SENSITIVITY)) {
+    //     return FileType::Text;
+    // }
     if (filename.endsWith(".lua",PATH_SENSITIVITY)) {
         return FileType::LUA;
     }
@@ -148,9 +138,9 @@ FileType getFileType(const QString &filename)
     }
     QFileInfo info(filename);
     if (info.suffix().isEmpty()) {
-        return FileType::Other;
+        return FileType::CppSource;
     }
-    return FileType::Other;
+    return FileType::Text;
 }
 
 bool programIsWin32GuiApp(const QString & filename)
@@ -898,7 +888,7 @@ static const QMap<QString,FileType> FileTypeMapping{
     {"CppSource", FileType::CppSource}, // c++ source file (.cpp)
     {"CCppHeader", FileType::CCppHeader}, // c header (.h)
     {"WindowsResourceSource", FileType::WindowsResourceSource}, // resource source (.res)
-    {"Project", FileType::Project}, //Red Panda C++ Project (.dev)
+    {"Project", FileType::Project}, //RedPandaIDE Project (.dev)
     {"Text", FileType::Text}, // text file
     {"FragmentShader", FileType::FragmentShader},
     {"VerticeShader", FileType::VerticeShader},
