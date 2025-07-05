@@ -560,7 +560,8 @@ int wmain(int argc, wchar_t** argv) {
     double seconds = (endtime - starttime) / (double)GetClockFrequency();
 
     if (pBuf) {
-        strcpy(pBuf,"FINISHED");
+        //strcpy(pBuf,"FINISHED");
+        strcpy_s(pBuf,sizeof(char)*8,"FINISHED");
         UnmapViewOfFile(pBuf);
     }
     if (hSharedMemory != NULL && hSharedMemory!=INVALID_HANDLE_VALUE) {
