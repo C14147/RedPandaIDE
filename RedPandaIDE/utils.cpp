@@ -898,7 +898,7 @@ static const QMap<QString,FileType> FileTypeMapping{
     {"CppSource", FileType::CppSource}, // c++ source file (.cpp)
     {"CCppHeader", FileType::CCppHeader}, // c header (.h)
     {"WindowsResourceSource", FileType::WindowsResourceSource}, // resource source (.res)
-    {"Project", FileType::Project}, //Red Panda C++ Project (.dev)
+    {"Project", FileType::Project}, //RedPandaIDE Project (.dev)
     {"Text", FileType::Text}, // text file
     {"FragmentShader", FileType::FragmentShader},
     {"VerticeShader", FileType::VerticeShader},
