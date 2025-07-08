@@ -5,7 +5,8 @@ SUBDIRS += \
     consolepauser \
     redpanda_qt_utils \
     qsynedit \
-    lua
+    lua \
+    tools/qmarkdowntextedit/qmarkdowntextedit-lib.pro \
 
 consolepauser.subdir = tools/consolepauser
 redpanda_qt_utils.subdir = libs/redpanda_qt_utils
@@ -17,8 +18,9 @@ lua.subdir = libs/lua
 RedPandaIDE.depends = consolepauser qsynedit lua
 qsynedit.depends = redpanda_qt_utils
 
-APP_NAME = RedPandaCPP-CE
+APP_NAME = RedPandaIDE
 include(version.inc)
+include(tools/qmarkdowntextedit/qmarkdowntextedit.pri)
 
 !isEmpty(APP_VERSION_SUFFIX): {
     APP_VERSION = "$${APP_VERSION}$${APP_VERSION_SUFFIX}"

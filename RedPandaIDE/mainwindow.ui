@@ -126,7 +126,7 @@
      <x>0</x>
      <y>0</y>
      <width>2054</width>
-     <height>24</height>
+     <height>33</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -956,7 +956,7 @@
      <enum>QTabWidget::TabPosition::North</enum>
     </property>
     <property name="currentIndex">
-     <number>6</number>
+     <number>2</number>
     </property>
     <property name="iconSize">
      <size>
@@ -1048,6 +1048,21 @@
       </item>
      </layout>
     </widget>
+    <widget class="QWidget" name="tabConsole">
+     <attribute name="title">
+      <string>Console</string>
+     </attribute>
+     <widget class="TerminalWidget" name="terminalWidget" native="true">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>10</y>
+        <width>321</width>
+        <height>221</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
     <widget class="QWidget" name="tabDebug">
      <attribute name="title">
       <string>Debug</string>
@@ -1133,7 +1148,7 @@
           <enum>QTabWidget::TabPosition::North</enum>
          </property>
          <property name="currentIndex">
-          <number>4</number>
+          <number>2</number>
          </property>
          <widget class="QWidget" name="tabDebugConsole">
           <attribute name="title">
@@ -3394,6 +3409,12 @@
    <class>ShrinkableTabWidget</class>
    <extends>QTabWidget</extends>
    <header location="global">widgets/shrinkabletabwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TerminalWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">widgets/terminalwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
