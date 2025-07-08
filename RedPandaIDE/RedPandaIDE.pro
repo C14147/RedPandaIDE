@@ -242,7 +242,8 @@ SOURCES += \
     widgets/searchresultview.cpp \
     widgets/shortcutinputedit.cpp \
     widgets/shrinkabletabwidget.cpp \
-    widgets/signalmessagedialog.cpp
+    widgets/signalmessagedialog.cpp \
+    widgets/terminalwidget.cpp
 
 HEADERS += \
     SimpleIni.h \
@@ -379,7 +380,8 @@ HEADERS += \
     widgets/searchresultview.h \
     widgets/shortcutinputedit.h \
     widgets/shrinkabletabwidget.h \
-    widgets/signalmessagedialog.h
+    widgets/signalmessagedialog.h \
+    widgets/terminalwidget.h
 
 FORMS += \
     settingsdialog/compilerautolinkwidget.ui \
