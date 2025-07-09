@@ -1,4 +1,4 @@
-#include "Terminalwidget.h"
+#include "terminalwidget.h"
 
 #ifdef Q_OS_WIN
 const QString DEFAULT_SHELL = "cmd.exe";

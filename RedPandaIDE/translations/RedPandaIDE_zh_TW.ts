@@ -4163,45 +4163,44 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.ui" line="+14"/>
         <location filename="../mainwindow.cpp" line="+1435"/>
         <source>RedPandaIDE</source>
         <translation>小熊猫C++</translation>
     </message>
     <message>
-        <location line="+512"/>
-        <location line="+2250"/>
+        <location filename="../mainwindow.ui" line="+535"/>
+        <location line="+2281"/>
         <source>Files</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location line="-2497"/>
+        <location line="-2528"/>
         <location line="+328"/>
-        <location line="+2145"/>
+        <location line="+2176"/>
         <source>Project</source>
         <translation>項目</translation>
     </message>
     <message>
-        <location line="-2095"/>
-        <location line="+2103"/>
+        <location line="-2126"/>
+        <location line="+2134"/>
         <source>Watch</source>
         <translation>監視</translation>
     </message>
     <message>
-        <location line="-2062"/>
-        <location line="+2070"/>
+        <location line="-2093"/>
+        <location line="+2101"/>
         <source>Structure</source>
         <translation>結構</translation>
     </message>
     <message>
-        <location line="-2032"/>
+        <location line="-2063"/>
         <location line="+24"/>
-        <location line="+2024"/>
+        <location line="+2055"/>
         <source>Problem Set</source>
         <translation>試題集</translation>
     </message>
     <message>
-        <location line="-1996"/>
+        <location line="-2027"/>
         <location line="+3"/>
         <location filename="../mainwindow.cpp" line="+1490"/>
         <location line="+5931"/>
@@ -4240,7 +4239,7 @@
     </message>
     <message>
         <location line="+109"/>
-        <location line="+1832"/>
+        <location line="+1863"/>
         <location filename="../mainwindow.cpp" line="-2872"/>
         <location line="+3"/>
         <location line="+4"/>
@@ -4250,14 +4249,14 @@
         <translation>編譯器</translation>
     </message>
     <message>
-        <location line="-1782"/>
-        <location line="+1790"/>
+        <location line="-1814"/>
+        <location line="+1822"/>
         <source>Tools Output</source>
         <translation>工具輸出</translation>
     </message>
     <message>
-        <location line="-2354"/>
-        <location line="+599"/>
+        <location line="-2385"/>
+        <location line="+630"/>
         <location line="+1258"/>
         <location line="+3"/>
         <location line="+502"/>
@@ -4307,8 +4306,8 @@
         <translation>地址運算式：</translation>
     </message>
     <message>
-        <location line="-1034"/>
-        <location line="+1073"/>
+        <location line="-1065"/>
+        <location line="+1104"/>
         <location line="+1508"/>
         <location filename="../mainwindow.cpp" line="+5900"/>
         <source>Search</source>
@@ -4431,7 +4430,7 @@
         <translation>期望輸出</translation>
     </message>
     <message>
-        <location line="-1801"/>
+        <location line="-1832"/>
         <location filename="../mainwindow.cpp" line="+4678"/>
         <location line="+1"/>
         <location line="+1"/>
@@ -4497,18 +4496,18 @@
     </message>
     <message>
         <location line="+37"/>
-        <location line="+1683"/>
+        <location line="+1715"/>
         <location line="+3"/>
         <source>Compile</source>
         <translation>編譯</translation>
     </message>
     <message>
-        <location line="-1637"/>
+        <location line="-1669"/>
         <source>Compiler Set</source>
         <translation>編譯器配寘集</translation>
     </message>
     <message>
-        <location line="+1562"/>
+        <location line="+1594"/>
         <source>New Source File</source>
         <translation>新建原始碼檔</translation>
     </message>
@@ -4558,12 +4557,22 @@
         <translation>Ctrl+Shift+S</translation>
     </message>
     <message>
-        <location line="-1884"/>
+        <location line="-2104"/>
+        <source>RedPandaIDE CE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+189"/>
         <source>File Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1905"/>
+        <location line="+850"/>
+        <source>Console</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1086"/>
         <source>Options</source>
         <translation>選項</translation>
     </message>
@@ -6314,7 +6323,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2488"/>
+        <location line="-2519"/>
         <source>Explorer</source>
         <translation>管理器</translation>
     </message>
@@ -6324,7 +6333,7 @@
         <translation>消息</translation>
     </message>
     <message>
-        <location line="+2056"/>
+        <location line="+2087"/>
         <source>Toggle Explorer Panel</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6364,12 +6373,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2652"/>
+        <location line="-2683"/>
         <source>Selection</source>
         <translation>選擇</translation>
     </message>
     <message>
-        <location line="+2657"/>
+        <location line="+2688"/>
         <source>Select Word</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6487,7 +6496,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2193"/>
+        <location line="-2224"/>
         <location filename="../mainwindow.cpp" line="-261"/>
         <location line="+7173"/>
         <source>Import FPS Problem Set</source>
@@ -6509,12 +6518,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="+2201"/>
+        <location filename="../mainwindow.ui" line="+2232"/>
         <source>Trim trailing spaces</source>
         <translation type="unfinished">刪除行尾空格</translation>
     </message>
     <message>
-        <location line="-2189"/>
+        <location line="-2220"/>
         <location filename="../mainwindow.cpp" line="-7169"/>
         <location line="+7198"/>
         <source>Export FPS Problem Set</source>
@@ -6536,7 +6545,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="+1077"/>
+        <location filename="../mainwindow.ui" line="+1109"/>
         <source>Choose Expected Output File</source>
         <translation>選擇期望輸出檔案</translation>
     </message>
@@ -6899,7 +6908,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="-3086"/>
+        <location filename="../mainwindow.ui" line="-3117"/>
         <source>Move Caret</source>
         <translation>移動光標</translation>
     </message>
@@ -7305,7 +7314,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+372"/>
+        <location line="+376"/>
         <source>Project Updated</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7366,11 +7375,11 @@
     </message>
     <message>
         <location line="+94"/>
-        <source>Developed using the RedPandaIDE IDE</source>
+        <source>Developed using the RedPandaIDE</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1068"/>
+        <location line="-1072"/>
         <location line="+98"/>
         <source>Error</source>
         <translation type="unfinished">錯誤</translation>
@@ -7885,7 +7894,7 @@
 <context>
     <name>ProjectModel</name>
     <message>
-        <location filename="../project.cpp" line="+1556"/>
+        <location filename="../project.cpp" line="+1560"/>
         <source>File exists</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8138,7 +8147,7 @@
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="../main.cpp" line="+458"/>
+        <location filename="../main.cpp" line="+463"/>
         <source>Error</source>
         <translation type="unfinished">錯誤</translation>
     </message>
@@ -8403,7 +8412,7 @@
     </message>
     <message>
         <location line="+6"/>
-        <location filename="../main.cpp" line="-260"/>
+        <location filename="../main.cpp" line="-265"/>
         <location line="+7"/>
         <source>Error</source>
         <translation type="unfinished">錯誤</translation>
@@ -8458,7 +8467,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+195"/>
+        <location line="+200"/>
         <source>Can&apos;t load autolink settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8489,7 +8498,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+98"/>
+        <location line="+95"/>
+        <source>Enable experimental support for GCC standard library modules (-fmodules-ts)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Warnings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8817,12 +8831,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>Enable experimental support for GCC standard library modules (-fmodules)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+32"/>
+        <location line="+37"/>
         <source>PE Stack Size</source>
         <translation type="unfinished"></translation>
     </message>

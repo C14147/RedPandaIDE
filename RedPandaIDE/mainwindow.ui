@@ -1052,16 +1052,33 @@
      <attribute name="title">
       <string>Console</string>
      </attribute>
-     <widget class="TerminalWidget" name="terminalWidget" native="true">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>10</y>
-        <width>321</width>
-        <height>221</height>
-       </rect>
+     <layout class="QHBoxLayout" name="horizontalLayout_cons">
+      <property name="spacing">
+       <number>7</number>
       </property>
-     </widget>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="TerminalWidget" name="terminalWidget" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
     <widget class="QWidget" name="tabDebug">
      <attribute name="title">
