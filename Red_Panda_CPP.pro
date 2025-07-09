@@ -6,12 +6,13 @@ SUBDIRS += \
     redpanda_qt_utils \
     qsynedit \
     lua \
-    tools/qmarkdowntextedit/qmarkdowntextedit-lib.pro \
+    qmarkdowntextedit \
 
 consolepauser.subdir = tools/consolepauser
 redpanda_qt_utils.subdir = libs/redpanda_qt_utils
 qsynedit.subdir = libs/qsynedit
 lua.subdir = libs/lua
+qmarkdowntextedit.subdir = libs/qmarkdowntextedit
 
 # Add the dependencies so that the RedPandaIDE project can add the depended programs
 # into the main app bundle
@@ -20,7 +21,7 @@ qsynedit.depends = redpanda_qt_utils
 
 APP_NAME = RedPandaIDE
 include(version.inc)
-include(tools/qmarkdowntextedit/qmarkdowntextedit.pri)
+include($${qmarkdowntextedit.subdir}/qmarkdowntextedit.pri)
 
 !isEmpty(APP_VERSION_SUFFIX): {
     APP_VERSION = "$${APP_VERSION}$${APP_VERSION_SUFFIX}"

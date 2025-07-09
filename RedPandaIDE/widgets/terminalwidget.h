@@ -1,38 +1,32 @@
-#ifndef TERMINALWIDGET_H
-#define TERMINALWIDGET_H
+#ifndef TerminalWidget_H
+#define TerminalWidget_H
 
 #include <QWidget>
-#include <QTextEdit>
+#include <QPlainTextEdit>
 #include <QLineEdit>
-#include <QVBoxLayout>
 #include <QProcess>
+#include <QVBoxLayout>
 #include <QKeyEvent>
 
-class TerminalWidget : public QWidget
-{
+class TerminalWidget : public QWidget {
     Q_OBJECT
-
 public:
     explicit TerminalWidget(QWidget *parent = nullptr);
     ~TerminalWidget();
 
+private slots:
+    void onReadyRead();
+    void onCommandEntered();
+
 protected:
     void keyPressEvent(QKeyEvent *event) override;
 
-private slots:
-    void onReadyReadStandardOutput();
-    void onReadyReadStandardError();
-    void onProcessFinished(int exitCode, QProcess::ExitStatus exitStatus);
-    void onLineEditReturnPressed();
-
 private:
-    QTextEdit *outputTextEdit;
-    QLineEdit *inputLineEdit;
-    QVBoxLayout *mainLayout;
+    QPlainTextEdit *output;
+    QLineEdit *input;
     QProcess *process;
-    QString currentCommand;
     QString shell;
-    QStringList shellArgs;
+    void startShell();
 };
 
-#endif // TERMINALWIDGET_H    
+#endif // TerminalWidget_H
