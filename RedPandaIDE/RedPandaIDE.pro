@@ -1,6 +1,6 @@
 QT       += core gui printsupport network svg xml widgets
 
-CONFIG += c++20
+CONFIG += c++17
 CONFIG += nokey
 
 win32: CONFIG += lrelease_dosdevice
