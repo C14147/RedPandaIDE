@@ -41,6 +41,8 @@ EditorColorSchemeWidget::EditorColorSchemeWidget(const QString& name, const QStr
     mDefaultSchemeComboFont = ui->cbScheme->font();
     mModifiedSchemeComboFont = mDefaultSchemeComboFont;
     mModifiedSchemeComboFont.setBold(true);
+
+    pColorManager->reload();
     int schemeCount=0;
     foreach (const QString &schemeName, pColorManager->getSchemes()) {
         PColorScheme scheme = pColorManager->get(schemeName);
