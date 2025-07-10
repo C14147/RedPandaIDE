@@ -17,7 +17,7 @@ if is_os("windows") then
 end
 
 option("app-name")
-    set_default("RedPandaCPP")
+    set_default("RedPandaIDE CE")
     set_showmenu(true)
     add_defines("APP_NAME=\"$(app-name)\"")
 
@@ -190,6 +190,7 @@ end
 includes("libs/qsynedit")
 includes("libs/redpanda_qt_utils")
 includes("tools/consolepauser")
+--includes("tools/qmarkdowntextedit")
 if has_config("vcs") then
     if is_os("windows") then
         includes("tools/redpanda-win-git-askpass")

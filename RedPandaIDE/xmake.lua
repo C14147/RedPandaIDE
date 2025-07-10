@@ -117,7 +117,8 @@ target("RedPandaIDE")
         "widgets/qpatchedcombobox",
         "widgets/searchresultview",
         "widgets/shortcutinputedit",
-        "widgets/shrinkabletabwidget")
+        "widgets/shrinkabletabwidget",
+	"widgets/terminalwidget")
 
     add_ui_classes(
         "mainwindow",
