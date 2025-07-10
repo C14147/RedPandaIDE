@@ -73,7 +73,7 @@ ToolsGeneralWidget::ToolsGeneralWidget(const QString &name, const QString &group
             this, &ToolsGeneralWidget::onEdited);
     connect(ui->cbOutput, qOverload<int>(&QComboBox::currentIndexChanged),
             this, &ToolsGeneralWidget::onEdited);
-    connect(ui->chkUTF8, &QCheckBox::stateChanged,
+    connect(ui->chkUTF8, &QCheckBox::checkStateChanged,
             this, &ToolsGeneralWidget::onEdited);
 }
 

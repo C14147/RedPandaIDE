@@ -142,7 +142,7 @@ void SettingsWidget::disconnectInputs()
         disconnect(p, &QLineEdit::textChanged, this, &SettingsWidget::setSettingsChanged);
     }
     for (QCheckBox* p:findChildren<QCheckBox*>()) {
-        disconnect(p, &QCheckBox::stateChanged, this, &SettingsWidget::setSettingsChanged);
+        disconnect(p, &QCheckBox::checkStateChanged, this, &SettingsWidget::setSettingsChanged);
     }
     for (QRadioButton* p:findChildren<QRadioButton*>()) {
         disconnect(p, &QRadioButton::toggled, this, &SettingsWidget::setSettingsChanged);

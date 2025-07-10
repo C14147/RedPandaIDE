@@ -44,9 +44,9 @@ CompilerSetOptionWidget::CompilerSetOptionWidget(const QString& name, const QStr
     mCppIncludeDirWidget = new CompilerSetDirectoriesWidget();
     ui->dirTabs->addTab(mCppIncludeDirWidget,QObject::tr("C++ Includes"));
 
-    connect(ui->chkUseCustomCompilerParams, &QCheckBox::stateChanged,
+    connect(ui->chkUseCustomCompilerParams, &QCheckBox::checkStateChanged,
              ui->txtCustomCompileParams, &QPlainTextEdit::setEnabled);
-    connect(ui->chkUseCustomLinkParams, &QCheckBox::stateChanged,
+    connect(ui->chkUseCustomLinkParams, &QCheckBox::checkStateChanged,
              ui->txtCustomLinkParams, &QPlainTextEdit::setEnabled);
 
 #ifdef Q_OS_WIN
