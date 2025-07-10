@@ -18,6 +18,7 @@
 #define EDITORCLIPBOARDWIDGET_H
 
 #include <QWidget>
+#include <QCheckBox>
 #include "settingswidget.h"
 
 namespace Ui {

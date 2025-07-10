@@ -35,15 +35,15 @@ EditorClipboardWidget::EditorClipboardWidget(const QString& name, const QString&
         ui->cbRTFColorScheme->addItem(name);
     }
     connect(ui->chkCopyRTFUseEditorColor,
-            &QCheckBox::stateChanged,
+            &QCheckBox_stateChanged,
             this,
             &EditorClipboardWidget::onUseSchemeChanged);
     connect(ui->chkCopyHTMLUseEditorColor,
-            &QCheckBox::stateChanged,
+            &QCheckBox_stateChanged,
             this,
             &EditorClipboardWidget::onUseSchemeChanged);
     connect(ui->chkCopyHTMLWithLineNumber,
-            &QCheckBox::stateChanged,
+            &QCheckBox_stateChanged,
             ui->chkCopyHTMLRecalcLineNumber,
             &QCheckBox::setEnabled);
 }

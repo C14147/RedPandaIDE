@@ -18,6 +18,14 @@
 #define SETTINGSWIDGET_H
 
 #include <QWidget>
+#include <QCheckBox>
+
+// Avoid using deprecated functions in Qt6
+#if QT_VERSION_MAJOR == 6
+#  define QCheckBox_stateChanged QCheckBox::checkStateChanged;
+#else
+#  define QCheckBox_stateChanged QCheckBox::stateChanged;
+#endif
 
 class QAbstractItemView;
 class SettingsWidget : public QWidget

@@ -21,6 +21,7 @@
 #include "../colorscheme.h"
 
 #include <QMenu>
+#include <QCheckBox>
 #include <QStandardItemModel>
 #include <QStyledItemDelegate>
 
