@@ -22,9 +22,9 @@
 
 // Avoid using deprecated functions in Qt6
 #if QT_VERSION_MAJOR == 6
-#  define QCheckBox_stateChanged QCheckBox::checkStateChanged;
+#  define QCheckBox_stateChanged QCheckBox::checkStateChanged
 #else
-#  define QCheckBox_stateChanged QCheckBox::stateChanged;
+#  define QCheckBox_stateChanged QCheckBox::stateChanged
 #endif
 
 class QAbstractItemView;
