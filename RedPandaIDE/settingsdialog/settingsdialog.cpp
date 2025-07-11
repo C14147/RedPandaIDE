@@ -39,6 +39,7 @@
 #include "environmentprogramswidget.h"
 #include "executorgeneralwidget.h"
 #include "executorproblemsetwidget.h"
+#include "extensionswidget.h"
 #include "debuggeneralwidget.h"
 #include "formattergeneralwidget.h"
 #include "formatterpathwidget.h"
@@ -229,6 +230,9 @@ PSettingsDialog SettingsDialog::optionDialog(QWidget *parent)
     dialog->addWidget(widget);
 
     widget = new ToolsGeneralWidget(tr("General"),tr("Tools"));
+    dialog->addWidget(widget);
+
+    widget = new ExtensionsWidget(tr("Extension Manager"),tr("Tools"));
     dialog->addWidget(widget);
 
 #ifdef ENABLE_VCS

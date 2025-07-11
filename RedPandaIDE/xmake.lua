@@ -118,7 +118,8 @@ target("RedPandaIDE")
         "widgets/searchresultview",
         "widgets/shortcutinputedit",
         "widgets/shrinkabletabwidget",
-	"widgets/terminalwidget")
+	    "widgets/terminalwidget",
+        "downloadtool")
 
     add_ui_classes(
         "mainwindow",
@@ -160,6 +161,7 @@ target("RedPandaIDE")
         "settingsdialog/projectprecompilewidget",
         "settingsdialog/settingsdialog",
         "settingsdialog/toolsgeneralwidget",
+        "settingsdialog/extensionswidget",
         -- widgets
         "widgets/aboutdialog",
         "widgets/choosethemedialog",

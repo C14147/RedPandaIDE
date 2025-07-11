@@ -134,6 +134,7 @@ SOURCES += \
 #    debugger/dapprotocol.cpp \
 #    debugger/dapdebugger.cpp \    
     cpprefacter.cpp \
+    downloadtool.cpp \
     parser/cppparser.cpp \
     parser/cpppreprocessor.cpp \
     parser/cpptokenizer.cpp \
@@ -205,6 +206,7 @@ SOURCES += \
     settingsdialog/executorgeneralwidget.cpp \
     settingsdialog/settingsdialog.cpp \
     settingsdialog/settingswidget.cpp \
+    settingsdialog/extensionswidget.cpp \
     systemconsts.cpp \
     utils.cpp \
     utils/escape.cpp \
@@ -271,6 +273,7 @@ HEADERS += \
 #    debugger/dapdebugger.h \    
     cpprefacter.h \
     customfileiconprovider.h \
+    downloadtool.h \
     parser/cppparser.h \
     parser/cpppreprocessor.h \
     parser/cpptokenizer.h \
@@ -310,6 +313,7 @@ HEADERS += \
     settingsdialog/projectoutputwidget.h \
     settingsdialog/projectprecompilewidget.h \
     settingsdialog/toolsgeneralwidget.h \
+    settingsdialog/extensionswidget.h \
     shortcutmanager.h \
     symbolusagemanager.h \
     syntaxermanager.h \
@@ -412,6 +416,7 @@ FORMS += \
     settingsdialog/projectoutputwidget.ui \
     settingsdialog/projectprecompilewidget.ui \
     settingsdialog/toolsgeneralwidget.ui \
+    settingsdialog/extensionswidget.ui \
     widgets/aboutdialog.ui \
     widgets/choosethemedialog.ui \
     widgets/cpudialog.ui \

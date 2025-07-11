@@ -1,26 +1,27 @@
 <RCC>
-    <qresource prefix="/icons">
-        <file>images/devcpp.ico</file>
-        <file>images/associations/c.ico</file>
-        <file>images/associations/cpp.ico</file>
-        <file>images/associations/dev.ico</file>
-        <file>images/associations/devpackage.ico</file>
-        <file>images/associations/devpak.ico</file>
-        <file>images/associations/h.ico</file>
-        <file>images/associations/hpp.ico</file>
-        <file>images/associations/ide.ico</file>
-        <file>images/associations/IDE2.ico</file>
-        <file>images/associations/o.ico</file>
-        <file>images/associations/obj.ico</file>
-        <file>images/associations/rc.ico</file>
-        <file>images/associations/template.ico</file>
-        <file>images/dark-close.svg</file>
-        <file>images/devcpp-gray.ico</file>
-        <file>images/devcpp-gray.png</file>
-        <file>images/SplashScreen.png</file>
-    </qresource>
-    <qresource prefix="/demos">
-        <file alias="dark.png">images/demos/dark.png</file>
-        <file alias="light.png">images/demos/light.png</file>
-    </qresource>
+  <qresource prefix="/icons">
+    <file>images/extension.svg</file>
+    <file>images/devcpp.ico</file>
+    <file>images/associations/c.ico</file>
+    <file>images/associations/cpp.ico</file>
+    <file>images/associations/dev.ico</file>
+    <file>images/associations/devpackage.ico</file>
+    <file>images/associations/devpak.ico</file>
+    <file>images/associations/h.ico</file>
+    <file>images/associations/hpp.ico</file>
+    <file>images/associations/ide.ico</file>
+    <file>images/associations/IDE2.ico</file>
+    <file>images/associations/o.ico</file>
+    <file>images/associations/obj.ico</file>
+    <file>images/associations/rc.ico</file>
+    <file>images/associations/template.ico</file>
+    <file>images/dark-close.svg</file>
+    <file>images/devcpp-gray.ico</file>
+    <file>images/devcpp-gray.png</file>
+    <file>images/SplashScreen.png</file>
+  </qresource>
+  <qresource prefix="/demos">
+    <file alias="dark.png">images/demos/dark.png</file>
+    <file alias="light.png">images/demos/light.png</file>
+  </qresource>
 </RCC>
