@@ -74,7 +74,9 @@ EditorColorSchemeWidget::EditorColorSchemeWidget(const QString& name, const QStr
             this, &EditorColorSchemeWidget::onItemSelectionChanged);
     connect(this, &SettingsWidget::settingsChanged,this,
             &EditorColorSchemeWidget::onSettingChanged);
-    connect(ui->reloadButton, &QPushButton::clicked, this, &pColorManager->reload);
+    connect(ui->reloadButton, &QPushButton::clicked, this, [this](){
+        pColorManager->reload();
+    });
     ui->editDemo->setUseCodeFolding(true);
     ui->editDemo->document()->setText(
             "#include <iostream>\n"
