@@ -10,12 +10,12 @@ namespace Ui {
 class ExtensionsWidget;
 }
 
-class ExtensionsWidget : public QWidget
+class ExtensionsWidget : public SettingsWidget
 {
     Q_OBJECT
 
 public:
-    explicit ExtensionsWidget(const QString& name, const QString& group,QWidget *parent = nullptr);
+    explicit ExtensionsWidget(const QString& name, const QString& group,QWidget *parent = nullptr): SettingsWidget(name,group,parent);
     ~ExtensionsWidget();
 
 private:
