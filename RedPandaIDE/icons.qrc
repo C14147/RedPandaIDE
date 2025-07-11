@@ -1,6 +1,5 @@
 <RCC>
   <qresource prefix="/icons">
-    <file>images/extension.svg</file>
     <file>images/devcpp.ico</file>
     <file>images/associations/c.ico</file>
     <file>images/associations/cpp.ico</file>
