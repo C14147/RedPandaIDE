@@ -1647,6 +1647,19 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>DownloadTool</name>
+    <message>
+        <location filename="../downloadtool.cpp" line="+83"/>
+        <source>Downloaded %1 bytes to %2 in %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>Downloading %1...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Editor</name>
     <message>
         <source>untitled</source>
@@ -2071,6 +2084,11 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">选项</translation>
     </message>
     <message>
+        <location line="+7"/>
+        <source>Reload</source>
+        <translation>重新加载</translation>
+    </message>
+    <message>
         <location line="+141"/>
         <source>Foreground:</source>
         <translation>前景色</translation>
@@ -2151,7 +2169,7 @@ p, li { white-space: pre-wrap; }
         <translation>背景色</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="+350"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="+355"/>
         <location line="+53"/>
         <location line="+9"/>
         <location line="+13"/>
@@ -2465,7 +2483,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">最大步数</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+57"/>
         <source>Action before saving files</source>
         <translation>保存前动作</translation>
     </message>
@@ -2493,7 +2511,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">在保存文件时自动重新排版</translation>
     </message>
     <message>
-        <location line="-86"/>
+        <location line="-93"/>
         <source>Parse TODOs</source>
         <translation>查找代码中的TODO注释（含todo或者fixme的注释）</translation>
     </message>
@@ -2508,6 +2526,11 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>MB</source>
         <translation type="vanished">MB</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Create a new file after startup</source>
+        <translation type="unfinished">启动时新建一个文件</translation>
     </message>
     <message>
         <location line="+49"/>
@@ -2544,7 +2567,7 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">ANSI</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editormiscwidget.cpp" line="+102"/>
+        <location filename="../settingsdialog/editormiscwidget.cpp" line="+104"/>
         <source>System Default(%1)</source>
         <translation>系统默认(%1)</translation>
     </message>
@@ -3348,6 +3371,104 @@ p, li { white-space: pre-wrap; }
         <location line="+1"/>
         <source>Ignore spaces</source>
         <translation>忽略多余空格</translation>
+    </message>
+</context>
+<context>
+    <name>ExtensionsWidget</name>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.ui" line="+14"/>
+        <source>Form</source>
+        <translation type="unfinished">表单</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Search</source>
+        <translation type="unfinished">搜索</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>RedPandaIDE CE Software</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Information</source>
+        <translation>信息</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Extension Name:</source>
+        <translation>扩展名称：</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>ExtN</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Extension Type:</source>
+        <translation>扩展类型：</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Author:</source>
+        <translation>作者：</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>C14147</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Introduction：</source>
+        <translation>描述：</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Download Proxy：</source>
+        <translation>下载代理：</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>https://wget.la/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>https://ghfast.top/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>https://ghproxy.net/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Download</source>
+        <translation>下载</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Status:</source>
+        <translation>状态：</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Ready</source>
+        <translation>就绪</translation>
     </message>
 </context>
 <context>
@@ -9371,7 +9492,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="../main.cpp" line="+463"/>
+        <location filename="../main.cpp" line="+468"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
@@ -9465,7 +9586,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../colorscheme.cpp" line="+589"/>
-        <location filename="../main.cpp" line="-265"/>
+        <location filename="../main.cpp" line="-270"/>
         <location line="+7"/>
         <source>Error</source>
         <translation>错误</translation>
@@ -9481,9 +9602,24 @@ p, li { white-space: pre-wrap; }
         <translation>无法写入配置文件夹&quot;%1&quot;</translation>
     </message>
     <message>
-        <location line="+200"/>
+        <location line="+143"/>
+        <source>Loading settings...</source>
+        <translation>加载配置...</translation>
+    </message>
+    <message>
+        <location line="+57"/>
         <source>Can&apos;t load autolink settings</source>
         <translation>无法载入自动链接设置</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Creating window...</source>
+        <translation>创建窗体...</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Preparing Files...</source>
+        <translation>准备文件...</translation>
     </message>
     <message>
         <source>The following %1 directories don&apos;t exist:</source>
@@ -9584,7 +9720,7 @@ p, li { white-space: pre-wrap; }
         <translation>生成调试信息(-g3)</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="+3461"/>
+        <location filename="../settings.cpp" line="+3473"/>
         <source>Would you like RedPandaIDE to search for compilers in PATH?</source>
         <translation>您同意小熊猫C++在PATH路径中寻找gcc编译器吗？</translation>
     </message>
@@ -11476,7 +11612,7 @@ p, li { white-space: pre-wrap; }
     <name>SettingsDialog</name>
     <message>
         <location filename="../settingsdialog/settingsdialog.ui" line="+14"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="+142"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="+143"/>
         <source>Options</source>
         <translation>选项</translation>
     </message>
@@ -11546,14 +11682,14 @@ p, li { white-space: pre-wrap; }
         <location line="+7237"/>
         <location line="+5"/>
         <location filename="../settingsdialog/settingsdialog.cpp" line="+10"/>
-        <location line="+95"/>
+        <location line="+98"/>
         <source>Compiler Set</source>
         <translation>编译器配置集</translation>
     </message>
     <message>
         <location line="-7241"/>
         <location line="+7237"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="-95"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="-98"/>
         <location line="+3"/>
         <source>Compiler</source>
         <translation>编译器</translation>
@@ -11570,12 +11706,12 @@ p, li { white-space: pre-wrap; }
         <location line="+6"/>
         <location line="+3"/>
         <location line="+6"/>
-        <location line="+27"/>
+        <location line="+30"/>
         <source>General</source>
         <translation>通用</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="-83"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="-86"/>
         <location line="+3"/>
         <location line="+3"/>
         <location line="+3"/>
@@ -11692,12 +11828,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+3"/>
+        <location line="+3"/>
         <location line="+4"/>
         <source>Tools</source>
         <translation>工具</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="-4"/>
+        <source>Extension Manager</source>
+        <translation>扩展管理器</translation>
+    </message>
+    <message>
+        <location line="+4"/>
         <source>Git</source>
         <translation>Git</translation>
     </message>

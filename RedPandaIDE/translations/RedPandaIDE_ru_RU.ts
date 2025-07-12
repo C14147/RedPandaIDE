@@ -1281,6 +1281,19 @@
     </message>
 </context>
 <context>
+    <name>DownloadTool</name>
+    <message>
+        <location filename="../downloadtool.cpp" line="83"/>
+        <source>Downloaded %1 bytes to %2 in %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../downloadtool.cpp" line="116"/>
+        <source>Downloading %1...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Editor</name>
     <message>
         <location filename="../editor.cpp" line="123"/>
@@ -1621,135 +1634,140 @@
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="188"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="61"/>
+        <source>Reload</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="195"/>
         <source>Background:</source>
         <translation>Цвет фона:</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="195"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="202"/>
         <source>Foreground:</source>
         <translation>Основной цвет:</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="265"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="272"/>
         <source>Font Styles</source>
         <translation>Стили шрифта</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="271"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="278"/>
         <source>Bold</source>
         <translation>Жирный</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="278"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="285"/>
         <source>Italic</source>
         <translation>Курсив</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="285"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="292"/>
         <source>Strikeout</source>
         <translation>Зачеркнутый</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="292"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="299"/>
         <source>Underlined</source>
         <translation>Подчеркнутый</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="352"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="359"/>
         <source>Rainbow parenthesis</source>
         <translation>Радужные скобки</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="359"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="366"/>
         <source>Rainbow Indent Guides</source>
         <translation>Радужные линии отступа</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="366"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="373"/>
         <source>Rainbow Indents</source>
         <translation>Радужные отступы</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="376"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="383"/>
         <source>Duplicate...</source>
         <translation>Дублировать...</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="381"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="388"/>
         <source>Rename...</source>
         <translation>Переименовать...</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="386"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="393"/>
         <source>Restore to Default</source>
         <translation>Восстановить по умолчанию</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="391"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="398"/>
         <source>Import Scheme...</source>
         <translation>Импорт схемы...</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="396"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="403"/>
         <source>Export...</source>
         <translation>Экспорт...</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="401"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.ui" line="408"/>
         <source>Delete...</source>
         <translation>Удалить...</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="350"/>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="403"/>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="412"/>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="425"/>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="438"/>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="455"/>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="470"/>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="493"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="355"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="408"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="417"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="430"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="443"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="460"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="475"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="498"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="392"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="397"/>
         <source>Open</source>
         <translation>Открыть</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="392"/>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="463"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="397"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="468"/>
         <source>Color Scheme Files (*.scheme)</source>
         <translation>Файлы цветовых схем (*.scheme)</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="403"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="408"/>
         <source>&apos;%1&apos; is not a valid name for color scheme file.</source>
         <translation>&apos;%1&apos; - некорректное имя для файла цветовой схемы.</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="421"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="426"/>
         <source>New scheme name</source>
         <translation>Имя новой схемы</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="425"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="430"/>
         <source>&apos;%1&apos; is not a valid scheme name!</source>
         <translation>&apos;%1&apos; - некорректное имя схемы!</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="463"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="468"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="479"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="484"/>
         <source>Confirm Delete Scheme</source>
         <translation>Подтверждение удаления схемы</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="480"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="485"/>
         <source>Scheme &apos;%1&apos; will be deleted!&lt;br /&gt;Do you really want to continue?</source>
         <translation>Схема &apos;%1&apos; будет удалена!&lt;br /&gt;Вы действительно хотите продолжить?</translation>
     </message>
@@ -1980,62 +1998,67 @@
         <translation>Разбор запланированных дел (TODO)</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editormiscwidget.ui" line="77"/>
+        <location filename="../settingsdialog/editormiscwidget.ui" line="41"/>
+        <source>Create a new file after startup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/editormiscwidget.ui" line="84"/>
         <source>Action before saving files</source>
         <translation>Действие перед сохранением файлов</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editormiscwidget.ui" line="83"/>
+        <location filename="../settingsdialog/editormiscwidget.ui" line="90"/>
         <source>Reformat</source>
         <translation>Переформатирование</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editormiscwidget.ui" line="90"/>
+        <location filename="../settingsdialog/editormiscwidget.ui" line="97"/>
         <source>Trim trailing spaces</source>
         <translation>Обрезка конечных пробелов</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editormiscwidget.ui" line="97"/>
+        <location filename="../settingsdialog/editormiscwidget.ui" line="104"/>
         <source>None</source>
         <translation>Нет</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editormiscwidget.ui" line="120"/>
+        <location filename="../settingsdialog/editormiscwidget.ui" line="127"/>
         <source>Auto detect encoding when openning files</source>
         <translation>Автоопределение кодировки открываемых файлов</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editormiscwidget.ui" line="127"/>
+        <location filename="../settingsdialog/editormiscwidget.ui" line="134"/>
         <source>Default file encoding</source>
         <translation>Кодировка файлов по умолчанию</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editormiscwidget.ui" line="155"/>
+        <location filename="../settingsdialog/editormiscwidget.ui" line="162"/>
         <source>Default file type</source>
         <translation>Тип файла по умолчанию</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editormiscwidget.ui" line="161"/>
+        <location filename="../settingsdialog/editormiscwidget.ui" line="168"/>
         <source>C files</source>
         <translation>Файлы Си</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editormiscwidget.ui" line="168"/>
+        <location filename="../settingsdialog/editormiscwidget.ui" line="175"/>
         <source>C++ files</source>
         <translation>Файлы Си++</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editormiscwidget.cpp" line="102"/>
+        <location filename="../settingsdialog/editormiscwidget.cpp" line="104"/>
         <source>System Default(%1)</source>
         <translation>Системная по-умолчанию(%1)</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editormiscwidget.cpp" line="103"/>
+        <location filename="../settingsdialog/editormiscwidget.cpp" line="105"/>
         <source>UTF-8</source>
         <translation>UTF-8</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editormiscwidget.cpp" line="104"/>
+        <location filename="../settingsdialog/editormiscwidget.cpp" line="106"/>
         <source>UTF-8 BOM</source>
         <translation>UTF-8 BOM</translation>
     </message>
@@ -2738,6 +2761,104 @@
         <location filename="../settingsdialog/executorproblemsetwidget.cpp" line="29"/>
         <source>Ignore spaces</source>
         <translation>Игнорировать пробелы</translation>
+    </message>
+</context>
+<context>
+    <name>ExtensionsWidget</name>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.ui" line="14"/>
+        <source>Form</source>
+        <translation type="unfinished">Форма</translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.ui" line="27"/>
+        <source>Search</source>
+        <translation type="unfinished">Поиск</translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.ui" line="43"/>
+        <source>RedPandaIDE CE Software</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.ui" line="61"/>
+        <source>Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.ui" line="69"/>
+        <source>Extension Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.ui" line="76"/>
+        <source>ExtN</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.ui" line="100"/>
+        <source>Extension Type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.ui" line="107"/>
+        <source>Theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.ui" line="131"/>
+        <source>Author:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.ui" line="138"/>
+        <source>C14147</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.ui" line="162"/>
+        <source>Introduction：</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.ui" line="187"/>
+        <source>Download Proxy：</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.ui" line="200"/>
+        <source>https://wget.la/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.ui" line="205"/>
+        <source>https://ghfast.top/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.ui" line="210"/>
+        <source>https://ghproxy.net/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.ui" line="220"/>
+        <source>Download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.ui" line="227"/>
+        <source>Cancel</source>
+        <translation type="unfinished">Отмена</translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.ui" line="240"/>
+        <source>Status:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.ui" line="247"/>
+        <source>Ready</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8116,7 +8237,7 @@
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="../main.cpp" line="463"/>
+        <location filename="../main.cpp" line="468"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
@@ -8127,7 +8248,7 @@
         <location filename="../autolinkmanager.cpp" line="54"/>
         <location filename="../autolinkmanager.cpp" line="70"/>
         <location filename="../autolinkmanager.cpp" line="91"/>
-        <location filename="../settings.cpp" line="4116"/>
+        <location filename="../settings.cpp" line="4128"/>
         <location filename="../widgets/ojproblemsetmodel.cpp" line="167"/>
         <location filename="../widgets/ojproblemsetmodel.cpp" line="230"/>
         <source>Can&apos;t open file &apos;%1&apos; for read.</source>
@@ -8671,9 +8792,24 @@
         <translation>Невозможна запись в конфигурационный файл %1</translation>
     </message>
     <message>
+        <location filename="../main.cpp" line="349"/>
+        <source>Loading settings...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../main.cpp" line="406"/>
         <source>Can&apos;t load autolink settings</source>
         <translation>Невозможно загрузить настройки автосвязывания</translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="415"/>
+        <source>Creating window...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="422"/>
+        <source>Preparing Files...</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../parser/cppparser.cpp" line="1345"/>
@@ -8706,64 +8842,64 @@
         <translation>Ошибка записи файла &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="3081"/>
+        <location filename="../settings.cpp" line="3093"/>
         <source>C Compiler &quot;%1&quot; is missing!</source>
         <translation>Компилятор Си &quot;%1&quot; утрачен!</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="3084"/>
+        <location filename="../settings.cpp" line="3096"/>
         <source>C++ Compiler &quot;%1&quot; is missing!</source>
         <translation>Компилятор Си++ &quot;%1&quot; утрачен!</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="3087"/>
+        <location filename="../settings.cpp" line="3099"/>
         <source>Debugger &quot;%1&quot; is missing!</source>
         <translation>Отладчик &quot;%1&quot; утрачен!</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="3090"/>
+        <location filename="../settings.cpp" line="3102"/>
         <source>Make program &quot;%1&quot; is missing!</source>
         <translation>Программа сборки &quot;%1&quot; утрачена!</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="3314"/>
+        <location filename="../settings.cpp" line="3326"/>
         <source>Error executing platform compiler hint add-on</source>
         <translatorcomment>Сомнительный перевод, надо переделать</translatorcomment>
         <translation>Ошибка при запуске дополнения с подсказкой компилятора платформы</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="3453"/>
-        <location filename="../settings.cpp" line="3459"/>
+        <location filename="../settings.cpp" line="3465"/>
+        <location filename="../settings.cpp" line="3471"/>
         <source>Compiler set not configuared.</source>
         <translation>Набор компиляторов не настроен.</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="3455"/>
+        <location filename="../settings.cpp" line="3467"/>
         <source>Would you like RedPandaIDE to search for compilers in the following locations: &lt;BR /&gt;&apos;%1&apos;&lt;BR /&gt;&apos;%2&apos;? </source>
         <translation>Вы хотели бы, чтобы Красная Панда Си++ поискала компиляторы в следующих местах: &lt;BR /&gt;&apos;%1&apos;&lt;BR /&gt;&apos;%2&apos;? </translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="3461"/>
+        <location filename="../settings.cpp" line="3473"/>
         <source>Would you like RedPandaIDE to search for compilers in PATH?</source>
         <translation>Вы хотели бы, чтобы Красная Панда Си++ поискала компиляторы в PATH?</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="3463"/>
+        <location filename="../settings.cpp" line="3475"/>
         <source>Confirm</source>
         <translation>Подтверждение</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="3472"/>
+        <location filename="../settings.cpp" line="3484"/>
         <source>No Compiler Set</source>
         <translation>Нет набора компиляторов</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="3473"/>
+        <location filename="../settings.cpp" line="3485"/>
         <source>Can&apos;t find a C/C++ compiler.</source>
         <translation>Не могу найти компилятор Си/Си++.</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="3475"/>
+        <location filename="../settings.cpp" line="3487"/>
         <source>You must have a compiler to compile and execute C/C++ files.</source>
         <translation>Вы должны иметь компилятор, чтобы компилировать файлы Си/Си++.</translation>
     </message>
@@ -9648,12 +9784,12 @@
 <context>
     <name>Settings</name>
     <message>
-        <location filename="../settings.cpp" line="4088"/>
+        <location filename="../settings.cpp" line="4100"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../settings.cpp" line="4089"/>
+        <location filename="../settings.cpp" line="4101"/>
         <source>Can&apos;t find terminal program!</source>
         <translation>Не найдена программа-терминал!</translation>
     </message>
@@ -9662,7 +9798,7 @@
     <name>SettingsDialog</name>
     <message>
         <location filename="../settingsdialog/settingsdialog.ui" line="14"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="142"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="143"/>
         <source>Options</source>
         <translation>Параметры</translation>
     </message>
@@ -9691,265 +9827,271 @@
         <location filename="../mainwindow.cpp" line="2726"/>
         <location filename="../mainwindow.cpp" line="9963"/>
         <location filename="../mainwindow.cpp" line="9968"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="169"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="264"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="170"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="268"/>
         <source>Compiler Set</source>
         <translation>Набор компиляторов</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2604"/>
         <location filename="../mainwindow.cpp" line="9969"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="258"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="261"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="264"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="267"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="270"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="262"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="265"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="268"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="271"/>
         <location filename="../settingsdialog/settingsdialog.cpp" line="274"/>
         <location filename="../settingsdialog/settingsdialog.cpp" line="278"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="281"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="282"/>
         <location filename="../settingsdialog/settingsdialog.cpp" line="285"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="291"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="289"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="295"/>
         <source>Project</source>
         <translation>Проект</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2727"/>
         <location filename="../mainwindow.cpp" line="9964"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="169"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="172"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="170"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="173"/>
         <source>Compiler</source>
         <translation>Компилятор</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="8846"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="175"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="216"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="222"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="225"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="231"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="258"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="176"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="217"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="223"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="226"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="232"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="262"/>
         <source>General</source>
         <translation>Основное</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="8847"/>
         <location filename="../mainwindow.cpp" line="9260"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="216"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="219"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="217"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="220"/>
         <source>Program Runner</source>
         <translation>Запуск программ</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="9259"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="219"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="220"/>
         <source>Problem Set</source>
         <translation>Набор проблем</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="145"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="146"/>
         <source>Appearance</source>
         <translation>Оформление</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="145"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="149"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="153"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="156"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="159"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="162"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="146"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="150"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="154"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="157"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="160"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="163"/>
         <source>Environment</source>
         <translation>Окружение</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="149"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="150"/>
         <source>File Association</source>
         <translation>Ассоциации файлов</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="153"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="154"/>
         <source>Shortcuts</source>
         <translation>Сочетания клавиш</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="156"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="157"/>
         <source>Terminal</source>
         <translation>Терминал</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="159"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="160"/>
         <source>Performance</source>
         <translation>Производительность</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="162"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="163"/>
         <source>Folders / Restore Default Settings</source>
         <translation>Каталоги / Сохрание настроек по умолчанию</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="172"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="173"/>
         <source>Auto Link</source>
         <translation>Автоматическое связывание</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="175"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="178"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="181"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="184"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="187"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="190"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="193"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="196"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="199"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="202"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="205"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="176"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="179"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="182"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="185"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="188"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="191"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="194"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="197"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="200"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="203"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="206"/>
         <source>Editor</source>
         <translation>Редактор</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="178"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="179"/>
         <source>Font</source>
         <translation>Шрифты</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="181"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="182"/>
         <source>Copy &amp; Export</source>
         <translation>Копирование и Экспорт</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="184"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="185"/>
         <source>Color</source>
         <translation>Цвета</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="187"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="188"/>
         <source>Code Completion</source>
         <translation>Дополнение кода</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="190"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="191"/>
         <source>Symbol Completion</source>
         <translation>Дополнение символов</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="193"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="194"/>
         <source>Snippet</source>
         <translation>Фрагменты кода</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="196"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="197"/>
         <source>Auto Syntax Checking</source>
         <translation>Автопроверка синтаксиса</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="199"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="200"/>
         <source>Tooltips</source>
         <translation>Высплывающие подсказки</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="202"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="203"/>
         <source>Auto save</source>
         <translation>Автосохранение</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="205"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="206"/>
         <source>Misc</source>
         <translation>Разное</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="208"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="209"/>
         <source>Custom C/C++ Keywords</source>
         <translation>Пользовательские ключевые слова C/C++</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="208"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="213"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="209"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="214"/>
         <source>Languages</source>
         <translation>Языки</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="213"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="214"/>
         <source>ASM Generation</source>
         <translation>Генерация ASM</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="222"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="223"/>
         <source>Debugger</source>
         <translation>Отладчик</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="225"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="228"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="226"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="229"/>
         <source>Code Formatter</source>
         <translation>Форматирование кода</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="228"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="229"/>
         <source>Program</source>
         <translation>Программа</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="231"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="232"/>
         <location filename="../settingsdialog/settingsdialog.cpp" line="235"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="239"/>
         <source>Tools</source>
         <translation>Инструменты</translation>
     </message>
     <message>
         <location filename="../settingsdialog/settingsdialog.cpp" line="235"/>
+        <source>Extension Manager</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="239"/>
         <source>Git</source>
         <translation>Git</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="256"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="260"/>
         <source>Project Options</source>
         <translation>Параметры проекта</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="261"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="265"/>
         <source>Files</source>
         <translation>Файлов</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="267"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="271"/>
         <source>Custom Compile options</source>
         <translation>Настрока параметров компиляци</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="270"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="274"/>
         <source>Directories</source>
         <translation>Каталоги</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="274"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="278"/>
         <source>Precompiled Header</source>
         <translation>Скомпилированные заголовочные файлы</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="278"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="282"/>
         <source>Makefile</source>
         <translation>Makefile</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="281"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="285"/>
         <source>Output</source>
         <translation>Вывод</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="285"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="289"/>
         <source>DLL host</source>
         <translation>DLL host</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="291"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="295"/>
         <source>Version info</source>
         <translation>Информация о версии</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="352"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="356"/>
         <source>Save Changes</source>
         <translation>Сохранить изменения</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="353"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="357"/>
         <source>There are changes in the settings, do you want to save them before swtich to other page?</source>
         <translation>Настройки изменились, хотите их сохранить перед переключением на другую страницу?</translation>
     </message>

@@ -1285,6 +1285,19 @@
     </message>
 </context>
 <context>
+    <name>DownloadTool</name>
+    <message>
+        <location filename="../downloadtool.cpp" line="+83"/>
+        <source>Downloaded %1 bytes to %2 in %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>Downloading %1...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Editor</name>
     <message>
         <location filename="../editor.cpp" line="+361"/>
@@ -1625,6 +1638,11 @@
         <translation>...</translation>
     </message>
     <message>
+        <location line="+7"/>
+        <source>Reload</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+134"/>
         <source>Background:</source>
         <translation>背景色</translation>
@@ -1705,7 +1723,7 @@
         <translation>刪除...</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="+350"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="+355"/>
         <location line="+53"/>
         <location line="+9"/>
         <location line="+13"/>
@@ -1979,7 +1997,12 @@
         <translation>自動打開上次退出時打開的檔案</translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+14"/>
+        <source>Create a new file after startup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+86"/>
         <source>Auto detect encoding when openning files</source>
         <translation>在打開文件時自動探測檔案編碼</translation>
     </message>
@@ -2004,7 +2027,7 @@
         <translation>C語言檔案</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editormiscwidget.cpp" line="+102"/>
+        <location filename="../settingsdialog/editormiscwidget.cpp" line="+104"/>
         <source>System Default(%1)</source>
         <translation>系統默認(%1)</translation>
     </message>
@@ -2019,12 +2042,12 @@
         <translation>UTF-8 BOM</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editormiscwidget.ui" line="-127"/>
+        <location filename="../settingsdialog/editormiscwidget.ui" line="-134"/>
         <source>Parse TODOs</source>
         <translation>查找程式碼中的TODO註釋（含todo或者fixme的註釋）</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+50"/>
         <source>Action before saving files</source>
         <translation>保存前動作</translation>
     </message>
@@ -2774,6 +2797,104 @@
         <location line="+1"/>
         <source>Ignore spaces</source>
         <translation>忽略多餘空格</translation>
+    </message>
+</context>
+<context>
+    <name>ExtensionsWidget</name>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.ui" line="+14"/>
+        <source>Form</source>
+        <translation type="unfinished">表單</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Search</source>
+        <translation type="unfinished">查找</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>RedPandaIDE CE Software</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Extension Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>ExtN</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Extension Type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Author:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>C14147</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Introduction：</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Download Proxy：</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>https://wget.la/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>https://ghfast.top/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>https://ghproxy.net/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Cancel</source>
+        <translation type="unfinished">取消</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Status:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Ready</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8147,7 +8268,7 @@
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="../main.cpp" line="+463"/>
+        <location filename="../main.cpp" line="+468"/>
         <source>Error</source>
         <translation type="unfinished">錯誤</translation>
     </message>
@@ -8158,7 +8279,7 @@
         <location filename="../autolinkmanager.cpp" line="+54"/>
         <location line="+16"/>
         <location line="+21"/>
-        <location filename="../settings.cpp" line="+4116"/>
+        <location filename="../settings.cpp" line="+4128"/>
         <location filename="../widgets/ojproblemsetmodel.cpp" line="-403"/>
         <location line="+63"/>
         <source>Can&apos;t open file &apos;%1&apos; for read.</source>
@@ -8412,7 +8533,7 @@
     </message>
     <message>
         <location line="+6"/>
-        <location filename="../main.cpp" line="-265"/>
+        <location filename="../main.cpp" line="-270"/>
         <location line="+7"/>
         <source>Error</source>
         <translation type="unfinished">錯誤</translation>
@@ -8467,8 +8588,23 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+200"/>
+        <location line="+143"/>
+        <source>Loading settings...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+57"/>
         <source>Can&apos;t load autolink settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Creating window...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Preparing Files...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9684,7 +9820,7 @@
     <name>SettingsDialog</name>
     <message>
         <location filename="../settingsdialog/settingsdialog.ui" line="+14"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="+142"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="+143"/>
         <source>Options</source>
         <translation type="unfinished">選項</translation>
     </message>
@@ -9715,14 +9851,14 @@
         <location line="+6"/>
         <location line="+3"/>
         <location line="+6"/>
-        <location line="+27"/>
+        <location line="+30"/>
         <source>General</source>
         <translation type="unfinished">基本選項</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+413"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="-42"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="-45"/>
         <location line="+3"/>
         <source>Program Runner</source>
         <translation type="unfinished"></translation>
@@ -9774,14 +9910,14 @@
         <location line="+7237"/>
         <location line="+5"/>
         <location filename="../settingsdialog/settingsdialog.cpp" line="+10"/>
-        <location line="+95"/>
+        <location line="+98"/>
         <source>Compiler Set</source>
         <translation type="unfinished">編譯器配寘集</translation>
     </message>
     <message>
         <location line="-7241"/>
         <location line="+7237"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="-95"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="-98"/>
         <location line="+3"/>
         <source>Compiler</source>
         <translation type="unfinished">編譯器</translation>
@@ -9874,12 +10010,18 @@
     </message>
     <message>
         <location line="+3"/>
+        <location line="+3"/>
         <location line="+4"/>
         <source>Tools</source>
         <translation type="unfinished">工具</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="-4"/>
+        <source>Extension Manager</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
         <source>Git</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9955,7 +10097,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-145"/>
+        <location line="-148"/>
         <source>Custom C/C++ Keywords</source>
         <translation type="unfinished"></translation>
     </message>

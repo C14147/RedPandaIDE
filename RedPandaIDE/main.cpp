@@ -346,7 +346,7 @@ int main(int argc, char *argv[])
 
     initParser();
 
-    splashw.showMessage("Loading settings...");
+    splashw.showMessage(QObject::tr("Loading settings..."));
     app.processEvents();
     try {
 
@@ -412,16 +412,14 @@ int main(int argc, char *argv[])
 
         QDir::setCurrent(pSettings->environment().defaultOpenFolder());
 
-        splashw.showMessage("Creating window...");
+        splashw.showMessage(QObject::tr("Creating window..."));
         app.processEvents();
         MainWindow mainWindow;
         pMainWindow = &mainWindow;
         if (mainWindow.screen())
             setScreenDPI(mainWindow.screen()->logicalDotsPerInch());
 
-        mainWindow.show();
-        splashw.finish(pMainWindow);
-
+        splashw.showMessage(QObject::tr("Preparing Files..."));
         QStringList filesToOpen = app.arguments();
         filesToOpen.pop_front();
         if (!filesToOpen.isEmpty()) {
@@ -430,9 +428,16 @@ int main(int argc, char *argv[])
             if (pSettings->editor().autoLoadLastFiles())
                 mainWindow.loadLastOpens();
         }
-        if (mainWindow.editorList()->pageCount()==0 && !mainWindow.project()) {
+
+        if (pSettings->editor().createFileAfterStartup()
+            && mainWindow.editorList()->pageCount()==0
+            && !mainWindow.project())
+        {
             mainWindow.newEditor();
         }
+
+        mainWindow.show();
+        splashw.finish(pMainWindow);
 
         //reset default open folder
         mainWindow.setFilesViewRoot(pSettings->environment().currentFolder());
