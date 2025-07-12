@@ -529,6 +529,16 @@ void Settings::Editor::setSyntaxCheckWhenLineChanged(bool syntaxCheckWhenLineCha
     mSyntaxCheckWhenLineChanged = syntaxCheckWhenLineChanged;
 }
 
+bool Settings::Editor::createFileAfterStartup() const
+{
+    return mCreateFileAfterStartup;
+}
+
+void Settings::Editor::setCreateFileAfterStartup(bool newCreateFileAfterStartup)
+{
+    mCreateFileAfterStartup = newCreateFileAfterStartup;
+}
+
 bool Settings::Editor::readOnlySytemHeader() const
 {
     return mReadOnlySytemHeader;
@@ -1400,6 +1410,7 @@ void Settings::Editor::doSave()
 
     //misc
     saveValue("default_encoding",mDefaultEncoding);
+    saveValue("create_file_after_startup",mCreateFileAfterStartup);
     saveValue("readonly_system_header",mReadOnlySytemHeader);
     saveValue("auto_load_last_files",mAutoLoadLastFiles);
     saveValue("default_file_cpp",mDefaultFileCpp);
@@ -1558,6 +1569,7 @@ void Settings::Editor::doLoad()
     mEnableAutolink = boolValue("enable_autolink",true);
 
     //misc
+    mCreateFileAfterStartup = boolValue("create_file_after_startup", true);
     mReadOnlySytemHeader = boolValue("readonly_system_header",true);
     mAutoLoadLastFiles = boolValue("auto_load_last_files",true);
     mDefaultFileCpp = boolValue("default_file_cpp",true);

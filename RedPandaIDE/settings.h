@@ -272,6 +272,9 @@ public:
         bool syntaxCheckWhenLineChanged() const;
         void setSyntaxCheckWhenLineChanged(bool syntaxCheckWhenLineChanged);
 
+        bool createFileAfterStartup() const;
+        void setCreateFileAfterStartup(bool newCreateFileAfterStartup);
+
         bool readOnlySytemHeader() const;
         void setReadOnlySytemHeader(bool newReadOnlySytemHeader);
 
@@ -510,6 +513,7 @@ public:
         //Misc
         QByteArray mDefaultEncoding;
         bool mAutoDetectFileEncoding;
+        bool mCreateFileAfterStartup;
         bool mReadOnlySytemHeader;
         bool mAutoLoadLastFiles;
         bool mDefaultFileCpp;

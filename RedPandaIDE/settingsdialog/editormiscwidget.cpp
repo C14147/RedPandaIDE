@@ -35,6 +35,7 @@ EditorMiscWidget::~EditorMiscWidget()
 
 void EditorMiscWidget::doLoad()
 {
+    ui->chkCreateFileAfterStartup->setChecked(pSettings->editor().createFileAfterStartup());
     ui->chkReadonlySystemHeaders->setChecked(pSettings->editor().readOnlySytemHeader());
     ui->chkLoadLastFiles->setChecked(pSettings->editor().autoLoadLastFiles());
     if (pSettings->editor().defaultFileCpp()) {
@@ -76,6 +77,7 @@ void EditorMiscWidget::doLoad()
 
 void EditorMiscWidget::doSave()
 {
+    pSettings->editor().setCreateFileAfterStartup(ui->chkCreateFileAfterStartup->isChecked());
     pSettings->editor().setReadOnlySytemHeader(ui->chkReadonlySystemHeaders->isChecked());
     pSettings->editor().setAutoLoadLastFiles(ui->chkLoadLastFiles->isChecked());
     pSettings->editor().setDefaultFileCpp(ui->rbCppFile->isChecked());
