@@ -44,6 +44,12 @@
 #define UPDATE_HORIZONTAL_SCROLLBAR_EVENT ((QEvent::Type)(QEvent::User+1))
 #define UPDATE_VERTICAL_SCROLLBAR_EVENT ((QEvent::Type)(QEvent::User+2))
 
+#if QT_VERSION_MAJOR == 6
+#  define GET_EVENT_POSITION(x) (x)->position().toPoint()
+#else
+#  define GET_EVENT_POSITION(x) (x)->pos()
+#endif
+
 namespace QSynedit {
 QSynEdit::QSynEdit(QWidget *parent) : QAbstractScrollArea(parent),
     mEditingCount{0},
@@ -6335,8 +6341,8 @@ void QSynEdit::dragEnterEvent(QDragEnterEvent *event)
         mDragCaretSave = caretXY();
         mDragSelBeginSave = blockBegin();
         mDragSelEndSave = blockEnd();
-        BufferCoord coord = displayToBufferPos(pixelsToNearestGlyphPos(event->pos().x(),
-                                                                        event->pos().y()));
+        BufferCoord coord = displayToBufferPos(pixelsToNearestGlyphPos(GET_EVENT_POSITION(event).x(),
+                                                                        GET_EVENT_POSITION(event).y()));
         internalSetCaretXY(coord);
         setBlockBegin(mDragSelBeginSave);
         setBlockEnd(mDragSelEndSave);
@@ -6350,8 +6356,8 @@ void QSynEdit::dropEvent(QDropEvent *event)
 {
     //mScrollTimer->stop();
 
-    BufferCoord coord = displayToBufferPos(pixelsToNearestGlyphPos(event->pos().x(),
-                                                                    event->pos().y()));
+    BufferCoord coord = displayToBufferPos(pixelsToNearestGlyphPos(GET_EVENT_POSITION(event).x(),
+                                                                    GET_EVENT_POSITION(event).y()));
     if (
             (event->proposedAction() == Qt::DropAction::CopyAction
              && coord>mDragSelBeginSave && coord<mDragSelEndSave)
