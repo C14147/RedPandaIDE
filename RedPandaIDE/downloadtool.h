@@ -5,6 +5,7 @@
 #define DOWNLOADTOOL_H
 
 #include <QObject>
+#include <QDebug>
 #include <QUrl>
 #include <QFile>
 #include <QDir>

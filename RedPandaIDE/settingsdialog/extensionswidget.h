@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include <QApplication>
+#include <QDebug>
+
 #include "settingswidget.h"
 #include "../widgets/macroinfomodel.h"
 #include "../toolsmanager.h"
