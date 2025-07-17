@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QApplication>
 #include <QDebug>
+#include <QByteArray>
+#include <QJsonDocument>
 
 #include "settingswidget.h"
 #include "../widgets/macroinfomodel.h"
@@ -20,10 +22,11 @@ class ExtensionsWidget : public SettingsWidget
 
 public:
     DownloadTool *extMetadata = new DownloadTool(
-        "https://raw.githubusercontent.com/C14147/RedPandaIDE-Extensions/refs/heads/main/extensionsList.csv",
+        "https://raw.githubusercontent.com/C14147/RedPandaIDE-Extensions/refs/heads/main/extensionsList.json",
         QApplication::applicationDirPath()
         );
     DownloadTool *extFile = nullptr;
+    QJsonDocument metadata;
 
 public:
     explicit ExtensionsWidget(const QString& name, const QString& group,QWidget *parent = nullptr);
@@ -32,7 +35,8 @@ public:
     void doLoad() override;
 
 public slots:
-    void onDownloadFinished();
+    void onDownloadFinished();    // also deal the analysis of file into list
+    void dealMetadataDownloadProcess(qint64 bytesRead, qint64 totalBytes, qreal progress);
 
 private:
     Ui::ExtensionsWidget *ui;
