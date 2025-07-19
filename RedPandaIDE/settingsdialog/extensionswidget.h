@@ -6,6 +6,9 @@
 #include <QDebug>
 #include <QByteArray>
 #include <QJsonDocument>
+#include <atomic>
+#include <memory>
+#include <QListWidgetItem>
 
 #include "settingswidget.h"
 #include "../widgets/macroinfomodel.h"
@@ -21,25 +24,42 @@ class ExtensionsWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    DownloadTool *extMetadata = new DownloadTool(
-        "https://raw.githubusercontent.com/C14147/RedPandaIDE-Extensions/refs/heads/main/extensionsList.json",
-        QApplication::applicationDirPath()
-        );
-    DownloadTool *extFile = nullptr;
-    QJsonDocument metadata;
-
-public:
     explicit ExtensionsWidget(const QString& name, const QString& group,QWidget *parent = nullptr);
-    ~ExtensionsWidget();
+    ~ExtensionsWidget() override;
     void doSave() override;
     void doLoad() override;
 
 public slots:
-    void onDownloadFinished();    // also deal the analysis of file into list
+    void onDownloadFinished();
     void dealMetadataDownloadProcess(qint64 bytesRead, qint64 totalBytes, qreal progress);
 
+private slots:
+    void onSearchClicked();
+    void onDownloadClicked();
+    void onCancelClicked();
+    void onExtensionSelected(QListWidgetItem* item);
+
 private:
+    enum class State {
+        Idle,
+        DownloadingMetadata,
+        ProcessingMetadata,
+        DownloadingExtension,
+        Cancelling
+    };
+
+    void setState(State newState);
+    void safeUpdateUI(const std::function<void()>& updateFunc);
+    void cancelAllOperations();
+    void processMetadata();
+    void clearResources();
+
     Ui::ExtensionsWidget *ui;
+    State m_currentState = State::Idle;
+    std::atomic<bool> m_destroying = false;
+    std::unique_ptr<DownloadTool> m_extMetadata;
+    std::unique_ptr<DownloadTool> m_extFile;
+    QJsonDocument m_metadata;
 };
 
 #endif // EXTENSIONSWIDGET_H

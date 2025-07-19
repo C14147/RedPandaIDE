@@ -1,4 +1,5 @@
 QT       += core gui printsupport network svg xml widgets
+QT += concurrent
 
 CONFIG += c++17
 CONFIG += nokey
