@@ -1,26 +1,23 @@
+// This file copied from CSDN:
+// https://blog.csdn.net/weixin_42602900/article/details/140606196
+
 #include "downloadtool.h"
-#include <QFileInfo>
-#include <QDebug>
-#include <QEventLoop>
 
 DownloadTool::DownloadTool(const QString& downloadUrl, const QString& savePath, QObject* parent)
     : QObject(parent)
-    , m_downloadUrl(downloadUrl)
-    , m_savePath(savePath)
-    , httpRequestAborted(false)
 {
+    m_downloadUrl = downloadUrl;
+    m_savePath    = savePath;
 }
 
 DownloadTool::~DownloadTool()
 {
+    m_destroying = true;
     cancelDownload();
 }
 
 void DownloadTool::startDownload()
 {
-    // 检查生命周期守卫
-    if (!m_lifeGuard) return;
-
     const QUrl newUrl = QUrl::fromUserInput(m_downloadUrl);
 
     if (!newUrl.isValid()) {
@@ -61,12 +58,11 @@ void DownloadTool::cancelDownload() {
         file.reset();
     }
 }
-
 void DownloadTool::httpFinished()
 {
-    // 检查生命周期守卫
-    if (!m_lifeGuard) return;
-
+    if (m_destroying) {
+        return;
+    }
     QFileInfo fi;
     if (httpRequestAborted) {
         if (file) {
@@ -114,17 +110,17 @@ void DownloadTool::httpFinished()
 
 void DownloadTool::httpReadyRead()
 {
-    // 检查生命周期守卫
-    if (!m_lifeGuard) return;
-
+    if (m_destroying) {
+        return;
+    }
     if (file) file->write(reply->readAll());
 }
 
 void DownloadTool::networkReplyProgress(qint64 bytesRead, qint64 totalBytes)
 {
-    // 检查生命周期守卫
-    if (!m_lifeGuard) return;
-
+    if (m_destroying) {
+        return;
+    }
     qreal progress = qreal(bytesRead) / qreal(totalBytes);
     Q_EMIT sigProgress(bytesRead, totalBytes, progress);
 
@@ -136,9 +132,6 @@ void DownloadTool::networkReplyProgress(qint64 bytesRead, qint64 totalBytes)
 
 void DownloadTool::startRequest(const QUrl& requestedUrl)
 {
-    // 检查生命周期守卫
-    if (!m_lifeGuard) return;
-
     url = requestedUrl;
     httpRequestAborted = false;
 
@@ -154,9 +147,6 @@ void DownloadTool::startRequest(const QUrl& requestedUrl)
 
 std::unique_ptr<QFile> DownloadTool::openFileForWrite(const QString& fileName)
 {
-    // 检查生命周期守卫
-    if (!m_lifeGuard) return nullptr;
-
     std::unique_ptr<QFile> file(new QFile(fileName));
     if (!file->open(QIODevice::WriteOnly)) {
 #ifdef DOWNLOAD_DEBUG
