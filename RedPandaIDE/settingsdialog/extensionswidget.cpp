@@ -18,8 +18,9 @@
 #include <QJsonValue>
 #include <QStringList>
 #include <QTimer>
-#include <QListWidgetItem>
-#include <QtConcurrent/QtConcurrent>
+#include <QtConcurrent>
+#include <QEventLoop>
+#include <QThread>
 
 ExtensionsWidget::ExtensionsWidget(const QString& name, const QString& group, QWidget *parent)
     : SettingsWidget(name, group, parent)
@@ -29,11 +30,30 @@ ExtensionsWidget::ExtensionsWidget(const QString& name, const QString& group, QW
 {
     ui->setupUi(this);
 
-    // 连接UI信号
-    connect(ui->searchButton, &QPushButton::clicked, this, &ExtensionsWidget::onSearchClicked);
-    connect(ui->downloadButton, &QPushButton::clicked, this, &ExtensionsWidget::onDownloadClicked);
-    connect(ui->cancelButton, &QPushButton::clicked, this, &ExtensionsWidget::onCancelClicked);
-    connect(ui->extList, &QListWidget::itemClicked, this, &ExtensionsWidget::onExtensionSelected);
+    // 创建生命周期守卫
+    m_lifeGuard = QSharedPointer<QObject>::create();
+
+    // 连接UI信号 - 使用弱引用
+    auto weakLifeGuard = QWeakPointer<QObject>(m_lifeGuard);
+    connect(ui->searchButton, &QPushButton::clicked, this, [this, weakLifeGuard] {
+        if (weakLifeGuard.isNull()) return;
+        onSearchClicked();
+    });
+
+    connect(ui->downloadButton, &QPushButton::clicked, this, [this, weakLifeGuard] {
+        if (weakLifeGuard.isNull()) return;
+        onDownloadClicked();
+    });
+
+    connect(ui->cancelButton, &QPushButton::clicked, this, [this, weakLifeGuard] {
+        if (weakLifeGuard.isNull()) return;
+        onCancelClicked();
+    });
+
+    connect(ui->extList, &QListWidget::itemClicked, this, [this, weakLifeGuard](QListWidgetItem* item) {
+        if (weakLifeGuard.isNull()) return;
+        onExtensionSelected(item);
+    });
 
     // 初始化UI状态
     ui->progressBar->setRange(0, 100);
@@ -44,15 +64,16 @@ ExtensionsWidget::ExtensionsWidget(const QString& name, const QString& group, QW
 ExtensionsWidget::~ExtensionsWidget()
 {
     m_destroying = true;
-    setState(State::Cancelling);
+
+    // 使生命周期守卫无效
+    m_lifeGuard.clear();
+
+    // 取消所有操作
     cancelAllOperations();
 
-    // 确保所有异步操作完成
-    QEventLoop loop;
-    QTimer::singleShot(100, &loop, &QEventLoop::quit);
-    loop.exec();
-
+    // 安全删除UI
     delete ui;
+    ui = nullptr;
 }
 
 void ExtensionsWidget::doSave()
@@ -68,7 +89,10 @@ void ExtensionsWidget::doLoad()
 
 void ExtensionsWidget::onSearchClicked()
 {
-    if (m_destroying) return;
+    // 使用生命周期守卫保护
+    auto guard = m_lifeGuard;
+    if (!guard || m_destroying) return;
+
     setState(State::DownloadingMetadata);
 
     // 创建新的下载器实例
@@ -78,11 +102,22 @@ void ExtensionsWidget::onSearchClicked()
         this
         );
 
-    // 连接信号
-    connect(m_extMetadata.get(), &DownloadTool::sigProgress,
-            this, &ExtensionsWidget::dealMetadataDownloadProcess);
-    connect(m_extMetadata.get(), &DownloadTool::sigDownloadFinished,
-            this, &ExtensionsWidget::onDownloadFinished);
+    // 使用弱引用连接信号
+    auto weakLifeGuard = QWeakPointer<QObject>(m_lifeGuard);
+
+    connect(m_extMetadata.get(), &DownloadTool::sigProgress, this,
+            [this, weakLifeGuard](qint64 bytesRead, qint64 totalBytes, qreal progress) {
+                auto guard = weakLifeGuard.toStrongRef();
+                if (!guard || m_destroying) return;
+                dealMetadataDownloadProcess(bytesRead, totalBytes, progress);
+            });
+
+    connect(m_extMetadata.get(), &DownloadTool::sigDownloadFinished, this,
+            [this, weakLifeGuard] {
+                auto guard = weakLifeGuard.toStrongRef();
+                if (!guard || m_destroying) return;
+                onDownloadFinished();
+            });
 
     // 开始下载
     m_extMetadata->startDownload();
@@ -93,7 +128,9 @@ void ExtensionsWidget::onSearchClicked()
 
 void ExtensionsWidget::onDownloadClicked()
 {
-    if (m_destroying || m_currentState != State::Idle) return;
+    // 使用生命周期守卫保护
+    auto guard = m_lifeGuard;
+    if (!guard || m_destroying || m_currentState != State::Idle) return;
 
     QListWidgetItem* selectedItem = ui->extList->currentItem();
     if (!selectedItem) {
@@ -113,24 +150,30 @@ void ExtensionsWidget::onDownloadClicked()
         this
         );
 
-    // 连接信号
-    connect(m_extFile.get(), &DownloadTool::sigProgress, this, [this](qint64 bytesRead, qint64 totalBytes, qreal progress) {
-        if (m_destroying) return;
-        safeUpdateUI([this, progress] {
-            ui->progressBar->setValue(static_cast<int>(progress * 100));
-            ui->statusLabel->setText(tr("Downloading: %1%").arg(static_cast<int>(progress * 100)));
-        });
-    });
+    // 使用弱引用连接信号
+    auto weakLifeGuard = QWeakPointer<QObject>(m_lifeGuard);
 
-    connect(m_extFile.get(), &DownloadTool::sigDownloadFinished, this, [this, extensionName] {
-        if (m_destroying) return;
-        setState(State::Idle);
-        safeUpdateUI([this, extensionName] {
-            ui->statusLabel->setText(tr("Download completed: %1").arg(extensionName));
-            QMessageBox::information(this, tr("Success"), tr("Extension downloaded successfully!"));
-        });
-        m_extFile.reset(); // 安全释放资源
-    });
+    connect(m_extFile.get(), &DownloadTool::sigProgress, this,
+            [this, weakLifeGuard](qint64 bytesRead, qint64 totalBytes, qreal progress) {
+                auto guard = weakLifeGuard.toStrongRef();
+                if (!guard || m_destroying) return;
+                safeUpdateUI([this, progress] {
+                    ui->progressBar->setValue(static_cast<int>(progress * 100));
+                    ui->statusLabel->setText(tr("Downloading: %1%").arg(static_cast<int>(progress * 100)));
+                });
+            });
+
+    connect(m_extFile.get(), &DownloadTool::sigDownloadFinished, this,
+            [this, weakLifeGuard, extensionName] {
+                auto guard = weakLifeGuard.toStrongRef();
+                if (!guard || m_destroying) return;
+                setState(State::Idle);
+                safeUpdateUI([this, extensionName] {
+                    ui->statusLabel->setText(tr("Download completed: %1").arg(extensionName));
+                    QMessageBox::information(this, tr("Success"), tr("Extension downloaded successfully!"));
+                });
+                m_extFile.reset(); // 安全释放资源
+            });
 
     // 开始下载
     m_extFile->startDownload();
@@ -141,6 +184,10 @@ void ExtensionsWidget::onDownloadClicked()
 
 void ExtensionsWidget::onCancelClicked()
 {
+    // 使用生命周期守卫保护
+    auto guard = m_lifeGuard;
+    if (!guard || m_destroying) return;
+
     cancelAllOperations();
     setState(State::Idle);
     safeUpdateUI([this] {
@@ -151,7 +198,9 @@ void ExtensionsWidget::onCancelClicked()
 
 void ExtensionsWidget::onExtensionSelected(QListWidgetItem* item)
 {
-    if (m_destroying || !item) return;
+    // 使用生命周期守卫保护
+    auto guard = m_lifeGuard;
+    if (!guard || m_destroying || !item) return;
 
     safeUpdateUI([this, item] {
         // 更新扩展信息显示
@@ -164,7 +213,9 @@ void ExtensionsWidget::onExtensionSelected(QListWidgetItem* item)
 
 void ExtensionsWidget::onDownloadFinished()
 {
-    if (m_destroying || m_currentState != State::DownloadingMetadata) return;
+    // 使用生命周期守卫保护
+    auto guard = m_lifeGuard;
+    if (!guard || m_destroying || m_currentState != State::DownloadingMetadata) return;
 
     setState(State::ProcessingMetadata);
     safeUpdateUI([this] {
@@ -179,7 +230,9 @@ void ExtensionsWidget::onDownloadFinished()
 
 void ExtensionsWidget::dealMetadataDownloadProcess(qint64 bytesRead, qint64 totalBytes, qreal progress)
 {
-    if (m_destroying || m_currentState != State::DownloadingMetadata) return;
+    // 使用生命周期守卫保护
+    auto guard = m_lifeGuard;
+    if (!guard || m_destroying || m_currentState != State::DownloadingMetadata) return;
 
     safeUpdateUI([this, progress] {
         ui->progressBar->setValue(static_cast<int>(progress * 100));
@@ -203,15 +256,17 @@ void ExtensionsWidget::setState(State newState)
 
 void ExtensionsWidget::safeUpdateUI(const std::function<void()>& updateFunc)
 {
-    if (m_destroying) return;
+    // 使用生命周期守卫保护
+    auto guard = m_lifeGuard;
+    if (!guard || m_destroying) return;
 
     // 确保UI更新在主线程执行
-    if (QThread::currentThread() != this->thread()) {
-        QMetaObject::invokeMethod(this, [this, updateFunc] {
-            if (!m_destroying) updateFunc();
-        }, Qt::QueuedConnection);
+    if (QThread::currentThread() != QApplication::instance()->thread()) {
+        QMetaObject::invokeMethod(QApplication::instance(), [guard, updateFunc] {
+            if (guard) updateFunc();
+        }, Qt::BlockingQueuedConnection);
     } else {
-        if (!m_destroying) updateFunc();
+        updateFunc();
     }
 }
 
@@ -234,18 +289,21 @@ void ExtensionsWidget::cancelAllOperations()
 
 void ExtensionsWidget::processMetadata()
 {
-    if (m_destroying) return;
+    // 使用生命周期守卫保护
+    auto guard = m_lifeGuard;
+    if (!guard || m_destroying) return;
 
     QDir dir(QApplication::applicationDirPath());
     QString filePath = dir.absoluteFilePath("extensionsList.json");
 
     // 创建局部变量存储错误信息
     QString errorMessage;
+    QStringList extensions;
 
     {
         QFile file(filePath);
         if (!file.open(QIODevice::ReadOnly)) {
-            errorMessage = file.errorString(); // 保存错误信息到变量
+            errorMessage = file.errorString();
         } else {
             QByteArray data = file.readAll();
             file.close();
@@ -266,17 +324,7 @@ void ExtensionsWidget::processMetadata()
                 errorMessage = tr("Invalid JSON Format: The root element is not a JSON object");
             } else {
                 QJsonObject metadataObj = metadata.object();
-                QStringList extensions = metadataObj.keys();
-
-                safeUpdateUI([this, extensions] {
-                    ui->extList->clear();
-                    ui->extList->addItems(extensions);
-                    ui->progressBar->setValue(100);
-                    ui->statusLabel->setText(tr("%1 extensions loaded").arg(extensions.size()));
-                });
-
-                setState(State::Idle);
-                return;
+                extensions = metadataObj.keys();
             }
         }
     }
@@ -289,6 +337,19 @@ void ExtensionsWidget::processMetadata()
                                   tr("Failed to process metadata file: %1\n%2")
                                       .arg(filePath)
                                       .arg(errorMessage));
+        });
+    }
+    // 如果有扩展列表，更新UI
+    else if (!extensions.isEmpty()) {
+        safeUpdateUI([this, extensions] {
+            // 双重检查守卫
+            auto uiGuard = m_lifeGuard;
+            if (!uiGuard || m_destroying) return;
+
+            ui->extList->clear();
+            ui->extList->addItems(extensions);
+            ui->progressBar->setValue(100);
+            ui->statusLabel->setText(tr("%1 extensions loaded").arg(extensions.size()));
         });
     }
 

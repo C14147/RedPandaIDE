@@ -8,6 +8,7 @@
 #include <QJsonDocument>
 #include <atomic>
 #include <memory>
+#include <QSharedPointer>
 #include <QListWidgetItem>
 
 #include "settingswidget.h"
@@ -24,7 +25,7 @@ class ExtensionsWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit ExtensionsWidget(const QString& name, const QString& group,QWidget *parent = nullptr);
+    explicit ExtensionsWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
     ~ExtensionsWidget() override;
     void doSave() override;
     void doLoad() override;
@@ -56,10 +57,13 @@ private:
 
     Ui::ExtensionsWidget *ui;
     State m_currentState = State::Idle;
-    std::atomic<bool> m_destroying = false;
+    bool m_destroying = false;
     std::unique_ptr<DownloadTool> m_extMetadata;
     std::unique_ptr<DownloadTool> m_extFile;
     QJsonDocument m_metadata;
+
+    // 生命周期守卫
+    QSharedPointer<QObject> m_lifeGuard;
 };
 
 #endif // EXTENSIONSWIDGET_H
