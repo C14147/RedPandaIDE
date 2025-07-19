@@ -47,7 +47,6 @@ private:
 private:
     QString m_downloadUrl;  // 保存构造时传入的下载url
     QString m_savePath;     // 保存构造时传入的保存路径
-    std::atomic<bool> m_destroying = false;
 
     const QString defaultFileName = "tmp";  // 默认下载到tmp文件夹
 

@@ -10,11 +10,7 @@ DownloadTool::DownloadTool(const QString& downloadUrl, const QString& savePath, 
     m_savePath    = savePath;
 }
 
-DownloadTool::~DownloadTool()
-{
-    m_destroying = true;
-    cancelDownload();
-}
+DownloadTool::~DownloadTool() {}
 
 void DownloadTool::startDownload()
 {
@@ -44,33 +40,15 @@ void DownloadTool::startDownload()
     startRequest(newUrl);
 }
 
-void DownloadTool::cancelDownload() {
+void DownloadTool::cancelDownload()
+{
     httpRequestAborted = true;
-    if (reply) {
-        reply->disconnect(this);
-        reply->abort();
-        reply->deleteLater();
-        reply = nullptr;
-    }
-
-    if (file) {
-        file->close();
-        file.reset();
-    }
+    reply->abort();
 }
+
 void DownloadTool::httpFinished()
 {
-    if (m_destroying) {
-        return;
-    }
     QFileInfo fi;
-    if (httpRequestAborted) {
-        if (file) {
-            file->close();
-            file.reset();
-        }
-        return;
-    }
     if (file) {
         fi.setFile(file->fileName());
         file->close();
@@ -110,17 +88,11 @@ void DownloadTool::httpFinished()
 
 void DownloadTool::httpReadyRead()
 {
-    if (m_destroying) {
-        return;
-    }
     if (file) file->write(reply->readAll());
 }
 
 void DownloadTool::networkReplyProgress(qint64 bytesRead, qint64 totalBytes)
 {
-    if (m_destroying) {
-        return;
-    }
     qreal progress = qreal(bytesRead) / qreal(totalBytes);
     Q_EMIT sigProgress(bytesRead, totalBytes, progress);
 
