@@ -332,7 +332,7 @@ void ExtensionsWidget::installExtension(const QString& filePath, QString type)
         args << "/C \""
              << QString(QDir(QApplication.applicationDirPath()+"/7z/").absoluteFilePath("7za.exe"))
              << QString(" x '%1' -o '%2' \"").arg(filePath).arg(extensionDir);
-#else
+#endif
         ui->statusLabel->setText(tr("Unziping Extension..."));
         QProcess process;
         process.start(command, args);
