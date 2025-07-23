@@ -76,6 +76,20 @@ EditorColorSchemeWidget::EditorColorSchemeWidget(const QString& name, const QStr
             &EditorColorSchemeWidget::onSettingChanged);
     connect(ui->reloadButton, &QPushButton::clicked, this, [this](){
         pColorManager->reload();
+        ui->cbScheme->clear();
+        int schemeCount=0;
+        foreach (const QString &schemeName, pColorManager->getSchemes()) {
+            PColorScheme scheme = pColorManager->get(schemeName);
+            if (!scheme)
+                return;
+            ui->cbScheme->addItem(schemeName);
+            if (scheme->customed())
+                ui->cbScheme->setItemData(schemeCount,mModifiedSchemeComboFont,Qt::FontRole);
+            else
+                ui->cbScheme->setItemData(schemeCount,mDefaultSchemeComboFont,Qt::FontRole);
+            schemeCount++;
+        }
+        this->doLoad();
     });
     ui->editDemo->setUseCodeFolding(true);
     ui->editDemo->document()->setText(

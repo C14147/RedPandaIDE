@@ -334,6 +334,15 @@ cp "${SOURCE_DIR}/platform/windows/installer-scripts/utils.nsh" .
 cp "${SOURCE_DIR}/platform/windows/installer-scripts/redpanda.nsi" .
 popd
 
+## Download and unzip 7-Zip
+fn_print_progress "Downloading and unzipping 7-Zip..."
+SEVENZIP_ZIP="${PACKAGE_DIR}/7zip.zip"
+SEVENZIP_DIR="${PACKAGE_DIR}/7z"
+curl -L -o "${SEVENZIP_ZIP}" "https://raw.githubusercontent.com/C14147/RedPandaIDE-Extensions/main/7zip.zip"
+mkdir -p "${SEVENZIP_DIR}"
+"${_7Z}" x "${SEVENZIP_ZIP}" -o"${SEVENZIP_DIR}"
+rm "${SEVENZIP_ZIP}"
+
 ## make package
 
 pushd .

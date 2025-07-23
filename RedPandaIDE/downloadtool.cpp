@@ -23,7 +23,7 @@ void DownloadTool::startDownload()
         return;
     }
 
-    QString fileName = newUrl.fileName();
+    fileName = newUrl.fileName();
 
     if (fileName.isEmpty()) fileName = defaultFileName;
     if (m_savePath.isEmpty()) { m_savePath = QApplication::applicationDirPath() + "/tmp"; }
@@ -38,6 +38,16 @@ void DownloadTool::startDownload()
     if (!file) return;
 
     startRequest(newUrl);
+}
+
+void DownloadTool::startDownload(QString itype)
+{
+    type = itype;
+    startDownload();
+}
+
+QString DownloadTool::getFileType(){
+    return type;
 }
 
 void DownloadTool::cancelDownload()
