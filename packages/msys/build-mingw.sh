@@ -340,7 +340,7 @@ SEVENZIP_ZIP="${PACKAGE_DIR}/7zip.zip"
 SEVENZIP_DIR="${PACKAGE_DIR}/7z"
 curl -L -o "${SEVENZIP_ZIP}" "https://raw.githubusercontent.com/C14147/RedPandaIDE-Extensions/main/7zip.zip"
 mkdir -p "${SEVENZIP_DIR}"
-"${_7Z}" x "${SEVENZIP_ZIP}" -o"${SEVENZIP_DIR}"
+"${_7Z}" x -y "${SEVENZIP_ZIP}" -o"${SEVENZIP_DIR}"
 rm "${SEVENZIP_ZIP}"
 
 ## make package
