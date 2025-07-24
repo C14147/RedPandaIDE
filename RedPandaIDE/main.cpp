@@ -252,12 +252,6 @@ int main(int argc, char *argv[])
     }
     config.setBackend(QSslConfiguration::SecureTransportBackend);
 #endif
-    // Check the SSL support
-    if (!QSslSocket::supportsSsl()) {
-        qDebug() << "SSL not supported!";
-        qDebug() << "SSL build version:" << QSslSocket::sslLibraryBuildVersionString();
-        qDebug() << "SSL library version:" << QSslSocket::sslLibraryVersionNumber();
-    }
 
     QApplication app(argc, argv);
 #if QT_VERSION_MAJOR < 6
