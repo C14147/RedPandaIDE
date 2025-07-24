@@ -88,6 +88,7 @@ void EnvironmentAppearanceWidget::doSave()
 
     pSettings->environment().save();
     pMainWindow->applySettings();
+    pMainWindow->update();
 }
 
 void EnvironmentAppearanceWidget::updateIcons(const QSize & size)

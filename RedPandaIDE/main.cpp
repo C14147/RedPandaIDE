@@ -264,58 +264,43 @@ int main(int argc, char *argv[])
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif
 
-    QScreen *screen = QGuiApplication::primaryScreen();
-    QRect screenRect = screen->availableGeometry() ;
 
-    QPixmap splash =
-        QPixmap(":/icons/images/SplashScreen.png")
-                         .scaled((int)screenRect.width()/2.5,(int)screenRect.width()/3.33);
-    QSplashScreen splashw(splash);
-    splashw.show();
-
-    ExternalResource resource;
-
+    // --- Load settings and theme before any widget is created ---
     QLockFile lockFile(QDir::tempPath()+QDir::separator()+"RedPandaDevCppStartUp.lock");
-    {
-        bool firstRun;
-        QString settingFilename = getSettingFilename(QString(), firstRun);
-        bool openInSingleInstance = false;
-        if (!settingFilename.isEmpty() && !firstRun) {
-            QSettings envSetting(settingFilename,QSettings::IniFormat);
-            envSetting.beginGroup(SETTING_ENVIRONMENT);
-            openInSingleInstance = envSetting.value("open_files_in_single_instance",false).toBool();
-        } else if (!settingFilename.isEmpty() && firstRun)
-            openInSingleInstance = false;
-        if (app.arguments().contains("-ns")) {
-            openInSingleInstance = false;
-        } else if (app.arguments().contains("-s"))
-            openInSingleInstance = true;
-        if (openInSingleInstance) {
-            int openCount = 0;
-            while (true) {
-                if (lockFile.tryLock(100))
-                    break;
-                openCount++;
-                if (openCount>100)
-                    break;
-            }
+    bool firstRun;
+    QString settingFilename = getSettingFilename(QString(), firstRun);
+    bool openInSingleInstance = false;
+    if (!settingFilename.isEmpty() && !firstRun) {
+        QSettings envSetting(settingFilename,QSettings::IniFormat);
+        envSetting.beginGroup(SETTING_ENVIRONMENT);
+        openInSingleInstance = envSetting.value("open_files_in_single_instance",false).toBool();
+    } else if (!settingFilename.isEmpty() && firstRun)
+        openInSingleInstance = false;
+    if (app.arguments().contains("-ns")) {
+        openInSingleInstance = false;
+    } else if (app.arguments().contains("-s"))
+        openInSingleInstance = true;
+    if (openInSingleInstance) {
+        int openCount = 0;
+        while (true) {
+            if (lockFile.tryLock(100))
+                break;
+            openCount++;
+            if (openCount>100)
+                break;
+        }
 
-            if (app.arguments().length()>=2 && openCount<100) {
+        if (app.arguments().length()>=2 && openCount<100) {
 #ifdef Q_OS_WIN
-                if (sendFilesToInstance()) {
-                    lockFile.unlock();
-                    return 0;
-                }
-#endif
+            if (sendFilesToInstance()) {
+                lockFile.unlock();
+                return 0;
             }
+#endif
         }
     }
     //Translation must be loaded first
-    splashw.showMessage("Loading translation...");
-    app.processEvents();
     QTranslator trans,transQt,transUtils;
-    bool firstRun;
-    QString settingFilename = getSettingFilename(QString(), firstRun);
     if (!isGreenEdition()) {
         QStringList documentLocations = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
         QDir::setCurrent(documentLocations.first());
@@ -355,70 +340,72 @@ int main(int argc, char *argv[])
 
     initParser();
 
-    splashw.showMessage(QObject::tr("Loading settings..."));
-    app.processEvents();
-    try {
-
-        SystemConsts systemConsts;
-        pSystemConsts = &systemConsts;
-        CharsetInfoManager charsetInfoManager(language);
-        pCharsetInfoManager=&charsetInfoManager;
-
-        //We must use smarter point here, to manually control it's lifetime:
-        // when restore default settings, it must be destoyed before we remove all setting files.
-        auto settings = std::make_unique<Settings>(settingFilename);
-        //load settings
-        pSettings = settings.get();
-        if (firstRun) {
-            pSettings->compilerSets().findSets();
-            pSettings->compilerSets().saveSets();
+    // --- Load settings and theme before any widget is created ---
+    auto settings = std::make_unique<Settings>(settingFilename);
+    //load settings
+    pSettings = settings.get();
+    if (firstRun) {
+        pSettings->compilerSets().findSets();
+        pSettings->compilerSets().saveSets();
+    }
+    pSettings->load();
+    if (firstRun) {
+        // set theme
+        ChooseThemeDialog themeDialog;
+        themeDialog.setFont(QFont(defaultUiFont(),11));
+        themeDialog.exec();
+        switch (themeDialog.theme()) {
+        case ChooseThemeDialog::Theme::AutoFollowSystem:
+            setTheme("system");
+            break;
+        case ChooseThemeDialog::Theme::Dark:
+            setTheme("dark");
+            break;
+        case ChooseThemeDialog::Theme::Light:
+            setTheme("default");
+            break;
+        default:
+            setTheme("default");
         }
-        pSettings->load();
-        if (firstRun) {
-            // set theme
-            ChooseThemeDialog themeDialog;
-            themeDialog.setFont(QFont(defaultUiFont(),11));
-            themeDialog.exec();
-            switch (themeDialog.theme()) {
-            case ChooseThemeDialog::Theme::AutoFollowSystem:
-                setTheme("system");
-                break;
-            case ChooseThemeDialog::Theme::Dark:
-                setTheme("dark");
-                break;
-            case ChooseThemeDialog::Theme::Light:
-                setTheme("default");
-                break;
-            default:
-                setTheme("default");
-            }
 
-            pSettings->editor().setDefaultFileCpp(true);
-            pSettings->editor().save();
+        pSettings->editor().setDefaultFileCpp(true);
+        pSettings->editor().save();
 
-            //auto detect git in path
+        //auto detect git in path
 #ifdef ENABLE_VCS
-            pSettings->vcs().detectGitInPath();
+        pSettings->vcs().detectGitInPath();
 #endif
-        }
-        //Color scheme settings must be loaded after translation
-        ColorManager colorManager;
-        pColorManager = &colorManager;
-        IconsManager iconsManager;
-        pIconsManager = &iconsManager;
-        AutolinkManager autolinkManager;
-        pAutolinkManager = &autolinkManager;
-        try {
-            pAutolinkManager->load();
-        } catch (FileError e) {
-            QMessageBox::critical(nullptr,
-                                  QObject::tr("Can't load autolink settings"),
-                                  e.reason(),
-                                  QMessageBox::Ok);
-        }
-        // qDebug()<<"Load font";
-        QFontDatabase::addApplicationFont(":/fonts/asciicontrol.ttf");
+    }
+    //Color scheme settings must be loaded after translation
+    ColorManager colorManager;
+    pColorManager = &colorManager;
+    IconsManager iconsManager;
+    pIconsManager = &iconsManager;
+    AutolinkManager autolinkManager;
+    pAutolinkManager = &autolinkManager;
+    try {
+        pAutolinkManager->load();
+    } catch (FileError e) {
+        QMessageBox::critical(nullptr,
+                              QObject::tr("Can't load autolink settings"),
+                              e.reason(),
+                              QMessageBox::Ok);
+    }
+    // qDebug()<<"Load font";
+    QFontDatabase::addApplicationFont(":/fonts/asciicontrol.ttf");
 
+    // --- Now create widgets ---
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect screenRect = screen->availableGeometry() ;
+
+    QPixmap splash =
+        QPixmap(":/icons/images/SplashScreen.png")
+                         .scaled((int)screenRect.width()/2.5,(int)screenRect.width()/3.33);
+    QSplashScreen splashw(splash);
+    splashw.show();
+
+    ExternalResource resource;
+    try{
         QDir::setCurrent(pSettings->environment().defaultOpenFolder());
 
         splashw.showMessage(QObject::tr("Creating window..."));
