@@ -73,9 +73,10 @@ void EnvironmentAppearanceWidget::doSave()
         if (appTheme && !appTheme->defaultColorScheme().isEmpty()) {
             pSettings->editor().setColorScheme(appTheme->defaultColorScheme());
             pSettings->editor().save();
-            pMainWindow->updateEditorColorSchemes();
+
         }
     }
+    pMainWindow->updateEditorColorSchemes();
     pSettings->environment().setTheme(ui->cbTheme->currentData().toString());
     pSettings->environment().setInterfaceFont(ui->cbFont->currentFont().family());
     pSettings->environment().setInterfaceFontSize(ui->spinFontSize->value());
@@ -88,6 +89,7 @@ void EnvironmentAppearanceWidget::doSave()
 
     pSettings->environment().save();
     pMainWindow->applySettings();
+    pMainWindow->applyUISettings();
 }
 
 void EnvironmentAppearanceWidget::updateIcons(const QSize & size)
