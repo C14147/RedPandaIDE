@@ -1283,12 +1283,12 @@
 <context>
     <name>DownloadTool</name>
     <message>
-        <location filename="../downloadtool.cpp" line="83"/>
+        <location filename="../downloadtool.cpp" line="93"/>
         <source>Downloaded %1 bytes to %2 in %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../downloadtool.cpp" line="116"/>
+        <location filename="../downloadtool.cpp" line="126"/>
         <source>Downloading %1...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1719,55 +1719,55 @@
         <translation>Удалить...</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="355"/>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="408"/>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="417"/>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="430"/>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="443"/>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="460"/>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="475"/>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="498"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="369"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="422"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="431"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="444"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="457"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="474"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="489"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="512"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="397"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="411"/>
         <source>Open</source>
         <translation>Открыть</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="397"/>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="468"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="411"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="482"/>
         <source>Color Scheme Files (*.scheme)</source>
         <translation>Файлы цветовых схем (*.scheme)</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="408"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="422"/>
         <source>&apos;%1&apos; is not a valid name for color scheme file.</source>
         <translation>&apos;%1&apos; - некорректное имя для файла цветовой схемы.</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="426"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="440"/>
         <source>New scheme name</source>
         <translation>Имя новой схемы</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="430"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="444"/>
         <source>&apos;%1&apos; is not a valid scheme name!</source>
         <translation>&apos;%1&apos; - некорректное имя схемы!</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="468"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="482"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="484"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="498"/>
         <source>Confirm Delete Scheme</source>
         <translation>Подтверждение удаления схемы</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="485"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="499"/>
         <source>Scheme &apos;%1&apos; will be deleted!&lt;br /&gt;Do you really want to continue?</source>
         <translation>Схема &apos;%1&apos; будет удалена!&lt;br /&gt;Вы действительно хотите продолжить?</translation>
     </message>
@@ -2858,6 +2858,167 @@
     <message>
         <location filename="../settingsdialog/extensionswidget.ui" line="247"/>
         <source>Ready</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="51"/>
+        <source>Downloading Metadata...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="61"/>
+        <source>Listing Extensions...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="70"/>
+        <source>File Not Found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="71"/>
+        <source>Metadata file does not exist at: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="80"/>
+        <source>Error Loading Metadata File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="81"/>
+        <source>Failed to open file: %1
+Error: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="92"/>
+        <source>Empty File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="93"/>
+        <source>Metadata file is empty: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="111"/>
+        <source>JSON Parse Error: %1
+At position: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="119"/>
+        <source>
+Context: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="123"/>
+        <source>JSON Parse Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="132"/>
+        <source>Invalid JSON Format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="133"/>
+        <source>The root element is not a JSON object</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="157"/>
+        <source>%1 extensions loaded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="183"/>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="184"/>
+        <source>Unknown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="185"/>
+        <source>No description available</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="192"/>
+        <source>No Selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="192"/>
+        <source>Please select an extension to download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="198"/>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="206"/>
+        <source>Error</source>
+        <translation type="unfinished">Ошибка</translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="198"/>
+        <source>Extension information not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="206"/>
+        <source>Download URL not available for this extension</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="219"/>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="228"/>
+        <source>Unsupported Platform</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="220"/>
+        <source>This Extension is just for Windows only.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="229"/>
+        <source>This Extension is just for Windows 64-bit only.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="262"/>
+        <source>Downloading %1...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="280"/>
+        <source>Download completed: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="295"/>
+        <source>Download canceled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="336"/>
+        <source>Unziping Extension...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="340"/>
+        <source>Installation timed out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="346"/>
+        <source>Installation failed: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="357"/>
+        <source>Extension installed successfully!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

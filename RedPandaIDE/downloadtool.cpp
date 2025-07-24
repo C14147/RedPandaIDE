@@ -2,6 +2,10 @@
 // https://blog.csdn.net/weixin_42602900/article/details/140606196
 
 #include "downloadtool.h"
+#include <QSslConfiguration>
+#include <QSslCertificate>
+#include <QSslSocket>
+#include <QList>
 
 DownloadTool::DownloadTool(const QString& downloadUrl, const QString& savePath, QObject* parent)
     : QObject(parent)

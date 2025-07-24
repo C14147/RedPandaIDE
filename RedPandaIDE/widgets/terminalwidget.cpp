@@ -33,7 +33,7 @@ TerminalWidget::~TerminalWidget() {
 void TerminalWidget::startShell() {
     process->start(shell);
     if (!process->waitForStarted(2000)) {
-        output->appendPlainText("无法启动终端进程。");
+        output->appendPlainText("Launch Terminal Process Failed.");
     }
 }
 

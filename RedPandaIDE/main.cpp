@@ -15,6 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "main.h"
+#include <QSslSocket>
+#include <QSslConfiguration>
 
 #ifdef Q_OS_WIN
 static_assert(WM_APP_OPEN_FILE < 0xc000);
@@ -227,11 +229,11 @@ void setTheme(const QString& theme) {
 
 int main(int argc, char *argv[])
 {
-//#ifdef Q_OS_WINDOWS
+// #ifdef Q_OS_WINDOWS
 //    // Make title bar and palette follow system-wide dark mode setting on recent Windows releases.
 //    // Use freetype as the fontengine
 //    qputenv("QT_QPA_PLATFORM", "windows:darkmode=2:fontengine=freetype");
-//#endif
+// #endif
 
 #ifdef Q_OS_MACOS
     // in macOS GUI apps, `/usr/local/bin` is not in PATH by default
@@ -248,7 +250,14 @@ int main(int argc, char *argv[])
         QString newPath = pathList.join(PATH_SEPARATOR);
         qputenv("PATH", newPath.toUtf8());
     }
+    config.setBackend(QSslConfiguration::SecureTransportBackend);
 #endif
+    // Check the SSL support
+    if (!QSslSocket::supportsSsl()) {
+        qDebug() << "SSL not supported!";
+        qDebug() << "SSL build version:" << QSslSocket::sslLibraryBuildVersionString();
+        qDebug() << "SSL library version:" << QSslSocket::sslLibraryVersionNumber();
+    }
 
     QApplication app(argc, argv);
 #if QT_VERSION_MAJOR < 6

@@ -1649,14 +1649,14 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DownloadTool</name>
     <message>
-        <location filename="../downloadtool.cpp" line="+83"/>
+        <location filename="../downloadtool.cpp" line="+93"/>
         <source>Downloaded %1 bytes to %2 in %3</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+33"/>
         <source>Downloading %1...</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -2169,7 +2169,7 @@ p, li { white-space: pre-wrap; }
         <translation>背景色</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="+355"/>
+        <location filename="../settingsdialog/editorcolorschemewidget.cpp" line="+369"/>
         <location line="+53"/>
         <location line="+9"/>
         <location line="+13"/>
@@ -3469,6 +3469,167 @@ p, li { white-space: pre-wrap; }
         <location line="+7"/>
         <source>Ready</source>
         <translation>就绪</translation>
+    </message>
+    <message>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="+51"/>
+        <source>Downloading Metadata...</source>
+        <translation>下载元数据……</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Listing Extensions...</source>
+        <translation>列出扩展……</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>File Not Found</source>
+        <translation>未找到文件</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Metadata file does not exist at: %1</source>
+        <translation>源文件在%1中不存在</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Error Loading Metadata File</source>
+        <translation>加载源文件出错</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Failed to open file: %1
+Error: %2</source>
+        <translation>打开%1出错：%2</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Empty File</source>
+        <translation>空文件</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Metadata file is empty: %1</source>
+        <translation>源文件无数据：%1</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>JSON Parse Error: %1
+At position: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>
+Context: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>JSON Parse Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Invalid JSON Format</source>
+        <translation>错误的JSON格式</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>The root element is not a JSON object</source>
+        <translation>根元素不是一个有效的JSON对象</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>%1 extensions loaded</source>
+        <translation>加载了%1个扩展</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <location line="+1"/>
+        <source>Unknown</source>
+        <translation>未知</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>No description available</source>
+        <translation>没有可用的描述</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>No Selection</source>
+        <translation>没有选项</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Please select an extension to download</source>
+        <translation>请选择一个扩展以下载</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <location line="+8"/>
+        <source>Error</source>
+        <translation>错误</translation>
+    </message>
+    <message>
+        <location line="-8"/>
+        <source>Extension information not found</source>
+        <translation>找不到扩展信息</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Download URL not available for this extension</source>
+        <translation>该扩展的URL不可用</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <location line="+9"/>
+        <source>Unsupported Platform</source>
+        <translation>不支持的平台</translation>
+    </message>
+    <message>
+        <location line="-8"/>
+        <source>This Extension is just for Windows only.</source>
+        <translation>该扩展仅适用于Windows。</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>This Extension is just for Windows 64-bit only.</source>
+        <translation>该扩展只适用于64位的Windows。</translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>Downloading %1...</source>
+        <translation>正在下载%1......</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Download completed: %1</source>
+        <translation>%1下载完成</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Download canceled</source>
+        <translation>下载被停止</translation>
+    </message>
+    <message>
+        <location line="+41"/>
+        <source>Unziping Extension...</source>
+        <translation>解压扩展……</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Installation timed out</source>
+        <translation>安装超时</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Installation failed: %1</source>
+        <translation>安装失败：%1</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Extension installed successfully!</source>
+        <translation>扩展安装成功！</translation>
     </message>
 </context>
 <context>
