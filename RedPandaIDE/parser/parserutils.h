@@ -16,6 +16,11 @@
  */
 #ifndef PARSER_UTILS_H
 #define PARSER_UTILS_H
+
+#ifdef _MSC_VER
+#  pragma  warning( disable: 4267 )
+#endif
+
 #include <QMap>
 #include <QObject>
 #include <QSet>

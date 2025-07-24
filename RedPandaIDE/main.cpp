@@ -267,9 +267,14 @@ int main(int argc, char *argv[])
     QScreen *screen = QGuiApplication::primaryScreen();
     QRect screenRect = screen->availableGeometry() ;
 
-    QPixmap splash =
-        QPixmap(":/icons/images/SplashScreen.png")
-                         .scaled((int)screenRect.width()/2.5,(int)screenRect.width()/3.33);
+    QPixmap splashPixmap(":/icons/images/SplashScreen.png");
+    splashPixmap.setDevicePixelRatio(screen->devicePixelRatio());
+    QPixmap splash = splashPixmap.scaled(
+        (int)screenRect.width()/2.5,
+        (int)screenRect.width()/3.33,
+        Qt::KeepAspectRatio,
+        Qt::SmoothTransformation
+        );
     QSplashScreen splashw(splash);
     splashw.show();
 
