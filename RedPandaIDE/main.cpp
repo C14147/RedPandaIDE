@@ -254,7 +254,6 @@ int main(int argc, char *argv[])
         QString newPath = pathList.join(PATH_SEPARATOR);
         qputenv("PATH", newPath.toUtf8());
     }
-    config.setBackend(QSslConfiguration::SecureTransportBackend);
 #endif
 
     QApplication app(argc, argv);
