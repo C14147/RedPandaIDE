@@ -63,6 +63,7 @@ jobs:
             ${{ matrix.packagePrefix }}-qt5-static
             ${{ matrix.packagePrefix }}-cmake
             ${{ matrix.packagePrefix }}-7zip
+            ${{ matrix.packagePrefix }}-openssl
             mingw-w64-i686-nsis
             git
 
@@ -84,7 +85,8 @@ jobs:
         with:
           name: Windows MSYS2 - msystem=${{ matrix.msystem }}
           path: dist/
-
+          
+# Legacy not supported extensions
   windows_legacy_native:
     name: Windows NT 5.x native
     strategy:

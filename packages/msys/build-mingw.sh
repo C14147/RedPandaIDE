@@ -317,7 +317,7 @@ pushd .
 cd "${BUILD_DIR}"
 qmake_flags=()
 [[ ${NSIS_ARCH} == x64 ]] && qmake_flags+=("X86_64=ON")
-"$QMAKE" PREFIX="${PACKAGE_DIR}" ${qmake_flags[@]} -o Makefile "${SOURCE_DIR}/Red_Panda_Cpp.pro" -r
+"$QMAKE" PREFIX="${PACKAGE_DIR}" ${qmake_flags[@]} -o Makefile "${SOURCE_DIR}/Red_Panda_Cpp.pro" -r "DEFINES+=BUILD_INCLUDE_OPENSSL"
 mingw32-make -j$(nproc)
 mingw32-make install
 popd

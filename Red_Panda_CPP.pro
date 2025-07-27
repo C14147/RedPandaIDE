@@ -14,9 +14,41 @@ qsynedit.subdir = libs/qsynedit
 lua.subdir = libs/lua
 #qmarkdowntextedit.subdir = libs/qmarkdowntextedit
 
+contains(DEFINES, BUILD_INCLUDE_OPENSSL) {
+# OpenSSL 静态链接配置
+# ========================================================
+    win32 {
+        # MSYS2 环境下的OpenSSL路径
+        MSYS2_ROOT = /
+        OPENSSL_ROOT = $${MSYS2_ROOT}msys64/mingw64
+
+        # 包含路径
+        INCLUDEPATH += $${OPENSSL_ROOT}/include
+
+        # 库路径和链接
+        LIBS += -L$${OPENSSL_ROOT}/lib
+        LIBS += -llibeay32
+        LIBS += -lssleay32
+
+        # Windows 系统库依赖
+        LIBS += -lcrypt32 -lws2_32
+    }
+
+    unix:!macos {
+        # Linux 静态链接配置
+        LIBS += -lssl -lcrypto
+        LIBS += -ldl -lpthread
+}
+
+# 确保静态链接
+CONFIG += static
+DEFINES += OPENSSL_NO_ENGINE
+}
+# ========================================================
+RedPandaIDE.depends = consolepauser qsynedit lua
+
 # Add the dependencies so that the RedPandaIDE project can add the depended programs
 # into the main app bundle
-RedPandaIDE.depends = consolepauser qsynedit lua
 qsynedit.depends = redpanda_qt_utils
 
 APP_NAME = RedPandaIDE

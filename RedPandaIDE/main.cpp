@@ -18,6 +18,10 @@
 #include <QSslSocket>
 #include <QSslConfiguration>
 
+#ifdef BUILD_INCLUDE_OPENSSL
+#include <openssl/ssl.h>
+#endif
+
 #ifdef Q_OS_WIN
 static_assert(WM_APP_OPEN_FILE < 0xc000);
 
@@ -256,6 +260,17 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 #if QT_VERSION_MAJOR < 6
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
+#endif
+
+#ifdef BUILD_INCLUDE_OPENSSL
+#   ifdef Q_OS_WIN
+        SSL_library_init();
+        OpenSSL_add_all_algorithms();
+        SSL_load_error_strings();
+#   else
+        OPENSSL_init_ssl(0, NULL);
+        OPENSSL_init_crypto(0, NULL);
+#   endif
 #endif
 
     QScreen *screen = QGuiApplication::primaryScreen();
