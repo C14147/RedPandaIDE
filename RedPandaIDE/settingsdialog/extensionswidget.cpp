@@ -31,7 +31,6 @@ ExtensionsWidget::ExtensionsWidget(const QString& name, const QString& group,QWi
     connect(extMetadata, &DownloadTool::sigProgress, this, &ExtensionsWidget::dealMetadataDownloadProcess);
     connect(extMetadata, &DownloadTool::sigDownloadFinished, this, &ExtensionsWidget::onDownloadFinished);
 
-    // 连接UI信号
     connect(ui->extList, &QListWidget::itemClicked, this, &ExtensionsWidget::on_extList_itemClicked);
     connect(ui->downloadButton, &QPushButton::clicked, this, &ExtensionsWidget::on_downloadButton_clicked);
     connect(ui->cancelButton, &QPushButton::clicked, this, &ExtensionsWidget::on_cancelButton_clicked);
@@ -136,8 +135,8 @@ void ExtensionsWidget::onDownloadFinished()
     }
 
     QJsonObject metadata_obj = metadata.object();
-    this->metadata = metadata; // 保存元数据
-    extensionInfoMap.clear(); // 清除旧数据
+    this->metadata = metadata;
+    extensionInfoMap.clear();
 
     QStringList exts = metadata_obj.keys();
     const int totalCount = exts.count();
@@ -148,7 +147,7 @@ void ExtensionsWidget::onDownloadFinished()
 
     for (const QString& extName : exts) {
         QJsonObject extInfo = metadata_obj.value(extName).toObject();
-        extensionInfoMap.insert(extName, extInfo); // 保存扩展信息
+        extensionInfoMap.insert(extName, extInfo);
         ui->extList->addItem(extName);
     }
 
@@ -209,7 +208,7 @@ void ExtensionsWidget::on_downloadButton_clicked()
 
     // check the special commands of download
     QStringList att = extInfo.value("special_cmd").toString().split(',');
-    if(att.contains(FILEPATH_FULL_LINK)){
+    if(!att.contains(FILEPATH_FULL_LINK)){
         downloadUrl = "https://raw.githubusercontent.com/C14147/RedPandaIDE-Extensions/main/"+downloadUrl;
     }
     if(att.contains(WIN_ONLY)){
@@ -237,7 +236,7 @@ void ExtensionsWidget::on_downloadButton_clicked()
         downloadUrl = proxy + downloadUrl;
     }
 
-    // 设置保存路径
+    // set save path
     QDir savePath = QApplication::applicationDirPath();
     savePath = savePath.absoluteFilePath(".");
     savePath = QDir::cleanPath(savePath.path()) + QDir::separator();
@@ -248,17 +247,15 @@ void ExtensionsWidget::on_downloadButton_clicked()
         savePath = QDir(savePath.path()+"/config/scheme/");
     }
 
-    // 创建下载工具实例
+    // start download
     if (extFile) {
         delete extFile;
     }
     extFile = new DownloadTool(downloadUrl, savePath.path(), this);
 
-    // 连接信号
     connect(extFile, &DownloadTool::sigProgress, this, &ExtensionsWidget::dealExtDownloadProcess);
     connect(extFile, &DownloadTool::sigDownloadFinished, this, &ExtensionsWidget::onDownloadExtFinished);
 
-    // 开始下载
     ui->statusLabel->setText(tr("Downloading %1...").arg(extensionName));
     ui->downloadButton->setEnabled(false);
     ui->cancelButton->setEnabled(true);
@@ -352,7 +349,7 @@ void ExtensionsWidget::installExtension(const QString& filePath, QString type)
     }
 
     pMainWindow->update();
-    // 更新UI
+    // update UI
     QMetaObject::invokeMethod(this, [this]() {
         ui->statusLabel->setText(tr("Extension installed successfully!"));
     }, Qt::QueuedConnection);

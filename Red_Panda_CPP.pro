@@ -6,7 +6,7 @@ SUBDIRS += \
     redpanda_qt_utils \
     qsynedit \
     lua \
-#    qmarkdowntextedit \
+    tools/7zipExtractor
 
 consolepauser.subdir = tools/consolepauser
 redpanda_qt_utils.subdir = libs/redpanda_qt_utils
@@ -15,32 +15,28 @@ lua.subdir = libs/lua
 #qmarkdowntextedit.subdir = libs/qmarkdowntextedit
 
 contains(DEFINES, BUILD_INCLUDE_OPENSSL) {
-# OpenSSL 静态链接配置
+# OpenSSL static link config  (for MSYS2)
 # ========================================================
     win32 {
-        # MSYS2 环境下的OpenSSL路径
+        # path of OpenSSL in MSYS2
         MSYS2_ROOT = /
         OPENSSL_ROOT = $${MSYS2_ROOT}msys64/mingw64
 
-        # 包含路径
         INCLUDEPATH += $${OPENSSL_ROOT}/include
 
-        # 库路径和链接
         LIBS += -L$${OPENSSL_ROOT}/lib
         LIBS += -llibeay32
         LIBS += -lssleay32
 
-        # Windows 系统库依赖
+        # Windows depends
         LIBS += -lcrypt32 -lws2_32
     }
 
     unix:!macos {
-        # Linux 静态链接配置
         LIBS += -lssl -lcrypto
         LIBS += -ldl -lpthread
 }
 
-# 确保静态链接
 CONFIG += static
 DEFINES += OPENSSL_NO_ENGINE
 }
