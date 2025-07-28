@@ -1,3 +1,9 @@
+#
+# RedPandaIDE Version 4.0.0 Notice
+# Soluction of Qt6 Quesion based on: https://github.com/msys2/MINGW-packages/issues/18966
+# Enable the BUILD_WITH_QT6 macro will enable the qt6 feature.
+#
+
 TEMPLATE = subdirs
 
 SUBDIRS += \
@@ -41,6 +47,11 @@ DEFINES += OPENSSL_NO_ENGINE
 }
 # ========================================================
 RedPandaIDE.depends = consolepauser qsynedit lua
+
+# Qt6 Feature
+contains(DEFINES, BUILD_WITH_QT6) {
+    include(qt6_feature.pri)
+}
 
 # Add the dependencies so that the RedPandaIDE project can add the depended programs
 # into the main app bundle
