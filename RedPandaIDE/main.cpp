@@ -271,18 +271,11 @@ int main(int argc, char *argv[])
         OPENSSL_init_crypto(0, NULL);
 #   endif
 #endif
-
     QScreen *screen = QGuiApplication::primaryScreen();
     QRect screenRect = screen->availableGeometry() ;
-
-    QPixmap splashPixmap(":/icons/images/SplashScreen.png");
-    splashPixmap.setDevicePixelRatio(screen->devicePixelRatio());
-    QPixmap splash = splashPixmap.scaled(
-        (int)screenRect.width()/2.5,
-        (int)screenRect.width()/3.33,
-        Qt::KeepAspectRatio,
-        Qt::SmoothTransformation
-        );
+    QPixmap splash = HDPixmap(":/icons/images/SplashScreen.png",
+             (int)screenRect.width()/2.5,
+             (int)screenRect.width()/3.33);
     QSplashScreen splashw(splash);
     splashw.show();
 
@@ -349,7 +342,11 @@ int main(int argc, char *argv[])
         if (transUtils.load("qt_utils_"+language,":/i18n/")) {
             app.installTranslator(&transUtils);
         }
-        QString translationsPath(QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+        QString translationsPath(
+            QT_VERSION_MAJOR == 6 ?
+            QLibraryInfo::path(QLibraryInfo::TranslationsPath):
+            QLibraryInfo::location(QLibraryInfo::TranslationsPath)
+);
         if (
             // since Qt 5.15.3, `qt_xx.qm` is a wrapper for `qtbase_xx.qm` and other (unused) `qm`s.
             // first, try loading `qt_xx.qm` from standard location (dynamic build) so that it works on Debian 11 (with Qt 5.15.2),
