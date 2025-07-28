@@ -920,3 +920,34 @@ FileType nameToFileType(const QString &name)
 {
     return FileTypeMapping.value(name, FileType::None);
 }
+
+QPixmap HDPixmap(QPixmap pix, int w, int h)
+{
+#if QT_VERSION_MAJOR == 6
+    QPixmap orgin = pix;
+    QScreen *screen = QGuiApplication::primaryScreen();
+
+    orgin.setDevicePixelRatio(screen->devicePixelRatio());
+    pix = orgin.scaled(
+        w,h,
+        Qt::KeepAspectRatio,
+        Qt::SmoothTransformation);
+#endif
+    return pix;
+}
+
+QPixmap HDPixmap(QPixmap pix)
+{
+    return HDPixmap(pix,pix.width(),pix.height());
+}
+
+QPixmap HDPixmap(QString picPath)
+{
+    return HDPixmap(QPixmap(picPath));
+}
+
+QPixmap HDPixmap(QString picPath, int w, int h)
+{
+    QPixmap pix(picPath);
+    return HDPixmap(pix,w,h);
+}

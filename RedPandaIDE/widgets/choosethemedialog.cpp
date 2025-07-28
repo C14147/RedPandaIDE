@@ -16,6 +16,7 @@
  */
 #include "choosethemedialog.h"
 #include "ui_choosethemedialog.h"
+#include "../utils.h"
 
 #include <QFontMetrics>
 #include <QScreen>
@@ -51,6 +52,9 @@ ChooseThemeDialog::ChooseThemeDialog(QWidget *parent) :
 #endif
     ui->rbDark->setChecked(true);
     ui->rbCpp->setChecked(true);
+
+    ui->lblDark->setPixmap(HDPixmap(ui->lblDark->pixmap()));
+    ui->lblLight->setPixmap(HDPixmap(ui->lblLight->pixmap()));
 }
 
 ChooseThemeDialog::~ChooseThemeDialog()

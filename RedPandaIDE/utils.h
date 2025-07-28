@@ -26,6 +26,7 @@
 #include <QThread>
 #include <QProcessEnvironment>
 #include <QTemporaryFile>
+#include <QPixmap>
 #define SI_NO_CONVERSION
 #include "SimpleIni.h"
 #include "qt_utils/utils.h"
@@ -246,5 +247,15 @@ bool applicationHasUtf8Manifest(const wchar_t *path);
 bool osSupportsUtf8Manifest();
 bool applicationIsUtf8(const QString &path);
 #endif
+
+/*
+* In Qt6, image files read directly from files may appear blurry.
+* This function will perform specific operations on image reading
+* to restore image clarity.
+*/
+QPixmap HDPixmap(QPixmap pix, int w, int h);
+QPixmap HDPixmap(QPixmap pix);
+QPixmap HDPixmap(QString picPath);
+QPixmap HDPixmap(QString picPath, int w, int h);
 
 #endif // UTILS_H
