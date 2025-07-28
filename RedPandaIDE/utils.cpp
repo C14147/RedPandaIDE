@@ -8,6 +8,10 @@
 #include <QVersionNumber>
 #include <QRandomGenerator>
 #include <QOperatingSystemVersion>
+#include <JlCompress.h>
+#include <QDir>
+#include <QFileInfo>
+#include <QDebug>
 #include <QtXml>
 #include "editor.h"
 #include "editorlist.h"
@@ -951,3 +955,97 @@ QPixmap HDPixmap(QString picPath, int w, int h)
     QPixmap pix(picPath);
     return HDPixmap(pix,w,h);
 }
+
+UnzipUtil::UnzipUtil(QObject *parent) : QObject(parent) {}
+
+bool UnzipUtil::extractAll(const QString &zipPath, 
+						   const QString &targetDir,
+						   bool overwrite)
+{
+	// 检查ZIP文件是否存在
+	if (!QFile::exists(zipPath)) {
+		emit finished(false, "ZIP file not found");
+		return false;
+	}
+	
+	// 创建目标目录
+	if (!createPathIfNeeded(targetDir)) {
+		emit finished(false, "Failed to create target directory");
+		return false;
+	}
+	
+	// 获取ZIP文件列表
+	QStringList fileList = JlCompress::getFileList(zipPath);
+	if (fileList.isEmpty()) {
+		emit finished(false, "Failed to read ZIP contents or empty archive");
+		return false;
+	}
+	
+	int totalFiles = fileList.size();
+	int processed = 0;
+	
+	// 逐个解压文件
+	for (const QString &file : fileList) {
+		QString absPath = targetDir + QDir::separator() + file;
+		QFileInfo fi(absPath);
+		
+		// 创建子目录
+		if (!createPathIfNeeded(fi.path())) {
+			qWarning() << "Failed to create path:" << fi.path();
+			continue;
+		}
+		
+		// 检查文件是否存在
+		if (QFile::exists(absPath) && !overwrite) {
+			qWarning() << "Skipping existing file:" << absPath;
+			processed++;
+			continue;
+		}
+		
+		// 解压单个文件
+		if (!JlCompress::extractFile(zipPath, file, absPath)) {
+			qWarning() << "Failed to extract file:" << file;
+		}
+		
+		// 更新进度
+		processed++;
+		emit progressChanged(processed, totalFiles);
+	}
+	
+	emit finished(true);
+	return true;
+}
+
+bool UnzipUtil::extractFile(const QString &zipPath,
+							const QString &fileName,
+							const QString &targetPath)
+{
+	if (!QFile::exists(zipPath)) {
+		emit finished(false, "ZIP file not found");
+		return false;
+	}
+	
+	QFileInfo fi(targetPath);
+	if (!createPathIfNeeded(fi.path())) {
+		emit finished(false, "Failed to create target directory");
+		return false;
+	}
+	
+	if (JlCompress::extractFile(zipPath, fileName, targetPath)) {
+		emit finished(true);
+		return true;
+	}
+	
+	emit finished(false, "Failed to extract specified file");
+	return false;
+}
+
+bool UnzipUtil::createPathIfNeeded(const QString &path)
+{
+	QDir dir(path);
+	if (!dir.exists()) {
+		return dir.mkpath(".");
+	}
+	return true;
+}
+

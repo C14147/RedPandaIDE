@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020-2022 Roy Qu (royqh1979@gmail.com)
+ * Copyright (C) 2025 C14147 (https://github.com/C14147)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -257,5 +258,66 @@ QPixmap HDPixmap(QPixmap pix, int w, int h);
 QPixmap HDPixmap(QPixmap pix);
 QPixmap HDPixmap(QString picPath);
 QPixmap HDPixmap(QString picPath, int w, int h);
+
+// The zip file Extract support
+/**
+ * @brief UnzipUtil
+ *
+ * Provide the zip file extract support based on QuaZIP
+ */
+class UnzipUtil : public QObject
+{
+	Q_OBJECT
+	
+public:
+	explicit UnzipUtil(QObject *parent = nullptr);
+	
+	/**
+	 * @brief Extract zip file to path
+	 * @param zipPath zipPath
+	 * @param targetDir the path to save
+	 * @param overwrite overwrite file
+	 * @return bool status of extracting
+	 * 
+	 * @example 
+	 * UnzipUtil unzip;
+	 * bool success = unzip.extractAll("archive.zip", "/target/path");
+	 */
+	bool extractAll(const QString &zipPath, 
+					const QString &targetDir, 
+					bool overwrite = false);
+	
+	/**
+	 * @brief 解压ZIP中的特定文件
+	 * @param zipPath ZIP文件路径
+	 * @param fileName ZIP内文件路径（相对路径）
+	 * @param targetPath 解压目标路径（完整路径）
+	 * @return bool 成功返回true，失败返回false
+	 * 
+	 * @example
+	 * unzip.extractFile("archive.zip", "docs/readme.txt", "/target/readme.txt");
+	 */
+	bool extractFile(const QString &zipPath,
+					 const QString &fileName,
+					 const QString &targetPath);
+	
+	signals:
+	/**
+	 * @brief 解压进度信号
+	 * @param current 当前已解压文件数
+	 * @param total ZIP内文件总数
+	 */
+	void progressChanged(int current, int total);
+	
+	/**
+	 * @brief 解压完成信号
+	 * @param success 操作是否成功
+	 * @param errorMsg 失败时的错误信息
+	 */
+	void finished(bool success, const QString &errorMsg = "");
+	
+private:
+	bool createPathIfNeeded(const QString &path);
+};
 
 #endif // UTILS_H

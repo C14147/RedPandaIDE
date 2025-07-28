@@ -12,6 +12,7 @@ SUBDIRS += \
     redpanda_qt_utils \
     qsynedit \
     lua \
+    tools/quazip/quazip
 
 consolepauser.subdir = tools/consolepauser
 redpanda_qt_utils.subdir = libs/redpanda_qt_utils
@@ -19,9 +20,8 @@ qsynedit.subdir = libs/qsynedit
 lua.subdir = libs/lua
 #qmarkdowntextedit.subdir = libs/qmarkdowntextedit
 
-contains(DEFINES, BUILD_INCLUDE_OPENSSL) {
 # OpenSSL static link config  (for MSYS2)
-# ========================================================
+contains(DEFINES, BUILD_INCLUDE_OPENSSL) {
     win32 {
         # path of OpenSSL in MSYS2
         MSYS2_ROOT = /
@@ -40,12 +40,11 @@ contains(DEFINES, BUILD_INCLUDE_OPENSSL) {
     unix:!macos {
         LIBS += -lssl -lcrypto
         LIBS += -ldl -lpthread
+    }
 }
 
 CONFIG += static
 DEFINES += OPENSSL_NO_ENGINE
-}
-# ========================================================
 RedPandaIDE.depends = consolepauser qsynedit lua
 
 # Qt6 Feature
