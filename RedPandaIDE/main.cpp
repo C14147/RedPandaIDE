@@ -342,11 +342,7 @@ int main(int argc, char *argv[])
         if (transUtils.load("qt_utils_"+language,":/i18n/")) {
             app.installTranslator(&transUtils);
         }
-        QString translationsPath(
-            QT_VERSION_MAJOR == 6 ?
-            QLibraryInfo::path(QLibraryInfo::TranslationsPath):
-            QLibraryInfo::location(QLibraryInfo::TranslationsPath)
-);
+        QString translationsPath(QLibraryInfo::location(QLibraryInfo::TranslationsPath));
         if (
             // since Qt 5.15.3, `qt_xx.qm` is a wrapper for `qtbase_xx.qm` and other (unused) `qm`s.
             // first, try loading `qt_xx.qm` from standard location (dynamic build) so that it works on Debian 11 (with Qt 5.15.2),
