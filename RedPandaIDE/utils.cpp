@@ -933,7 +933,7 @@ QPixmap HDPixmap(QPixmap pix, int w, int h)
         Qt::KeepAspectRatio,
         Qt::SmoothTransformation);
 #endif
-    return pix;
+    return pix.scaled(w,h);
 }
 
 QPixmap HDPixmap(QPixmap pix)
