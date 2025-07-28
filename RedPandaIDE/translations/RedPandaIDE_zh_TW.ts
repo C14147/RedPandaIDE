@@ -259,7 +259,12 @@
         <translation>淺色主題</translation>
     </message>
     <message>
-        <location line="+137"/>
+        <location line="+53"/>
+        <source>&gt; You can use other themes in the Extension Manager later .</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+84"/>
         <source>Ok</source>
         <translation>確定</translation>
     </message>
@@ -279,12 +284,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+66"/>
-        <source>&gt; You can use other themes in the Configuration Manager later .</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+20"/>
+        <location line="+86"/>
         <source>C</source>
         <translation>C</translation>
     </message>
@@ -1287,7 +1287,7 @@
 <context>
     <name>DownloadTool</name>
     <message>
-        <location filename="../downloadtool.cpp" line="+93"/>
+        <location filename="../downloadtool.cpp" line="+97"/>
         <source>Downloaded %1 bytes to %2 in %3</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2341,7 +2341,7 @@
         <translation>使用自定義圖標</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/environmentappearancewidget.cpp" line="+108"/>
+        <location filename="../settingsdialog/environmentappearancewidget.cpp" line="+110"/>
         <source>English</source>
         <translation>English</translation>
     </message>
@@ -2897,7 +2897,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../settingsdialog/extensionswidget.cpp" line="+51"/>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="+50"/>
         <source>Downloading Metadata...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3023,7 +3023,7 @@ Context: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+31"/>
         <source>Downloading %1...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4445,7 +4445,7 @@ Context: %1</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+1435"/>
+        <location filename="../mainwindow.cpp" line="+1437"/>
         <source>RedPandaIDE</source>
         <translation>小熊猫C++</translation>
     </message>
@@ -4542,12 +4542,12 @@ Context: %1</source>
         <location line="+1258"/>
         <location line="+3"/>
         <location line="+502"/>
-        <location filename="../mainwindow.cpp" line="-7934"/>
+        <location filename="../mainwindow.cpp" line="-7936"/>
         <location line="+1"/>
         <location line="+1"/>
         <location line="+1"/>
         <location line="+1"/>
-        <location line="+7467"/>
+        <location line="+7469"/>
         <source>Debug</source>
         <translation>調試</translation>
     </message>
@@ -5667,13 +5667,13 @@ Context: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-8590"/>
+        <location filename="../mainwindow.cpp" line="-8592"/>
         <location line="+62"/>
         <location line="+9"/>
         <location line="+8"/>
         <location line="+9"/>
         <location line="+65"/>
-        <location line="+1464"/>
+        <location line="+1466"/>
         <location line="+1836"/>
         <location line="+117"/>
         <location line="+1796"/>
@@ -5685,7 +5685,7 @@ Context: %1</source>
         <translation type="unfinished">錯誤</translation>
     </message>
     <message>
-        <location line="-9702"/>
+        <location line="-9704"/>
         <source>New</source>
         <translation>新建</translation>
     </message>
@@ -5711,18 +5711,18 @@ Context: %1</source>
     </message>
     <message>
         <location line="+82"/>
-        <location line="+8501"/>
+        <location line="+8503"/>
         <source>Problem Set %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-7791"/>
+        <location line="-7793"/>
         <location line="+7"/>
         <source>Load Theme Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+367"/>
+        <location line="+369"/>
         <location line="+2"/>
         <location line="+30"/>
         <location line="+2"/>
@@ -7150,7 +7150,7 @@ Context: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-5245"/>
+        <location filename="../mainwindow.cpp" line="-5247"/>
         <source>Exact</source>
         <translation type="unfinished">完全一致</translation>
     </message>
@@ -7165,7 +7165,7 @@ Context: %1</source>
         <translation type="unfinished">忽略多餘空格</translation>
     </message>
     <message>
-        <location line="+7118"/>
+        <location line="+7120"/>
         <source>Folder Not Empty</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8429,7 +8429,7 @@ Context: %1</source>
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="../main.cpp" line="+468"/>
+        <location filename="../main.cpp" line="+487"/>
         <source>Error</source>
         <translation type="unfinished">錯誤</translation>
     </message>
@@ -8694,7 +8694,7 @@ Context: %1</source>
     </message>
     <message>
         <location line="+6"/>
-        <location filename="../main.cpp" line="-270"/>
+        <location filename="../main.cpp" line="-283"/>
         <location line="+7"/>
         <source>Error</source>
         <translation type="unfinished">錯誤</translation>
@@ -8749,7 +8749,7 @@ Context: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+143"/>
+        <location line="+156"/>
         <source>Loading settings...</source>
         <translation type="unfinished"></translation>
     </message>

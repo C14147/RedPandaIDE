@@ -6,7 +6,6 @@ SUBDIRS += \
     redpanda_qt_utils \
     qsynedit \
     lua \
-    tools/7zipExtractor
 
 consolepauser.subdir = tools/consolepauser
 redpanda_qt_utils.subdir = libs/redpanda_qt_utils

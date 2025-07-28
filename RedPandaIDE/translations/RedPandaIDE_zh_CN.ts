@@ -426,7 +426,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+7"/>
         <source>Nice to meet you! Please set your usage preferences. You can also change them later in the settings.</source>
-        <translation>见到你很高兴请设置您的使用偏好。您也可以稍后在设置中更改它们。</translation>
+        <translation>见到你很高兴！请设置您的使用偏好。您也可以稍后在设置中更改它们。</translation>
     </message>
     <message>
         <location line="+59"/>
@@ -435,8 +435,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+7"/>
+        <source>&gt; You can use other themes in the Extension Manager later .</source>
+        <translation>&gt; 你可以之后在扩展管理器中安装其他主题。</translation>
+    </message>
+    <message>
         <source>&gt; You can use other themes in the Configuration Manager later .</source>
-        <translation>&gt; 稍后您可以在 配置管理器 中使用其他主题。</translation>
+        <translation type="vanished">&gt; 稍后您可以在 配置管理器 中使用其他主题。</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -1649,7 +1653,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DownloadTool</name>
     <message>
-        <location filename="../downloadtool.cpp" line="+93"/>
+        <location filename="../downloadtool.cpp" line="+97"/>
         <source>Downloaded %1 bytes to %2 in %3</source>
         <translation></translation>
     </message>
@@ -2530,7 +2534,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+7"/>
         <source>Create a new file after startup</source>
-        <translation type="unfinished">启动时新建一个文件</translation>
+        <translation>启动时新建一个文件</translation>
     </message>
     <message>
         <location line="+49"/>
@@ -2861,7 +2865,7 @@ p, li { white-space: pre-wrap; }
         <translation>大小:</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/environmentappearancewidget.cpp" line="+108"/>
+        <location filename="../settingsdialog/environmentappearancewidget.cpp" line="+110"/>
         <source>English</source>
         <translation>英语</translation>
     </message>
@@ -3388,7 +3392,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+16"/>
         <source>RedPandaIDE CE Software</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">小熊猫IDE软件</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -3471,7 +3475,7 @@ p, li { white-space: pre-wrap; }
         <translation>就绪</translation>
     </message>
     <message>
-        <location filename="../settingsdialog/extensionswidget.cpp" line="+51"/>
+        <location filename="../settingsdialog/extensionswidget.cpp" line="+50"/>
         <source>Downloading Metadata...</source>
         <translation>下载元数据……</translation>
     </message>
@@ -3597,7 +3601,7 @@ Context: %1</source>
         <translation>该扩展只适用于64位的Windows。</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+31"/>
         <source>Downloading %1...</source>
         <translation>正在下载%1......</translation>
     </message>
@@ -5086,7 +5090,7 @@ Context: %1</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+1435"/>
+        <location filename="../mainwindow.cpp" line="+1437"/>
         <source>RedPandaIDE</source>
         <translation>小熊猫IDE CE</translation>
     </message>
@@ -5165,12 +5169,12 @@ Context: %1</source>
         <location line="+1258"/>
         <location line="+3"/>
         <location line="+502"/>
-        <location filename="../mainwindow.cpp" line="-3161"/>
+        <location filename="../mainwindow.cpp" line="-3163"/>
         <location line="+1"/>
         <location line="+1"/>
         <location line="+1"/>
         <location line="+1"/>
-        <location line="+7467"/>
+        <location line="+7469"/>
         <source>Debug</source>
         <translation>调试</translation>
     </message>
@@ -5263,7 +5267,7 @@ Context: %1</source>
         <translation type="vanished">工具栏2</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-7721"/>
+        <location filename="../mainwindow.cpp" line="-7723"/>
         <source>New</source>
         <translation>新建</translation>
     </message>
@@ -5395,7 +5399,7 @@ Context: %1</source>
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../mainwindow.cpp" line="+2822"/>
+        <location filename="../mainwindow.cpp" line="+2824"/>
         <location line="+28"/>
         <location line="+200"/>
         <source>Copy</source>
@@ -6755,12 +6759,12 @@ Context: %1</source>
         <translation>文件编码</translation>
     </message>
     <message>
-        <location line="-3548"/>
+        <location line="-3550"/>
         <source>Recent Files</source>
         <translation>文件历史</translation>
     </message>
     <message>
-        <location line="+1172"/>
+        <location line="+1174"/>
         <location line="+2"/>
         <location line="+30"/>
         <location line="+2"/>
@@ -7087,7 +7091,7 @@ Context: %1</source>
         <translation>清除</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-3032"/>
+        <location filename="../mainwindow.cpp" line="-3034"/>
         <source>Export</source>
         <translation>导出</translation>
     </message>
@@ -7098,7 +7102,7 @@ Context: %1</source>
     </message>
     <message>
         <location line="+82"/>
-        <location line="+8501"/>
+        <location line="+8503"/>
         <source>Problem Set %1</source>
         <translation>试题集%1</translation>
     </message>
@@ -8080,13 +8084,13 @@ Context: %1</source>
         <translation>试题案例%1</translation>
     </message>
     <message>
-        <location line="-8739"/>
+        <location line="-8741"/>
         <location line="+62"/>
         <location line="+9"/>
         <location line="+8"/>
         <location line="+9"/>
         <location line="+65"/>
-        <location line="+1464"/>
+        <location line="+1466"/>
         <location line="+1836"/>
         <location line="+117"/>
         <location line="+1796"/>
@@ -8098,7 +8102,7 @@ Context: %1</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location line="-9681"/>
+        <location line="-9683"/>
         <source>Recent Projects</source>
         <translation>项目历史</translation>
     </message>
@@ -8109,7 +8113,7 @@ Context: %1</source>
         <translation>载入主题失败</translation>
     </message>
     <message>
-        <location line="+495"/>
+        <location line="+497"/>
         <location line="+22"/>
         <source>Clear History</source>
         <translation>清除历史</translation>
@@ -8173,7 +8177,7 @@ Context: %1</source>
         <translation>确认转换</translation>
     </message>
     <message>
-        <location line="-9784"/>
+        <location line="-9786"/>
         <source>Exact</source>
         <translation>完全一致</translation>
     </message>
@@ -8192,7 +8196,7 @@ Context: %1</source>
         <translation type="vanished">行: %1 列: %2 (%3个字符) 总行数: %4</translation>
     </message>
     <message>
-        <location line="+2434"/>
+        <location line="+2436"/>
         <location line="+123"/>
         <location line="+2674"/>
         <source>If you are using the Release compiler set, please use choose the Debug version from toolbar.</source>
@@ -9653,7 +9657,7 @@ Context: %1</source>
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="../main.cpp" line="+468"/>
+        <location filename="../main.cpp" line="+487"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
@@ -9747,7 +9751,7 @@ Context: %1</source>
     </message>
     <message>
         <location filename="../colorscheme.cpp" line="+589"/>
-        <location filename="../main.cpp" line="-270"/>
+        <location filename="../main.cpp" line="-283"/>
         <location line="+7"/>
         <source>Error</source>
         <translation>错误</translation>
@@ -9763,7 +9767,7 @@ Context: %1</source>
         <translation>无法写入配置文件夹&quot;%1&quot;</translation>
     </message>
     <message>
-        <location line="+143"/>
+        <location line="+156"/>
         <source>Loading settings...</source>
         <translation>加载配置...</translation>
     </message>
