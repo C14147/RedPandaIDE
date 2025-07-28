@@ -53,8 +53,13 @@ ChooseThemeDialog::ChooseThemeDialog(QWidget *parent) :
     ui->rbDark->setChecked(true);
     ui->rbCpp->setChecked(true);
 
+#if QT_VERSION_MAJOR == 6
     ui->lblDark->setPixmap(HDPixmap(ui->lblDark->pixmap()));
     ui->lblLight->setPixmap(HDPixmap(ui->lblLight->pixmap()));
+#else
+    ui->lblDark->setPixmap(HDPixmap(ui->lblDark->pixmap(Qt::ReturnByValue)));
+    ui->lblLight->setPixmap(HDPixmap(ui->lblLight->pixmap(Qt::ReturnByValue)));
+#endif
 }
 
 ChooseThemeDialog::~ChooseThemeDialog()
