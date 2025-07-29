@@ -1,15 +1,8 @@
-# +=========================================================================================+
-# | RedPandaIDE Version 3.4.0 Notice                                                        |
-# | beta3   : Add zipped file support in ExtensionManager                                   |
-# | beta4   : Add the latest C++26 grammar support                                          |
-# | RC1     : fix the bug of 'using namespace'                                              |
-# | RC2     : Upload MinGW64 15.1.0 to installer(online)                                    |
-# | Release : Release the version if all tests passed                                       |
-# +-----------------------------------------------------------------------------------------+
-# | RedPandaIDE Version 4.0.0 Notice                                                        |
-# | Soluction of Qt6 Quesion based on: https://github.com/msys2/MINGW-packages/issues/18966 |
-# | Enable the BUILD_WITH_QT6 macro will enable the qt6 feature.                            |
-# +=========================================================================================+
+#
+# RedPandaIDE Version 4.0.0 Notice
+# Soluction of Qt6 Quesion based on: https://github.com/msys2/MINGW-packages/issues/18966
+# Enable the BUILD_WITH_QT6 macro will enable the qt6 feature.
+#
 
 TEMPLATE = subdirs
 

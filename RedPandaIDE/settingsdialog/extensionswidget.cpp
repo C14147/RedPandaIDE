@@ -245,11 +245,7 @@ void ExtensionsWidget::on_downloadButton_clicked()
         savePath = QDir(savePath.path()+"/config/themes/");
     }else if(extInfo.value("type").toString() == "colorScheme"){
         savePath = QDir(savePath.path()+"/config/scheme/");
-    }else if(extInfo.value("type").toString() == "compiler"){
-        savePath = QDir(savePath.path()+"/compilers/");
-    }else if(extInfo.value("type").toString() == "widgetExtend") {} // TODO
-    else if(extInfo.value("type").toString() == "toolExtend") {}    // TODO
-    else {}
+    }
 
     // start download
     if (extFile) {
@@ -280,6 +276,7 @@ void ExtensionsWidget::onDownloadExtFinished()
 
     ui->statusLabel->setText(tr("Download completed: %1").arg(fileName));
 
+    // 安装扩展
     installExtension(fileName,extFile->getFileType());
 }
 
@@ -290,13 +287,6 @@ void ExtensionsWidget::dealExtDownloadProcess([[maybe_unused]] qint64 bytesRead,
 
 void ExtensionsWidget::on_cancelButton_clicked()
 {
-    // if (unzip_finished){
-    //     unzip_finished = 2;
-    //     unzip.cancelDoing();
-    //     ui->statusLabel->setText(tr("Extract canceled"));
-    //     ui->downloadButton->setEnabled(true);
-    //     ui->cancelButton->setEnabled(false);
-    // }
     if (extFile) {
         extFile->cancelDownload();
         ui->statusLabel->setText(tr("Download canceled"));
@@ -316,18 +306,10 @@ void ExtensionsWidget::on_searchButton_clicked()
     }
 }
 
-void ExtensionsWidget::dealUnzipProcess(int current, int total) {
-    ui->progressBar->setValue((int)current/total);
-}
-void ExtensionsWidget::onUnzipFinished() {
-    unzip_finished = 1;
-    ui->statusLabel->setText(tr("Unzip finished"));
-}
-
 void ExtensionsWidget::installExtension(const QString& filePath, QString type)
 {
     QFileInfo fileInfo(filePath);
-    // QString extensionDir = filePath;
+    QString extensionDir = filePath;
 
     if (type == "colorScheme"){
         pSettings->editor().setColorScheme(fileInfo.fileName().replace("_"," ").split('.')[0]);
@@ -338,29 +320,32 @@ void ExtensionsWidget::installExtension(const QString& filePath, QString type)
         pSettings->environment().save();
         pMainWindow->applySettings();
     }else{
-        // Extract file
+        // 解压文件
         QString command;
         QStringList args;
 
+#ifdef Q_OS_WIN
+        command = "cmd";
+        args << "/C \""
+             << QString(QDir(QApplication::applicationDirPath()+"/7z/").absoluteFilePath("7za.exe"))
+             << QString(" x '%1' -o '%2' \"").arg(filePath).arg(extensionDir);
+#endif
         ui->statusLabel->setText(tr("Unziping Extension..."));
+        QProcess process;
+        process.start(command, args);
+        if (!process.waitForFinished(30000)) {
+            emit installFinished(false, tr("Installation timed out"));
+            return;
+        }
 
-        // connect(UnzipUtil, UnzipUtil::progressChanged, ExtensionsWidget::dealUnzipProcess);
-        // connect(UnzipUtil, UnzipUtil::finished, ExtensionsWidget::onUnzipFinished());
+        if (process.exitCode() != 0) {
+            QString error = QString::fromUtf8(process.readAllStandardError());
+            emit installFinished(false, tr("Installation failed: %1").arg(error));
+            return;
+        }
 
-        // unzip.extractAll(filePath, QDir(filePath.split('.')[0]+QDir::separator()));
-
-        // // wait for unzip finished
-        // while(!unzip_finished){
-        //     QCoreApplication::processEvents(QEventLoop::AllEvents,100);
-        // }
-
-        // if (unzip_finished == 1) {
-        //     pSettings->compilerSets().addSets(
-        //         QDir(filePath.split('.')[0]+QDir::separator()).absolutePath());
-        //     pSettings->compilerSets().saveSets();
-        // }
-
-        // QFile::remove(filePath);
+        // 删除下载的压缩文件
+        QFile::remove(filePath);
     }
 
     pMainWindow->update();
