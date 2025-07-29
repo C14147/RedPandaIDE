@@ -13,6 +13,7 @@
 #include <QJsonDocument>
 #include <QListWidgetItem>
 
+#include "utils.h"
 #include "settingswidget.h"
 #include "../widgets/macroinfomodel.h"
 #include "../toolsmanager.h"
@@ -34,6 +35,8 @@ public:
     DownloadTool *extFile = nullptr;
     QJsonDocument metadata;
     QMap<QString, QJsonObject> extensionInfoMap; // 存储扩展名到详细信息的映射
+    //UnzipUtil unzip;
+    int unzip_finished = 0;  // 0: no, 1:yes, 2:user abort
 
 public:
     explicit ExtensionsWidget(const QString& name, const QString& group,QWidget *parent = nullptr);
@@ -49,6 +52,8 @@ public slots:
     void dealMetadataDownloadProcess(qint64 bytesRead, qint64 totalBytes, qreal progress);
     void onDownloadExtFinished();
     void dealExtDownloadProcess(qint64 bytesRead, qint64 totalBytes, qreal progress);
+    void dealUnzipProcess(int current, int total);
+    void onUnzipFinished();
 
 private slots:
     void on_extList_itemClicked(QListWidgetItem *item);

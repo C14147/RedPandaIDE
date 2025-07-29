@@ -3270,6 +3270,9 @@ bool Settings::CompilerSets::addSets(const QString &folder, const QString& c_pro
 bool Settings::CompilerSets::addSets(const QString &folder)
 {
     bool found = false;
+    WaitingWidget waitw;
+    qDebug() << "add sets";
+    waitw.show();
     if (!directoryExists(folder))
         return found;
     if (fileExists(folder, GCC_PROGRAM)) {
@@ -3287,6 +3290,8 @@ bool Settings::CompilerSets::addSets(const QString &folder)
         found=true;
     }
 #endif
+    waitw.hide();
+    waitw.deleteLater();
     return found;
 }
 
