@@ -12,7 +12,6 @@ SUBDIRS += \
     redpanda_qt_utils \
     qsynedit \
     lua \
-    tools/quazip/quazip
 
 consolepauser.subdir = tools/consolepauser
 redpanda_qt_utils.subdir = libs/redpanda_qt_utils

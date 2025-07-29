@@ -8,7 +8,6 @@
 #include <QVersionNumber>
 #include <QRandomGenerator>
 #include <QOperatingSystemVersion>
-#include <JlCompress.h>
 #include <QDir>
 #include <QFileInfo>
 #include <QDebug>
@@ -956,96 +955,46 @@ QPixmap HDPixmap(QString picPath, int w, int h)
     return HDPixmap(pix,w,h);
 }
 
-UnzipUtil::UnzipUtil(QObject *parent) : QObject(parent) {}
-
-bool UnzipUtil::extractAll(const QString &zipPath, 
-						   const QString &targetDir,
-						   bool overwrite)
+WaitingWidget::WaitingWidget(QWidget *parent)
+    : QWidget(parent)
+    , verticalLayout(new QVBoxLayout(this))
+    , label(new QLabel(this))
+    , progressBar(new QProgressBar(this))
 {
-	// 检查ZIP文件是否存在
-	if (!QFile::exists(zipPath)) {
-		emit finished(false, "ZIP file not found");
-		return false;
-	}
-	
-	// 创建目标目录
-	if (!createPathIfNeeded(targetDir)) {
-		emit finished(false, "Failed to create target directory");
-		return false;
-	}
-	
-	// 获取ZIP文件列表
-	QStringList fileList = JlCompress::getFileList(zipPath);
-	if (fileList.isEmpty()) {
-		emit finished(false, "Failed to read ZIP contents or empty archive");
-		return false;
-	}
-	
-	int totalFiles = fileList.size();
-	int processed = 0;
-	
-	// 逐个解压文件
-	for (const QString &file : fileList) {
-		QString absPath = targetDir + QDir::separator() + file;
-		QFileInfo fi(absPath);
-		
-		// 创建子目录
-		if (!createPathIfNeeded(fi.path())) {
-			qWarning() << "Failed to create path:" << fi.path();
-			continue;
-		}
-		
-		// 检查文件是否存在
-		if (QFile::exists(absPath) && !overwrite) {
-			qWarning() << "Skipping existing file:" << absPath;
-			processed++;
-			continue;
-		}
-		
-		// 解压单个文件
-		if (!JlCompress::extractFile(zipPath, file, absPath)) {
-			qWarning() << "Failed to extract file:" << file;
-		}
-		
-		// 更新进度
-		processed++;
-		emit progressChanged(processed, totalFiles);
-	}
-	
-	emit finished(true);
-	return true;
+    setupUi();
 }
 
-bool UnzipUtil::extractFile(const QString &zipPath,
-							const QString &fileName,
-							const QString &targetPath)
+WaitingWidget::~WaitingWidget() = default;
+
+void WaitingWidget::changeEvent(QEvent *event)
 {
-	if (!QFile::exists(zipPath)) {
-		emit finished(false, "ZIP file not found");
-		return false;
-	}
-	
-	QFileInfo fi(targetPath);
-	if (!createPathIfNeeded(fi.path())) {
-		emit finished(false, "Failed to create target directory");
-		return false;
-	}
-	
-	if (JlCompress::extractFile(zipPath, fileName, targetPath)) {
-		emit finished(true);
-		return true;
-	}
-	
-	emit finished(false, "Failed to extract specified file");
-	return false;
+    if (event->type() == QEvent::LanguageChange) {
+        retranslateUi();
+    }
+    QWidget::changeEvent(event);
 }
 
-bool UnzipUtil::createPathIfNeeded(const QString &path)
+void WaitingWidget::setupUi()
 {
-	QDir dir(path);
-	if (!dir.exists()) {
-		return dir.mkpath(".");
-	}
-	return true;
+    setObjectName("WaitingWidget");
+    resize(520, 63);
+    setContextMenuPolicy(Qt::NoContextMenu);
+
+    verticalLayout->setObjectName("verticalLayout");
+    label->setObjectName("label");
+    progressBar->setObjectName("progressBar");
+
+    verticalLayout->addWidget(label);
+    verticalLayout->addWidget(progressBar);
+
+    progressBar->setMaximum(0);
+    progressBar->setTextVisible(false);
+
+    retranslateUi();
 }
 
+void WaitingWidget::retranslateUi()
+{
+    setWindowTitle(tr("Waiting"));
+    label->setText(tr("Hang on a minute..."));
+}

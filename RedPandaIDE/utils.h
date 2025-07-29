@@ -25,9 +25,14 @@
 #include <QStringList>
 #include <memory>
 #include <QThread>
+#include <QEvent>
 #include <QProcessEnvironment>
 #include <QTemporaryFile>
 #include <QPixmap>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QProgressBar>
+#include <QWidget>
 #define SI_NO_CONVERSION
 #include "SimpleIni.h"
 #include "qt_utils/utils.h"
@@ -259,65 +264,23 @@ QPixmap HDPixmap(QPixmap pix);
 QPixmap HDPixmap(QString picPath);
 QPixmap HDPixmap(QString picPath, int w, int h);
 
-// The zip file Extract support
-/**
- * @brief UnzipUtil
- *
- * Provide the zip file extract support based on QuaZIP
- */
-class UnzipUtil : public QObject
+class WaitingWidget : public QWidget
 {
-	Q_OBJECT
-	
+    Q_OBJECT
 public:
-	explicit UnzipUtil(QObject *parent = nullptr);
-	
-	/**
-	 * @brief Extract zip file to path
-	 * @param zipPath zipPath
-	 * @param targetDir the path to save
-	 * @param overwrite overwrite file
-	 * @return bool status of extracting
-	 * 
-	 * @example 
-	 * UnzipUtil unzip;
-	 * bool success = unzip.extractAll("archive.zip", "/target/path");
-	 */
-	bool extractAll(const QString &zipPath, 
-					const QString &targetDir, 
-					bool overwrite = false);
-	
-	/**
-	 * @brief 解压ZIP中的特定文件
-	 * @param zipPath ZIP文件路径
-	 * @param fileName ZIP内文件路径（相对路径）
-	 * @param targetPath 解压目标路径（完整路径）
-	 * @return bool 成功返回true，失败返回false
-	 * 
-	 * @example
-	 * unzip.extractFile("archive.zip", "docs/readme.txt", "/target/readme.txt");
-	 */
-	bool extractFile(const QString &zipPath,
-					 const QString &fileName,
-					 const QString &targetPath);
-	
-	signals:
-	/**
-	 * @brief 解压进度信号
-	 * @param current 当前已解压文件数
-	 * @param total ZIP内文件总数
-	 */
-	void progressChanged(int current, int total);
-	
-	/**
-	 * @brief 解压完成信号
-	 * @param success 操作是否成功
-	 * @param errorMsg 失败时的错误信息
-	 */
-	void finished(bool success, const QString &errorMsg = "");
-	
+    explicit WaitingWidget(QWidget *parent = nullptr);
+    ~WaitingWidget() override;
+
+protected:
+    void changeEvent(QEvent *event) override;
+
 private:
-	bool createPathIfNeeded(const QString &path);
+    QVBoxLayout *verticalLayout;
+    QLabel *label;
+    QProgressBar *progressBar;
+
+    void setupUi();
+    void retranslateUi();
 };
 
 #endif // UTILS_H
