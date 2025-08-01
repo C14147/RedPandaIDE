@@ -91,7 +91,7 @@ void initParser()
     CppKeywords.insert("reinterpret_cast",KeywordType::SkipItself);
     CppKeywords.insert("static_cast",KeywordType::SkipItself);
     CppKeywords.insert("template",KeywordType::SkipItself);
-    //CppKeywords.insert("this",SkipType::skItself);
+    CppKeywords.insert("this",KeywordType::SkipItself); // Uncommented
     CppKeywords.insert("thread_local",KeywordType::SkipItself);
     CppKeywords.insert("true",KeywordType::SkipItself);
     CppKeywords.insert("typename",KeywordType::SkipItself);
@@ -179,6 +179,13 @@ void initParser()
     CppKeywords.insert("[[unlikely]]",KeywordType::None);
     CppKeywords.insert("[[no_unique_address]]",KeywordType::None);
 
+    // C++20 modules
+    CppKeywords.insert("import", KeywordType::None); // Added
+    CppKeywords.insert("module", KeywordType::None); // Added
+
+    // C++11 context keywords
+    CppKeywords.insert("override", KeywordType::None); // Added
+    CppKeywords.insert("final", KeywordType::None); // Added
 
 #ifdef ENABLE_SDCC
     SDCCKeywords.insert("__sfr",KeywordType::None);
@@ -222,8 +229,8 @@ void initParser()
     CppTypeKeywords.insert("int");
     CppTypeKeywords.insert("long");
     CppTypeKeywords.insert("short");
-    //CppTypeKeywords.insert("signed");
-    //CppTypeKeywords.insert("unsigned");
+    CppTypeKeywords.insert("signed"); // Uncommented
+    CppTypeKeywords.insert("unsigned"); // Uncommented
     CppTypeKeywords.insert("void");
     CppTypeKeywords.insert("wchar_t");
     CppTypeKeywords.insert("signed");
@@ -307,6 +314,9 @@ void initParser()
     STLContainers.insert("std::deque");
     STLContainers.insert("std::forward_list");
     STLContainers.insert("std::list");
+    STLContainers.insert("std::flat_map"); // C++23
+    STLContainers.insert("std::flat_set"); // C++23
+    STLContainers.insert("std::mdspan"); // C++23
 
     STLContainers.insert("std::set");
 //    STLContainers.insert("std::map");
@@ -323,6 +333,9 @@ void initParser()
     STLContainers.insert("std::priority_queue");
 
     STLContainers.insert("std::span");
+    STLContainers.insert("std::expected"); // C++23
+    STLContainers.insert("std::optional"); // C++23
+    STLContainers.insert("std::generator"); // C++23 coroutines
 
     STLMaps.insert("std::map");
     STLMaps.insert("std::multilist");
@@ -335,6 +348,7 @@ void initParser()
     STLElementMethods.insert("back");
     STLElementMethods.insert("front");
     STLElementMethods.insert("top");
+    STLElementMethods.insert("operator[]"); // Added
 
     //STL iterator
     STLIterators.insert("iterator");
@@ -343,6 +357,7 @@ void initParser()
     STLIterators.insert("local_iterator");
     STLIterators.insert("reverse_iterator");
     STLIterators.insert("const_reverse_iterator");
+    STLIterators.insert("sentinel"); // C++20
 
     //STL pointers
     STLPointers.insert("std::unique_ptr");
@@ -360,6 +375,7 @@ void initParser()
     AutoTypes.insert("auto &&");
     AutoTypes.insert("const auto");
     AutoTypes.insert("const auto &");
+    AutoTypes.insert("decltype(auto)"); // C++14
 
     //C/CPP preprocessor directives
     CppDirectives.append("#include");
@@ -374,6 +390,8 @@ void initParser()
     CppDirectives.append("#pragma");
     CppDirectives.append("#line");
     CppDirectives.append("#undef");
+    CppDirectives.append("#__has_include"); // C++17
+    CppDirectives.append("#warning"); // C++23
 
     // javadoc tags
     JavadocTags.append("@author");
@@ -401,6 +419,7 @@ void initParser()
     MemberOperators.insert("->");
     MemberOperators.insert("->*");
     MemberOperators.insert(".*");
+    MemberOperators.insert("<=>"); // C++20 three-way comparison
 
     IOManipulators.insert("std::boolalpha");
     IOManipulators.insert("std::noboolalpha");
