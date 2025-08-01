@@ -9,6 +9,7 @@ TEMPLATE = subdirs
 SUBDIRS += \
     RedPandaIDE \
     consolepauser \
+    libs/ZipUnpacker \
     redpanda_qt_utils \
     qsynedit \
     lua \

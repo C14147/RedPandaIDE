@@ -35,6 +35,9 @@ ExtensionsWidget::ExtensionsWidget(const QString& name, const QString& group,QWi
     connect(ui->downloadButton, &QPushButton::clicked, this, &ExtensionsWidget::on_downloadButton_clicked);
     connect(ui->cancelButton, &QPushButton::clicked, this, &ExtensionsWidget::on_cancelButton_clicked);
     connect(ui->searchButton, &QPushButton::clicked, this, &ExtensionsWidget::on_searchButton_clicked);
+
+    connect(unzip, &ZipUnpacker::currentFileChanged, this, &ExtensionsWidget::dealUnzipProcess);
+    connect(unzip, &ZipUnpacker::finished, this, &ExtensionsWidget::onUnzipFinished);
 }
 
 ExtensionsWidget::~ExtensionsWidget()
@@ -42,6 +45,7 @@ ExtensionsWidget::~ExtensionsWidget()
     delete ui;
     delete extMetadata;
     delete extFile;
+    delete unzip;
 }
 
 void ExtensionsWidget::doLoad()
@@ -306,6 +310,28 @@ void ExtensionsWidget::on_searchButton_clicked()
     }
 }
 
+void ExtensionsWidget::onUnzipFinished(
+    bool success,
+    const QString &fileName,
+    const QString &errorMessage)
+{
+    if(success){
+        if (QFileInfo(fileName).fileName().startsWith("compiler.")){    // Compiler Achieve
+            ui->statusLabel->setText(tr("Setting up compiler sets..."));
+            pSettings->compilerSets().addSets(fileName);
+            ui->progressBar->setValue(100);
+            pSettings->compilerSets().saveSets();
+        }else ui->statusLabel->setText(tr("Error: Unknown Extension Type."));
+    }else{
+        ui->statusLabel->setText(tr("Error: ")+errorMessage);
+    }
+}
+
+void ExtensionsWidget::dealUnzipProcess(int rate)
+{
+    ui->progressBar->setValue(rate);
+}
+
 void ExtensionsWidget::installExtension(const QString& filePath, QString type)
 {
     QFileInfo fileInfo(filePath);
@@ -319,32 +345,15 @@ void ExtensionsWidget::installExtension(const QString& filePath, QString type)
         pSettings->environment().setTheme(fileInfo.fileName());
         pSettings->environment().save();
         pMainWindow->applySettings();
-    }else{
-        // 解压文件
-        QString command;
-        QStringList args;
+    }else{    // .zip file
+        ui->statusLabel->setText(tr("Unzip file..."));
+        unzip->unpack(
+            filePath,
+            QString(QCoreApplication::applicationDirPath()+
+                    QDir::separator()+
+                    "extensions/compiler")
+            );
 
-#ifdef Q_OS_WIN
-        command = "cmd";
-        args << "/C \""
-             << QString(QDir(QApplication::applicationDirPath()+"/7z/").absoluteFilePath("7za.exe"))
-             << QString(" x '%1' -o '%2' \"").arg(filePath).arg(extensionDir);
-#endif
-        ui->statusLabel->setText(tr("Unziping Extension..."));
-        QProcess process;
-        process.start(command, args);
-        if (!process.waitForFinished(30000)) {
-            emit installFinished(false, tr("Installation timed out"));
-            return;
-        }
-
-        if (process.exitCode() != 0) {
-            QString error = QString::fromUtf8(process.readAllStandardError());
-            emit installFinished(false, tr("Installation failed: %1").arg(error));
-            return;
-        }
-
-        // 删除下载的压缩文件
         QFile::remove(filePath);
     }
 

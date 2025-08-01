@@ -1,4 +1,4 @@
-QT       += core gui printsupport network svg xml widgets
+QT       += core gui printsupport network svg xml widgets core-private gui-private
 
 CONFIG += c++17
 CONFIG += nokey
@@ -106,11 +106,13 @@ CONFIG(debug_and_release_target) {
     }
 }
 
-INCLUDEPATH += ../libs/qsynedit ../libs/redpanda_qt_utils ../libs/lua ../libs/qmarkdowntextedit
+INCLUDEPATH += ../libs/qsynedit ../libs/redpanda_qt_utils ../libs/lua
+INCLUDEPATH += ../libs/zipunpacker
 
 LIBS += -L$$OUT_PWD/../libs/qsynedit/$${OBJ_OUT_PWD} -lqsynedit \
         -L$$OUT_PWD/../libs/redpanda_qt_utils/$${OBJ_OUT_PWD} -lredpanda_qt_utils \
-        -L$$OUT_PWD/../libs/lua/$${OBJ_OUT_PWD} -llua
+        -L$$OUT_PWD/../libs/lua/$${OBJ_OUT_PWD} -llua \
+        -L$$OUT_PWD/../libs/zipunpacker/$${OBJ_OUT_PWD} -lzipunpacker
 #        -L$$OUT_PWD/../libs/qmarkdowntextedit/$${OBJ_OUT_PWD} -lqmarkdowntextedit
 
 SOURCES += \
