@@ -2,14 +2,16 @@
 # | RedPandaIDE Version 3.4.0 Notice                                                        |
 # | beta3   : (abandoned)Add zipped file support in ExtensionManager                        |
 # | beta4   : Add the latest C++26 grammar support                                          |
-# | RC1     : fix the bug of 'using namespace'                                              |
-# | RC2     : Upload MinGW64 15.1.0 to installer(online)                                    |
+# | RC1     : (abandoned)fix the bug of 'using namespace'                                   |
+# | RC2     : (abandoned)Upload MinGW64 15.1.0 to installer(online)                         |
 # | Release : Release the version if all tests passed                                       |
 # |                                                                                         |
 # | Notice: the beta3 plan abandoned because the author can't find a library to unpack zip  |
 # |         file.This plan will join in v4.0.0, and just support in Modern Edition, because |
 # |         we plan to use system command to unpack but win7 or earlier didn't support it.  |
 # |         In LightEdition, we plan to save theme and color scheme download support for it.|
+# |         The RC1 version abandoned because it not easy to fix.                           |
+# |         The RC2 version abandoned because it not support windows7 or earlier.           |
 # +-----------------------------------------------------------------------------------------+
 # | RedPandaIDE Version 4.0.0 Notice                                                        |
 # | After v3.4.x, we'll release 4.0 version.                                                |
