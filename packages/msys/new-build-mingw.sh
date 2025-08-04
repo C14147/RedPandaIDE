@@ -193,7 +193,7 @@ done
 BUILD_DIR="${TEMP}/redpanda-mingw-${MSYSTEM}-build"
 ASTYLE_BUILD_DIR="${BUILD_DIR}/astyle"
 PACKAGE_DIR="${TEMP}/redpanda-mingw-${MSYSTEM}-pkg"
-QMAKE="${MINGW_PREFIX}/qt5-static/bin/qmake"
+QMAKE="${MINGW_PREFIX}/qt6-static/bin/qmake"
 NSIS="/mingw32/bin/makensis"
 SOURCE_DIR="$(pwd)"
 ASSETS_DIR="${SOURCE_DIR}/assets"
@@ -250,7 +250,7 @@ function fn_print_progress() {
 ## Dependency check
 if [[ ${CHECK_DEPS} -eq 1 ]]; then
   deps=(
-    ${MINGW_PACKAGE_PREFIX}-{cc,make,qt5-static,cmake}
+    ${MINGW_PACKAGE_PREFIX}-{cc,make,qt6-static,cmake}
     # Always use x86 NSIS to display architecture mismatch errors
     mingw-w64-i686-nsis
     ${_7Z_PACKAGE_PREFIX}-7zip
@@ -335,7 +335,7 @@ pushd .
 cd "${BUILD_DIR}"
 qmake_flags=()
 [[ ${NSIS_ARCH} == x64 ]] && qmake_flags+=("X86_64=ON")
-"$QMAKE" PREFIX="${PACKAGE_DIR}" ${qmake_flags[@]} -o Makefile "${SOURCE_DIR}/Red_Panda_Cpp.pro" -r "DEFINES+=BUILD_INCLUDE_OPENSSL"
+"$QMAKE" PREFIX="${PACKAGE_DIR}" ${qmake_flags[@]} -o Makefile "${SOURCE_DIR}/Red_Panda_Cpp.pro" -r "DEFINES+=BUILD_INCLUDE_OPENSSL" 
 mingw32-make -j$(nproc)
 mingw32-make install
 popd

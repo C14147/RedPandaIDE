@@ -22,6 +22,24 @@ namespace Ui {
 class ExtensionsWidget;
 }
 
+class ExtensionsManager : public QObject {
+    Q_OBJECT
+public:
+    explicit ExtensionsManager(QObject* parent = nullptr);
+    void startMetadataDownload();
+    bool loadMetadata(QJsonDocument& metadata, QMap<QString, QJsonObject>& extensionInfoMap, QString& errorMsg);
+    bool downloadExtension(const QJsonObject& extInfo, QString proxy, QString& savePath, QString& errorMsg, DownloadTool*& extFile);
+    bool installExtension(const QString& filePath, const QString& type, QString& errorMsg);
+    void cancelDownload(DownloadTool* extFile);
+    void removeDownloadedFile(const QString& filePath);
+signals:
+    void metadataDownloadProgress(qint64 bytesRead, qint64 totalBytes, qreal progress);
+    void metadataDownloadFinished();
+    void extensionDownloadProgress(qint64 bytesRead, qint64 totalBytes, qreal progress);
+    void extensionDownloadFinished();
+};
+
+
 class ExtensionsWidget : public SettingsWidget
 {
     Q_OBJECT

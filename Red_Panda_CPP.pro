@@ -1,25 +1,36 @@
-# +=========================================================================================+
-# | RedPandaIDE Version 3.4.0 Notice                                                        |
-# | beta3   : (abandoned)Add zipped file support in ExtensionManager                        |
-# | beta4   : Add the latest C++26 grammar support                                          |
-# | RC1     : (abandoned)fix the bug of 'using namespace'                                   |
-# | RC2     : (abandoned)Upload MinGW64 15.1.0 to installer(online)                         |
-# | Release : Release the version if all tests passed                                       |
-# |                                                                                         |
-# | Notice: the beta3 plan abandoned because the author can't find a library to unpack zip  |
-# |         file.This plan will join in v4.0.0, and just support in Modern Edition, because |
-# |         we plan to use system command to unpack but win7 or earlier didn't support it.  |
-# |         In LightEdition, we plan to save theme and color scheme download support for it.|
-# |         The RC1 version abandoned because it not easy to fix.                           |
-# |         The RC2 version abandoned because it not support windows7 or earlier.           |
-# +-----------------------------------------------------------------------------------------+
-# | RedPandaIDE Version 4.0.0 Notice                                                        |
-# | After v3.4.x, we'll release 4.0 version.                                                |
-# | Soluction of Qt6 Quesion based on: https://github.com/msys2/MINGW-packages/issues/18966 |
-# | Enable the BUILD_WITH_QT6 macro will enable the qt6 feature.                            |
-# | Compilers always build the Light Edition, build Modern Edition must enable BUILD_MODERN |
-# | macro.                                                                                  |
-# +=========================================================================================+
+# +============================ RedPandaIDE Version 4.0.0 Notice ============================+
+# | Soluction of Qt6 Quesion based on: https://github.com/msys2/MINGW-packages/issues/18966  |
+# |---------------------------------- Compilation Options -----------------------------------|
+# | BUILD_MODERN macro: Enable the qt6 feature and build Modern Edition.                     |
+# |                     Compilers will build the Light Edition defaultly.                    |
+# | Attention: The Extension Manager will only enabled on Modern Edition.                    |
+# |----------------------------- Modern Edition Plan & Features -----------------------------|
+# | 1. framework upgrade preview                                                             |
+# |   - Build with Qt6 Framework.                                                            |
+# | 2. alpha 1                                                                               |
+# |   - Add complete support for extensions to compressed file types.                        |
+# |   - update compiler version to MinGW64 15.1.0                                            |
+# | 3. alpha 2                                                                               |
+# |   - Intelligent recognition of compiler versions and addition of additional compilation  |
+# |     options for specific versions of compilers.                                          |
+# |     (e.g. -fmodules-ts for MinGW 11.x, -fmodules for later)                              |                                                                               |
+# | 4. new feature preview 1                                                                 |
+# |   - Add analysis of C/C++ keywords and prompt users to enable C/C++ standard or          |
+# |     precompile modules.                                                                  |
+# |----------------------------- Plan & Features For All Edition ----------------------------|
+# | 1. alpha 1                                                                               |
+# |   - Refactor the appearance of the embedded terminal, and add environment variables such |
+# |     as compiler path and IDE path when the embedded terminal starts up.                  |
+# | 2. alpha 2                                                                               |
+# |   - Optimize code prompt algorithm to improve code parsing speed.                        |
+# | 3. new feature preview 2                                                                 |
+# |   - Save parsing records when using a library for the first time and read them if        |
+# |     necessary (switching to a new compiler will delete previous parsing records).        |
+# |   - Choose whether to save parsing in the settings.                                      |
+# | 3. beta 1: when upstream fixed over 5 issues and alpha plans are done, will publish this.|
+# | 4. beta 2: try to fix some issues.                                                       |
+# | 5. RC 1: Disable Extension Manager in Light Edition.                                     |
+# +==========================================================================================+
 
 TEMPLATE = subdirs
 
@@ -64,7 +75,7 @@ DEFINES += OPENSSL_NO_ENGINE
 RedPandaIDE.depends = consolepauser qsynedit lua
 
 # Qt6 Feature
-contains(DEFINES, BUILD_WITH_QT6) {
+contains(DEFINES, BUILD_MODERN) {
     include(qt6_feature.pri)
 }
 

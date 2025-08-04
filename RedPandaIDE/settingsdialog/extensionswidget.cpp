@@ -6,6 +6,7 @@
 #include "utils.h"
 #include "utils/escape.h"
 #include "utils/parsearg.h"
+#include "extensionsmanager.h"
 #include "../systemconsts.h"
 #include "../downloadtool.h"
 
@@ -23,14 +24,116 @@
 #include <QDesktopServices>
 #include <QtConcurrent/QtConcurrent>
 
+ExtensionsManager::ExtensionsManager(QObject* parent) : QObject(parent) {}
+
+void ExtensionsManager::startMetadataDownload() {
+    // This would trigger DownloadTool to start metadata download
+    // Signal/slot connection should be handled in ExtensionsWidget
+}
+
+bool ExtensionsManager::loadMetadata(QJsonDocument& metadata, QMap<QString, QJsonObject>& extensionInfoMap, QString& errorMsg) {
+    QDir dir(QApplication::applicationDirPath());
+    QString filePath = dir.absoluteFilePath("extensionsList.json");
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        errorMsg = QObject::tr("Failed to open file: %1").arg(filePath);
+        return false;
+    }
+    QByteArray data = file.readAll();
+    file.close();
+    if (data.startsWith("\xEF\xBB\xBF")) {
+        data = data.mid(3);
+    }
+    QJsonParseError parseError;
+    metadata = QJsonDocument::fromJson(data, &parseError);
+    if (metadata.isNull() || !metadata.isObject()) {
+        errorMsg = QObject::tr("JSON Parse Error: %1").arg(parseError.errorString());
+        return false;
+    }
+    QJsonObject metadata_obj = metadata.object();
+    extensionInfoMap.clear();
+    for (const QString& extName : metadata_obj.keys()) {
+        QJsonObject extInfo = metadata_obj.value(extName).toObject();
+        extensionInfoMap.insert(extName, extInfo);
+    }
+    return true;
+}
+
+bool ExtensionsManager::downloadExtension(const QJsonObject& extInfo, QString proxy, QString& savePath, QString& errorMsg, DownloadTool*& extFile) {
+    QString downloadUrl = extInfo.value("file_path").toString();
+    if (downloadUrl.isEmpty()) {
+        errorMsg = QObject::tr("Download URL not available for this extension");
+        return false;
+    }
+    QStringList att = extInfo.value("special_cmd").toString().split(',');
+    if(!att.contains("FILEPATH_FULL_LINK")){
+        downloadUrl = "https://raw.githubusercontent.com/C14147/RedPandaIDE-Extensions/main/"+downloadUrl;
+    }
+    if (!proxy.isEmpty()) {
+        downloadUrl = proxy + downloadUrl;
+    }
+    QDir dir(QApplication::applicationDirPath());
+    savePath = dir.absoluteFilePath(".");
+    if (extInfo.value("type").toString() == "theme") {
+        savePath = QDir(savePath+"/config/themes/").path();
+    } else if(extInfo.value("type").toString() == "colorScheme") {
+        savePath = QDir(savePath+"/config/scheme/").path();
+    }
+    if (extFile) {
+        delete extFile;
+    }
+    extFile = new DownloadTool(downloadUrl, savePath, nullptr);
+    return true;
+}
+
+bool ExtensionsManager::installExtension(const QString& filePath, const QString& type, QString& errorMsg) {
+    QFileInfo fileInfo(filePath);
+    QString extensionDir = filePath;
+    if (type == "colorScheme" || type == "theme") {
+        // UI update should be handled in ExtensionsWidget
+        return true;
+    } else {
+        QString command;
+        QStringList args;
+#ifdef Q_OS_WIN
+        command = "cmd";
+        args << "/C \""
+             << QString(QDir(QApplication::applicationDirPath()+"/7z/").absoluteFilePath("7za.exe"))
+             << QString(" x '%1' -o '%2' \"").arg(filePath).arg(extensionDir);
+#endif
+        QProcess process;
+        process.start(command, args);
+        if (!process.waitForFinished(30000)) {
+            errorMsg = QObject::tr("Installation timed out");
+            return false;
+        }
+        if (process.exitCode() != 0) {
+            errorMsg = QObject::tr("Installation failed: %1").arg(QString::fromUtf8(process.readAllStandardError()));
+            return false;
+        }
+        QFile::remove(filePath);
+    }
+    return true;
+}
+
+void ExtensionsManager::cancelDownload(DownloadTool* extFile) {
+    if (extFile) {
+        extFile->cancelDownload();
+    }
+}
+
+void ExtensionsManager::removeDownloadedFile(const QString& filePath) {
+    QFile::remove(filePath);
+}
+
 ExtensionsWidget::ExtensionsWidget(const QString& name, const QString& group,QWidget *parent)
     : SettingsWidget(name,group,parent)
     , ui(new Ui::ExtensionsWidget)
+    , manager(new ExtensionsManager(this))
 {
     ui->setupUi(this);
-    connect(extMetadata, &DownloadTool::sigProgress, this, &ExtensionsWidget::dealMetadataDownloadProcess);
-    connect(extMetadata, &DownloadTool::sigDownloadFinished, this, &ExtensionsWidget::onDownloadFinished);
-
+    connect(manager, &ExtensionsManager::metadataDownloadProgress, this, &ExtensionsWidget::dealMetadataDownloadProcess);
+    connect(manager, &ExtensionsManager::metadataDownloadFinished, this, &ExtensionsWidget::onDownloadFinished);
     connect(ui->extList, &QListWidget::itemClicked, this, &ExtensionsWidget::on_extList_itemClicked);
     connect(ui->downloadButton, &QPushButton::clicked, this, &ExtensionsWidget::on_downloadButton_clicked);
     connect(ui->cancelButton, &QPushButton::clicked, this, &ExtensionsWidget::on_cancelButton_clicked);
@@ -46,7 +149,7 @@ ExtensionsWidget::~ExtensionsWidget()
 
 void ExtensionsWidget::doLoad()
 {
-    extMetadata->startDownload();
+    manager->startMetadataDownload();
     ui->statusLabel->setText(tr("Downloading Metadata..."));
 }
 
@@ -59,98 +162,19 @@ void ExtensionsWidget::onDownloadFinished()
 {
     ui->statusLabel->setText(tr("Listing Extensions..."));
     QCoreApplication::processEvents();
-
-    QDir dir(QApplication::applicationDirPath());
-    QString filePath = dir.absoluteFilePath("extensionsList.json");
-
-    if (!QFile::exists(filePath)) {
-        QMessageBox::critical(
-            this,
-            tr("File Not Found"),
-            tr("Metadata file does not exist at: %1").arg(filePath)
-            );
+    QString errorMsg;
+    if (!manager->loadMetadata(metadata, extensionInfoMap, errorMsg)) {
+        QMessageBox::critical(this, tr("Error Loading Metadata"), errorMsg);
         return;
     }
-
-    QFile file(filePath);
-    if (!file.open(QIODevice::ReadOnly)) {
-        QMessageBox::critical(
-            this,
-            tr("Error Loading Metadata File"),
-            tr("Failed to open file: %1\nError: %2")
-                .arg(filePath)
-                .arg(file.errorString())
-            );
-        return;
-    }
-
-    qint64 fileSize = file.size();
-    if (fileSize == 0) {
-        QMessageBox::critical(
-            this,
-            tr("Empty File"),
-            tr("Metadata file is empty: %1").arg(filePath)
-            );
-        file.close();
-        return;
-    }
-
-    QByteArray data = file.readAll();
-    file.close();
-
-    // 移除BOM头
-    if (data.startsWith("\xEF\xBB\xBF")) {
-        data = data.mid(3);
-    }
-
-    QJsonParseError parseError;
-    QJsonDocument metadata = QJsonDocument::fromJson(data, &parseError);
-
-    if (metadata.isNull()) {
-        QString errorMsg = tr("JSON Parse Error: %1\nAt position: %2")
-        .arg(parseError.errorString())
-            .arg(parseError.offset);
-
-        int startPos = qMax(0, parseError.offset - 20);
-        int length = qMin(40, data.length() - startPos);
-        QString context = QString::fromUtf8(data.mid(startPos, length));
-
-        errorMsg += tr("\nContext: %1").arg(context);
-
-        QMessageBox::critical(
-            this,
-            tr("JSON Parse Error"),
-            errorMsg
-            );
-        return;
-    }
-
-    if (!metadata.isObject()) {
-        QMessageBox::critical(
-            this,
-            tr("Invalid JSON Format"),
-            tr("The root element is not a JSON object")
-            );
-        return;
-    }
-
-    QJsonObject metadata_obj = metadata.object();
-    this->metadata = metadata;
-    extensionInfoMap.clear();
-
-    QStringList exts = metadata_obj.keys();
+    QStringList exts = extensionInfoMap.keys();
     const int totalCount = exts.count();
-
     ui->extList->clear();
     ui->progressBar->setValue(0);
     ui->extList->setUpdatesEnabled(false);
-
     for (const QString& extName : exts) {
-        QJsonObject extInfo = metadata_obj.value(extName).toObject();
-        extensionInfoMap.insert(extName, extInfo);
         ui->extList->addItem(extName);
     }
-
     ui->extList->setUpdatesEnabled(true);
     ui->progressBar->setValue(100);
     ui->statusLabel->setText(tr("%1 extensions loaded").arg(totalCount));
@@ -191,71 +215,20 @@ void ExtensionsWidget::on_downloadButton_clicked()
         QMessageBox::warning(this, tr("No Selection"), tr("Please select an extension to download"));
         return;
     }
-
     QString extensionName = item->text();
     if (!extensionInfoMap.contains(extensionName)) {
         QMessageBox::critical(this, tr("Error"), tr("Extension information not found"));
         return;
     }
-
     QJsonObject extInfo = extensionInfoMap.value(extensionName);
-    QString downloadUrl = extInfo.value("file_path").toString();
-
-    if (downloadUrl.isEmpty()) {
-        QMessageBox::critical(this, tr("Error"), tr("Download URL not available for this extension"));
+    QString proxy = ui->cbProxy->currentText();
+    QString savePath, errorMsg;
+    if (!manager->downloadExtension(extInfo, proxy, savePath, errorMsg, extFile)) {
+        QMessageBox::critical(this, tr("Download Error"), errorMsg);
         return;
     }
-
-    // check the special commands of download
-    QStringList att = extInfo.value("special_cmd").toString().split(',');
-    if(!att.contains(FILEPATH_FULL_LINK)){
-        downloadUrl = "https://raw.githubusercontent.com/C14147/RedPandaIDE-Extensions/main/"+downloadUrl;
-    }
-    if(att.contains(WIN_ONLY)){
-        if(QSysInfo::productType().toLower() != "windows"){
-            QMessageBox::warning(
-                nullptr,
-                tr("Unsupported Platform"),
-                tr("This Extension is just for Windows only.")
-                );
-        }
-    }
-    if(att.contains(WIN64_ONLY)){
-        if(!QSysInfo::currentCpuArchitecture().contains("64")){
-            QMessageBox::warning(
-                nullptr,
-                tr("Unsupported Platform"),
-                tr("This Extension is just for Windows 64-bit only.")
-                );
-        }
-    }
-
-    // apply the proxy setting
-    QString proxy = ui->cbProxy->currentText();
-    if (!proxy.isEmpty()) {
-        downloadUrl = proxy + downloadUrl;
-    }
-
-    // set save path
-    QDir savePath = QApplication::applicationDirPath();
-    savePath = savePath.absoluteFilePath(".");
-    savePath = QDir::cleanPath(savePath.path()) + QDir::separator();
-
-    if (extInfo.value("type").toString() == "theme") {
-        savePath = QDir(savePath.path()+"/config/themes/");
-    }else if(extInfo.value("type").toString() == "colorScheme"){
-        savePath = QDir(savePath.path()+"/config/scheme/");
-    }
-
-    // start download
-    if (extFile) {
-        delete extFile;
-    }
-    extFile = new DownloadTool(downloadUrl, savePath.path(), this);
-
     connect(extFile, &DownloadTool::sigProgress, this, &ExtensionsWidget::dealExtDownloadProcess);
     connect(extFile, &DownloadTool::sigDownloadFinished, this, &ExtensionsWidget::onDownloadExtFinished);
-
     ui->statusLabel->setText(tr("Downloading %1...").arg(extensionName));
     ui->downloadButton->setEnabled(false);
     ui->cancelButton->setEnabled(true);
@@ -266,18 +239,30 @@ void ExtensionsWidget::onDownloadExtFinished()
 {
     ui->downloadButton->setEnabled(true);
     ui->cancelButton->setEnabled(false);
-
     QListWidgetItem *item = ui->extList->currentItem();
     if (!item) return;
-
     QString extensionName = item->text();
-    QString fileName = QDir::cleanPath(extFile->m_savePath) + QDir::separator() +
-                       extFile->fileName;
-
+    QString fileName = QDir::cleanPath(extFile->m_savePath) + QDir::separator() + extFile->fileName;
     ui->statusLabel->setText(tr("Download completed: %1").arg(fileName));
-
-    // 安装扩展
-    installExtension(fileName,extFile->getFileType());
+    QString errorMsg;
+    if (!manager->installExtension(fileName, extFile->getFileType(), errorMsg)) {
+        QMessageBox::critical(this, tr("Install Error"), errorMsg);
+        return;
+    }
+    // UI update logic for colorScheme/theme can remain here
+    if (extFile->getFileType() == "colorScheme") {
+        pSettings->editor().setColorScheme(QFileInfo(fileName).fileName().replace("_"," ").split('.')[0]);
+        pSettings->editor().save();
+        pMainWindow->updateEditorColorSchemes();
+    } else if (extFile->getFileType() == "theme") {
+        pSettings->environment().setTheme(QFileInfo(fileName).fileName());
+        pSettings->environment().save();
+        pMainWindow->applySettings();
+    }
+    pMainWindow->update();
+    QMetaObject::invokeMethod(this, [this]() {
+        ui->statusLabel->setText(tr("Extension installed successfully!"));
+    }, Qt::QueuedConnection);
 }
 
 void ExtensionsWidget::dealExtDownloadProcess([[maybe_unused]] qint64 bytesRead, [[maybe_unused]] qint64 totalBytes, qreal progress)
@@ -287,12 +272,10 @@ void ExtensionsWidget::dealExtDownloadProcess([[maybe_unused]] qint64 bytesRead,
 
 void ExtensionsWidget::on_cancelButton_clicked()
 {
-    if (extFile) {
-        extFile->cancelDownload();
-        ui->statusLabel->setText(tr("Download canceled"));
-        ui->downloadButton->setEnabled(true);
-        ui->cancelButton->setEnabled(false);
-    }
+    manager->cancelDownload(extFile);
+    ui->statusLabel->setText(tr("Download canceled"));
+    ui->downloadButton->setEnabled(true);
+    ui->cancelButton->setEnabled(false);
 }
 
 void ExtensionsWidget::on_searchButton_clicked()
