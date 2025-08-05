@@ -136,15 +136,15 @@ jobs:
 
       - name: Build
         run: |
-          ./packages/msys/build-mingw.sh \
+          ./packages/msys/new-build-mingw.sh \
             $( [[ ${{ matrix.isUcrt }} -eq 1 ]] && echo --ucrt 22621 )
-          ./packages/msys/build-mingw.sh --mingw \
+          ./packages/msys/new-build-mingw.sh --mingw \
             $( [[ ${{ matrix.isUcrt }} -eq 1 ]] && echo --ucrt 22621 )
 
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: Windows MSYS2 - msystem=${{ matrix.msystem }}
+          name: Windows MSYS2 with Qt6 - msystem=${{ matrix.msystem }}
           path: dist/
           
 # Legacy not supported extensions

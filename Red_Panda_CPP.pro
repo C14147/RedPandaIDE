@@ -76,7 +76,17 @@ RedPandaIDE.depends = consolepauser qsynedit lua
 
 # Qt6 Feature
 contains(DEFINES, BUILD_MODERN) {
-    include(qt6_feature.pri)
+    contains(QT, widgets){
+        MSYSTEM_PREFIX=$$(MSYSTEM_PREFIX)
+        greaterThan(MSYSTEM_PREFIX,' '){
+            contains(CONFIG, static) {
+	            message("STATIC Qt6 with MSYS2. Extra patch should be introduced.");
+                CONFIG += no_lflags_merge
+	            LIBS += -ltiff  -lmng.dll -ljpeg -ljbig -ldeflate  -lzstd -llerc -llzma  -lgraphite2 -lbz2 -lusp10 -lRpcrt4 -lsharpyuv -lOleAut32
+                #LIBS += -lbz2
+            }
+        }
+    }
 }
 
 # Add the dependencies so that the RedPandaIDE project can add the depended programs
