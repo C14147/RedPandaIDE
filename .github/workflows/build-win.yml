@@ -45,7 +45,7 @@ jobs:
       run: |
         choco install -y nsis 7zip git curl cmake
         refreshenv
-        shell: cmd
+      shell: cmd
 
     - name: Set up MSVC
       uses: microsoft/setup-msbuild@v2
