@@ -41,37 +41,14 @@ jobs:
         archives: qtbase qtsvg qttools
         tools: tools_qtcreator,qt.tools.qtcreator
 
-    - name: Locate MSBuild
-      id: find-msbuild
-      run: |
-          set "VSWHERE=%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe"
-          for /f "usebackq tokens=1* delims=: " %%i in (`"%VSWHERE%" -products * -requires Microsoft.Component.MSBuild -property installationPath -latest -version 2022`) do (
-            set "MSBUILD_PATH=%%i:%%j\MSBuild\Current\Bin\MSBuild.exe"
-          )
-          echo "MSBUILD_PATH=!MSBUILD_PATH!"
-          echo "msbuild-path=!MSBUILD_PATH!" >> %GITHUB_OUTPUT%
-      shell: cmd
-
-    - name: Add MSBuild to PATH
-      run: |
-        echo "${{ steps.find-msbuild.outputs.msbuild-path }}" | %{ $dir = Split-Path $_; $env:PATH += ";$dir"; [Environment]::SetEnvironmentVariable("PATH", $env:PATH, "Process") }
-      shell: powershell
-
-    - name: Verify MSBuild installation
-      run: |
-          msbuild -version
-      shell: cmd
-    
     - name: Install dependencies
       run: |
         choco install -y nsis 7zip git curl cmake
         refreshenv
       shell: cmd
 
-    - name: Set up MSVC
+    - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
-      with:
-        vs-version: '2022'
 
     - name: Prepare build environment
       run: |
