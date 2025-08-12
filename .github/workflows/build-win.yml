@@ -1,0 +1,77 @@
+name: Build with MSVC2022
+
+on:
+  push:
+    paths-ignore:
+      - ".github/**"
+      - ".gitignore"
+      - ".gitattributes"
+      - "**.md"
+      - "LICENSE"
+  pull_request:
+    paths-ignore:
+      - ".github/**"
+      - ".gitignore"
+      - ".gitattributes"
+      - "**.md"
+      - "LICENSE"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    strategy:
+      matrix:
+        arch: [x64, x86, arm64]  # 可扩展为x86、arm64等架构
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    
+    - name: Install Qt 6.9.1
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: '6.9.0'
+        host: windows
+        target: desktop
+        arch: win64_msvc2022_64
+        archives: qtbase qtsvg qttools
+        tools: tools_qtcreator,qt.tools.qtcreator
+    
+    - name: Install dependencies
+      run: |
+        choco install -y nsis 7zip git curl cmake
+        refreshenv
+        shell: cmd
+
+    - name: Set up MSVC
+      uses: microsoft/setup-msbuild@v2
+      with:
+        vs-version: '2022'
+
+    - name: Prepare build environment
+      run: |
+        # 确保版本文件存在
+        if not exist version.inc (echo APP_VERSION=1.0.0 > version.inc)
+      shell: cmd
+
+    - name: Build application
+      run: |
+        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        .\packages\build.bat --mingw64 --target-dir "%GITHUB_WORKSPACE%\dist"
+      shell: cmd
+
+    - name: Upload setup package
+      uses: actions/upload-artifact@v4
+      with:
+        name: redpanda-setup-${{ matrix.arch }}
+        path: ${{ github.workspace }}/dist/*.exe
+
+    - name: Upload portable package
+      uses: actions/upload-artifact@v4
+      with:
+        name: redpanda-portable-${{ matrix.arch }}
+        path: ${{ github.workspace }}/dist/*.7z
