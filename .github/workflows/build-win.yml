@@ -44,17 +44,12 @@ jobs:
     - name: Install dependencies
       run: |
         choco install -y nsis 7zip git curl cmake
+        choco install -y visualstudio2022-buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.MSBuildTools --add Microsoft.VisualStudio.Workload.VCTools --quiet"
         refreshenv
       shell: cmd
 
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v2
-
-    - name: Prepare build environment
-      run: |
-        # 确保版本文件存在
-        if not exist version.inc (echo APP_VERSION=1.0.0 > version.inc)
-      shell: cmd
 
     - name: Build application
       run: |
