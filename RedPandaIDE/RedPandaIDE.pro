@@ -264,6 +264,7 @@ SOURCES += \
     widgets/terminalwidget.cpp
 
 HEADERS += \
+    PluginInterface.h \
     SimpleIni.h \
     addon/luaapi.h \
     addon/luaexecutor.h \

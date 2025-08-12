@@ -390,7 +390,6 @@ void initParser()
     CppDirectives.append("#pragma");
     CppDirectives.append("#line");
     CppDirectives.append("#undef");
-    CppDirectives.append("#__has_include"); // C++17
     CppDirectives.append("#warning"); // C++23
 
     // javadoc tags

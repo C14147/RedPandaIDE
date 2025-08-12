@@ -1,0 +1,52 @@
+从v4.0.0版本开始：
+ - RedPandaIDE将不再构建Linux版本和MacOS版本。
+ - RedPandaIDE将提供多种可配置宏，用于发布适用于不同场景的版本和在自定义编译时个性化体验。相关的宏会在下文展示。
+
+可配置的宏：
+ - BUILD_QT6 : 使用Qt6作为UI框架编译
+ - BUILD_PLG : 启用插件支持
+ - BUILD_EXT : 开启BUILD_PLG，并启用扩展市场
+ - BUILD_PURE: 仅启用核心代码编辑器和文件管理器（不包括项目管理器）
+ - BUILD_MODERN: BUILD_EXT + BUILD_QT6
+ - BUILD_OI  : （OI竞赛专用）开启BUILD_PLG，并编译内置的OI Feature Plugin。
+ 
+RedPandaIDE各个版本所配置的宏：
+ - Modern  : BUILD_QT6 + BUILD_EXT
+ - Ordinary: None
+ - Light   : BUILD_PURE
+ - OI Competition Customized Edition: BUILD_OI
+
+
+开发计划（v4.0.0 预发布版本）：
+1. framework upgrade preview
+ - [Enhancement ](Modern Edition) Try to build with Qt6 Framework.
+2. alpha 1
+ - [Enhancement ](Modern Edition) update compiler version to MinGW64 15.1.0
+ - [Enhancement ] Refactor the appearance of the embedded terminal (DELAY: CyanHao is Developing)
+3. alpha 2
+ - [Enhancement ](Modern Edition) Add complete support for extensions to compressed file types.
+ - [Enhancement ] Add environment variables such as compiler path and IDE path when the embedded terminal starts up. (DELAY: CyanHao is Developing)
+4. alpha 3
+ - [Enhancement ](Modern Edition) Intelligent recognition of compiler versions and addition of additional compilation options for specific versions of compilers. (e.g. -fmodules-ts for MinGW 11.x, -fmodules for later)
+ - [Enhancement ] Optimize code prompt algorithm to improve code parsing speed.
+5. new feature preview 1
+ - [Enhancement ](Modern Edition) Add analysis of C/C++ keywords and prompt users to enable C/C++ standard or precompile modules.
+6. new feature preview 2
+ - [Enhancement ] Save parsing records when using a library for the first time and read them if necessary (switching to a new compiler will delete previous parsing records, choose whether to save parsing in the settings).
+7. new feature preview 3
+ - [Enhancement ] Add support for LLDB debugging.
+8. project pefactoring preview 1
+ - [Enhancement ] Move each sub project in the './tools/' folder to a separate repository.
+ - [Enhancement ] Try using the brand new consolepauser code.
+9. project pefactoring preview 2
+ - [Enhancement ] Move the ExtendeManager to a new repository and add it as an external tool to RedPandaIDE.
+10. alpha 4
+ - [New Feature] Design plugin system.
+
+
+准备修复问题：
+1. 代码结构解析问题：匿名命名空间解析有问题，导致后续代码解析不正确
+2. 文件末尾的using后无法提示代码(namespace)
+3. 建议的修正: 小熊猫注册的文件关联里, RedPandaIDE的程序路径未加双引号, 存在系统无法正确调用的可能.
+4. 建议的修正: 选项里设置了"同一个小熊猫程序进程打开文件"后, 若小熊猫已经存在(一个)窗口, 则在explorer中双击被关联的文件(如.c, .h), 小熊猫不会将其窗口设为活动窗口(即最上层窗口, 且焦点也不在小熊猫的窗口).
+5. 建议的修正: 被划红色波浪线的变量名无法进行重命名符号(尝试执行该操作时鼠标会短暂地转圈, 但其后没有重命名符号的窗口弹出). (这种情形可见于 在头文件中进行了函数形参名称的更改, 然后复制头文件中更改后的函数声明到源文件中, 则源文件用原名称的变量报未定义的变量错误) 

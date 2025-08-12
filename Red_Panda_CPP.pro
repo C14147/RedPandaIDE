@@ -1,37 +1,3 @@
-# +============================ RedPandaIDE Version 4.0.0 Notice ============================+
-# | Soluction of Qt6 Quesion based on: https://github.com/msys2/MINGW-packages/issues/18966  |
-# |---------------------------------- Compilation Options -----------------------------------|
-# | BUILD_MODERN macro: Enable the qt6 feature and build Modern Edition.                     |
-# |                     Compilers will build the Light Edition defaultly.                    |
-# | Attention: The Extension Manager will only enabled on Modern Edition.                    |
-# |----------------------------- Modern Edition Plan & Features -----------------------------|
-# | 1. framework upgrade preview                                                             |
-# |   - Build with Qt6 Framework.                                                            |
-# | 2. alpha 1                                                                               |
-# |   - Add complete support for extensions to compressed file types.                        |
-# |   - update compiler version to MinGW64 15.1.0                                            |
-# | 3. alpha 2                                                                               |
-# |   - Intelligent recognition of compiler versions and addition of additional compilation  |
-# |     options for specific versions of compilers.                                          |
-# |     (e.g. -fmodules-ts for MinGW 11.x, -fmodules for later)                              |                                                                               |
-# | 4. new feature preview 1                                                                 |
-# |   - Add analysis of C/C++ keywords and prompt users to enable C/C++ standard or          |
-# |     precompile modules.                                                                  |
-# |----------------------------- Plan & Features For All Edition ----------------------------|
-# | 1. alpha 1                                                                               |
-# |   - Refactor the appearance of the embedded terminal, and add environment variables such |
-# |     as compiler path and IDE path when the embedded terminal starts up.                  |
-# | 2. alpha 2                                                                               |
-# |   - Optimize code prompt algorithm to improve code parsing speed.                        |
-# | 3. new feature preview 2                                                                 |
-# |   - Save parsing records when using a library for the first time and read them if        |
-# |     necessary (switching to a new compiler will delete previous parsing records).        |
-# |   - Choose whether to save parsing in the settings.                                      |
-# | 3. beta 1: when upstream fixed over 5 issues and alpha plans are done, will publish this.|
-# | 4. beta 2: try to fix some issues.                                                       |
-# | 5. RC 1: Disable Extension Manager in Light Edition.                                     |
-# +==========================================================================================+
-
 TEMPLATE = subdirs
 
 SUBDIRS += \
