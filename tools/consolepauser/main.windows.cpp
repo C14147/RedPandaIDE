@@ -452,7 +452,7 @@ void EnableVtSequence() {
         SetConsoleMode(hConsole, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING | ENABLE_PROCESSED_OUTPUT);
 }
 
-int wmain(int argc, wchar_t** argv) {
+int wmain(int /*argc*/, wchar_t** argv) {
 
     try {
         AP::gArgs = ArgParser<wchar_t>::ParseArgs(argv);
