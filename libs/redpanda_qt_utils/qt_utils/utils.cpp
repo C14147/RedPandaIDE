@@ -43,11 +43,7 @@
 #include <windows.h>
 #endif
 
-#if QT_VERSION_MAJOR >= 6
-# include <QStringConverter>
-#else
-# include <QTextCodec>
-#endif
+#include <QTextCodec>
 
 BaseError::BaseError(const QString &reason):
 mReason(reason)

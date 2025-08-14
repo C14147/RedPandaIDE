@@ -26,9 +26,9 @@ contains(DEFINES, BUILD_MODERN) {
         MSYSTEM_PREFIX=$$(MSYSTEM_PREFIX)
         greaterThan(MSYSTEM_PREFIX,' '){
             contains(CONFIG, static) {
-	            message("STATIC Qt6 with MSYS2. Extra patch should be introduced.");
+                message("STATIC Qt6 with MSYS2. Extra patch should be introduced.");
                 CONFIG += no_lflags_merge
-	            LIBS += -ltiff  -lmng.dll -ljpeg -ljbig -ldeflate  -lzstd -llerc -llzma  -lgraphite2 -lbz2 -lusp10 -lRpcrt4 -lsharpyuv -lOleAut32
+                LIBS += -ltiff  -lmng.dll -ljpeg -ljbig -ldeflate  -lzstd -llerc -llzma  -lgraphite2 -lbz2 -lusp10 -lRpcrt4 -lsharpyuv -lOleAut32
                 #LIBS += -lbz2
             }
         }

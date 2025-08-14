@@ -1,20 +1,20 @@
 name: Build with MSVC2022
 
 on:
-  push:
-    paths-ignore:
-      - ".github/**"
-      - ".gitignore"
-      - ".gitattributes"
-      - "**.md"
-      - "LICENSE"
-  pull_request:
-    paths-ignore:
-      - ".github/**"
-      - ".gitignore"
-      - ".gitattributes"
-      - "**.md"
-      - "LICENSE"
+  # push:
+  #   paths-ignore:
+  #     - ".github/**"
+  #     - ".gitignore"
+  #     - ".gitattributes"
+  #     - "**.md"
+  #     - "LICENSE"
+  # pull_request:
+  #   paths-ignore:
+  #     - ".github/**"
+  #     - ".gitignore"
+  #     - ".gitattributes"
+  #     - "**.md"
+  #     - "LICENSE"
   workflow_dispatch:
 
 jobs:

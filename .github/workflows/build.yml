@@ -1,20 +1,20 @@
 name: Build
 
 on:
-  # push:
-  #   paths-ignore:
-  #     - ".github/**"
-  #     - ".gitignore"
-  #     - ".gitattributes"
-  #     - "**.md"
-  #     - "LICENSE"
-  # pull_request:
-  #   paths-ignore:
-  #     - ".github/**"
-  #     - ".gitignore"
-  #     - ".gitattributes"
-  #     - "**.md"
-  #     - "LICENSE"
+  push:
+    paths-ignore:
+      - ".github/**"
+      - ".gitignore"
+      - ".gitattributes"
+      - "**.md"
+      - "LICENSE"
+  pull_request:
+    paths-ignore:
+      - ".github/**"
+      - ".gitignore"
+      - ".gitattributes"
+      - "**.md"
+      - "LICENSE"
   workflow_dispatch:
 
 env:
@@ -122,6 +122,7 @@ jobs:
             ${{ matrix.packagePrefix }}-qt6-static
             ${{ matrix.packagePrefix }}-qt6-imageformats
             ${{ matrix.packagePrefix }}-angleproject
+            ${{ matrix.packagePrefix }}-qt6-5compat 
             ${{ matrix.packagePrefix }}-cmake
             ${{ matrix.packagePrefix }}-7zip
             ${{ matrix.packagePrefix }}-openssl
@@ -280,6 +281,7 @@ jobs:
           arch: win64_msvc2022_64
           archives: qtbase qtsvg qttools
           tools: tools_qtcreator,qt.tools.qtcreator
+          modules: qt5compat
 
       - name: Build
         run: |
@@ -300,37 +302,6 @@ jobs:
         with:
           name: Windows MSVC x64 with Qt6
           path: pkg/
-
-  debian:
-    name: Debian
-    strategy:
-      fail-fast: false
-      matrix:
-        arch: [amd64, i386]
-        version: ["11", "12"]
-        include:
-          - { arch: amd64, platform: linux/amd64 }
-          - { arch: i386, platform: linux/386 }
-    env:
-      IMAGE: docker.io/${{ matrix.arch }}/debian:${{ matrix.version }}
-      PLATFORM: ${{ matrix.platform }}
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Build
-        run: |
-          ${{ env.CONTAINER_COMMAND }} ./packages/debian/01-in-docker.sh
-
-      - name: Upload
-        uses: actions/upload-artifact@v4
-        with:
-          name: Debian ${{ matrix.version }} ${{ matrix.arch }}
-          path: dist/*.deb
 
   ubuntu:
     name: Ubuntu
@@ -357,150 +328,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Ubuntu ${{ matrix.version }} amd64
-          path: dist/*.deb
-
-  archlinux:
-    name: Arch Linux
-    runs-on: ubuntu-latest
-    env:
-      IMAGE: docker.io/amd64/archlinux:latest
-      PLATFORM: linux/amd64
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Build
-        run: |
-          ${{ env.CONTAINER_COMMAND }} ./packages/archlinux/01-in-docker.sh
-
-      - name: Upload
-        uses: actions/upload-artifact@v4
-        with:
-          name: Arch Linux
-          path: dist/*.pkg.tar.zst
-
-  fedora:
-    name: Fedora
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        version: ["latest", "rawhide"]
-    env:
-      IMAGE: docker.io/amd64/fedora:${{ matrix.version }}
-      PLATFORM: linux/amd64
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Build
-        run: |
-          ${{ env.CONTAINER_COMMAND }} ./packages/fedora/01-in-docker.sh
-
-      - name: Upload
-        uses: actions/upload-artifact@v4
-        with:
-          name: Fedora ${{ matrix.version }} x86_64
-          path: dist/*.rpm
-
-  opensuse:
-    name: openSUSE
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-    env:
-      IMAGE: docker.io/opensuse/tumbleweed:latest
-      PLATFORM: linux/amd64
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Build
-        run: |
-          ${{ env.CONTAINER_COMMAND }} ./packages/opensuse/01-in-docker.sh
-
-      - name: Upload
-        uses: actions/upload-artifact@v4
-        with:
-          name: openSUSE Tumbleweed x86_64
-          path: dist/*.rpm
-
-  alpine:
-    name: Alpine Linux
-    runs-on: ubuntu-latest
-    env:
-      IMAGE: docker.io/amd64/alpine:latest
-      PLATFORM: linux/amd64
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Build
-        run: |
-          ${{ env.CONTAINER_COMMAND }} ./packages/alpine/01-in-docker.sh
-
-      - name: Upload
-        uses: actions/upload-artifact@v4
-        with:
-          name: Alpine Linux
-          path: dist/*.apk
-
-  appimage:
-    name: Linux AppImage
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        arch:
-          - x86_64
-          - aarch64
-          - riscv64
-          - loong64
-          - i686
-    env:
-      IMAGE: ghcr.io/redpanda-cpp/appimage-builder-${{ matrix.arch }}:20241204.0
-      PLATFORM: linux/amd64
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Build
-        run: |
-          ${{ env.CONTAINER_COMMAND }} ./packages/appimage/01-in-docker.sh
-
-      - name: Upload
-        uses: actions/upload-artifact@v4
-        with:
-          name: Linux AppImage ${{ matrix.arch }}
-          path: dist/*.AppImage
-
-  static-deb:
-    name: Static Deb
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Build
-        run: |
-          packages/debian-static/builddeb.sh
-
-      - name: Upload
-        uses: actions/upload-artifact@v4
-        with:
-          name: Static Deb
           path: dist/*.deb
 
   macos:
