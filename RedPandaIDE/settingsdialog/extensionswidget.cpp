@@ -325,10 +325,14 @@ void ExtensionsWidget::installExtension(const QString& filePath, QString type)
         QStringList args;
 
 #ifdef Q_OS_WIN
-        command = "cmd";
-        args << "/C \""
-             << QString(QDir(QApplication::applicationDirPath()+"/7z/").absoluteFilePath("7za.exe"))
-             << QString(" x '%1' -o '%2' \"").arg(filePath).arg(extensionDir);
+        if(QSysInfo::productVersion().toInt() <= 7){
+            QMessageBox::about(this, tr("Error"), tr("The current windows platform is not support to running this command."));
+            return ;
+        }
+        command = "powershell";
+        args << "\""
+             << QString("Expand-Archive -Path ")
+             << QString("\"%1\" -DestinationPath \"%2\" \" ").arg(filePath).arg(extensionDir);
 #endif
         ui->statusLabel->setText(tr("Unziping Extension..."));
         QProcess process;
