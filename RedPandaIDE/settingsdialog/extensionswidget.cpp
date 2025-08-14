@@ -316,7 +316,7 @@ void ExtensionsWidget::installExtension(const QString& filePath, QString type)
         pSettings->editor().save();
         pMainWindow->updateEditorColorSchemes();
     }else if(type == "theme"){
-        pSettings->environment().setTheme(fileInfo.fileName());
+        pSettings->environment().setTheme(fileInfo.fileName().split('.')[0]);
         pSettings->environment().save();
         pMainWindow->applySettings();
     }else{
@@ -344,7 +344,6 @@ void ExtensionsWidget::installExtension(const QString& filePath, QString type)
             return;
         }
 
-        // 删除下载的压缩文件
         QFile::remove(filePath);
     }
 
