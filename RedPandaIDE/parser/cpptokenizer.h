@@ -20,6 +20,34 @@
 #include <QObject>
 #include "parserutils.h"
 
+
+/**
+ * @class CppTokenizer
+ * @brief Specialized lexical analyzer for C++ source code parsing
+ *
+ * @details This class implements C++-specific tokenization logic, converting raw C++ source text
+ *          into a structured sequence of tokens. It extends generic tokenization capabilities
+ *          with handling for C++ syntax nuances, language features, and standards compliance.
+ *
+ * Core functionalities:
+ * - Recognizes C++ keywords (e.g., `constexpr`, `namespace`, `concept`, `co_await`) across standards (C++11 to C++23)
+ * - Parses C++-specific literals: raw strings (`R"(...)"`), user-defined literals (`123u`), and numeric suffixes
+ * - Processes preprocessor directives (`#include`, `#define`, `#ifdef`) and their associated tokens
+ * - Handles context-dependent syntax:
+ *   - Template angle brackets (`<>`) vs. comparison operators
+ *   - Lambda introducers (`[]`), captures, and parameter lists
+ *   - Multi-line comments (`/*...*\/`), single-line comments (`//`), and attribute syntax (`[[...]]`)
+ *   - String/character literals with escape sequences (e.g., `\n`, `\"`)
+ * - Identifies C++ operators (e.g., `::`, `->*`, `<<=`, `co_yield`) and delimiters
+ * - Tracks precise source positions (line/column) for error reporting and navigation features
+ * - Generates error tokens for invalid syntax (unclosed literals, malformed operators)
+ *
+ * Output token streams support downstream IDE features: syntax highlighting, code completion,
+ * basic syntax validation, and source navigation.
+ *
+ * @note Designed to adapt to C++ standard revisions, with conditional handling of version-specific features.
+ */
+
 class CppTokenizer
 {
     enum class TokenType {
