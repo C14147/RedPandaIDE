@@ -96,6 +96,8 @@
 
 
 #include "settingsdialog/settingsdialog.h"
+#include "pluginmanager/pluginmanager.h"
+#include "pluginmanager/plugininterface.h"
 #include "compiler/compilermanager.h"
 #include <qsynedit/document.h>
 #include "cpprefacter.h"
@@ -324,6 +326,62 @@ MainWindow::MainWindow(QWidget *parent)
                              tr("Error"),
                              e.reason());
     }
+
+    // plugin manager
+    mPluginManager = new PluginManager(this, this);
+    // connect plugin manager signals for dynamic integration
+    connect(mPluginManager, &PluginManager::pluginLoaded, this, [this](IRedPandaPlugin* plugin, const QString &path){
+        Q_UNUSED(path)
+        if (!plugin) return;
+        for (QAction* a : plugin->toolActions()) {
+            if (a) ui->menuTools->addAction(a);
+        }
+        for (const auto &p : plugin->explorerTabs()) {
+            QWidget* w = p.second;
+            if (w) ui->tabExplorer->addTab(w, p.first);
+        }
+        for (const auto &p : plugin->messagesTabs()) {
+            QWidget* w = p.second;
+            if (w) ui->tabMessages->addTab(w, p.first);
+        }
+    });
+    connect(mPluginManager, &PluginManager::pluginUnloaded, this, [this](IRedPandaPlugin* plugin, const QString &path){
+        Q_UNUSED(path)
+        if (!plugin) return;
+        // remove tool actions
+        for (QAction* a : plugin->toolActions()) {
+            if (a) {
+                // action is owned by menu; remove from menus if present
+                QWidget *parent = qobject_cast<QWidget*>(a->parent());
+                if (parent) parent->removeAction(a);
+                delete a;
+            }
+        }
+        // remove explorer tabs
+        for (const auto &p : plugin->explorerTabs()) {
+            QWidget* w = p.second;
+            if (w) {
+                int idx = findTabIndex(ui->tabExplorer, w);
+                if (idx >= 0) ui->tabExplorer->removeTab(idx);
+                delete w;
+            }
+        }
+        // remove messages tabs
+        for (const auto &p : plugin->messagesTabs()) {
+            QWidget* w = p.second;
+            if (w) {
+                int idx = findTabIndex(ui->tabMessages, w);
+                if (idx >= 0) ui->tabMessages->removeTab(idx);
+                delete w;
+            }
+        }
+        // settings widgets are owned by SettingsDialog; cannot safely delete here if dialog owns them
+        // we simply emit unload and rely on dialog to refresh when next opened.
+    });
+
+    // load plugins from config/plugins folder (non-recursive)
+    QString pluginsFolder = includeTrailingPathDelimiter(pSettings->dirs().config()) + "plugins";
+    mPluginManager->loadPlugins(pluginsFolder);
     mBookmarkModel = new BookmarkModel{this};
     try {
         mBookmarkModel->loadBookmarks(includeTrailingPathDelimiter(pSettings->dirs().config())
@@ -523,7 +581,16 @@ MainWindow::~MainWindow()
         mProject=nullptr;
     delete mProjectProxyModel;
     delete mEditorList;
+    if (mPluginManager) {
+        delete mPluginManager;
+        mPluginManager = nullptr;
+    }
     delete ui;
+}
+
+QString MainWindow::uiLanguage() const
+{
+    return pSettings->environment().language();
 }
 
 void MainWindow::updateForEncodingInfo(bool clear)
@@ -8641,6 +8708,11 @@ bool MainWindow::shouldRemoveAllSettings() const
 ToolsManager *MainWindow::toolsManager() const
 {
     return mToolsManager;
+}
+
+PluginManager *MainWindow::pluginManager() const
+{
+    return mPluginManager;
 }
 
 

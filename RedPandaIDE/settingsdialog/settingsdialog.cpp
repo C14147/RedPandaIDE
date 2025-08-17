@@ -40,6 +40,8 @@
 #include "executorgeneralwidget.h"
 #include "executorproblemsetwidget.h"
 #include "extensionswidget.h"
+#include "../pluginmanager/plugininterface.h"
+#include "../pluginmanager/pluginmanager.h"
 #include "debuggeneralwidget.h"
 #include "formattergeneralwidget.h"
 #include "formatterpathwidget.h"
@@ -241,6 +243,18 @@ PSettingsDialog SettingsDialog::optionDialog(QWidget *parent)
 #endif
 
     dialog->selectFirstWidget();
+
+    // allow plugins to contribute settings pages
+    if (pMainWindow && pMainWindow->pluginManager()) {
+        for (IRedPandaPlugin* plugin : pMainWindow->pluginManager()->plugins()) {
+            if (!plugin) continue;
+            QList<SettingsWidget*> widgets = plugin->settingsWidgets();
+            for (SettingsWidget* w : widgets) {
+                if (w)
+                    dialog->addWidget(w);
+            }
+        }
+    }
 
     return dialog;
 }

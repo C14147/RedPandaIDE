@@ -155,6 +155,7 @@ SOURCES += \
     parser/cpptokenizer.cpp \
     parser/parserutils.cpp \
     parser/statementmodel.cpp \
+    pluginmanager/pluginmanager.cpp \
     problems/competitivecompenionhandler.cpp \
     problems/freeprojectsetformat.cpp \
     problems/ojproblemset.cpp \
@@ -264,7 +265,6 @@ SOURCES += \
     widgets/terminalwidget.cpp
 
 HEADERS += \
-    PluginInterface.h \
     SimpleIni.h \
     addon/luaapi.h \
     addon/luaexecutor.h \
@@ -295,6 +295,8 @@ HEADERS += \
     parser/cpptokenizer.h \
     parser/parserutils.h \
     parser/statementmodel.h \
+    pluginmanager/plugininterface.h \
+    pluginmanager/pluginmanager.h \
     problems/competitivecompenionhandler.h \
     problems/freeprojectsetformat.h \
     problems/ojproblemset.h \

@@ -21,7 +21,6 @@
 #include <QStandardPaths>
 #include <QSysInfo>
 #include <QDesktopServices>
-#include <QtConcurrent/QtConcurrent>
 
 ExtensionsWidget::ExtensionsWidget(const QString& name, const QString& group,QWidget *parent)
     : SettingsWidget(name,group,parent)
@@ -276,7 +275,6 @@ void ExtensionsWidget::onDownloadExtFinished()
 
     ui->statusLabel->setText(tr("Download completed: %1").arg(fileName));
 
-    // 安装扩展
     installExtension(fileName,extFile->getFileType());
 }
 

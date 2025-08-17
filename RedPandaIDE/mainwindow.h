@@ -190,6 +190,10 @@ public:
 
     SearchDialog *searchDialog() const;
 
+    // Return current UI language code (e.g. "en_US", "zh_CN"). Plugins may call
+    // this via the MainWindow pointer passed to IRedPandaPlugin::initialize().
+    QString uiLanguage() const;
+
     SearchResultModel* searchResultModel();
 
     CodeCompletionPopup *completionPopup() const;
@@ -212,6 +216,9 @@ public:
     const PTodoParser &todoParser() const;
 
     ToolsManager *toolsManager() const;
+
+    // Plugin manager accessor (may be nullptr if plugins not loaded)
+    class PluginManager* pluginManager() const;
 
     bool shouldRemoveAllSettings() const;
 
@@ -935,6 +942,7 @@ private:
     CodeSnippetsManager *mCodeSnippetManager;
     PTodoParser mTodoParser;
     ToolsManager *mToolsManager;
+    class PluginManager *mPluginManager;
     CustomFileSystemModel *mFileSystemModel;
     CustomFileIconProvider mFileSystemModelIconProvider;
     OJProblemSetModel *mOJProblemSetModel;
