@@ -127,7 +127,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="qt_utils/utils.cpp" line="64"/>
+        <location filename="qt_utils/utils.cpp" line="60"/>
         <source>Index %1 out of range</source>
         <translation>Индекс %1 вне диапазона</translation>
     </message>
