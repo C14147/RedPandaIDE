@@ -15,8 +15,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "main.h"
-#include <QSslSocket>
+
 #include <QSslConfiguration>
+#include <QSslSocket>
 
 #ifdef BUILD_INCLUDE_OPENSSL
 #include <openssl/ssl.h>
@@ -26,23 +27,24 @@
 static_assert(WM_APP_OPEN_FILE < 0xc000);
 
 HWND prevAppInstance = NULL;
-BOOL CALLBACK GetPreviousInstanceCallback(HWND hwnd, LPARAM param){
+BOOL CALLBACK GetPreviousInstanceCallback(HWND hwnd, LPARAM param) {
     BOOL result = TRUE;
     WCHAR buffer[4098];
-    HINSTANCE hWindowModule = (HINSTANCE)GetWindowLongPtr(hwnd,GWLP_HINSTANCE);
+    HINSTANCE hWindowModule = (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE);
 
-    if (hWindowModule==0)
+    if (hWindowModule == 0)
         return result;
 
     DWORD processID;
 
     // Get the ID of the process that created this window
-    GetWindowThreadProcessId(hwnd,&processID);
-    if (processID==0)
+    GetWindowThreadProcessId(hwnd, &processID);
+    if (processID == 0)
         return result;
 
     // Get the process associated with the ID
-    HANDLE hWindowProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processID);
+    HANDLE hWindowProcess =
+        OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processID);
     if (hWindowProcess == 0)
         return result;
 
@@ -51,13 +53,13 @@ BOOL CALLBACK GetPreviousInstanceCallback(HWND hwnd, LPARAM param){
         return TRUE;
 
     CloseHandle(hWindowProcess); // not needed anymore
-    WCHAR * compareFilename=(WCHAR*)param;
-    QString s1=QString::fromWCharArray(compareFilename);
-    QString s2=QString::fromWCharArray(buffer);
+    WCHAR* compareFilename = (WCHAR*)param;
+    QString s1 = QString::fromWCharArray(compareFilename);
+    QString s2 = QString::fromWCharArray(buffer);
 
-    //Is from the "same" application?
-    if (QString::compare(s1,s2,PATH_SENSITIVITY)==0) {
-        //found, stop EnumWindows loop
+    // Is from the "same" application?
+    if (QString::compare(s1, s2, PATH_SENSITIVITY) == 0) {
+        // found, stop EnumWindows loop
         prevAppInstance = hwnd;
         return FALSE;
     }
@@ -67,30 +69,32 @@ BOOL CALLBACK GetPreviousInstanceCallback(HWND hwnd, LPARAM param){
 
 HWND getPreviousInstance() {
     WCHAR buffer[4098];
-    //ShowMessage('ERROR_ALREADY_EXISTS');
-    // Store our own module filename
+    // ShowMessage('ERROR_ALREADY_EXISTS');
+    //  Store our own module filename
     if (GetModuleFileNameW(GetModuleHandle(NULL), buffer, sizeof(buffer)) == 0)
         return NULL;
 
-    // If that's the case, walk all top level windows and find the previous instance
-    // At this point, the program that created the mutex might not have created its MainForm yet
-    if (EnumWindows(GetPreviousInstanceCallback, LPARAM(buffer))==0) {
+    // If that's the case, walk all top level windows and find the previous
+    // instance At this point, the program that created the mutex might not have
+    // created its MainForm yet
+    if (EnumWindows(GetPreviousInstanceCallback, LPARAM(buffer)) == 0) {
         return prevAppInstance;
     } else
         return NULL;
 }
 
 #if QT_VERSION_MAJOR >= 6
-bool WindowLogoutEventFilter::nativeEventFilter(const QByteArray & /*eventType*/, void *message, qintptr *result)
+bool WindowLogoutEventFilter::nativeEventFilter(const QByteArray& /*eventType*/, void* message,
+                                                qintptr* result)
 #else
-bool WindowLogoutEventFilter::nativeEventFilter(const QByteArray & /*eventType*/, void *message, long *result)
+bool WindowLogoutEventFilter::nativeEventFilter(const QByteArray& /*eventType*/, void* message,
+                                                long* result)
 #endif
 {
-    MSG * pMsg = static_cast<MSG *>(message);
-    switch(pMsg->message) {
+    MSG* pMsg = static_cast<MSG*>(message);
+    switch (pMsg->message) {
     case WM_QUERYENDSESSION:
-        if (pMsg->lParam == 0
-                || (pMsg->lParam & ENDSESSION_LOGOFF)) {
+        if (pMsg->lParam == 0 || (pMsg->lParam & ENDSESSION_LOGOFF)) {
             if (!pMainWindow->close()) {
                 *result = 0;
             } else {
@@ -99,22 +103,22 @@ bool WindowLogoutEventFilter::nativeEventFilter(const QByteArray & /*eventType*/
             return true;
         }
         break;
-    case WM_DPICHANGED:{
+    case WM_DPICHANGED: {
         if (pMsg->hwnd == (HWND)pMainWindow->winId()) {
             int oldDPI = screenDPI();
-            //postEvent takes the owner ship
-            QEvent * dpiEvent = new QEvent(DPI_CHANGED_EVENT);
-            qApp->postEvent(pMainWindow,dpiEvent);
+            // postEvent takes the owner ship
+            QEvent* dpiEvent = new QEvent(DPI_CHANGED_EVENT);
+            qApp->postEvent(pMainWindow, dpiEvent);
             setScreenDPI(HIWORD(pMsg->wParam));
             int newDPI = screenDPI();
-            pMainWindow->updateDPI(oldDPI,newDPI);
+            pMainWindow->updateDPI(oldDPI, newDPI);
         } else if (pMainWindow->cpuDialog() &&
                    (HWND)pMainWindow->cpuDialog()->winId() == pMsg->hwnd) {
             int newDPI = HIWORD(pMsg->wParam);
             pMainWindow->cpuDialog()->updateDPI(newDPI);
         }
         break;
-        }
+    }
     case WM_APP_OPEN_FILE: {
         QSharedMemory sharedMemory("RedPandaCpp/openfiles");
         if (sharedMemory.attach()) {
@@ -147,15 +151,15 @@ bool sendFilesToInstance() {
         QDataStream out(&buffer);
         QStringList filesToOpen = qApp->arguments();
         filesToOpen.pop_front();
-        out<<filesToOpen;
+        out << filesToOpen;
         int size = buffer.size();
         if (sharedMemory.create(size)) {
             sharedMemory.lock();
-            char *to = (char*)sharedMemory.data();
-            const char *from = buffer.data().data();
+            char* to = (char*)sharedMemory.data();
+            const char* from = buffer.data().data();
             memcpy(to, from, qMin(sharedMemory.size(), size));
             sharedMemory.unlock();
-            SendMessage(prevInstance,WM_APP_OPEN_FILE,0,0);
+            SendMessage(prevInstance, WM_APP_OPEN_FILE, 0, 0);
             return true;
         }
     }
@@ -163,18 +167,15 @@ bool sendFilesToInstance() {
 }
 #endif
 
-BlockWheelEventFiler::BlockWheelEventFiler(QObject* parent):QObject(parent) {}
+BlockWheelEventFiler::BlockWheelEventFiler(QObject* parent) : QObject(parent) {
+}
 
-BlockWheelEventFiler::~BlockWheelEventFiler()
-{
-
-} ;
-bool BlockWheelEventFiler::eventFilter(QObject *watched, QEvent *event)
-{
-    //Prevent QComboBox wheel event
-    if (event->type() == QEvent::Wheel
-            && !pSettings->environment().comboboxWheel()) {
-        QComboBox *p=qobject_cast<QComboBox*>(watched);
+BlockWheelEventFiler::~BlockWheelEventFiler() {
+}
+bool BlockWheelEventFiler::eventFilter(QObject* watched, QEvent* event) {
+    // Prevent QComboBox wheel event
+    if (event->type() == QEvent::Wheel && !pSettings->environment().comboboxWheel()) {
+        QComboBox* p = qobject_cast<QComboBox*>(watched);
         if (p && !(p->view() && p->view()->isVisible()))
             return true;
     }
@@ -186,11 +187,11 @@ QString getSettingFilename(const QString& filepath, bool& firstRun) {
     if (filepath.isEmpty()) {
         if (isGreenEdition()) {
             filename = includeTrailingPathDelimiter(QApplication::applicationDirPath()) +
-                    "config/"  + APP_SETTSINGS_FILENAME;
+                       "config/" + APP_SETTSINGS_FILENAME;
         } else {
-            QStringList appLocations = QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
-            filename =includeTrailingPathDelimiter(appLocations.first())
-                 + APP_SETTSINGS_FILENAME;
+            QStringList appLocations =
+                QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
+            filename = includeTrailingPathDelimiter(appLocations.first()) + APP_SETTSINGS_FILENAME;
         }
     } else {
         filename = filepath;
@@ -202,13 +203,15 @@ QString getSettingFilename(const QString& filepath, bool& firstRun) {
     if (!dir.exists()) {
         if (!dir.mkpath(dir.absolutePath())) {
             QMessageBox::critical(nullptr, QObject::tr("Error"),
-                QString(QObject::tr("Can't create configuration folder %1")).arg(dir.absolutePath()));
+                                  QString(QObject::tr("Can't create configuration folder %1"))
+                                      .arg(dir.absolutePath()));
             return "";
         }
     }
 
     if (fileInfo.exists() && !fileInfo.isWritable()) {
-        QMessageBox::critical(nullptr, QObject::tr("Error"),
+        QMessageBox::critical(
+            nullptr, QObject::tr("Error"),
             QString(QObject::tr("Can't write to configuration file %1")).arg(filename));
 
         return "";
@@ -228,20 +231,20 @@ void setTheme(const QString& theme) {
         pSettings->environment().setIconSet(appTheme->defaultIconSet());
     }
     pSettings->environment().save();
-
 }
 
 #ifdef ENABLE_GLIBC_HWCAPS
-extern "C" int Q_DECL_EXPORT RedPandaIDE_main(int argc, char *argv[])
+extern "C" int Q_DECL_EXPORT RedPandaIDE_main(int argc, char* argv[])
 #else
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 #endif
 {
-// #ifdef Q_OS_WINDOWS
-//    // Make title bar and palette follow system-wide dark mode setting on recent Windows releases.
-//    // Use freetype as the fontengine
-//    qputenv("QT_QPA_PLATFORM", "windows:darkmode=2:fontengine=freetype");
-// #endif
+    // #ifdef Q_OS_WINDOWS
+    //    // Make title bar and palette follow system-wide dark mode setting on
+    //    recent Windows releases.
+    //    // Use freetype as the fontengine
+    //    qputenv("QT_QPA_PLATFORM", "windows:darkmode=2:fontengine=freetype");
+    // #endif
 
 #ifdef Q_OS_MACOS
     // in macOS GUI apps, `/usr/local/bin` is not in PATH by default
@@ -266,34 +269,34 @@ int main(int argc, char *argv[])
 #endif
 
 #ifdef BUILD_INCLUDE_OPENSSL
-#   ifdef Q_OS_WIN
-        SSL_library_init();
-        OpenSSL_add_all_algorithms();
-        SSL_load_error_strings();
-#   else
-        OPENSSL_init_ssl(0, NULL);
-        OPENSSL_init_crypto(0, NULL);
-#   endif
+#ifdef Q_OS_WIN
+    SSL_library_init();
+    OpenSSL_add_all_algorithms();
+    SSL_load_error_strings();
+#else
+    OPENSSL_init_ssl(0, NULL);
+    OPENSSL_init_crypto(0, NULL);
 #endif
-    QScreen *screen = QGuiApplication::primaryScreen();
-    QRect screenRect = screen->availableGeometry() ;
-    QPixmap splash = HDPixmap(":/icons/images/SplashScreen.png",
-             (int)screenRect.width()/2.5,
-             (int)screenRect.width()/3.33);
+#endif
+    QScreen* screen = QGuiApplication::primaryScreen();
+    QRect screenRect = screen->availableGeometry();
+    QPixmap splash = HDPixmap(":/icons/images/SplashScreen.png", (int)screenRect.width() / 2.5,
+                              (int)screenRect.width() / 3.33);
     QSplashScreen splashw(splash);
     splashw.show();
 
     ExternalResource resource;
 
-    QLockFile lockFile(QDir::tempPath()+QDir::separator()+"RedPandaDevCppStartUp.lock");
+    QLockFile lockFile(QDir::tempPath() + QDir::separator() + "RedPandaDevCppStartUp.lock");
     {
         bool firstRun;
         QString settingFilename = getSettingFilename(QString(), firstRun);
         bool openInSingleInstance = false;
         if (!settingFilename.isEmpty() && !firstRun) {
-            QSettings envSetting(settingFilename,QSettings::IniFormat);
+            QSettings envSetting(settingFilename, QSettings::IniFormat);
             envSetting.beginGroup(SETTING_ENVIRONMENT);
-            openInSingleInstance = envSetting.value("open_files_in_single_instance",false).toBool();
+            openInSingleInstance =
+                envSetting.value("open_files_in_single_instance", false).toBool();
         } else if (!settingFilename.isEmpty() && firstRun)
             openInSingleInstance = false;
         if (app.arguments().contains("-ns")) {
@@ -306,11 +309,11 @@ int main(int argc, char *argv[])
                 if (lockFile.tryLock(100))
                     break;
                 openCount++;
-                if (openCount>100)
+                if (openCount > 100)
                     break;
             }
 
-            if (app.arguments().length()>=2 && openCount<100) {
+            if (app.arguments().length() >= 2 && openCount < 100) {
 #ifdef Q_OS_WIN
                 if (sendFilesToInstance()) {
                     lockFile.unlock();
@@ -320,14 +323,15 @@ int main(int argc, char *argv[])
             }
         }
     }
-    //Translation must be loaded first
+    // Translation must be loaded first
     splashw.showMessage("Loading translation...");
     app.processEvents();
-    QTranslator trans,transQt,transUtils;
+    QTranslator trans, transQt, transUtils;
     bool firstRun;
     QString settingFilename = getSettingFilename(QString(), firstRun);
     if (!isGreenEdition()) {
-        QStringList documentLocations = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
+        QStringList documentLocations =
+            QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
         QDir::setCurrent(documentLocations.first());
     }
     if (settingFilename.isEmpty()) {
@@ -336,24 +340,25 @@ int main(int argc, char *argv[])
     }
     QString language;
     {
-        QSettings languageSetting(settingFilename,QSettings::IniFormat);
+        QSettings languageSetting(settingFilename, QSettings::IniFormat);
         languageSetting.beginGroup(SETTING_ENVIRONMENT);
-        language = languageSetting.value("language",QLocale::system().name()).toString();
+        language = languageSetting.value("language", QLocale::system().name()).toString();
 
-        if (trans.load("RedPandaIDE_"+language,":/i18n/")) {
+        if (trans.load("RedPandaIDE_" + language, ":/i18n/")) {
             app.installTranslator(&trans);
         }
-        if (transUtils.load("qt_utils_"+language,":/i18n/")) {
+        if (transUtils.load("qt_utils_" + language, ":/i18n/")) {
             app.installTranslator(&transUtils);
         }
         QString translationsPath(QLibraryInfo::location(QLibraryInfo::TranslationsPath));
         if (
-            // since Qt 5.15.3, `qt_xx.qm` is a wrapper for `qtbase_xx.qm` and other (unused) `qm`s.
-            // first, try loading `qt_xx.qm` from standard location (dynamic build) so that it works on Debian 11 (with Qt 5.15.2),
+            // since Qt 5.15.3, `qt_xx.qm` is a wrapper for `qtbase_xx.qm` and other
+            // (unused) `qm`s. first, try loading `qt_xx.qm` from standard location
+            // (dynamic build) so that it works on Debian 11 (with Qt 5.15.2),
             transQt.load("qt_" + language, translationsPath) ||
-            // and then bundled `qtbase_xx.qm` (static build) for simplicity in qmake project.
-            transQt.load("qtbase_" + language, ":/translations")
-        ) {
+            // and then bundled `qtbase_xx.qm` (static build) for simplicity in
+            // qmake project.
+            transQt.load("qtbase_" + language, ":/translations")) {
             app.installTranslator(&transQt);
         }
     }
@@ -361,23 +366,23 @@ int main(int argc, char *argv[])
     qRegisterMetaType<PCompileIssue>("PCompileIssue");
     qRegisterMetaType<PCompileIssue>("PCompileIssue&");
     qRegisterMetaType<QVector<int>>("QVector<int>");
-    qRegisterMetaType<QHash<int,QString>>("QHash<int,QString>");
+    qRegisterMetaType<QHash<int, QString>>("QHash<int,QString>");
 
     initParser();
 
     splashw.showMessage(QObject::tr("Loading settings..."));
     app.processEvents();
     try {
-
         SystemConsts systemConsts;
         pSystemConsts = &systemConsts;
         CharsetInfoManager charsetInfoManager(language);
-        pCharsetInfoManager=&charsetInfoManager;
+        pCharsetInfoManager = &charsetInfoManager;
 
-        //We must use smarter point here, to manually control it's lifetime:
-        // when restore default settings, it must be destoyed before we remove all setting files.
+        // We must use smarter point here, to manually control it's lifetime:
+        //  when restore default settings, it must be destoyed before we remove all
+        //  setting files.
         auto settings = std::make_unique<Settings>(settingFilename);
-        //load settings
+        // load settings
         pSettings = settings.get();
         if (firstRun) {
             pSettings->compilerSets().findSets();
@@ -387,7 +392,7 @@ int main(int argc, char *argv[])
         if (firstRun) {
             // set theme
             ChooseThemeDialog themeDialog;
-            themeDialog.setFont(QFont(defaultUiFont(),11));
+            themeDialog.setFont(QFont(defaultUiFont(), 11));
             themeDialog.exec();
             switch (themeDialog.theme()) {
             case ChooseThemeDialog::Theme::AutoFollowSystem:
@@ -406,12 +411,12 @@ int main(int argc, char *argv[])
             pSettings->editor().setDefaultFileCpp(true);
             pSettings->editor().save();
 
-            //auto detect git in path
+            // auto detect git in path
 #ifdef ENABLE_VCS
             pSettings->vcs().detectGitInPath();
 #endif
         }
-        //Color scheme settings must be loaded after translation
+        // Color scheme settings must be loaded after translation
         ColorManager colorManager;
         pColorManager = &colorManager;
         IconsManager iconsManager;
@@ -421,9 +426,7 @@ int main(int argc, char *argv[])
         try {
             pAutolinkManager->load();
         } catch (FileError e) {
-            QMessageBox::critical(nullptr,
-                                  QObject::tr("Can't load autolink settings"),
-                                  e.reason(),
+            QMessageBox::critical(nullptr, QObject::tr("Can't load autolink settings"), e.reason(),
                                   QMessageBox::Ok);
         }
         // qDebug()<<"Load font";
@@ -448,25 +451,23 @@ int main(int argc, char *argv[])
                 mainWindow.loadLastOpens();
         }
 
-        if (pSettings->editor().createFileAfterStartup()
-            && mainWindow.editorList()->pageCount()==0
-            && !mainWindow.project())
-        {
+        if (pSettings->editor().createFileAfterStartup() &&
+            mainWindow.editorList()->pageCount() == 0 && !mainWindow.project()) {
             mainWindow.newEditor();
         }
 
         mainWindow.show();
         splashw.finish(pMainWindow);
 
-        //reset default open folder
+        // reset default open folder
         mainWindow.setFilesViewRoot(pSettings->environment().currentFolder());
 
 #ifdef Q_OS_WIN
         WindowLogoutEventFilter filter;
         app.installNativeEventFilter(&filter);
 #endif
-        //Event filter to prevent QCombobox receive wheel event;
-        BlockWheelEventFiler *blockWheelFilter=new BlockWheelEventFiler(&app);
+        // Event filter to prevent QCombobox receive wheel event;
+        BlockWheelEventFiler* blockWheelFilter = new BlockWheelEventFiler(&app);
         app.installEventFilter(blockWheelFilter);
 
         if (lockFile.isLocked()) {
@@ -482,9 +483,9 @@ int main(int argc, char *argv[])
             dir.removeRecursively();
         }
         return retCode;
-    }  catch (BaseError e) {
+    } catch (BaseError e) {
         lockFile.unlock();
-        QMessageBox::critical(nullptr,QApplication::tr("Error"),e.reason());
+        QMessageBox::critical(nullptr, QApplication::tr("Error"), e.reason());
         return -1;
     }
 }

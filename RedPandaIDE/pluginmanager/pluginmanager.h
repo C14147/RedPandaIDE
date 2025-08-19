@@ -18,14 +18,14 @@ class PluginManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit PluginManager(MainWindow *mainWindow, QObject *parent = nullptr);
+    explicit PluginManager(QObject *parent = nullptr);
     ~PluginManager();
 
     // load all plugins from a folder (non-recursive)
-    void loadPlugins(const QString &folder);
+    QMap<QString, QString> loadPlugins(const QString &folder);
 
     // load a single plugin by absolute path
-    bool loadPlugin(const QString &path);
+    QString loadPlugin(const QString &path);
 
     // unload a previously loaded plugin by path
     bool unloadPlugin(const QString &path);
@@ -42,13 +42,18 @@ public:
     // get metadata parsed from plugin json file for a loaded plugin
     QVariantMap pluginMetadata(const QString &path) const;
 
+    // check the depends if loaded
+    size_t processDepends() noexcept;
+
+    IRedPandaPlugin *findPluginByID(const QString &pluginID) noexcept;
+    IRedPandaPlugin *findPluginByName(const QString &pluginName) noexcept;
+
+
 signals:
     void pluginLoaded(IRedPandaPlugin* plugin, const QString &path);
     void pluginUnloaded(IRedPandaPlugin* plugin, const QString &path);
 
-private:
-    MainWindow *mMainWindow;
-    QVariantMap metadata; // parsed from plugin_name.json if present
+public:
     struct PluginRecord {
         QString path;
         QPluginLoader *loader{nullptr};
@@ -57,9 +62,11 @@ private:
         QList<QWidget*> explorerTabs;
         QList<QWidget*> messagesTabs;
         QList<class SettingsWidget*> settingsWidgets;
+        QVariantMap metadata; // parsed from plugin_name.json if present
     };
 
     QList<PluginRecord> mRecords;
+    QStringList unprocessedDepends;
 };
 
 #endif // PLUGINMANAGER_H

@@ -328,7 +328,7 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     // plugin manager
-    mPluginManager = new PluginManager(this, this);
+    mPluginManager = new PluginManager(this);
     // connect plugin manager signals for dynamic integration
     connect(mPluginManager, &PluginManager::pluginLoaded, this, [this](IRedPandaPlugin* plugin, const QString &path){
         Q_UNUSED(path)
@@ -381,7 +381,18 @@ MainWindow::MainWindow(QWidget *parent)
 
     // load plugins from config/plugins folder (non-recursive)
     QString pluginsFolder = includeTrailingPathDelimiter(pSettings->dirs().config()) + "plugins";
-    mPluginManager->loadPlugins(pluginsFolder);
+    QMap<QString, QString> faileds = mPluginManager->loadPlugins(pluginsFolder);
+    if(!faileds.empty())
+    {
+        QString errMsg = tr("Failed to load plugins:");
+        errMsg += "\n";
+        foreach(QString plugin, faileds.keys())
+        {
+            errMsg += "File: " + plugin + ", " + faileds[plugin] + "\n";
+        }
+        QMessageBox::warning(this, tr("Warning"), errMsg);
+    }
+
     mBookmarkModel = new BookmarkModel{this};
     try {
         mBookmarkModel->loadBookmarks(includeTrailingPathDelimiter(pSettings->dirs().config())

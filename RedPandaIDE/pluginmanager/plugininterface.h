@@ -13,6 +13,12 @@ class QWidget;
 class IRedPandaPlugin
 {
 public:
+    QList<QString> depends;
+    QString pluginID;
+    QString pluginName;
+    QString pluginVersion;
+
+public:
     virtual ~IRedPandaPlugin() {}
 
     // Called once when the plugin is loaded. MainWindow pointer is provided for
