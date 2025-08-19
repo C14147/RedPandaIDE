@@ -25,11 +25,11 @@
 #include "widgets/editorfontdialog.h"
 #include <qabstractitemmodel.h>
 
-Qt::ItemFlags EditorFontModel::flags(const QModelIndex &index) const
+Qt::ItemFlags EditorFontModel::flags(const QModelIndex& index) const
 {
     Qt::ItemFlags flags = Qt::NoItemFlags;
     if (index.isValid()) {
-        flags = Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable ;
+        flags = Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable;
     } else if (index.row() == -1) {
         // -1 means it's a drop target?
         flags = Qt::ItemIsDropEnabled;
@@ -37,14 +37,13 @@ Qt::ItemFlags EditorFontModel::flags(const QModelIndex &index) const
     return flags;
 }
 
-EditorFontWidget::EditorFontWidget(const QString& name, const QString& group, QWidget *parent) :
-    SettingsWidget(name,group,parent),
-    ui(new Ui::EditorFontWidget),
-    mModel(pSettings->editor().fontFamilies())
+EditorFontWidget::EditorFontWidget(const QString& name, const QString& group, QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::EditorFontWidget),
+      mModel(pSettings->editor().fontFamilies())
 {
     ui->setupUi(this);
 
-    QItemSelectionModel *m = ui->lstFontList->selectionModel();
+    QItemSelectionModel* m = ui->lstFontList->selectionModel();
     ui->lstFontList->setModel(&mModel);
     delete m;
     ui->lstFontList->setDragEnabled(true);
@@ -72,7 +71,7 @@ void EditorFontWidget::on_btnAddFont_clicked()
 {
     QModelIndex index = ui->lstFontList->currentIndex();
     int insertPos = index.isValid() ? index.row() + 1 : mModel.rowCount();
-    EditorFontDialog dlg(insertPos==0, this);
+    EditorFontDialog dlg(insertPos == 0, this);
     if (dlg.exec() == QDialog::Accepted) {
         mModel.insertRow(insertPos);
         mModel.setData(mModel.index(insertPos), dlg.fontFamily());
@@ -141,8 +140,8 @@ void EditorFontWidget::on_btnMoveFontToBottom_clicked()
 
 void EditorFontWidget::doLoad()
 {
-    //pSettings->editor().load();
-    //font
+    // pSettings->editor().load();
+    // font
     ui->spinFontSize->setValue(pSettings->editor().fontSize());
     ui->spinLineSpacing->setValue(pSettings->editor().lineSpacing());
     ui->chkLigature->setChecked(pSettings->editor().enableLigaturesSupport());
@@ -151,7 +150,7 @@ void EditorFontWidget::doLoad()
     ui->chkInnerSpaces->setChecked(pSettings->editor().showInnerSpaces());
     ui->chkTrailingSpaces->setChecked(pSettings->editor().showTrailingSpaces());
     ui->chkLineBreaks->setChecked(pSettings->editor().showLineBreaks());
-    //gutter
+    // gutter
     ui->chkGutterVisible->setChecked(pSettings->editor().gutterVisible());
     ui->chkAutoSizeGutter->setChecked(pSettings->editor().gutterAutoSize());
     ui->spinGutterLeftOffset->setValue(pSettings->editor().gutterLeftOffset());
@@ -168,7 +167,7 @@ void EditorFontWidget::doLoad()
 
 void EditorFontWidget::doSave()
 {
-    //font
+    // font
     pSettings->editor().setFontFamilies(mModel.stringList());
     pSettings->editor().setFontSize(ui->spinFontSize->value());
     pSettings->editor().setLineSpacing(ui->spinLineSpacing->value());
@@ -179,7 +178,7 @@ void EditorFontWidget::doSave()
     pSettings->editor().setShowInnerSpaces(ui->chkInnerSpaces->isChecked());
     pSettings->editor().setShowTrailingSpaces(ui->chkTrailingSpaces->isChecked());
     pSettings->editor().setShowLineBreaks(ui->chkLineBreaks->isChecked());
-    //gutter
+    // gutter
     pSettings->editor().setGutterVisible(ui->chkGutterVisible->isChecked());
     pSettings->editor().setGutterAutoSize(ui->chkAutoSizeGutter->isChecked());
     pSettings->editor().setGutterLeftOffset(ui->spinGutterLeftOffset->value());
@@ -198,7 +197,8 @@ void EditorFontWidget::doSave()
     pMainWindow->updateEditorSettings();
 }
 
-void EditorFontWidget::updateIcons(const QSize &/*size*/) {
+void EditorFontWidget::updateIcons(const QSize& /*size*/)
+{
     pIconsManager->setIcon(ui->btnAddFont, IconsManager::ACTION_MISC_ADD);
     pIconsManager->setIcon(ui->btnRemoveFont, IconsManager::ACTION_MISC_REMOVE);
     pIconsManager->setIcon(ui->btnModifyFont, IconsManager::ACTION_MISC_RENAME);
@@ -209,19 +209,18 @@ void EditorFontWidget::updateIcons(const QSize &/*size*/) {
     pIconsManager->setIcon(ui->btnMoveFontToBottom, IconsManager::ACTION_MISC_MOVEBOTTOM);
 }
 
-void EditorFontWidget::on_lstFontList_doubleClicked(const QModelIndex &index)
+void EditorFontWidget::on_lstFontList_doubleClicked(const QModelIndex& index)
 {
     modifyFont(index);
 }
 
-void EditorFontWidget::modifyFont(const QModelIndex &index)
+void EditorFontWidget::modifyFont(const QModelIndex& index)
 {
     if (!index.isValid())
         return;
-    EditorFontDialog dlg(index.row()==0, this);
+    EditorFontDialog dlg(index.row() == 0, this);
     dlg.setFontFamily(mModel.data(index, Qt::DisplayRole).toString());
     if (dlg.exec() == QDialog::Accepted) {
         mModel.setData(index, dlg.fontFamily());
     }
 }
-

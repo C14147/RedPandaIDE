@@ -22,7 +22,7 @@
 
 CustomFileIconProvider::CustomFileIconProvider()
 {
-    //provider delete it in the destructor
+    // provider delete it in the destructor
 #ifdef ENABLE_VCS
     mVCSRepository = new GitRepository("");
 #endif
@@ -35,7 +35,7 @@ CustomFileIconProvider::~CustomFileIconProvider()
 #endif
 }
 
-void CustomFileIconProvider::setRootFolder(const QString &folder)
+void CustomFileIconProvider::setRootFolder(const QString& folder)
 {
 #ifdef ENABLE_VCS
     mVCSRepository->setFolder(folder);
@@ -52,7 +52,7 @@ void CustomFileIconProvider::update()
 }
 
 #ifdef ENABLE_VCS
-GitRepository *CustomFileIconProvider::VCSRepository() const
+GitRepository* CustomFileIconProvider::VCSRepository() const
 {
     return mVCSRepository;
 }
@@ -66,10 +66,9 @@ QIcon CustomFileIconProvider::icon(IconType type) const
             return icon;
     }
     return QFileIconProvider::icon(type);
-
 }
 
-QIcon CustomFileIconProvider::icon(const QFileInfo &info) const
+QIcon CustomFileIconProvider::icon(const QFileInfo& info) const
 {
     QIcon icon;
     if (info.isDir()) {
@@ -88,7 +87,7 @@ QIcon CustomFileIconProvider::icon(const QFileInfo &info) const
             icon = pIconsManager->getIcon(IconsManager::FILESYSTEM_FOLDER);
     } else if (!info.exists()) {
         icon = pIconsManager->getIcon(IconsManager::ACTION_MISC_CROSS);
-    } else  if (isHFile(info.fileName())) {
+    } else if (isHFile(info.fileName())) {
 #ifdef ENABLE_VCS
         if (mVCSRepository->isFileInRepository(info)) {
             if (mVCSRepository->isFileConflicting(info))
@@ -130,7 +129,7 @@ QIcon CustomFileIconProvider::icon(const QFileInfo &info) const
         } else
 #endif
             icon = pIconsManager->getIcon(IconsManager::FILESYSTEM_CFILE);
-    } else if (info.suffix()=="dev") {
+    } else if (info.suffix() == "dev") {
 #ifdef ENABLE_VCS
         if (mVCSRepository->isFileInRepository(info)) {
             if (mVCSRepository->isFileConflicting(info))
@@ -157,7 +156,7 @@ QIcon CustomFileIconProvider::icon(const QFileInfo &info) const
                 icon = pIconsManager->getIcon(IconsManager::FILESYSTEM_FILE_VCS_NOCHANGE);
         }
 #endif
-        //use default system icon
+        // use default system icon
     }
     if (!icon.isNull())
         return icon;

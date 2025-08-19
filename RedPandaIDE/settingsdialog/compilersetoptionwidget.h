@@ -31,20 +31,21 @@ class CompilerSetOptionWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit CompilerSetOptionWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit CompilerSetOptionWidget(const QString& name, const QString& group,
+                                     QWidget* parent = nullptr);
     ~CompilerSetOptionWidget();
 
 private:
-    Ui::CompilerSetOptionWidget *ui;
+    Ui::CompilerSetOptionWidget* ui;
     CompilerSetDirectoriesWidget* mBinDirWidget;
     CompilerSetDirectoriesWidget* mCIncludeDirWidget;
     CompilerSetDirectoriesWidget* mCppIncludeDirWidget;
     CompilerSetDirectoriesWidget* mLibDirWidget;
 
-
     // SettingsWidget interface
 public:
     void init() override;
+
 protected:
     void doLoad() override;
     void doSave() override;
@@ -64,8 +65,8 @@ private slots:
     void on_btnRenameCompilerSet_clicked();
     void on_btnRemoveCompilerSet_clicked();
 
-    void on_cbEncoding_currentTextChanged(const QString &arg1);
-    void on_cbEncodingDetails_currentTextChanged(const QString &arg1);
+    void on_cbEncoding_currentTextChanged(const QString& arg1);
+    void on_cbEncodingDetails_currentTextChanged(const QString& arg1);
     void on_btnChooseCCompiler_clicked();
     void on_btnChooseCppCompiler_clicked();
     void on_btnChooseMake_clicked();

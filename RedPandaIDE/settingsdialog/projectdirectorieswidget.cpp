@@ -20,22 +20,21 @@
 #include "../project.h"
 #include "../mainwindow.h"
 
-ProjectDirectoriesWidget::ProjectDirectoriesWidget(const QString &name, const QString &group, QWidget *parent) :
-    SettingsWidget(name,group,parent),
-    ui(new Ui::ProjectDirectoriesWidget)
+ProjectDirectoriesWidget::ProjectDirectoriesWidget(const QString& name, const QString& group,
+                                                   QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::ProjectDirectoriesWidget)
 {
     ui->setupUi(this);
 
     mBinDirWidget = new CompilerSetDirectoriesWidget();
-    ui->tabDirs->addTab(mBinDirWidget,tr("Binaries"));
+    ui->tabDirs->addTab(mBinDirWidget, tr("Binaries"));
     mLibDirWidget = new CompilerSetDirectoriesWidget();
-    ui->tabDirs->addTab(mLibDirWidget,tr("Libraries"));
+    ui->tabDirs->addTab(mLibDirWidget, tr("Libraries"));
     mIncludeDirWidget = new CompilerSetDirectoriesWidget();
-    ui->tabDirs->addTab(mIncludeDirWidget,tr("Includes"));
+    ui->tabDirs->addTab(mIncludeDirWidget, tr("Includes"));
     mResourceDirWidget = new CompilerSetDirectoriesWidget();
-    ui->tabDirs->addTab(mResourceDirWidget,tr("Resources"));
+    ui->tabDirs->addTab(mResourceDirWidget, tr("Resources"));
 }
-
 
 ProjectDirectoriesWidget::~ProjectDirectoriesWidget()
 {
@@ -48,7 +47,6 @@ void ProjectDirectoriesWidget::doLoad()
     mLibDirWidget->setDirList(pMainWindow->project()->options().libDirs);
     mIncludeDirWidget->setDirList(pMainWindow->project()->options().includeDirs);
     mResourceDirWidget->setDirList(pMainWindow->project()->options().resourceIncludes);
-
 }
 
 void ProjectDirectoriesWidget::doSave()

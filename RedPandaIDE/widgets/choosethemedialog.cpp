@@ -21,17 +21,16 @@
 #include <QFontMetrics>
 #include <QScreen>
 
-ChooseThemeDialog::ChooseThemeDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::ChooseThemeDialog)
+ChooseThemeDialog::ChooseThemeDialog(QWidget* parent)
+    : QDialog(parent), ui(new Ui::ChooseThemeDialog)
 {
     ui->setupUi(this);
 #if defined(Q_OS_WIN) && QT_VERSION_MAJOR == 5
-        //first run, adjust size with dpi
+    // first run, adjust size with dpi
     int dpi = qApp->primaryScreen()->logicalDotsPerInch();
-//    int w = width()*dpi/96;
-//    int h = height()*dpi/96;
-//    ui->lblDark
+    //    int w = width()*dpi/96;
+    //    int h = height()*dpi/96;
+    //    ui->lblDark
     double dpr = 96.0 / qApp->primaryScreen()->logicalDotsPerInch();
     QPixmap p = ui->lblLight->pixmap(Qt::ReturnByValue);
     p.setDevicePixelRatio(dpr);
@@ -42,7 +41,7 @@ ChooseThemeDialog::ChooseThemeDialog(QWidget *parent) :
     QFontMetrics fm{font()};
     QFont f{font()};
 
-    f.setPixelSize(fm.height()*dpi/96);
+    f.setPixelSize(fm.height() * dpi / 96);
     setFont(f);
 #endif
 #ifdef ENABLE_LUA_ADDON
@@ -82,7 +81,7 @@ ChooseThemeDialog::Theme ChooseThemeDialog::theme()
 
 ChooseThemeDialog::Language ChooseThemeDialog::language()
 {
-    return ui->rbCpp->isChecked()?Language::CPlusPlus:Language::C;
+    return ui->rbCpp->isChecked() ? Language::CPlusPlus : Language::C;
 }
 
 void ChooseThemeDialog::on_btnOk_clicked()

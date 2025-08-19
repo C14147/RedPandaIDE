@@ -22,17 +22,16 @@
 #include <QStringListModel>
 #include <QDebug>
 
-CompilerSetDirectoriesWidget::CompilerSetDirectoriesWidget(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::CompilerSetDirectoriesWidget)
+CompilerSetDirectoriesWidget::CompilerSetDirectoriesWidget(QWidget* parent)
+    : QWidget(parent), ui(new Ui::CompilerSetDirectoriesWidget)
 {
     ui->setupUi(this);
 
-    QItemSelectionModel *m=ui->listView->selectionModel();
+    QItemSelectionModel* m = ui->listView->selectionModel();
     ui->listView->setModel(&mModel);
     delete m;
-    connect(ui->listView->selectionModel(), &QItemSelectionModel::selectionChanged,
-            this, &CompilerSetDirectoriesWidget::selectionChanged);
+    connect(ui->listView->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+            &CompilerSetDirectoriesWidget::selectionChanged);
     ui->listView->setSelectionMode(QAbstractItemView::SingleSelection);
     onUpdateIcons();
 }
@@ -40,14 +39,14 @@ CompilerSetDirectoriesWidget::CompilerSetDirectoriesWidget(QWidget *parent) :
 CompilerSetDirectoriesWidget::~CompilerSetDirectoriesWidget()
 {
     delete ui;
-    //qDebug()<<"compiler set directory widget deleted";
+    // qDebug()<<"compiler set directory widget deleted";
 }
 
-void CompilerSetDirectoriesWidget::setDirList(const QStringList &list)
+void CompilerSetDirectoriesWidget::setDirList(const QStringList& list)
 {
     mModel.setStringList(list);
-    QModelIndexList lst =ui->listView->selectionModel()->selectedIndexes();
-    ui->btnDelete->setEnabled(lst.count()>0);
+    QModelIndexList lst = ui->listView->selectionModel()->selectedIndexes();
+    ui->btnDelete->setEnabled(lst.count() > 0);
 }
 
 QStringList CompilerSetDirectoriesWidget::dirList() const
@@ -55,16 +54,17 @@ QStringList CompilerSetDirectoriesWidget::dirList() const
     return mModel.stringList();
 }
 
-//CompilerSetDirectoriesWidget::ListModel::~ListModel()
+// CompilerSetDirectoriesWidget::ListModel::~ListModel()
 //{
-//    qDebug()<<"compiler set directory widget list model deleted";
-//}
+//     qDebug()<<"compiler set directory widget list model deleted";
+// }
 
-Qt::ItemFlags CompilerSetDirectoriesWidget::ListModel::flags(const QModelIndex &index) const
+Qt::ItemFlags CompilerSetDirectoriesWidget::ListModel::flags(const QModelIndex& index) const
 {
     Qt::ItemFlags flags = Qt::NoItemFlags;
     if (index.isValid()) {
-        flags = Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable ;
+        flags =
+            Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable;
     } else if (index.row() == -1) {
         // -1 means it's a drop target?
         flags = Qt::ItemIsDropEnabled;
@@ -74,35 +74,35 @@ Qt::ItemFlags CompilerSetDirectoriesWidget::ListModel::flags(const QModelIndex &
 
 void CompilerSetDirectoriesWidget::on_btnAdd_pressed()
 {
-    QString folder = QFileDialog::getExistingDirectory(this,tr("Choose Folder"));
+    QString folder = QFileDialog::getExistingDirectory(this, tr("Choose Folder"));
     if (!folder.isEmpty()) {
         int row = mModel.rowCount();
         mModel.insertRow(row);
-        QModelIndex index= mModel.index(row,0);
-        mModel.setData(index,folder,Qt::DisplayRole);
+        QModelIndex index = mModel.index(row, 0);
+        mModel.setData(index, folder, Qt::DisplayRole);
     }
 }
 
-void CompilerSetDirectoriesWidget::selectionChanged(const QItemSelection &selected, const QItemSelection &/*deselected*/)
+void CompilerSetDirectoriesWidget::selectionChanged(const QItemSelection& selected,
+                                                    const QItemSelection& /*deselected*/)
 {
     ui->btnDelete->setEnabled(!selected.isEmpty());
 }
 
 void CompilerSetDirectoriesWidget::on_btnDelete_pressed()
 {
-    QModelIndexList lst =ui->listView->selectionModel()->selectedIndexes();
-    if (lst.count()>0) {
+    QModelIndexList lst = ui->listView->selectionModel()->selectedIndexes();
+    if (lst.count() > 0) {
         mModel.removeRow(lst[0].row());
     }
 }
 
-
 void CompilerSetDirectoriesWidget::on_btnRemoveInvalid_pressed()
 {
     QStringList lst;
-    foreach (const QString& folder, dirList() ) {
+    foreach (const QString& folder, dirList()) {
         QFileInfo info(folder);
-        if (info.exists() && info.isDir() ) {
+        if (info.exists() && info.isDir()) {
             lst.append(folder.trimmed());
         }
     }
@@ -111,7 +111,7 @@ void CompilerSetDirectoriesWidget::on_btnRemoveInvalid_pressed()
 
 void CompilerSetDirectoriesWidget::onUpdateIcons()
 {
-    pIconsManager->setIcon(ui->btnAdd,IconsManager::ACTION_MISC_ADD);
+    pIconsManager->setIcon(ui->btnAdd, IconsManager::ACTION_MISC_ADD);
     pIconsManager->setIcon(ui->btnDelete, IconsManager::ACTION_MISC_REMOVE);
     pIconsManager->setIcon(ui->btnRemoveInvalid, IconsManager::ACTION_MISC_VALIDATE);
 }

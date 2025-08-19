@@ -22,9 +22,9 @@
 #include <qt_utils/charsetinfo.h>
 #include <QMessageBox>
 
-ProjectCompilerWidget::ProjectCompilerWidget(const QString &name, const QString &group, QWidget *parent) :
-    SettingsWidget(name,group,parent),
-    ui(new Ui::ProjectCompilerWidget)
+ProjectCompilerWidget::ProjectCompilerWidget(const QString& name, const QString& group,
+                                             QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::ProjectCompilerWidget)
 {
     ui->setupUi(this);
 }
@@ -36,23 +36,22 @@ ProjectCompilerWidget::~ProjectCompilerWidget()
 
 void ProjectCompilerWidget::refreshOptions()
 {
-    Settings::PCompilerSet pSet = pSettings->compilerSets().getSet(ui->cbCompilerSet->currentIndex());
+    Settings::PCompilerSet pSet =
+        pSettings->compilerSets().getSet(ui->cbCompilerSet->currentIndex());
     if (!pSet)
         return;
-    ui->panelAddCharset->setVisible(pSet->compilerType()!=CompilerType::Clang);
-    //ui->chkAddCharset->setEnabled(pSet->compilerType()!=COMPILER_CLANG);
+    ui->panelAddCharset->setVisible(pSet->compilerType() != CompilerType::Clang);
+    // ui->chkAddCharset->setEnabled(pSet->compilerType()!=COMPILER_CLANG);
 
-    ui->tabOptions->resetUI(pSet,mOptions);
+    ui->tabOptions->resetUI(pSet, mOptions);
 
     ui->chkStaticLink->setChecked(mStaticLink);
     ui->chkAddCharset->setChecked(mAddCharset);
 
     QByteArray execEncoding = mExecCharset;
-    if (execEncoding == ENCODING_AUTO_DETECT
-            || execEncoding == ENCODING_SYSTEM_DEFAULT
-            || execEncoding == ENCODING_OEM_DEFAULT
-            || execEncoding == ENCODING_UTF8) {
-        int index =ui->cbEncoding->findData(execEncoding);
+    if (execEncoding == ENCODING_AUTO_DETECT || execEncoding == ENCODING_SYSTEM_DEFAULT ||
+        execEncoding == ENCODING_OEM_DEFAULT || execEncoding == ENCODING_UTF8) {
+        int index = ui->cbEncoding->findData(execEncoding);
         ui->cbEncoding->setCurrentIndex(index);
         ui->cbEncodingDetails->clear();
         ui->cbEncodingDetails->setVisible(false);
@@ -73,7 +72,8 @@ void ProjectCompilerWidget::refreshOptions()
 void ProjectCompilerWidget::doLoad()
 {
     mOptions = pMainWindow->project()->options().compilerOptions;
-    Settings::PCompilerSet pSet = pSettings->compilerSets().getSet(ui->cbCompilerSet->currentIndex());
+    Settings::PCompilerSet pSet =
+        pSettings->compilerSets().getSet(ui->cbCompilerSet->currentIndex());
     if (mOptions.isEmpty() && pSet)
         mOptions = pSet->compileOptions();
     mStaticLink = pMainWindow->project()->options().staticLink;
@@ -87,19 +87,22 @@ void ProjectCompilerWidget::doLoad()
 
 void ProjectCompilerWidget::doSave()
 {
-    Settings::PCompilerSet pSet = pSettings->compilerSets().getSet(ui->cbCompilerSet->currentIndex());
+    Settings::PCompilerSet pSet =
+        pSettings->compilerSets().getSet(ui->cbCompilerSet->currentIndex());
     if (!pSet)
         return;
     pMainWindow->project()->setCompilerSet(ui->cbCompilerSet->currentIndex());
     pMainWindow->project()->options().compilerOptions = ui->tabOptions->arguments(true);
-    if (pSet->compilerType()!=CompilerType::Clang)
+    if (pSet->compilerType() != CompilerType::Clang)
         pMainWindow->project()->options().addCharset = ui->chkAddCharset->isChecked();
     pMainWindow->project()->options().staticLink = ui->chkStaticLink->isChecked();
 
     if (ui->cbEncodingDetails->isVisible()) {
-        pMainWindow->project()->options().execEncoding = ui->cbEncodingDetails->currentText().toLocal8Bit();
+        pMainWindow->project()->options().execEncoding =
+            ui->cbEncodingDetails->currentText().toLocal8Bit();
     } else {
-        pMainWindow->project()->options().execEncoding = ui->cbEncoding->currentData().toString().toLocal8Bit();
+        pMainWindow->project()->options().execEncoding =
+            ui->cbEncoding->currentData().toString().toLocal8Bit();
     }
     mOptions = pMainWindow->project()->options().compilerOptions;
     mStaticLink = pMainWindow->project()->options().staticLink;
@@ -112,54 +115,56 @@ void ProjectCompilerWidget::init()
 {
     ui->cbCompilerSet->blockSignals(true);
     ui->cbCompilerSet->clear();
-    for (size_t i=0;i<pSettings->compilerSets().size();i++) {
+    for (size_t i = 0; i < pSettings->compilerSets().size(); i++) {
         ui->cbCompilerSet->addItem(pSettings->compilerSets().getSet(i)->name());
     }
     ui->cbCompilerSet->blockSignals(false);
     ui->cbEncodingDetails->setVisible(false);
     ui->cbEncoding->clear();
-    ui->cbEncoding->addItem(tr("System Default(%1)").arg(QString(pCharsetInfoManager->getDefaultSystemEncoding())),ENCODING_SYSTEM_DEFAULT);
+    ui->cbEncoding->addItem(
+        tr("System Default(%1)").arg(QString(pCharsetInfoManager->getDefaultSystemEncoding())),
+        ENCODING_SYSTEM_DEFAULT);
 #ifdef Q_OS_WIN
-    ui->cbEncoding->addItem(tr("System OEM(%1)").arg(QString(pCharsetInfoManager->getDefaultConsoleEncoding())),ENCODING_OEM_DEFAULT);
+    ui->cbEncoding->addItem(
+        tr("System OEM(%1)").arg(QString(pCharsetInfoManager->getDefaultConsoleEncoding())),
+        ENCODING_OEM_DEFAULT);
 #endif
-    ui->cbEncoding->addItem(tr("UTF-8"),ENCODING_UTF8);
+    ui->cbEncoding->addItem(tr("UTF-8"), ENCODING_UTF8);
     foreach (const QString& langName, pCharsetInfoManager->languageNames()) {
-        ui->cbEncoding->addItem(langName,langName);
+        ui->cbEncoding->addItem(langName, langName);
     }
     SettingsWidget::init();
 }
 
 void ProjectCompilerWidget::on_cbCompilerSet_currentIndexChanged(int index)
 {
-    if (index<0)
+    if (index < 0)
         return;
     std::shared_ptr<Project> project = pMainWindow->project();
     clearSettingsChanged();
     disconnectInputs();
     ui->cbCompilerSet->blockSignals(true);
-    auto action = finally([this]{
+    auto action = finally([this] {
         ui->cbCompilerSet->blockSignals(false);
         refreshOptions();
         connectInputs();
     });
-    Settings::PCompilerSet pSet=pSettings->compilerSets().getSet(index);
+    Settings::PCompilerSet pSet = pSettings->compilerSets().getSet(index);
 #ifdef ENABLE_SDCC
     if (pSet) {
-        if (project->options().type==ProjectType::MicroController) {
-            if (pSet->compilerType()!=CompilerType::SDCC) {
-                QMessageBox::information(this,
-                                         tr("Wrong Compiler Type"),
-                                         tr("Compiler %1 can't compile a microcontroller project.").arg(pSet->name())
-                                         );
+        if (project->options().type == ProjectType::MicroController) {
+            if (pSet->compilerType() != CompilerType::SDCC) {
+                QMessageBox::information(
+                    this, tr("Wrong Compiler Type"),
+                    tr("Compiler %1 can't compile a microcontroller project.").arg(pSet->name()));
                 ui->cbCompilerSet->setCurrentIndex(project->options().compilerSet);
                 return;
             }
         } else {
-            if (pSet->compilerType()==CompilerType::SDCC) {
-                QMessageBox::information(this,
-                                         tr("Wrong Compiler Type"),
-                                         tr("Compiler %1 can only compile microcontroller project.").arg(pSet->name())
-                                         );
+            if (pSet->compilerType() == CompilerType::SDCC) {
+                QMessageBox::information(
+                    this, tr("Wrong Compiler Type"),
+                    tr("Compiler %1 can only compile microcontroller project.").arg(pSet->name()));
                 ui->cbCompilerSet->setCurrentIndex(project->options().compilerSet);
                 return;
             }
@@ -167,13 +172,10 @@ void ProjectCompilerWidget::on_cbCompilerSet_currentIndexChanged(int index)
     }
 #endif
     if (QMessageBox::warning(
-                this,
-                tr("Change Project Compiler Set"),
-                tr("Change the project's compiler set will lose all custom compiler set options.")
-                +"<br />"
-                + tr("Do you really want to do that?"),
-                QMessageBox::Yes | QMessageBox::No,
-                QMessageBox::No) != QMessageBox::Yes) {
+            this, tr("Change Project Compiler Set"),
+            tr("Change the project's compiler set will lose all custom compiler set options.") +
+                "<br />" + tr("Do you really want to do that?"),
+            QMessageBox::Yes | QMessageBox::No, QMessageBox::No) != QMessageBox::Yes) {
         ui->cbCompilerSet->setCurrentIndex(project->options().compilerSet);
         return;
     }
@@ -183,16 +185,14 @@ void ProjectCompilerWidget::on_cbCompilerSet_currentIndexChanged(int index)
     mExecCharset = pSet->execCharset().toUtf8();
 
     setSettingsChanged();
-    //project->saveOptions();
+    // project->saveOptions();
 }
 
-void ProjectCompilerWidget::on_cbEncoding_currentTextChanged(const QString &/*arg1*/)
+void ProjectCompilerWidget::on_cbEncoding_currentTextChanged(const QString& /*arg1*/)
 {
     QString userData = ui->cbEncoding->currentData().toString();
-    if (userData == ENCODING_AUTO_DETECT
-            || userData == ENCODING_SYSTEM_DEFAULT
-            || userData == ENCODING_OEM_DEFAULT
-            || userData == ENCODING_UTF8) {
+    if (userData == ENCODING_AUTO_DETECT || userData == ENCODING_SYSTEM_DEFAULT ||
+        userData == ENCODING_OEM_DEFAULT || userData == ENCODING_UTF8) {
         ui->cbEncodingDetails->setVisible(false);
         ui->cbEncodingDetails->clear();
     } else {
@@ -205,9 +205,6 @@ void ProjectCompilerWidget::on_cbEncoding_currentTextChanged(const QString &/*ar
     }
 }
 
-
-void ProjectCompilerWidget::on_cbEncodingDetails_currentTextChanged(const QString &/*arg1*/)
+void ProjectCompilerWidget::on_cbEncodingDetails_currentTextChanged(const QString& /*arg1*/)
 {
-
 }
-

@@ -27,8 +27,8 @@ public:
     LightFusionStyle();
     // QStyle interface
 public:
-    int pixelMetric(PixelMetric metric, const QStyleOption *option, const QWidget *widget) const override;
-
+    int pixelMetric(PixelMetric metric, const QStyleOption* option,
+                    const QWidget* widget) const override;
 };
 
 #endif // LIGHTFUSIONSTYLE_H

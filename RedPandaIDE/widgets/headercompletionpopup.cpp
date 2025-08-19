@@ -27,17 +27,16 @@
 #include "../colorscheme.h"
 #include <qsynedit/constants.h>
 
-HeaderCompletionPopup::HeaderCompletionPopup(QWidget* parent):QWidget{parent},
-    mListView{nullptr}
+HeaderCompletionPopup::HeaderCompletionPopup(QWidget* parent) : QWidget{parent}, mListView{nullptr}
 {
     setWindowFlags(Qt::Popup);
 
     mListView = new CodeCompletionListView(this);
-    mModel=new HeaderCompletionListModel(&mCompletionList, 0);
-    QItemSelectionModel *m=mListView->selectionModel();
+    mModel = new HeaderCompletionListModel(&mCompletionList, 0);
+    QItemSelectionModel* m = mListView->selectionModel();
     mListView->setModel(mModel);
     delete m;
-    mDelegate = new HeaderCompletionListItemDelegate(mModel,this);
+    mDelegate = new HeaderCompletionListItemDelegate(mModel, this);
     mListView->setItemDelegate(mDelegate);
     setLayout(new QVBoxLayout());
     layout()->addWidget(mListView);
@@ -56,7 +55,7 @@ HeaderCompletionPopup::~HeaderCompletionPopup()
     delete mModel;
 }
 
-void HeaderCompletionPopup::prepareSearch(const QString &phrase, const QString &fileName)
+void HeaderCompletionPopup::prepareSearch(const QString& phrase, const QString& fileName)
 {
     QCursor oldCursor = cursor();
     setCursor(Qt::WaitCursor);
@@ -66,26 +65,26 @@ void HeaderCompletionPopup::prepareSearch(const QString &phrase, const QString &
     setCursor(oldCursor);
 }
 
-bool HeaderCompletionPopup::search(const QString &phrase, bool autoHideOnSingleResult)
+bool HeaderCompletionPopup::search(const QString& phrase, bool autoHideOnSingleResult)
 {
     mPhrase = phrase;
     if (mPhrase.isEmpty()) {
         hide();
         return false;
     }
-    if(!isEnabled())
+    if (!isEnabled())
         return false;
 
     QCursor oldCursor = cursor();
     setCursor(Qt::WaitCursor);
 
     int i = mPhrase.lastIndexOf('\\');
-    if (i<0) {
+    if (i < 0) {
         i = mPhrase.lastIndexOf('/');
     }
     QString symbol = mPhrase;
-    if (i>=0) {
-        symbol = mPhrase.mid(i+1);
+    if (i >= 0) {
+        symbol = mPhrase.mid(i + 1);
     }
 
     // filter fFullCompletionList to fCompletionList
@@ -105,12 +104,13 @@ bool HeaderCompletionPopup::search(const QString &phrase, bool autoHideOnSingleR
             mDelegate->setMatchedColor(item->foreground());
         else
             mDelegate->setMatchedColor(palette().color(QPalette::HighlightedText));
-        mListView->setCurrentIndex(mModel->index(0,0));
+        mListView->setCurrentIndex(mModel->index(0, 0));
         if (mCompletionList.count() == 1) {
             // if only one suggestion and auto hide , don't show the frame
             if (autoHideOnSingleResult)
                 return true;
-            // if only one suggestion, and is exactly the symbol to search, hide the frame (the search is over)
+            // if only one suggestion, and is exactly the symbol to search, hide the frame (the
+            // search is over)
             if (symbol == mCompletionList[0]->filename)
                 return true;
         }
@@ -120,15 +120,13 @@ bool HeaderCompletionPopup::search(const QString &phrase, bool autoHideOnSingleR
     return false;
 }
 
-void HeaderCompletionPopup::setKeypressedCallback(const KeyPressedCallback &newKeypressedCallback)
+void HeaderCompletionPopup::setKeypressedCallback(const KeyPressedCallback& newKeypressedCallback)
 {
     mListView->setKeypressedCallback(newKeypressedCallback);
 }
 
-void HeaderCompletionPopup::setSuggestionColor(const QColor& localColor,
-                                               const QColor& projectColor,
-                                               const QColor& systemColor,
-                                               const QColor& folderColor)
+void HeaderCompletionPopup::setSuggestionColor(const QColor& localColor, const QColor& projectColor,
+                                               const QColor& systemColor, const QColor& folderColor)
 {
     mModel->setLocalColor(localColor);
     mModel->setProjectColor(projectColor);
@@ -142,18 +140,18 @@ QString HeaderCompletionPopup::selectedFilename(bool updateUsageCount)
         return "";
     int index = mListView->currentIndex().row();
     PHeaderCompletionListItem item;
-    if (index>=0 && index<mCompletionList.count())
-        item=mCompletionList[index];
-    else if (mCompletionList.count()>0) {
-        item=mCompletionList.front();
+    if (index >= 0 && index < mCompletionList.count())
+        item = mCompletionList[index];
+    else if (mCompletionList.count() > 0) {
+        item = mCompletionList.front();
     }
     if (item) {
         if (updateUsageCount) {
             item->usageCount++;
-            mHeaderUsageCounts.insert(item->fullpath,item->usageCount);
+            mHeaderUsageCounts.insert(item->fullpath, item->usageCount);
         }
         if (item->isFolder)
-            return item->filename+"/";
+            return item->filename + "/";
         return item->filename;
     }
     return "";
@@ -164,45 +162,45 @@ void HeaderCompletionPopup::setLineHeightFactor(float newLineHeightFactor)
     mDelegate->setLineHeightFactor(newLineHeightFactor);
 }
 
-static bool sortByUsage(const PHeaderCompletionListItem& item1,const PHeaderCompletionListItem& item2){
+static bool sortByUsage(const PHeaderCompletionListItem& item1,
+                        const PHeaderCompletionListItem& item2)
+{
     if (item1->usageCount != item2->usageCount)
         return item1->usageCount > item2->usageCount;
 
     if (item1->itemType != item2->itemType)
-        return item1->itemType<item2->itemType;
+        return item1->itemType < item2->itemType;
 
     int code = QString::compare(item1->noSuffixFilename, item2->noSuffixFilename, PATH_SENSITIVITY);
-    if (code!=0)
-        return code<0;
+    if (code != 0)
+        return code < 0;
     return item1->suffix < item2->suffix;
 }
 
-
-void HeaderCompletionPopup::filterList(const QString &member)
+void HeaderCompletionPopup::filterList(const QString& member)
 {
-    Qt::CaseSensitivity caseSensitivity=mIgnoreCase?Qt::CaseInsensitive:Qt::CaseSensitive;
+    Qt::CaseSensitivity caseSensitivity = mIgnoreCase ? Qt::CaseInsensitive : Qt::CaseSensitive;
     mCompletionList.clear();
     mModel->setMatched(0);
     if (member.isEmpty()) {
-        foreach (const PHeaderCompletionListItem& item,mFullCompletionList.values()) {
+        foreach (const PHeaderCompletionListItem& item, mFullCompletionList.values()) {
             mCompletionList.append(item);
         }
     } else {
-        foreach (const PHeaderCompletionListItem& item,mFullCompletionList.values()) {
+        foreach (const PHeaderCompletionListItem& item, mFullCompletionList.values()) {
             if (item->filename.startsWith(member, caseSensitivity)) {
                 mCompletionList.append(item);
             }
         }
     }
-    std::sort(mCompletionList.begin(),mCompletionList.end(), sortByUsage);
+    std::sort(mCompletionList.begin(), mCompletionList.end(), sortByUsage);
     mModel->setMatched(member.length());
 }
 
-
-void HeaderCompletionPopup::getCompletionFor(const QString &phrase)
+void HeaderCompletionPopup::getCompletionFor(const QString& phrase)
 {
     int idx = phrase.lastIndexOf('\\');
-    if (idx<0) {
+    if (idx < 0) {
         idx = phrase.lastIndexOf('/');
     }
     mFullCompletionList.clear();
@@ -212,30 +210,31 @@ void HeaderCompletionPopup::getCompletionFor(const QString &phrase)
             addFilesInPath(fileInfo.absolutePath(), HeaderCompletionListItemType::LocalHeader);
         };
 
-        for (const QString& path: mParser->includePaths()) {
+        for (const QString& path : mParser->includePaths()) {
             addFilesInPath(path, HeaderCompletionListItemType::ProjectHeader);
         }
 
-        for (const QString& path: mParser->projectIncludePaths()) {
+        for (const QString& path : mParser->projectIncludePaths()) {
             addFilesInPath(path, HeaderCompletionListItemType::SystemHeader);
         }
     } else {
-        QString current = phrase.mid(0,idx);
+        QString current = phrase.mid(0, idx);
         if (mSearchLocal) {
             QFileInfo fileInfo(mCurrentFile);
-            addFilesInSubDir(fileInfo.absolutePath(),current, HeaderCompletionListItemType::LocalHeader);
+            addFilesInSubDir(fileInfo.absolutePath(), current,
+                             HeaderCompletionListItemType::LocalHeader);
         }
-        for (const QString& path: mParser->includePaths()) {
-            addFilesInSubDir(path,current, HeaderCompletionListItemType::ProjectHeader);
+        for (const QString& path : mParser->includePaths()) {
+            addFilesInSubDir(path, current, HeaderCompletionListItemType::ProjectHeader);
         }
 
-        for (const QString& path: mParser->projectIncludePaths()) {
-            addFilesInSubDir(path,current, HeaderCompletionListItemType::SystemHeader);
+        for (const QString& path : mParser->projectIncludePaths()) {
+            addFilesInSubDir(path, current, HeaderCompletionListItemType::SystemHeader);
         }
     }
 }
 
-void HeaderCompletionPopup::addFilesInPath(const QString &path, HeaderCompletionListItemType type)
+void HeaderCompletionPopup::addFilesInPath(const QString& path, HeaderCompletionListItemType type)
 {
     QDir dir(path);
     if (!dir.exists())
@@ -254,7 +253,8 @@ void HeaderCompletionPopup::addFilesInPath(const QString &path, HeaderCompletion
     }
 }
 
-void HeaderCompletionPopup::addFile(const QDir& dir, const QFileInfo& fileInfo, HeaderCompletionListItemType type)
+void HeaderCompletionPopup::addFile(const QDir& dir, const QFileInfo& fileInfo,
+                                    HeaderCompletionListItemType type)
 {
     QString fileName = fileInfo.fileName();
     if (fileName.isEmpty())
@@ -267,12 +267,13 @@ void HeaderCompletionPopup::addFile(const QDir& dir, const QFileInfo& fileInfo, 
     item->suffix = fileInfo.suffix();
     item->itemType = type;
     item->fullpath = cleanPath(dir.absoluteFilePath(fileName));
-    item->usageCount = mHeaderUsageCounts.value(item->fullpath,0);
+    item->usageCount = mHeaderUsageCounts.value(item->fullpath, 0);
     item->isFolder = fileInfo.isDir();
-    mFullCompletionList.insert(fileName,item);
+    mFullCompletionList.insert(fileName, item);
 }
 
-void HeaderCompletionPopup::addFilesInSubDir(const QString &baseDirPath, const QString &subDirName, HeaderCompletionListItemType type)
+void HeaderCompletionPopup::addFilesInSubDir(const QString& baseDirPath, const QString& subDirName,
+                                             HeaderCompletionListItemType type)
 {
     QDir baseDir(baseDirPath);
     QString subDirPath = baseDir.filePath(subDirName);
@@ -299,17 +300,17 @@ void HeaderCompletionPopup::setIgnoreCase(bool newIgnoreCase)
     mIgnoreCase = newIgnoreCase;
 }
 
-const QString &HeaderCompletionPopup::phrase() const
+const QString& HeaderCompletionPopup::phrase() const
 {
     return mPhrase;
 }
 
-void HeaderCompletionPopup::setParser(const PCppParser &newParser)
+void HeaderCompletionPopup::setParser(const PCppParser& newParser)
 {
     mParser = newParser;
 }
 
-void HeaderCompletionPopup::hideEvent(QHideEvent *)
+void HeaderCompletionPopup::hideEvent(QHideEvent*)
 {
     mCompletionList.clear();
     mModel->setMatched(0);
@@ -317,7 +318,7 @@ void HeaderCompletionPopup::hideEvent(QHideEvent *)
     mParser = nullptr;
 }
 
-bool HeaderCompletionPopup::event(QEvent *event)
+bool HeaderCompletionPopup::event(QEvent* event)
 {
     bool result = QWidget::event(event);
     if (event->type() == QEvent::FontChange) {
@@ -329,35 +330,33 @@ bool HeaderCompletionPopup::event(QEvent *event)
     return result;
 }
 
-HeaderCompletionListModel::HeaderCompletionListModel(const QList<PHeaderCompletionListItem> *files, int matched, QObject *parent):
-    QAbstractListModel{parent},
-    mFiles{files},
-    mMatched{matched}
+HeaderCompletionListModel::HeaderCompletionListModel(const QList<PHeaderCompletionListItem>* files,
+                                                     int matched, QObject* parent)
+    : QAbstractListModel{parent}, mFiles{files}, mMatched{matched}
 {
-
 }
 
-int HeaderCompletionListModel::rowCount(const QModelIndex &) const
+int HeaderCompletionListModel::rowCount(const QModelIndex&) const
 {
     return mFiles->count();
 }
 
-QVariant HeaderCompletionListModel::data(const QModelIndex &index, int role) const
+QVariant HeaderCompletionListModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid())
         return QVariant();
-    if (index.row()>=mFiles->count())
+    if (index.row() >= mFiles->count())
         return QVariant();
 
-    switch(role) {
+    switch (role) {
     case Qt::DisplayRole: {
         return mFiles->at(index.row())->filename;
-        }
+    }
     case Qt::ForegroundRole: {
-        PHeaderCompletionListItem item=mFiles->at(index.row());
+        PHeaderCompletionListItem item = mFiles->at(index.row());
         if (item->isFolder)
             return mFolderColor;
-        switch(item->itemType) {
+        switch (item->itemType) {
         case HeaderCompletionListItemType::LocalHeader:
             return mLocalColor;
         case HeaderCompletionListItemType::ProjectHeader:
@@ -365,8 +364,7 @@ QVariant HeaderCompletionListModel::data(const QModelIndex &index, int role) con
         case HeaderCompletionListItemType::SystemHeader:
             return mSystemColor;
         }
-    }
-        break;
+    } break;
     }
     return QVariant();
 }
@@ -377,22 +375,22 @@ void HeaderCompletionListModel::notifyUpdated()
     endResetModel();
 }
 
-void HeaderCompletionListModel::setLocalColor(const QColor &newColor)
+void HeaderCompletionListModel::setLocalColor(const QColor& newColor)
 {
     mLocalColor = newColor;
 }
 
-void HeaderCompletionListModel::setSystemColor(const QColor &newColor)
+void HeaderCompletionListModel::setSystemColor(const QColor& newColor)
 {
     mSystemColor = newColor;
 }
 
-void HeaderCompletionListModel::setProjectColor(const QColor &newColor)
+void HeaderCompletionListModel::setProjectColor(const QColor& newColor)
 {
     mProjectColor = newColor;
 }
 
-void HeaderCompletionListModel::setFolderColor(const QColor &newFolderColor)
+void HeaderCompletionListModel::setFolderColor(const QColor& newFolderColor)
 {
     mFolderColor = newFolderColor;
 }
@@ -407,15 +405,14 @@ void HeaderCompletionListModel::setMatched(int newMatched)
     mMatched = newMatched;
 }
 
-HeaderCompletionListItemDelegate::HeaderCompletionListItemDelegate(HeaderCompletionListModel *model, QWidget *parent):
-    QStyledItemDelegate{parent},
-    mModel{model},
-    mLineHeightFactor{1.0}
+HeaderCompletionListItemDelegate::HeaderCompletionListItemDelegate(HeaderCompletionListModel* model,
+                                                                   QWidget* parent)
+    : QStyledItemDelegate{parent}, mModel{model}, mLineHeightFactor{1.0}
 {
-
 }
 
-void HeaderCompletionListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void HeaderCompletionListItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option,
+                                             const QModelIndex& index) const
 {
     if (!mModel) {
         QStyledItemDelegate::paint(painter, option, index);
@@ -436,36 +433,37 @@ void HeaderCompletionListItemDelegate::paint(QPainter *painter, const QStyleOpti
     if (option.state & QStyle::State_Selected) {
         painter->fillRect(option.rect, mCurrentSelectionBackColor);
     }
-    int padding = (option.rect.height()-painter->fontMetrics().height())/2;
-    int y=option.rect.bottom()-painter->fontMetrics().descent()-padding;
-    int x=0;
+    int padding = (option.rect.height() - painter->fontMetrics().height()) / 2;
+    int y = option.rect.bottom() - painter->fontMetrics().descent() - padding;
+    int x = 0;
     QString t = text.left(mModel->matched());
     painter->setPen(mMatchedColor);
     painter->setFont(matchedFont);
-    painter->drawText(x,y,t);
-    x+=painter->fontMetrics().horizontalAdvance(t);
+    painter->drawText(x, y, t);
+    x += painter->fontMetrics().horizontalAdvance(t);
     t = text.mid(mModel->matched());
     painter->setPen(normalColor);
     painter->setFont(normalFont);
-    painter->drawText(x,y,t);
+    painter->drawText(x, y, t);
     painter->restore();
 }
 
-QSize HeaderCompletionListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+QSize HeaderCompletionListItemDelegate::sizeHint(const QStyleOptionViewItem& option,
+                                                 const QModelIndex& index) const
 {
     QSize size = QStyledItemDelegate::sizeHint(option, index);
-    size.setHeight(QFontMetrics(mFont).height()*mLineHeightFactor);
+    size.setHeight(QFontMetrics(mFont).height() * mLineHeightFactor);
     return size;
 }
 
-const QFont &HeaderCompletionListItemDelegate::font() const
+const QFont& HeaderCompletionListItemDelegate::font() const
 {
     return mFont;
 }
 
-void HeaderCompletionListItemDelegate::setFont(const QFont &newFont)
+void HeaderCompletionListItemDelegate::setFont(const QFont& newFont)
 {
-    mFont=newFont;
+    mFont = newFont;
 }
 
 float HeaderCompletionListItemDelegate::lineHeightFactor() const
@@ -483,7 +481,7 @@ QColor HeaderCompletionListItemDelegate::matchedColor() const
     return mMatchedColor;
 }
 
-void HeaderCompletionListItemDelegate::setMatchedColor(const QColor &newMatchedColor)
+void HeaderCompletionListItemDelegate::setMatchedColor(const QColor& newMatchedColor)
 {
     mMatchedColor = newMatchedColor;
 }
@@ -493,7 +491,8 @@ QColor HeaderCompletionListItemDelegate::currentSelectionBackColor() const
     return mCurrentSelectionBackColor;
 }
 
-void HeaderCompletionListItemDelegate::setCurrentSelectionBackColor(const QColor &newCurrentSelectionBackColor)
+void HeaderCompletionListItemDelegate::setCurrentSelectionBackColor(
+    const QColor& newCurrentSelectionBackColor)
 {
     mCurrentSelectionBackColor = newCurrentSelectionBackColor;
 }

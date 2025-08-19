@@ -31,16 +31,15 @@ class EditorFontModel : public QStringListModel
     Q_OBJECT
 public:
     using QStringListModel::QStringListModel;
-    Qt::ItemFlags flags(const QModelIndex &index) const;
+    Qt::ItemFlags flags(const QModelIndex& index) const;
 };
 
 class EditorFontWidget : public SettingsWidget
 {
     Q_OBJECT
 public:
-    explicit EditorFontWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit EditorFontWidget(const QString& name, const QString& group, QWidget* parent = nullptr);
     ~EditorFontWidget();
-
 
 private slots:
     void on_chkGutterOnlyMonospacedFonts_stateChanged(int arg1);
@@ -57,18 +56,20 @@ private slots:
 
     // void on_chkForceFixedFontWidth_toggled(bool checked);
 
-    void on_lstFontList_doubleClicked(const QModelIndex &index);
+    void on_lstFontList_doubleClicked(const QModelIndex& index);
+
 private:
-    void modifyFont(const QModelIndex &index);
+    void modifyFont(const QModelIndex& index);
+
 private:
-    Ui::EditorFontWidget *ui;
+    Ui::EditorFontWidget* ui;
     EditorFontModel mModel;
 
     // SettingsWidget interface
 protected:
     void doLoad() override;
     void doSave() override;
-    void updateIcons(const QSize &size) override;
+    void updateIcons(const QSize& size) override;
 };
 
 #endif // EDITORFONTWIDGET_H

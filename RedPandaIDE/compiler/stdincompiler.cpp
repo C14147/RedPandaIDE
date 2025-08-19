@@ -19,10 +19,9 @@
 #include <QFile>
 #include <QFileInfo>
 
-StdinCompiler::StdinCompiler(const QString &filename,const QByteArray& encoding, const QString& content, bool onlyCheckSyntax):
-    Compiler(filename, onlyCheckSyntax),
-    mContent(content),
-    mEncoding(encoding)
+StdinCompiler::StdinCompiler(const QString& filename, const QByteArray& encoding,
+                             const QString& content, bool onlyCheckSyntax)
+    : Compiler(filename, onlyCheckSyntax), mContent(content), mEncoding(encoding)
 {
 }
 
@@ -40,10 +39,10 @@ bool StdinCompiler::prepareForCompile()
     if (fileType == FileType::Other)
         fileType = FileType::CppSource;
     QString strFileType;
-    if (mEncoding!=ENCODING_ASCII) {
-        mArguments += getCharsetArgument(mEncoding,fileType, mOnlyCheckSyntax);
+    if (mEncoding != ENCODING_ASCII) {
+        mArguments += getCharsetArgument(mEncoding, fileType, mOnlyCheckSyntax);
     }
-    switch(fileType) {
+    switch (fileType) {
     case FileType::CSource:
         mArguments += {"-x", "c", "-"};
         mArguments += getCCompileArguments(mOnlyCheckSyntax);

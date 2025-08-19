@@ -39,7 +39,7 @@ class ShortcutManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit ShortcutManager(QObject *parent = nullptr);
+    explicit ShortcutManager(QObject* parent = nullptr);
     void load();
     void save();
     void setShortcuts(QList<PEnvironmentShortcut> shortcuts);
@@ -47,7 +47,7 @@ public:
     void applyTo(QAction* action);
 
 private:
-    QMap<QString,PEnvironmentShortcut> mShortcuts;
+    QMap<QString, PEnvironmentShortcut> mShortcuts;
 };
 
 using PShortcutManager = std::shared_ptr<ShortcutManager>;

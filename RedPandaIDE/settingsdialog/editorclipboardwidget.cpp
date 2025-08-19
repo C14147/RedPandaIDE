@@ -20,9 +20,9 @@
 #include "../mainwindow.h"
 #include "../colorscheme.h"
 
-EditorClipboardWidget::EditorClipboardWidget(const QString& name, const QString& group, QWidget *parent) :
-    SettingsWidget(name,group,parent),
-    ui(new Ui::EditorClipboardWidget)
+EditorClipboardWidget::EditorClipboardWidget(const QString& name, const QString& group,
+                                             QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::EditorClipboardWidget)
 {
     ui->setupUi(this);
     ui->cbCopyWithFormatAs->addItem("None");
@@ -30,21 +30,15 @@ EditorClipboardWidget::EditorClipboardWidget(const QString& name, const QString&
     ui->cbCopyWithFormatAs->addItem("HTML");
 #endif
 
-    foreach (const QString &name, pColorManager->getSchemes()) {
+    foreach (const QString& name, pColorManager->getSchemes()) {
         ui->cbHTMLColorScheme->addItem(name);
         ui->cbRTFColorScheme->addItem(name);
     }
-    connect(ui->chkCopyRTFUseEditorColor,
-            &QCheckBox_stateChanged,
-            this,
+    connect(ui->chkCopyRTFUseEditorColor, &QCheckBox_stateChanged, this,
             &EditorClipboardWidget::onUseSchemeChanged);
-    connect(ui->chkCopyHTMLUseEditorColor,
-            &QCheckBox_stateChanged,
-            this,
+    connect(ui->chkCopyHTMLUseEditorColor, &QCheckBox_stateChanged, this,
             &EditorClipboardWidget::onUseSchemeChanged);
-    connect(ui->chkCopyHTMLWithLineNumber,
-            &QCheckBox_stateChanged,
-            ui->chkCopyHTMLRecalcLineNumber,
+    connect(ui->chkCopyHTMLWithLineNumber, &QCheckBox_stateChanged, ui->chkCopyHTMLRecalcLineNumber,
             &QCheckBox::setEnabled);
 }
 
@@ -61,10 +55,10 @@ void EditorClipboardWidget::onUseSchemeChanged()
 
 void EditorClipboardWidget::doLoad()
 {
-    //pSettings->editor().load();
-    //copy
-    ui->cbCopyWithFormatAs->setCurrentIndex(std::max(0,std::min(ui->cbCopyWithFormatAs->count(),
-                                                                pSettings->editor().copyWithFormatAs())) );
+    // pSettings->editor().load();
+    // copy
+    ui->cbCopyWithFormatAs->setCurrentIndex(std::max(
+        0, std::min(ui->cbCopyWithFormatAs->count(), pSettings->editor().copyWithFormatAs())));
     ui->chkCopyRTFUseBackground->setChecked(pSettings->editor().copyRTFUseBackground());
     ui->chkCopyRTFUseEditorColor->setChecked(pSettings->editor().copyRTFUseEditorColor());
     ui->cbRTFColorScheme->setCurrentText(pSettings->editor().copyRTFColorScheme());
@@ -79,7 +73,7 @@ void EditorClipboardWidget::doLoad()
 
 void EditorClipboardWidget::doSave()
 {
-    //copy
+    // copy
     pSettings->editor().setCopyWithFormatAs(ui->cbCopyWithFormatAs->currentIndex());
 
     pSettings->editor().setCopyRTFUseBackground(ui->chkCopyRTFUseBackground->isChecked());
@@ -91,7 +85,8 @@ void EditorClipboardWidget::doSave()
     pSettings->editor().setCopyHTMLColorScheme(ui->cbHTMLColorScheme->currentText());
     pSettings->editor().setCopyHTMLWithLineNumber(ui->chkCopyHTMLWithLineNumber->isChecked());
     if (ui->chkCopyHTMLRecalcLineNumber->isEnabled())
-        pSettings->editor().setCopyHTMLRecalcLineNumber(ui->chkCopyHTMLRecalcLineNumber->isChecked());
+        pSettings->editor().setCopyHTMLRecalcLineNumber(
+            ui->chkCopyHTMLRecalcLineNumber->isChecked());
 
     pSettings->editor().save();
     pMainWindow->updateEditorSettings();

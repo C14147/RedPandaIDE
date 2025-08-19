@@ -34,7 +34,8 @@ struct FileAssociationItem {
 };
 using PFileAssociationItem = std::shared_ptr<FileAssociationItem>;
 
-class FileAssociationModel:public QAbstractListModel {
+class FileAssociationModel : public QAbstractListModel
+{
     Q_OBJECT
 public:
     explicit FileAssociationModel(QObject* parent = nullptr);
@@ -43,30 +44,25 @@ public:
     void saveAssociations();
 signals:
     void associationChanged();
+
 private:
-    bool checkAssociation(const QString& extension,
-                          const QString& filetype,
-                          const QString& verb,
+    bool checkAssociation(const QString& extension, const QString& filetype, const QString& verb,
                           const QString& serverApp);
-    bool registerAssociation(const QString& extension,
-                             const QString& filetype);
+    bool registerAssociation(const QString& extension, const QString& filetype);
     bool unregisterAssociation(const QString& extension);
     bool unregisterFileType(const QString& fileType);
-    bool registerFileType(const QString& filetype,
-                            const QString& description,
-                            const QString& verb,
-                            const QString& serverApp,
-                            int icon);
+    bool registerFileType(const QString& filetype, const QString& description, const QString& verb,
+                          const QString& serverApp, int icon);
+
 private:
     QList<PFileAssociationItem> mItems;
 
-
     // QAbstractItemModel interface
 public:
-    int rowCount(const QModelIndex &parent) const override;
-    QVariant data(const QModelIndex &index, int role) const override;
-    bool setData(const QModelIndex &index, const QVariant &value, int role) override;
-    Qt::ItemFlags flags(const QModelIndex &index) const override;
+    int rowCount(const QModelIndex& parent) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
+    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
 };
 
 class EnvironmentFileAssociationWidget : public SettingsWidget
@@ -74,11 +70,12 @@ class EnvironmentFileAssociationWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit EnvironmentFileAssociationWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit EnvironmentFileAssociationWidget(const QString& name, const QString& group,
+                                              QWidget* parent = nullptr);
     ~EnvironmentFileAssociationWidget();
 
 private:
-    Ui::EnvironmentFileAssociationWidget *ui;
+    Ui::EnvironmentFileAssociationWidget* ui;
     FileAssociationModel mModel;
 
     // SettingsWidget interface

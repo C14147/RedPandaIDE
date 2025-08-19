@@ -17,8 +17,7 @@
 
 #include "parsearg.h"
 
-namespace ParseArgumentsDetail
-{
+namespace ParseArgumentsDetail {
 
 /*Before:
     'blahblah'
@@ -26,7 +25,7 @@ namespace ParseArgumentsDetail
   After:
     'blahblah'
               ^pos */
-QString singleQuoted(const QString &command, int &pos)
+QString singleQuoted(const QString& command, int& pos)
 {
     QString result;
     while (pos < command.length() && command[pos] != '\'') {
@@ -39,7 +38,7 @@ QString singleQuoted(const QString &command, int &pos)
 }
 
 // read up to 3 octal digits
-QString readOctal(const QString &command, int &pos)
+QString readOctal(const QString& command, int& pos)
 {
     QString result;
     for (int i = 0; i < 3; ++i) {
@@ -53,11 +52,12 @@ QString readOctal(const QString &command, int &pos)
 }
 
 // read up to maxDigits hex digits
-QString readHex(const QString &command, int &pos, int maxDigits)
+QString readHex(const QString& command, int& pos, int maxDigits)
 {
     QString result;
     for (int i = 0; i < maxDigits; ++i) {
-        if (pos < command.length() && (command[pos].isDigit() || (command[pos].toLower() >= 'a' && command[pos].toLower() <= 'f'))) {
+        if (pos < command.length() && (command[pos].isDigit() || (command[pos].toLower() >= 'a' &&
+                                                                  command[pos].toLower() <= 'f'))) {
             result.push_back(command[pos]);
             ++pos;
         } else
@@ -110,7 +110,8 @@ QString readHex(const QString &command, int &pos, int maxDigits)
       $123
        ^pos
     Returns: as is */
-QString variableExpansion(const QString &command, int &pos, const QMap<QString, QString> &variables, bool ansiCQuotingPermitted)
+QString variableExpansion(const QString& command, int& pos, const QMap<QString, QString>& variables,
+                          bool ansiCQuotingPermitted)
 {
     if (pos >= command.length())
         return "$";
@@ -297,7 +298,7 @@ QString variableExpansion(const QString &command, int &pos, const QMap<QString, 
   After:
     <VARNAME.abc$>
                   ^pos */
-QString devCppExpansion(const QString &command, int &pos, const QMap<QString, QString> &variables)
+QString devCppExpansion(const QString& command, int& pos, const QMap<QString, QString>& variables)
 {
     QString varName;
     while (pos < command.length() && command[pos] != '>') {
@@ -323,7 +324,8 @@ QString devCppExpansion(const QString &command, int &pos, const QMap<QString, QS
   After:
     "blah\"blah"
                 ^pos */
-QString doubleQuoted(const QString &command, int &pos, const QMap<QString, QString> &variables, bool enableDevCppVariableExpansion)
+QString doubleQuoted(const QString& command, int& pos, const QMap<QString, QString>& variables,
+                     bool enableDevCppVariableExpansion)
 {
     QString result;
     while (pos < command.length()) {
@@ -377,7 +379,8 @@ QString doubleQuoted(const QString &command, int &pos, const QMap<QString, QStri
 
 } // namespace ParseArgumentsDetail
 
-QStringList parseArguments(const QString &command, const QMap<QString, QString> &variables, bool enableDevCppVariableExpansion)
+QStringList parseArguments(const QString& command, const QMap<QString, QString>& variables,
+                           bool enableDevCppVariableExpansion)
 {
     using namespace ParseArgumentsDetail;
 
@@ -461,7 +464,7 @@ QStringList parseArguments(const QString &command, const QMap<QString, QString> 
     return result;
 }
 
-QStringList parseArgumentsWithoutVariables(const QString &command)
+QStringList parseArgumentsWithoutVariables(const QString& command)
 {
     return parseArguments(command, {}, false);
 }

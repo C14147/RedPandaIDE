@@ -13,17 +13,18 @@ class FormatterPathWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit FormatterPathWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit FormatterPathWidget(const QString& name, const QString& group,
+                                 QWidget* parent = nullptr);
     ~FormatterPathWidget();
 
 private:
-    Ui::FormatterPathWidget *ui;
+    Ui::FormatterPathWidget* ui;
 
     // SettingsWidget interface
 protected:
     void doLoad() override;
     void doSave() override;
-    void updateIcons(const QSize &size) override;
+    void updateIcons(const QSize& size) override;
 private slots:
     void on_btnChooseAstyle_clicked();
 };

@@ -25,14 +25,13 @@
 #include "settings.h"
 #include "systemconsts.h"
 
-ToolsManager::ToolsManager(QObject *parent) : QObject(parent)
+ToolsManager::ToolsManager(QObject* parent) : QObject(parent)
 {
-
 }
 
 void ToolsManager::load()
 {
-    //if config file not exists, copy it from data
+    // if config file not exists, copy it from data
     QString filename = includeTrailingPathDelimiter(pSettings->dirs().config()) + DEV_TOOLS_FILE;
     if (!fileExists(filename)) {
         mTools.clear();
@@ -54,25 +53,23 @@ void ToolsManager::load()
         item->outputTarget = ToolItemOutputTarget::RedirectToToolsOutputPanel;
         item->isUTF8 = false;
         mTools.append(item);
-//#ifdef Q_OS_WIN
-//        item = std::make_shared<ToolItem>();
-//        item->title = tr("Open compiled in explorer");
-//        item->program = "explorer.exe";
-//        item->workingDirectory = "<SOURCEPATH>";
-//        item->parameters = " /n, /select, <EXENAME>";
-//        item->pauseAfterExit = false;
-//        mTools.append(item);
-//#endif
+        // #ifdef Q_OS_WIN
+        //         item = std::make_shared<ToolItem>();
+        //         item->title = tr("Open compiled in explorer");
+        //         item->program = "explorer.exe";
+        //         item->workingDirectory = "<SOURCEPATH>";
+        //         item->parameters = " /n, /select, <EXENAME>";
+        //         item->pauseAfterExit = false;
+        //         mTools.append(item);
+        // #endif
         save();
         return;
     }
-    //read config file
+    // read config file
     QFile file(filename);
     if (!file.open(QFile::ReadOnly)) {
-        QMessageBox::critical(nullptr,
-                              tr("Read tools config failed"),
-                              tr("Can't open tools config file '%1' for read.")
-                              .arg(filename));
+        QMessageBox::critical(nullptr, tr("Read tools config failed"),
+                              tr("Can't open tools config file '%1' for read.").arg(filename));
         return;
     }
 
@@ -80,17 +77,16 @@ void ToolsManager::load()
     if (json.isEmpty())
         return;
     QJsonParseError error;
-    QJsonDocument doc = QJsonDocument::fromJson(json,&error);
+    QJsonDocument doc = QJsonDocument::fromJson(json, &error);
     if (error.error != QJsonParseError::NoError) {
-        QMessageBox::critical(nullptr,
-                              tr("Read tools config failed"),
-                              tr("Read tools config file '%1' failed:%2")
-                              .arg(filename,error.errorString()));
+        QMessageBox::critical(
+            nullptr, tr("Read tools config failed"),
+            tr("Read tools config file '%1' failed:%2").arg(filename, error.errorString()));
         return;
     }
     mTools.clear();
     QJsonArray array = doc.array();
-    for(const QJsonValue& value: array) {
+    for (const QJsonValue& value : array) {
         QJsonObject object = value.toObject();
         PToolItem item = std::make_shared<ToolItem>();
         if (!object.contains("id"))
@@ -104,7 +100,7 @@ void ToolsManager::load()
         item->workingDirectory = object["workingDirectory"].toString();
         item->parameters = object["parameters"].toString();
         item->outputTarget = static_cast<ToolItemOutputTarget>(object["outputTarget"].toInt(0));
-        item->inputOrigin= static_cast<ToolItemInputOrigin>(object["inputOrigin"].toInt(0));
+        item->inputOrigin = static_cast<ToolItemInputOrigin>(object["inputOrigin"].toInt(0));
         item->isUTF8 = object["isUTF8"].toBool(true);
         mTools.append(item);
     }
@@ -115,45 +111,40 @@ void ToolsManager::save()
     QString filename = includeTrailingPathDelimiter(pSettings->dirs().config()) + DEV_TOOLS_FILE;
     QFile file(filename);
     if (!file.open(QFile::WriteOnly | QFile::Truncate)) {
-        QMessageBox::critical(nullptr,
-                              tr("Save tools config failed"),
-                              tr("Can't open tools config file '%1' for write.")
-                              .arg(filename));
+        QMessageBox::critical(nullptr, tr("Save tools config failed"),
+                              tr("Can't open tools config file '%1' for write.").arg(filename));
         return;
     }
     QJsonArray array;
-    foreach (const PToolItem& tool,mTools) {
+    foreach (const PToolItem& tool, mTools) {
         QJsonObject object;
-        object["id"]=tool->id;
-        object["title"]=tool->title;
-        object["program"]=tool->program;
+        object["id"] = tool->id;
+        object["title"] = tool->title;
+        object["program"] = tool->program;
         object["workingDirectory"] = tool->workingDirectory;
-        object["parameters"]=tool->parameters;
-        object["outputTarget"]=static_cast<int>(tool->outputTarget);
-        object["inputOrigin"]=static_cast<int>(tool->inputOrigin);
-        object["isUTF8"]=tool->isUTF8;
+        object["parameters"] = tool->parameters;
+        object["outputTarget"] = static_cast<int>(tool->outputTarget);
+        object["inputOrigin"] = static_cast<int>(tool->inputOrigin);
+        object["isUTF8"] = tool->isUTF8;
         array.append(object);
     }
     QJsonDocument doc;
     doc.setArray(array);
-    if (file.write(doc.toJson())<0) {
-        QMessageBox::critical(nullptr,
-                              tr("Save tools config failed"),
-                              tr("Write to tools config file '%1' failed.")
-                              .arg(filename));
+    if (file.write(doc.toJson()) < 0) {
+        QMessageBox::critical(nullptr, tr("Save tools config failed"),
+                              tr("Write to tools config file '%1' failed.").arg(filename));
         return;
     }
-
 }
 
-const QList<PToolItem> &ToolsManager::tools() const
+const QList<PToolItem>& ToolsManager::tools() const
 {
     return mTools;
 }
 
-PToolItem ToolsManager::findTool(const QString &title)
+PToolItem ToolsManager::findTool(const QString& title)
 {
-    for (int i=0;i<mTools.count();i++) {
+    for (int i = 0; i < mTools.count(); i++) {
         PToolItem item = mTools[i];
         if (title == item->title) {
             return item;
@@ -162,7 +153,7 @@ PToolItem ToolsManager::findTool(const QString &title)
     return PToolItem();
 }
 
-void ToolsManager::setTools(const QList<PToolItem> &newTools)
+void ToolsManager::setTools(const QList<PToolItem>& newTools)
 {
     mTools = newTools;
 }

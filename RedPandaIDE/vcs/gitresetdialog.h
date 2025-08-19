@@ -12,7 +12,7 @@ class GitResetDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit GitResetDialog(const QString& folder, QWidget *parent = nullptr);
+    explicit GitResetDialog(const QString& folder, QWidget* parent = nullptr);
     ~GitResetDialog();
     int resetToCommit(const QString& commit);
 
@@ -22,7 +22,7 @@ private slots:
     void on_btnCancel_clicked();
 
 private:
-    Ui::GitResetDialog *ui;
+    Ui::GitResetDialog* ui;
     QString mFolder;
 };
 

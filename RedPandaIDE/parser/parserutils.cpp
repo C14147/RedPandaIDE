@@ -26,9 +26,9 @@
 
 QStringList CppDirectives;
 QStringList JavadocTags;
-QMap<QString,KeywordType> CppKeywords;
+QMap<QString, KeywordType> CppKeywords;
 #ifdef ENABLE_SDCC
-QMap<QString,KeywordType> SDCCKeywords;
+QMap<QString, KeywordType> SDCCKeywords;
 QSet<QString> SDCCTypeKeywords;
 #endif
 QSet<QString> CppControlKeyWords;
@@ -43,8 +43,8 @@ QSet<QString> MemberOperators;
 QSet<QString> IOManipulators;
 QSet<QString> AutoTypes;
 
-Q_GLOBAL_STATIC(QSet<QString>,CppHeaderExts)
-Q_GLOBAL_STATIC(QSet<QString>,CppSourceExts)
+Q_GLOBAL_STATIC(QSet<QString>, CppHeaderExts)
+Q_GLOBAL_STATIC(QSet<QString>, CppSourceExts)
 
 void initParser()
 {
@@ -63,121 +63,120 @@ void initParser()
     CppSourceExts->insert("c++");
     CppSourceExts->insert("cp");
     // skip itself
-    CppKeywords.insert("and",KeywordType::SkipItself);
-    CppKeywords.insert("and_eq",KeywordType::SkipItself);
-    CppKeywords.insert("bitand",KeywordType::SkipItself);
-    CppKeywords.insert("bitor",KeywordType::SkipItself);
-    CppKeywords.insert("break",KeywordType::SkipItself);
-    CppKeywords.insert("compl",KeywordType::SkipItself);
-    CppKeywords.insert("constexpr",KeywordType::SkipItself);
-    CppKeywords.insert("const_cast",KeywordType::SkipItself);
-    CppKeywords.insert("continue",KeywordType::SkipItself);
-    CppKeywords.insert("dynamic_cast",KeywordType::SkipItself);
-    CppKeywords.insert("else",KeywordType::SkipItself);
-    CppKeywords.insert("explicit",KeywordType::SkipItself);
-    CppKeywords.insert("export",KeywordType::SkipItself);
-    CppKeywords.insert("false",KeywordType::SkipItself);
-    CppKeywords.insert("__extension__",KeywordType::SkipItself);
+    CppKeywords.insert("and", KeywordType::SkipItself);
+    CppKeywords.insert("and_eq", KeywordType::SkipItself);
+    CppKeywords.insert("bitand", KeywordType::SkipItself);
+    CppKeywords.insert("bitor", KeywordType::SkipItself);
+    CppKeywords.insert("break", KeywordType::SkipItself);
+    CppKeywords.insert("compl", KeywordType::SkipItself);
+    CppKeywords.insert("constexpr", KeywordType::SkipItself);
+    CppKeywords.insert("const_cast", KeywordType::SkipItself);
+    CppKeywords.insert("continue", KeywordType::SkipItself);
+    CppKeywords.insert("dynamic_cast", KeywordType::SkipItself);
+    CppKeywords.insert("else", KeywordType::SkipItself);
+    CppKeywords.insert("explicit", KeywordType::SkipItself);
+    CppKeywords.insert("export", KeywordType::SkipItself);
+    CppKeywords.insert("false", KeywordType::SkipItself);
+    CppKeywords.insert("__extension__", KeywordType::SkipItself);
 
-    //CppKeywords.insert("for",SkipType::skItself);
-    CppKeywords.insert("mutable",KeywordType::SkipItself);
-    CppKeywords.insert("noexcept",KeywordType::SkipItself);
-    CppKeywords.insert("not",KeywordType::SkipItself);
-    CppKeywords.insert("not_eq",KeywordType::SkipItself);
-    CppKeywords.insert("nullptr",KeywordType::SkipItself);
-    CppKeywords.insert("or",KeywordType::SkipItself);
-    CppKeywords.insert("or_eq",KeywordType::SkipItself);
-    CppKeywords.insert("register",KeywordType::SkipItself);
-    CppKeywords.insert("reinterpret_cast",KeywordType::SkipItself);
-    CppKeywords.insert("static_cast",KeywordType::SkipItself);
-    CppKeywords.insert("template",KeywordType::SkipItself);
-    CppKeywords.insert("this",KeywordType::SkipItself); // Uncommented
-    CppKeywords.insert("thread_local",KeywordType::SkipItself);
-    CppKeywords.insert("true",KeywordType::SkipItself);
-    CppKeywords.insert("typename",KeywordType::SkipItself);
-    CppKeywords.insert("virtual",KeywordType::SkipItself);
-    CppKeywords.insert("volatile",KeywordType::SkipItself);
-    CppKeywords.insert("xor",KeywordType::SkipItself);
-    CppKeywords.insert("xor_eq",KeywordType::SkipItself);
+    // CppKeywords.insert("for",SkipType::skItself);
+    CppKeywords.insert("mutable", KeywordType::SkipItself);
+    CppKeywords.insert("noexcept", KeywordType::SkipItself);
+    CppKeywords.insert("not", KeywordType::SkipItself);
+    CppKeywords.insert("not_eq", KeywordType::SkipItself);
+    CppKeywords.insert("nullptr", KeywordType::SkipItself);
+    CppKeywords.insert("or", KeywordType::SkipItself);
+    CppKeywords.insert("or_eq", KeywordType::SkipItself);
+    CppKeywords.insert("register", KeywordType::SkipItself);
+    CppKeywords.insert("reinterpret_cast", KeywordType::SkipItself);
+    CppKeywords.insert("static_cast", KeywordType::SkipItself);
+    CppKeywords.insert("template", KeywordType::SkipItself);
+    CppKeywords.insert("this", KeywordType::SkipItself); // Uncommented
+    CppKeywords.insert("thread_local", KeywordType::SkipItself);
+    CppKeywords.insert("true", KeywordType::SkipItself);
+    CppKeywords.insert("typename", KeywordType::SkipItself);
+    CppKeywords.insert("virtual", KeywordType::SkipItself);
+    CppKeywords.insert("volatile", KeywordType::SkipItself);
+    CppKeywords.insert("xor", KeywordType::SkipItself);
+    CppKeywords.insert("xor_eq", KeywordType::SkipItself);
 
-
-    //CppKeywords.insert("catch",SkipType::skItself);
-    CppKeywords.insert("do",KeywordType::SkipItself);
-    CppKeywords.insert("try",KeywordType::SkipItself);
+    // CppKeywords.insert("catch",SkipType::skItself);
+    CppKeywords.insert("do", KeywordType::SkipItself);
+    CppKeywords.insert("try", KeywordType::SkipItself);
 
     // Skip to ;
-    CppKeywords.insert("delete",KeywordType::SkipNextSemicolon);
-    CppKeywords.insert("delete[]",KeywordType::SkipNextSemicolon);
-    CppKeywords.insert("goto",KeywordType::SkipNextSemicolon);
-    CppKeywords.insert("new",KeywordType::SkipNextSemicolon);
-    CppKeywords.insert("return",KeywordType::SkipNextSemicolon);
-    CppKeywords.insert("throw",KeywordType::SkipNextSemicolon);
-  //  CppKeywords.insert("using",SkipType::skToSemicolon); //won't use it
+    CppKeywords.insert("delete", KeywordType::SkipNextSemicolon);
+    CppKeywords.insert("delete[]", KeywordType::SkipNextSemicolon);
+    CppKeywords.insert("goto", KeywordType::SkipNextSemicolon);
+    CppKeywords.insert("new", KeywordType::SkipNextSemicolon);
+    CppKeywords.insert("return", KeywordType::SkipNextSemicolon);
+    CppKeywords.insert("throw", KeywordType::SkipNextSemicolon);
+    //  CppKeywords.insert("using",SkipType::skToSemicolon); //won't use it
 
     // Skip to :
-    CppKeywords.insert("case",KeywordType::SkipNextColon);
-    CppKeywords.insert("default",KeywordType::SkipNextColon);
+    CppKeywords.insert("case", KeywordType::SkipNextColon);
+    CppKeywords.insert("default", KeywordType::SkipNextColon);
 
     // Skip to )
-    CppKeywords.insert("__attribute__",KeywordType::SkipNextParenthesis);
-    CppKeywords.insert("__attribute",KeywordType::SkipNextParenthesis);
-    CppKeywords.insert("alignas",KeywordType::SkipNextParenthesis);  // not right
-    CppKeywords.insert("alignof",KeywordType::SkipNextParenthesis);  // not right
-    CppKeywords.insert("if",KeywordType::SkipNextParenthesis);
-    CppKeywords.insert("sizeof",KeywordType::SkipNextParenthesis);
-    CppKeywords.insert("switch",KeywordType::SkipNextParenthesis);
-    CppKeywords.insert("typeid",KeywordType::SkipNextParenthesis);
-    CppKeywords.insert("while",KeywordType::SkipNextParenthesis);
-    CppKeywords.insert("static_assert",KeywordType::SkipNextParenthesis);
-    CppKeywords.insert("_Pragma",KeywordType::SkipNextParenthesis);
+    CppKeywords.insert("__attribute__", KeywordType::SkipNextParenthesis);
+    CppKeywords.insert("__attribute", KeywordType::SkipNextParenthesis);
+    CppKeywords.insert("alignas", KeywordType::SkipNextParenthesis); // not right
+    CppKeywords.insert("alignof", KeywordType::SkipNextParenthesis); // not right
+    CppKeywords.insert("if", KeywordType::SkipNextParenthesis);
+    CppKeywords.insert("sizeof", KeywordType::SkipNextParenthesis);
+    CppKeywords.insert("switch", KeywordType::SkipNextParenthesis);
+    CppKeywords.insert("typeid", KeywordType::SkipNextParenthesis);
+    CppKeywords.insert("while", KeywordType::SkipNextParenthesis);
+    CppKeywords.insert("static_assert", KeywordType::SkipNextParenthesis);
+    CppKeywords.insert("_Pragma", KeywordType::SkipNextParenthesis);
 
     // Skip to }
-    CppKeywords.insert("asm",KeywordType::SkipNextParenthesis);
-    CppKeywords.insert("__asm",KeywordType::SkipNextParenthesis);
+    CppKeywords.insert("asm", KeywordType::SkipNextParenthesis);
+    CppKeywords.insert("__asm", KeywordType::SkipNextParenthesis);
     // Skip to {
 
-    CppKeywords.insert("requires",KeywordType::Requires);
-    CppKeywords.insert("concept",KeywordType::Concept);
+    CppKeywords.insert("requires", KeywordType::Requires);
+    CppKeywords.insert("concept", KeywordType::Concept);
 
     // wont handle
 
-    //Not supported yet
-    CppKeywords.insert("atomic_cancel",KeywordType::None);
-    CppKeywords.insert("atomic_commit",KeywordType::None);
-    CppKeywords.insert("atomic_noexcept",KeywordType::None);
-    CppKeywords.insert("consteval",KeywordType::None);
-    CppKeywords.insert("constinit",KeywordType::None);
-    CppKeywords.insert("co_await",KeywordType::None);
-    CppKeywords.insert("co_return",KeywordType::None);
-    CppKeywords.insert("co_yield",KeywordType::None);
-    CppKeywords.insert("reflexpr",KeywordType::None);
+    // Not supported yet
+    CppKeywords.insert("atomic_cancel", KeywordType::None);
+    CppKeywords.insert("atomic_commit", KeywordType::None);
+    CppKeywords.insert("atomic_noexcept", KeywordType::None);
+    CppKeywords.insert("consteval", KeywordType::None);
+    CppKeywords.insert("constinit", KeywordType::None);
+    CppKeywords.insert("co_await", KeywordType::None);
+    CppKeywords.insert("co_return", KeywordType::None);
+    CppKeywords.insert("co_yield", KeywordType::None);
+    CppKeywords.insert("reflexpr", KeywordType::None);
     // its a type
-    CppKeywords.insert("auto",KeywordType::None);
-    CppKeywords.insert("bool",KeywordType::None);
-    CppKeywords.insert("char",KeywordType::None);
-    CppKeywords.insert("char8_t",KeywordType::None);
-    CppKeywords.insert("char16_t",KeywordType::None);
-    CppKeywords.insert("char32_t",KeywordType::None);
-    CppKeywords.insert("double",KeywordType::None);
-    CppKeywords.insert("float",KeywordType::None);
-    CppKeywords.insert("int",KeywordType::None);
-    CppKeywords.insert("long",KeywordType::None);
-    CppKeywords.insert("short",KeywordType::None);
-    CppKeywords.insert("signed",KeywordType::None);
-    CppKeywords.insert("unsigned",KeywordType::None);
-    CppKeywords.insert("void",KeywordType::None);
-    CppKeywords.insert("wchar_t",KeywordType::None);
+    CppKeywords.insert("auto", KeywordType::None);
+    CppKeywords.insert("bool", KeywordType::None);
+    CppKeywords.insert("char", KeywordType::None);
+    CppKeywords.insert("char8_t", KeywordType::None);
+    CppKeywords.insert("char16_t", KeywordType::None);
+    CppKeywords.insert("char32_t", KeywordType::None);
+    CppKeywords.insert("double", KeywordType::None);
+    CppKeywords.insert("float", KeywordType::None);
+    CppKeywords.insert("int", KeywordType::None);
+    CppKeywords.insert("long", KeywordType::None);
+    CppKeywords.insert("short", KeywordType::None);
+    CppKeywords.insert("signed", KeywordType::None);
+    CppKeywords.insert("unsigned", KeywordType::None);
+    CppKeywords.insert("void", KeywordType::None);
+    CppKeywords.insert("wchar_t", KeywordType::None);
 
     // C++ Attributes
-    CppKeywords.insert("[[noreturn]]",KeywordType::None);
-    CppKeywords.insert("[[carries_dependency]]",KeywordType::None);
-    CppKeywords.insert("[[deprecated]]",KeywordType::None);
-    CppKeywords.insert("[[fallthrough]]",KeywordType::None);
-    CppKeywords.insert("[[nodiscard]]",KeywordType::None);
-    CppKeywords.insert("[[maybe_unused]]",KeywordType::None);
-    CppKeywords.insert("[[likely]]",KeywordType::None);
-    CppKeywords.insert("[[unlikely]]",KeywordType::None);
-    CppKeywords.insert("[[no_unique_address]]",KeywordType::None);
+    CppKeywords.insert("[[noreturn]]", KeywordType::None);
+    CppKeywords.insert("[[carries_dependency]]", KeywordType::None);
+    CppKeywords.insert("[[deprecated]]", KeywordType::None);
+    CppKeywords.insert("[[fallthrough]]", KeywordType::None);
+    CppKeywords.insert("[[nodiscard]]", KeywordType::None);
+    CppKeywords.insert("[[maybe_unused]]", KeywordType::None);
+    CppKeywords.insert("[[likely]]", KeywordType::None);
+    CppKeywords.insert("[[unlikely]]", KeywordType::None);
+    CppKeywords.insert("[[no_unique_address]]", KeywordType::None);
 
     // C++20 modules
     CppKeywords.insert("import", KeywordType::None); // Added
@@ -185,31 +184,31 @@ void initParser()
 
     // C++11 context keywords
     CppKeywords.insert("override", KeywordType::None); // Added
-    CppKeywords.insert("final", KeywordType::None); // Added
+    CppKeywords.insert("final", KeywordType::None);    // Added
 
 #ifdef ENABLE_SDCC
-    SDCCKeywords.insert("__sfr",KeywordType::None);
-    SDCCKeywords.insert("__sfr16",KeywordType::None);
-    SDCCKeywords.insert("__sfr32",KeywordType::None);
-    SDCCKeywords.insert("__sbit",KeywordType::None);
-    SDCCKeywords.insert("__bit",KeywordType::None);
-    SDCCKeywords.insert("__data",KeywordType::SkipItself);
-    SDCCKeywords.insert("__near",KeywordType::SkipItself);
-    SDCCKeywords.insert("__xdata",KeywordType::SkipItself);
-    SDCCKeywords.insert("__far",KeywordType::SkipItself);
-    SDCCKeywords.insert("__idata",KeywordType::SkipItself);
-    SDCCKeywords.insert("__pdata",KeywordType::SkipItself);
-    SDCCKeywords.insert("__code",KeywordType::SkipItself);
-    SDCCKeywords.insert("__banked",KeywordType::SkipItself);
-    SDCCKeywords.insert("__at",KeywordType::SkipNextParenthesis);
-    SDCCKeywords.insert("__reentrant",KeywordType::SkipItself);
-    SDCCKeywords.insert("__interrupt",KeywordType::SkipItself);
-    SDCCKeywords.insert("__using",KeywordType::SkipItself);
-    SDCCKeywords.insert("__critical",KeywordType::SkipItself);
-    SDCCKeywords.insert("__trap",KeywordType::SkipItself);
-    SDCCKeywords.insert("__asm",KeywordType::SkipItself);
-    SDCCKeywords.insert("__endasm",KeywordType::SkipItself);
-    SDCCKeywords.insert("__naked",KeywordType::SkipItself);
+    SDCCKeywords.insert("__sfr", KeywordType::None);
+    SDCCKeywords.insert("__sfr16", KeywordType::None);
+    SDCCKeywords.insert("__sfr32", KeywordType::None);
+    SDCCKeywords.insert("__sbit", KeywordType::None);
+    SDCCKeywords.insert("__bit", KeywordType::None);
+    SDCCKeywords.insert("__data", KeywordType::SkipItself);
+    SDCCKeywords.insert("__near", KeywordType::SkipItself);
+    SDCCKeywords.insert("__xdata", KeywordType::SkipItself);
+    SDCCKeywords.insert("__far", KeywordType::SkipItself);
+    SDCCKeywords.insert("__idata", KeywordType::SkipItself);
+    SDCCKeywords.insert("__pdata", KeywordType::SkipItself);
+    SDCCKeywords.insert("__code", KeywordType::SkipItself);
+    SDCCKeywords.insert("__banked", KeywordType::SkipItself);
+    SDCCKeywords.insert("__at", KeywordType::SkipNextParenthesis);
+    SDCCKeywords.insert("__reentrant", KeywordType::SkipItself);
+    SDCCKeywords.insert("__interrupt", KeywordType::SkipItself);
+    SDCCKeywords.insert("__using", KeywordType::SkipItself);
+    SDCCKeywords.insert("__critical", KeywordType::SkipItself);
+    SDCCKeywords.insert("__trap", KeywordType::SkipItself);
+    SDCCKeywords.insert("__asm", KeywordType::SkipItself);
+    SDCCKeywords.insert("__endasm", KeywordType::SkipItself);
+    SDCCKeywords.insert("__naked", KeywordType::SkipItself);
 
     SDCCTypeKeywords.insert("__sfr");
     SDCCTypeKeywords.insert("__sfr16");
@@ -229,7 +228,7 @@ void initParser()
     CppTypeKeywords.insert("int");
     CppTypeKeywords.insert("long");
     CppTypeKeywords.insert("short");
-    CppTypeKeywords.insert("signed"); // Uncommented
+    CppTypeKeywords.insert("signed");   // Uncommented
     CppTypeKeywords.insert("unsigned"); // Uncommented
     CppTypeKeywords.insert("void");
     CppTypeKeywords.insert("wchar_t");
@@ -237,38 +236,36 @@ void initParser()
     CppTypeKeywords.insert("unsigned");
 
     // it's part of type info
-    CppKeywords.insert("const",KeywordType::None);
-    CppKeywords.insert("extern",KeywordType::Extern);
+    CppKeywords.insert("const", KeywordType::None);
+    CppKeywords.insert("extern", KeywordType::Extern);
 
-    CppKeywords.insert("operator",KeywordType::Operator);
+    CppKeywords.insert("operator", KeywordType::Operator);
 
     // handled elsewhere
-    CppKeywords.insert("static",KeywordType::None);
+    CppKeywords.insert("static", KeywordType::None);
 
-    //struct/class/union
-    CppKeywords.insert("class",KeywordType::Struct);
-    CppKeywords.insert("struct",KeywordType::Struct);
-    CppKeywords.insert("union",KeywordType::Struct);
+    // struct/class/union
+    CppKeywords.insert("class", KeywordType::Struct);
+    CppKeywords.insert("struct", KeywordType::Struct);
+    CppKeywords.insert("union", KeywordType::Struct);
 
-
-    CppKeywords.insert("for",KeywordType::For);
-    CppKeywords.insert("catch",KeywordType::Catch);
-    CppKeywords.insert("private",KeywordType::Private);
-    CppKeywords.insert("public",KeywordType::Public);
-    CppKeywords.insert("enum",KeywordType::Enum);
-    CppKeywords.insert("namespace",KeywordType::Namespace);
-    CppKeywords.insert("inline",KeywordType::Inline);
-    CppKeywords.insert("typedef",KeywordType::Typedef);
-    CppKeywords.insert("using",KeywordType::Using);
-    CppKeywords.insert("protected",KeywordType::Protected);
-    CppKeywords.insert("friend",KeywordType::Friend);
-    CppKeywords.insert("decltype",KeywordType::DeclType); // not right
-
+    CppKeywords.insert("for", KeywordType::For);
+    CppKeywords.insert("catch", KeywordType::Catch);
+    CppKeywords.insert("private", KeywordType::Private);
+    CppKeywords.insert("public", KeywordType::Public);
+    CppKeywords.insert("enum", KeywordType::Enum);
+    CppKeywords.insert("namespace", KeywordType::Namespace);
+    CppKeywords.insert("inline", KeywordType::Inline);
+    CppKeywords.insert("typedef", KeywordType::Typedef);
+    CppKeywords.insert("using", KeywordType::Using);
+    CppKeywords.insert("protected", KeywordType::Protected);
+    CppKeywords.insert("friend", KeywordType::Friend);
+    CppKeywords.insert("decltype", KeywordType::DeclType); // not right
 
     // nullptr is value
-    CppKeywords.insert("nullptr",KeywordType::None);
+    CppKeywords.insert("nullptr", KeywordType::None);
 
-    //C Keywords
+    // C Keywords
     CKeywords.insert("auto");
     CKeywords.insert("break");
     CKeywords.insert("case");
@@ -308,7 +305,7 @@ void initParser()
     CppControlKeyWords.insert("if");
     CppControlKeyWords.insert("catch");
 
-    //STL Containers
+    // STL Containers
     STLContainers.insert("std::array");
     STLContainers.insert("std::vector");
     STLContainers.insert("std::deque");
@@ -316,25 +313,25 @@ void initParser()
     STLContainers.insert("std::list");
     STLContainers.insert("std::flat_map"); // C++23
     STLContainers.insert("std::flat_set"); // C++23
-    STLContainers.insert("std::mdspan"); // C++23
+    STLContainers.insert("std::mdspan");   // C++23
 
     STLContainers.insert("std::set");
-//    STLContainers.insert("std::map");
-//    STLContainers.insert("std::multilist");
-//    STLContainers.insert("std::multimap");
+    //    STLContainers.insert("std::map");
+    //    STLContainers.insert("std::multilist");
+    //    STLContainers.insert("std::multimap");
 
     STLContainers.insert("std::unordered_set");
-//    STLContainers.insert("std::unordered_map");
+    //    STLContainers.insert("std::unordered_map");
     STLContainers.insert("std::unordered_multiset");
-//    STLContainers.insert("std::unordered_multimap");
+    //    STLContainers.insert("std::unordered_multimap");
 
     STLContainers.insert("std::stack");
     STLContainers.insert("std::queue");
     STLContainers.insert("std::priority_queue");
 
     STLContainers.insert("std::span");
-    STLContainers.insert("std::expected"); // C++23
-    STLContainers.insert("std::optional"); // C++23
+    STLContainers.insert("std::expected");  // C++23
+    STLContainers.insert("std::optional");  // C++23
     STLContainers.insert("std::generator"); // C++23 coroutines
 
     STLMaps.insert("std::map");
@@ -343,14 +340,14 @@ void initParser()
     STLMaps.insert("std::unordered_map");
     STLMaps.insert("std::unordered_multimap");
 
-    //STL element access methods
+    // STL element access methods
     STLElementMethods.insert("at");
     STLElementMethods.insert("back");
     STLElementMethods.insert("front");
     STLElementMethods.insert("top");
     STLElementMethods.insert("operator[]"); // Added
 
-    //STL iterator
+    // STL iterator
     STLIterators.insert("iterator");
     STLIterators.insert("const_iterator");
     STLIterators.insert("const_local_iterator");
@@ -359,16 +356,16 @@ void initParser()
     STLIterators.insert("const_reverse_iterator");
     STLIterators.insert("sentinel"); // C++20
 
-    //STL pointers
+    // STL pointers
     STLPointers.insert("std::unique_ptr");
     STLPointers.insert("std::auto_ptr");
     STLPointers.insert("std::shared_ptr");
     STLPointers.insert("std::weak_ptr");
-    //STLPointers.insert("__gnu_cxx::__normal_iterator");
-//    STLPointers.insert("std::reverse_iterator");
-//    STLPointers.insert("std::iterator");
-//    STLPointers.insert("std::const_iterator");
-//    STLPointers.insert("std::const_reverse_iterator");
+    // STLPointers.insert("__gnu_cxx::__normal_iterator");
+    //    STLPointers.insert("std::reverse_iterator");
+    //    STLPointers.insert("std::iterator");
+    //    STLPointers.insert("std::const_iterator");
+    //    STLPointers.insert("std::const_reverse_iterator");
 
     AutoTypes.insert("auto");
     AutoTypes.insert("auto &");
@@ -377,7 +374,7 @@ void initParser()
     AutoTypes.insert("const auto &");
     AutoTypes.insert("decltype(auto)"); // C++14
 
-    //C/CPP preprocessor directives
+    // C/CPP preprocessor directives
     CppDirectives.append("#include");
     CppDirectives.append("#if");
     CppDirectives.append("#ifdef");
@@ -450,20 +447,20 @@ void initParser()
     IOManipulators.insert("std::ends");
     IOManipulators.insert("std::flush");
     IOManipulators.insert("std::endl");
-
 }
 
-QString getHeaderFilename(const QString &relativeTo, const QString &line,
-                          const QStringList& includePaths, const QStringList& projectIncludePaths) {
+QString getHeaderFilename(const QString& relativeTo, const QString& line,
+                          const QStringList& includePaths, const QStringList& projectIncludePaths)
+{
     QString result = "";
 
     // Handle <>
     int openTokenPos = line.indexOf('<');
     if (openTokenPos >= 0) {
-        int closeTokenPos = line.indexOf('>',openTokenPos+1);
-        if (closeTokenPos >=0) {
+        int closeTokenPos = line.indexOf('>', openTokenPos + 1);
+        if (closeTokenPos >= 0) {
             QString fileName = line.mid(openTokenPos + 1, closeTokenPos - openTokenPos - 1);
-            //project settings is preferred
+            // project settings is preferred
             result = getSystemHeaderFilename(fileName, projectIncludePaths);
             if (result.isEmpty()) {
                 result = getSystemHeaderFilename(fileName, includePaths);
@@ -473,11 +470,11 @@ QString getHeaderFilename(const QString &relativeTo, const QString &line,
         // Try ""
         openTokenPos = line.indexOf('"');
         if (openTokenPos >= 0) {
-            int closeTokenPos = line.indexOf('"', openTokenPos+1);
+            int closeTokenPos = line.indexOf('"', openTokenPos + 1);
             if (closeTokenPos >= 0) {
                 QString fileName = line.mid(openTokenPos + 1, closeTokenPos - openTokenPos - 1);
                 result = getLocalHeaderFilename(relativeTo, fileName);
-                //project settings is preferred
+                // project settings is preferred
                 if (result.isEmpty()) {
                     result = getSystemHeaderFilename(fileName, projectIncludePaths);
                 }
@@ -491,7 +488,7 @@ QString getHeaderFilename(const QString &relativeTo, const QString &line,
     return result;
 }
 
-QString getLocalHeaderFilename(const QString &relativeTo, const QString &fileName)
+QString getLocalHeaderFilename(const QString& relativeTo, const QString& fileName)
 {
     QFileInfo relativeFile(relativeTo);
     QDir dir = relativeFile.dir();
@@ -502,21 +499,20 @@ QString getLocalHeaderFilename(const QString &relativeTo, const QString &fileNam
     return "";
 }
 
-QString getSystemHeaderFilename(const QString &fileName, const QStringList& includePaths)
+QString getSystemHeaderFilename(const QString& fileName, const QStringList& includePaths)
 {
-
     // Search compiler include directories
-    for (const QString& path:includePaths) {
+    for (const QString& path : includePaths) {
         QDir dir(path);
         if (dir.exists(fileName)) {
             return cleanPath(dir.absoluteFilePath(fileName));
         }
     }
-    //not found
+    // not found
     return "";
 }
 
-bool isSystemHeaderFile(const QString &fileName, const QSet<QString> &includePaths)
+bool isSystemHeaderFile(const QString& fileName, const QSet<QString>& includePaths)
 {
     if (fileName.isEmpty())
         return false;
@@ -525,8 +521,8 @@ bool isSystemHeaderFile(const QString &fileName, const QSet<QString> &includePat
     bool isFullName = false;
 
 #ifdef Q_OS_WIN
-    isFullName = fileName.startsWith("/") || (fileName.length()>2 && fileName[1]==':'
-            && fileName[0].isLetter());
+    isFullName = fileName.startsWith("/") ||
+                 (fileName.length() > 2 && fileName[1] == ':' && fileName[0].isLetter());
 #else
     isFullName = fileName.startsWith("/");
 #endif
@@ -542,8 +538,8 @@ bool isSystemHeaderFile(const QString &fileName, const QSet<QString> &includePat
             }
         }
     } else {
-        //check if it's in the include dir
-        for (const QString& includePath: includePaths) {
+        // check if it's in the include dir
+        for (const QString& includePath : includePaths) {
             QDir dir(includePath);
             if (dir.exists(fileName))
                 return true;
@@ -552,7 +548,7 @@ bool isSystemHeaderFile(const QString &fileName, const QSet<QString> &includePat
     return false;
 }
 
-bool isCppKeyword(const QString &word)
+bool isCppKeyword(const QString& word)
 {
     return CppKeywords.contains(word);
 }
@@ -563,7 +559,6 @@ bool isHFile(const QString& filename)
         return false;
     QFileInfo fileInfo(filename);
     return CppHeaderExts->contains(fileInfo.suffix().toLower());
-
 }
 
 bool isCFile(const QString& filename)
@@ -580,22 +575,22 @@ PStatement CppScopes::findScopeAtLine(int line) const
     if (mScopes.isEmpty())
         return PStatement();
     int start = 0;
-    int end = mScopes.size()-1;
-    while (start<=end) {
-        int mid = (start+end)/2;
+    int end = mScopes.size() - 1;
+    while (start <= end) {
+        int mid = (start + end) / 2;
         PCppScope midScope = mScopes[mid];
         if (midScope->startLine == line) {
-            while (mid<end && (mScopes[mid+1]->startLine == line)) {
+            while (mid < end && (mScopes[mid + 1]->startLine == line)) {
                 mid++;
             }
             return mScopes[mid]->statement;
         } else if (midScope->startLine > line) {
-            end = mid-1;
+            end = mid - 1;
         } else {
-            start = mid+1;
+            start = mid + 1;
         }
     }
-    if (end>=0)
+    if (end >= 0)
         return mScopes[end]->statement;
     else
         return PStatement();
@@ -609,32 +604,32 @@ void CppScopes::addScope(int line, PStatement scopeStatement)
     mScopes.append(scope);
 #ifdef QT_DEBUG
     if (!mScopes.isEmpty() && mScopes.back()->startLine > line) {
-        qDebug()<<QString("Error: new scope %1 at %2 which is less that last scope %3")
-                  .arg(scopeStatement->fullName)
-                  .arg(line)
-                  .arg(mScopes.back()->startLine);
+        qDebug() << QString("Error: new scope %1 at %2 which is less that last scope %3")
+                        .arg(scopeStatement->fullName)
+                        .arg(line)
+                        .arg(mScopes.back()->startLine);
     }
 #endif
 }
 
-MemberOperatorType getOperatorType(const QString &phrase, int index)
+MemberOperatorType getOperatorType(const QString& phrase, int index)
 {
-    if (index>=phrase.length())
+    if (index >= phrase.length())
         return MemberOperatorType::Other;
     if (phrase[index] == '.')
         return MemberOperatorType::Dot;
-    if (index+1>=phrase.length())
+    if (index + 1 >= phrase.length())
         return MemberOperatorType::Other;
-    if ((phrase[index] == '-') && (phrase[index+1] == '>'))
+    if ((phrase[index] == '-') && (phrase[index + 1] == '>'))
         return MemberOperatorType::Arrow;
-    if ((phrase[index] == ':') && (phrase[index+1] == ':'))
+    if ((phrase[index] == ':') && (phrase[index + 1] == ':'))
         return MemberOperatorType::DColon;
     return MemberOperatorType::Other;
 }
 
 bool isScopeTypeKind(StatementKind kind)
 {
-    switch(kind) {
+    switch (kind) {
     case StatementKind::Class:
     case StatementKind::Namespace:
     case StatementKind::EnumType:
@@ -645,14 +640,10 @@ bool isScopeTypeKind(StatementKind kind)
     }
 }
 
-EvalStatement::EvalStatement(
-        const QString &baseType,
-        EvalStatementKind kind,
-        const PStatement &baseStatement,
-        const PStatement& typeStatement,
-        const PStatement& effectiveTypeStatement,
-        int pointerLevel,
-        const QString& templateParams)
+EvalStatement::EvalStatement(const QString& baseType, EvalStatementKind kind,
+                             const PStatement& baseStatement, const PStatement& typeStatement,
+                             const PStatement& effectiveTypeStatement, int pointerLevel,
+                             const QString& templateParams)
 {
     this->baseType = baseType;
     this->kind = kind;
@@ -663,22 +654,23 @@ EvalStatement::EvalStatement(
     this->templateParams = templateParams;
 }
 
-void EvalStatement::assignType(const PEvalStatement &typeStatement)
+void EvalStatement::assignType(const PEvalStatement& typeStatement)
 {
-    Q_ASSERT(typeStatement && typeStatement->kind==EvalStatementKind::Type);
+    Q_ASSERT(typeStatement && typeStatement->kind == EvalStatementKind::Type);
     baseType = typeStatement->baseType;
     pointerLevel = typeStatement->pointerLevel;
     effectiveTypeStatement = typeStatement->effectiveTypeStatement;
 }
 
-QStringList getOwnerExpressionAndMember(const QStringList expression, QString &memberOperator, QStringList &memberExpression)
+QStringList getOwnerExpressionAndMember(const QStringList expression, QString& memberOperator,
+                                        QStringList& memberExpression)
 {
-    //find position of the last member operator
+    // find position of the last member operator
     int lastMemberOperatorPos = -1;
     int currentMatchingLevel = 0;
     QString matchingSignLeft;
     QString matchingSignRight;
-    for (int i=0;i<expression.length();i++) {
+    for (int i = 0; i < expression.length(); i++) {
         QString token = expression[i];
         if (currentMatchingLevel == 0) {
             if (isMemberOperator(token)) {
@@ -706,26 +698,24 @@ QStringList getOwnerExpressionAndMember(const QStringList expression, QString &m
     }
 
     QStringList ownerExpression;
-    if (lastMemberOperatorPos<0) {
+    if (lastMemberOperatorPos < 0) {
         memberOperator = "";
         memberExpression = expression;
     } else {
         memberOperator = expression[lastMemberOperatorPos];
-        memberExpression = expression.mid(lastMemberOperatorPos+1);
-        ownerExpression = expression.mid(0,lastMemberOperatorPos);
+        memberExpression = expression.mid(lastMemberOperatorPos + 1);
+        ownerExpression = expression.mid(0, lastMemberOperatorPos);
     }
-    if (memberExpression.length()>1) {
-        memberExpression = memberExpression.mid(memberExpression.length()-1,1);
+    if (memberExpression.length() > 1) {
+        memberExpression = memberExpression.mid(memberExpression.length() - 1, 1);
     }
     return ownerExpression;
-
 }
 
 bool isMemberOperator(QString token)
 {
     return MemberOperators.contains(token);
 }
-
 
 StatementKind getKindOfStatement(const PStatement& statement)
 {
@@ -734,7 +724,7 @@ StatementKind getKindOfStatement(const PStatement& statement)
     if (statement->kind == StatementKind::Variable) {
         if (!statement->parentScope.lock()) {
             return StatementKind::GlobalVariable;
-        }  else if (statement->scope == StatementScope::Local) {
+        } else if (statement->scope == StatementScope::Local) {
             return StatementKind::LocalVariable;
         } else {
             return StatementKind::Variable;
@@ -745,33 +735,33 @@ StatementKind getKindOfStatement(const PStatement& statement)
     return statement->kind;
 }
 
-bool isCppFile(const QString &filename)
+bool isCppFile(const QString& filename)
 {
     if (isCFile(filename) && !filename.endsWith(".c"))
         return true;
     return false;
 }
 
-bool isCppControlKeyword(const QString &word)
+bool isCppControlKeyword(const QString& word)
 {
     return CppControlKeyWords.contains(word);
 }
 
-//static int counter=0;
-//Statement::Statement()
+// static int counter=0;
+// Statement::Statement()
 //{
-//    counter++;
-//}
+//     counter++;
+// }
 
-//Statement::~Statement()
+// Statement::~Statement()
 //{
-//    counter--;
-//    qDebug()<<"statement deleted:"<<counter<<fullName<<kind<<extractFileName(fileName)<<line;
-//}
+//     counter--;
+//     qDebug()<<"statement deleted:"<<counter<<fullName<<kind<<extractFileName(fileName)<<line;
+// }
 
 bool isTypeKind(StatementKind kind)
 {
-    switch(kind) {
+    switch (kind) {
     case StatementKind::Class:
     case StatementKind::Namespace:
     case StatementKind::EnumType:
@@ -786,13 +776,13 @@ bool isTypeKind(StatementKind kind)
 
 bool ParsedFileInfo::isLineVisible(int line) const
 {
-    int lastI=-1;
-    for(auto it=mBranches.begin();it!=mBranches.end();++it) {
+    int lastI = -1;
+    for (auto it = mBranches.begin(); it != mBranches.end(); ++it) {
         int i = it.key();
-        if (line<i)
+        if (line < i)
             break;
         else
             lastI = i;
     }
-    return lastI<0?true:mBranches[lastI];
+    return lastI < 0 ? true : mBranches[lastI];
 }

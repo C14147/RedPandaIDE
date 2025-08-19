@@ -24,10 +24,11 @@
 #define __builtin_unreachable() (__assume(0))
 #endif
 
-static QString contextualBackslashEscaping(const QString &arg, const QSet<QChar> &needsEscaping, bool escapeFinal = true)
+static QString contextualBackslashEscaping(const QString& arg, const QSet<QChar>& needsEscaping,
+                                           bool escapeFinal = true)
 {
     QString result;
-    for (auto it = arg.begin(); ; ++it) {
+    for (auto it = arg.begin();; ++it) {
         int nBackSlash = 0;
         while (it != arg.end() && *it == '\\') {
             ++it;
@@ -58,7 +59,7 @@ static QString contextualBackslashEscaping(const QString &arg, const QSet<QChar>
     return result;
 }
 
-QString escapeArgumentImplBourneAgainShellPretty(const QString &arg, bool isFirstArg)
+QString escapeArgumentImplBourneAgainShellPretty(const QString& arg, bool isFirstArg)
 {
     // ref. https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/utilities/V3_chap02.html
 
@@ -71,8 +72,8 @@ QString escapeArgumentImplBourneAgainShellPretty(const QString &arg, bool isFirs
      * only if used as the _first word_ of a command (or somewhere we dot not care).
      */
     const static QSet<QString> reservedWord{
-        "!", "{", "}", "case", "do", "done", "elif", "else", "esac", "fi", "for", "if", "in", "then", "until", "while",
-        "[[", "]]", "function", "select",
+        "!",   "{",  "}",  "case", "do",    "done",  "elif", "else", "esac",     "fi",
+        "for", "if", "in", "then", "until", "while", "[[",   "]]",   "function", "select",
     };
     if (isFirstArg && reservedWord.contains(arg))
         return QString(R"("%1")").arg(arg);
@@ -93,7 +94,8 @@ QString escapeArgumentImplBourneAgainShellPretty(const QString &arg, bool isFirs
     static QRegularExpression otherDangerChars(R"([|&;<>() \t\n*?\[\{\}])");
     bool isDoubleQuotingDanger = arg.contains(doubleQuotingDangerChars);
     bool isSingleQuotingDanger = arg.contains('\'');
-    bool isDangerAnyChar = isDoubleQuotingDanger || isSingleQuotingDanger || arg.contains(otherDangerChars);
+    bool isDangerAnyChar =
+        isDoubleQuotingDanger || isSingleQuotingDanger || arg.contains(otherDangerChars);
     bool isDangerFirstChar = (arg[0] == '#') || (arg[0] == '~');
     if (isFirstArg) {
         isDangerAnyChar = isDangerAnyChar || arg.contains('=');
@@ -135,10 +137,13 @@ QString escapeArgumentImplBourneAgainShellFast(QString arg)
     return '\'' + arg + '\'';
 }
 
-QString escapeArgumentImplWindowsCreateProcess(const QString &arg, bool forceQuote)
+QString escapeArgumentImplWindowsCreateProcess(const QString& arg, bool forceQuote)
 {
-    // See https://stackoverflow.com/questions/31838469/how-do-i-convert-argv-to-lpcommandline-parameter-of-createprocess ,
-    // and https://learn.microsoft.com/en-gb/archive/blogs/twistylittlepassagesallalike/everyone-quotes-command-line-arguments-the-wrong-way .
+    // See
+    // https://stackoverflow.com/questions/31838469/how-do-i-convert-argv-to-lpcommandline-parameter-of-createprocess
+    // , and
+    // https://learn.microsoft.com/en-gb/archive/blogs/twistylittlepassagesallalike/everyone-quotes-command-line-arguments-the-wrong-way
+    // .
 
     static QRegularExpression needQuoting(R"([ \t\n\v"])");
     if (!arg.isEmpty() && !forceQuote && !arg.contains(needQuoting))
@@ -147,7 +152,7 @@ QString escapeArgumentImplWindowsCreateProcess(const QString &arg, bool forceQuo
     return '"' + contextualBackslashEscaping(arg, {'"'}) + '"';
 }
 
-QString escapeArgumentImplWindowsCommandPrompt(const QString &arg)
+QString escapeArgumentImplWindowsCommandPrompt(const QString& arg)
 {
     static QRegularExpression metaChars(R"([()%!^"<>&|])");
     bool containsMeta = arg.contains(metaChars);
@@ -168,7 +173,7 @@ QString escapeArgumentImplWindowsCommandPrompt(const QString &arg)
         return escapeArgumentImplWindowsCreateProcess(arg, false);
 }
 
-QString escapeArgument(const QString &arg, bool isFirstArg, EscapeArgumentRule rule)
+QString escapeArgument(const QString& arg, bool isFirstArg, EscapeArgumentRule rule)
 {
     switch (rule) {
     case EscapeArgumentRule::BourneAgainShellPretty:
@@ -195,12 +200,12 @@ EscapeArgumentRule platformShellEscapeArgumentRule()
 #endif
 }
 
-QString escapeArgumentForPlatformShell(const QString &arg, bool isFirstArg)
+QString escapeArgumentForPlatformShell(const QString& arg, bool isFirstArg)
 {
     return escapeArgument(arg, isFirstArg, platformShellEscapeArgumentRule());
 }
 
-QString escapeCommandForPlatformShell(const QString &prog, const QStringList &args)
+QString escapeCommandForPlatformShell(const QString& prog, const QStringList& args)
 {
     QStringList escapedArgs{escapeArgumentForPlatformShell(prog, true)};
     for (int i = 0; i < args.size(); ++i)
@@ -240,7 +245,7 @@ EscapeArgumentRule makefileRecipeEscapeArgumentRule()
 #endif
 }
 
-QString escapeArgumentForMakefileVariableValue(const QString &arg, bool isFirstArg)
+QString escapeArgumentForMakefileVariableValue(const QString& arg, bool isFirstArg)
 {
     static QSet<QChar> needsMfEscaping = {'#'};
     QString recipeEscaped = escapeArgument(arg, isFirstArg, makefileRecipeEscapeArgumentRule());
@@ -248,7 +253,7 @@ QString escapeArgumentForMakefileVariableValue(const QString &arg, bool isFirstA
     return mfEscaped.replace('$', "$$");
 }
 
-QString escapeArgumentsForMakefileVariableValue(const QStringList &args)
+QString escapeArgumentsForMakefileVariableValue(const QStringList& args)
 {
     QStringList escapedArgs;
     for (int i = 0; i < args.size(); ++i)
@@ -256,28 +261,28 @@ QString escapeArgumentsForMakefileVariableValue(const QStringList &args)
     return escapedArgs.join(' ');
 }
 
-QString escapeFilenameForMakefileInclude(const QString &filename)
+QString escapeFilenameForMakefileInclude(const QString& filename)
 {
     static QSet<QChar> needsEscaping{'#', ' '};
     QString result = contextualBackslashEscaping(filename, needsEscaping);
     return result.replace('$', "$$");
 }
 
-QString escapeFilenameForMakefileTarget(const QString &filename)
+QString escapeFilenameForMakefileTarget(const QString& filename)
 {
     static QSet<QChar> needsEscaping{'#', ' ', ':', '%'};
     QString result = contextualBackslashEscaping(filename, needsEscaping);
     return result.replace('$', "$$");
 }
 
-QString escapeFilenameForMakefilePrerequisite(const QString &filename)
+QString escapeFilenameForMakefilePrerequisite(const QString& filename)
 {
     static QSet<QChar> needsEscaping{'#', ' ', ':', '?', '*'};
     QString result = contextualBackslashEscaping(filename, needsEscaping, false);
     return result.replace('$', "$$");
 }
 
-QString escapeFilenamesForMakefilePrerequisite(const QStringList &filenames)
+QString escapeFilenamesForMakefilePrerequisite(const QStringList& filenames)
 {
     QStringList escapedFilenames;
     for (int i = 0; i < filenames.size(); ++i)
@@ -285,18 +290,18 @@ QString escapeFilenamesForMakefilePrerequisite(const QStringList &filenames)
     return escapedFilenames.join(' ');
 }
 
-QString escapeArgumentForMakefileRecipe(const QString &arg, bool isFirstArg)
+QString escapeArgumentForMakefileRecipe(const QString& arg, bool isFirstArg)
 {
     QString shellEscaped = escapeArgument(arg, isFirstArg, makefileRecipeEscapeArgumentRule());
     return shellEscaped.replace('$', "$$");
 }
 
-QString escapeArgumentForInputField(const QString &arg, bool isFirstArg)
+QString escapeArgumentForInputField(const QString& arg, bool isFirstArg)
 {
     return escapeArgument(arg, isFirstArg, EscapeArgumentRule::BourneAgainShellPretty);
 }
 
-QString escapeArgumentsForInputField(const QStringList &args)
+QString escapeArgumentsForInputField(const QStringList& args)
 {
     QStringList escapedArgs;
     for (int i = 0; i < args.size(); ++i)

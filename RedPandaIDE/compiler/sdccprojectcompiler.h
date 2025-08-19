@@ -27,8 +27,8 @@ class SDCCProjectCompiler : public ProjectCompiler
     Q_OBJECT
 public:
     SDCCProjectCompiler(std::shared_ptr<Project> project);
-    SDCCProjectCompiler(const SDCCProjectCompiler&)=delete;
-    SDCCProjectCompiler& operator=(const SDCCProjectCompiler&)=delete;
+    SDCCProjectCompiler(const SDCCProjectCompiler&) = delete;
+    SDCCProjectCompiler& operator=(const SDCCProjectCompiler&) = delete;
     void buildMakeFile();
 
 private:
@@ -40,7 +40,7 @@ private:
     void writeMakeIncludes(QFile& file);
     void writeMakeClean(QFile& file);
     void writeMakeObjFilesRules(QFile& file);
-    void writeln(QFile& file, const QString& s="");
+    void writeln(QFile& file, const QString& s = "");
     // Compiler interface
 protected:
     bool prepareForCompile() override;

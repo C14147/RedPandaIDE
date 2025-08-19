@@ -22,18 +22,23 @@
 #include <QSysInfo>
 #include <QDesktopServices>
 
-ExtensionsWidget::ExtensionsWidget(const QString& name, const QString& group,QWidget *parent)
-    : SettingsWidget(name,group,parent)
-    , ui(new Ui::ExtensionsWidget)
+ExtensionsWidget::ExtensionsWidget(const QString& name, const QString& group, QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::ExtensionsWidget)
 {
     ui->setupUi(this);
-    connect(extMetadata, &DownloadTool::sigProgress, this, &ExtensionsWidget::dealMetadataDownloadProcess);
-    connect(extMetadata, &DownloadTool::sigDownloadFinished, this, &ExtensionsWidget::onDownloadFinished);
+    connect(extMetadata, &DownloadTool::sigProgress, this,
+            &ExtensionsWidget::dealMetadataDownloadProcess);
+    connect(extMetadata, &DownloadTool::sigDownloadFinished, this,
+            &ExtensionsWidget::onDownloadFinished);
 
-    connect(ui->extList, &QListWidget::itemClicked, this, &ExtensionsWidget::on_extList_itemClicked);
-    connect(ui->downloadButton, &QPushButton::clicked, this, &ExtensionsWidget::on_downloadButton_clicked);
-    connect(ui->cancelButton, &QPushButton::clicked, this, &ExtensionsWidget::on_cancelButton_clicked);
-    connect(ui->searchButton, &QPushButton::clicked, this, &ExtensionsWidget::on_searchButton_clicked);
+    connect(ui->extList, &QListWidget::itemClicked, this,
+            &ExtensionsWidget::on_extList_itemClicked);
+    connect(ui->downloadButton, &QPushButton::clicked, this,
+            &ExtensionsWidget::on_downloadButton_clicked);
+    connect(ui->cancelButton, &QPushButton::clicked, this,
+            &ExtensionsWidget::on_cancelButton_clicked);
+    connect(ui->searchButton, &QPushButton::clicked, this,
+            &ExtensionsWidget::on_searchButton_clicked);
 }
 
 ExtensionsWidget::~ExtensionsWidget()
@@ -63,33 +68,23 @@ void ExtensionsWidget::onDownloadFinished()
     QString filePath = dir.absoluteFilePath("extensionsList.json");
 
     if (!QFile::exists(filePath)) {
-        QMessageBox::critical(
-            this,
-            tr("File Not Found"),
-            tr("Metadata file does not exist at: %1").arg(filePath)
-            );
+        QMessageBox::critical(this, tr("File Not Found"),
+                              tr("Metadata file does not exist at: %1").arg(filePath));
         return;
     }
 
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)) {
         QMessageBox::critical(
-            this,
-            tr("Error Loading Metadata File"),
-            tr("Failed to open file: %1\nError: %2")
-                .arg(filePath)
-                .arg(file.errorString())
-            );
+            this, tr("Error Loading Metadata File"),
+            tr("Failed to open file: %1\nError: %2").arg(filePath).arg(file.errorString()));
         return;
     }
 
     qint64 fileSize = file.size();
     if (fileSize == 0) {
-        QMessageBox::critical(
-            this,
-            tr("Empty File"),
-            tr("Metadata file is empty: %1").arg(filePath)
-            );
+        QMessageBox::critical(this, tr("Empty File"),
+                              tr("Metadata file is empty: %1").arg(filePath));
         file.close();
         return;
     }
@@ -107,8 +102,8 @@ void ExtensionsWidget::onDownloadFinished()
 
     if (metadata.isNull()) {
         QString errorMsg = tr("JSON Parse Error: %1\nAt position: %2")
-        .arg(parseError.errorString())
-            .arg(parseError.offset);
+                               .arg(parseError.errorString())
+                               .arg(parseError.offset);
 
         int startPos = qMax(0, parseError.offset - 20);
         int length = qMin(40, data.length() - startPos);
@@ -116,20 +111,13 @@ void ExtensionsWidget::onDownloadFinished()
 
         errorMsg += tr("\nContext: %1").arg(context);
 
-        QMessageBox::critical(
-            this,
-            tr("JSON Parse Error"),
-            errorMsg
-            );
+        QMessageBox::critical(this, tr("JSON Parse Error"), errorMsg);
         return;
     }
 
     if (!metadata.isObject()) {
-        QMessageBox::critical(
-            this,
-            tr("Invalid JSON Format"),
-            tr("The root element is not a JSON object")
-            );
+        QMessageBox::critical(this, tr("Invalid JSON Format"),
+                              tr("The root element is not a JSON object"));
         return;
     }
 
@@ -155,14 +143,17 @@ void ExtensionsWidget::onDownloadFinished()
     ui->statusLabel->setText(tr("%1 extensions loaded").arg(totalCount));
 }
 
-void ExtensionsWidget::dealMetadataDownloadProcess([[maybe_unused]] qint64 bytesRead, [[maybe_unused]] qint64 totalBytes, qreal progress)
+void ExtensionsWidget::dealMetadataDownloadProcess([[maybe_unused]] qint64 bytesRead,
+                                                   [[maybe_unused]] qint64 totalBytes,
+                                                   qreal progress)
 {
     ui->progressBar->setValue(int(progress * 100));
 }
 
-void ExtensionsWidget::on_extList_itemClicked(QListWidgetItem *item)
+void ExtensionsWidget::on_extList_itemClicked(QListWidgetItem* item)
 {
-    if (!item) return;
+    if (!item)
+        return;
 
     QString extensionName = item->text();
     updateExtensionInfo(extensionName);
@@ -180,14 +171,16 @@ void ExtensionsWidget::updateExtensionInfo(const QString& extensionName)
     ui->extName->setText(extInfo.value("name").toString(extensionName));
     ui->extType->setText(extInfo.value("type").toString(tr("Unknown")));
     ui->extAuthor->setText(extInfo.value("author").toString(tr("Unknown")));
-    ui->introductionEdit->setPlainText(extInfo.value("introduction").toString(tr("No description available")));
+    ui->introductionEdit->setPlainText(
+        extInfo.value("introduction").toString(tr("No description available")));
 }
 
 void ExtensionsWidget::on_downloadButton_clicked()
 {
-    QListWidgetItem *item = ui->extList->currentItem();
+    QListWidgetItem* item = ui->extList->currentItem();
     if (!item) {
-        QMessageBox::warning(this, tr("No Selection"), tr("Please select an extension to download"));
+        QMessageBox::warning(this, tr("No Selection"),
+                             tr("Please select an extension to download"));
         return;
     }
 
@@ -201,31 +194,27 @@ void ExtensionsWidget::on_downloadButton_clicked()
     QString downloadUrl = extInfo.value("file_path").toString();
 
     if (downloadUrl.isEmpty()) {
-        QMessageBox::critical(this, tr("Error"), tr("Download URL not available for this extension"));
+        QMessageBox::critical(this, tr("Error"),
+                              tr("Download URL not available for this extension"));
         return;
     }
 
     // check the special commands of download
     QStringList att = extInfo.value("special_cmd").toString().split(',');
-    if(!att.contains(FILEPATH_FULL_LINK)){
-        downloadUrl = "https://raw.githubusercontent.com/C14147/RedPandaIDE-Extensions/main/"+downloadUrl;
+    if (!att.contains(FILEPATH_FULL_LINK)) {
+        downloadUrl =
+            "https://raw.githubusercontent.com/C14147/RedPandaIDE-Extensions/main/" + downloadUrl;
     }
-    if(att.contains(WIN_ONLY)){
-        if(QSysInfo::productType().toLower() != "windows"){
-            QMessageBox::warning(
-                nullptr,
-                tr("Unsupported Platform"),
-                tr("This Extension is just for Windows only.")
-                );
+    if (att.contains(WIN_ONLY)) {
+        if (QSysInfo::productType().toLower() != "windows") {
+            QMessageBox::warning(nullptr, tr("Unsupported Platform"),
+                                 tr("This Extension is just for Windows only."));
         }
     }
-    if(att.contains(WIN64_ONLY)){
-        if(!QSysInfo::currentCpuArchitecture().contains("64")){
-            QMessageBox::warning(
-                nullptr,
-                tr("Unsupported Platform"),
-                tr("This Extension is just for Windows 64-bit only.")
-                );
+    if (att.contains(WIN64_ONLY)) {
+        if (!QSysInfo::currentCpuArchitecture().contains("64")) {
+            QMessageBox::warning(nullptr, tr("Unsupported Platform"),
+                                 tr("This Extension is just for Windows 64-bit only."));
         }
     }
 
@@ -241,9 +230,9 @@ void ExtensionsWidget::on_downloadButton_clicked()
     savePath = QDir::cleanPath(savePath.path()) + QDir::separator();
 
     if (extInfo.value("type").toString() == "theme") {
-        savePath = QDir(savePath.path()+"/config/themes/");
-    }else if(extInfo.value("type").toString() == "colorScheme"){
-        savePath = QDir(savePath.path()+"/config/scheme/");
+        savePath = QDir(savePath.path() + "/config/themes/");
+    } else if (extInfo.value("type").toString() == "colorScheme") {
+        savePath = QDir(savePath.path() + "/config/scheme/");
     }
 
     // start download
@@ -253,7 +242,8 @@ void ExtensionsWidget::on_downloadButton_clicked()
     extFile = new DownloadTool(downloadUrl, savePath.path(), this);
 
     connect(extFile, &DownloadTool::sigProgress, this, &ExtensionsWidget::dealExtDownloadProcess);
-    connect(extFile, &DownloadTool::sigDownloadFinished, this, &ExtensionsWidget::onDownloadExtFinished);
+    connect(extFile, &DownloadTool::sigDownloadFinished, this,
+            &ExtensionsWidget::onDownloadExtFinished);
 
     ui->statusLabel->setText(tr("Downloading %1...").arg(extensionName));
     ui->downloadButton->setEnabled(false);
@@ -266,19 +256,20 @@ void ExtensionsWidget::onDownloadExtFinished()
     ui->downloadButton->setEnabled(true);
     ui->cancelButton->setEnabled(false);
 
-    QListWidgetItem *item = ui->extList->currentItem();
-    if (!item) return;
+    QListWidgetItem* item = ui->extList->currentItem();
+    if (!item)
+        return;
 
     QString extensionName = item->text();
-    QString fileName = QDir::cleanPath(extFile->m_savePath) + QDir::separator() +
-                       extFile->fileName;
+    QString fileName = QDir::cleanPath(extFile->m_savePath) + QDir::separator() + extFile->fileName;
 
     ui->statusLabel->setText(tr("Download completed: %1").arg(fileName));
 
-    installExtension(fileName,extFile->getFileType());
+    installExtension(fileName, extFile->getFileType());
 }
 
-void ExtensionsWidget::dealExtDownloadProcess([[maybe_unused]] qint64 bytesRead, [[maybe_unused]] qint64 totalBytes, qreal progress)
+void ExtensionsWidget::dealExtDownloadProcess([[maybe_unused]] qint64 bytesRead,
+                                              [[maybe_unused]] qint64 totalBytes, qreal progress)
 {
     ui->progressBar->setValue(static_cast<int>(progress * 100));
 }
@@ -298,7 +289,7 @@ void ExtensionsWidget::on_searchButton_clicked()
     QString searchText = ui->extLineEdit->text().trimmed();
 
     for (int i = 0; i < ui->extList->count(); ++i) {
-        QListWidgetItem *item = ui->extList->item(i);
+        QListWidgetItem* item = ui->extList->item(i);
         bool match = item->text().contains(searchText, Qt::CaseInsensitive);
         item->setHidden(!match);
     }
@@ -309,27 +300,28 @@ void ExtensionsWidget::installExtension(const QString& filePath, QString type)
     QFileInfo fileInfo(filePath);
     QString extensionDir = filePath;
 
-    if (type == "colorScheme"){
-        pSettings->editor().setColorScheme(fileInfo.fileName().replace("_"," ").split('.')[0]);
+    if (type == "colorScheme") {
+        pSettings->editor().setColorScheme(fileInfo.fileName().replace("_", " ").split('.')[0]);
         pSettings->editor().save();
         pMainWindow->updateEditorColorSchemes();
-    }else if(type == "theme"){
+    } else if (type == "theme") {
         pSettings->environment().setTheme(fileInfo.fileName().split('.')[0]);
         pSettings->environment().save();
         pMainWindow->applySettings();
-    }else{
+    } else {
         // 解压文件
         QString command;
         QStringList args;
 
 #ifdef Q_OS_WIN
-        if(QSysInfo::productVersion().toInt() <= 7){
-            QMessageBox::about(this, tr("Error"), tr("The current windows platform is not support to running this command."));
-            return ;
+        if (QSysInfo::productVersion().toInt() <= 7) {
+            QMessageBox::about(
+                this, tr("Error"),
+                tr("The current windows platform is not support to running this command."));
+            return;
         }
         command = "powershell";
-        args << "\""
-             << QString("Expand-Archive -Path ")
+        args << "\"" << QString("Expand-Archive -Path ")
              << QString("\"%1\" -DestinationPath \"%2\" \" ").arg(filePath).arg(extensionDir);
 #endif
         ui->statusLabel->setText(tr("Unziping Extension..."));
@@ -351,7 +343,7 @@ void ExtensionsWidget::installExtension(const QString& filePath, QString type)
 
     pMainWindow->update();
     // update UI
-    QMetaObject::invokeMethod(this, [this]() {
-        ui->statusLabel->setText(tr("Extension installed successfully!"));
-    }, Qt::QueuedConnection);
+    QMetaObject::invokeMethod(
+        this, [this]() { ui->statusLabel->setText(tr("Extension installed successfully!")); },
+        Qt::QueuedConnection);
 }

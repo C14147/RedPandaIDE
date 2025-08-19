@@ -23,11 +23,7 @@
 #include "codecompletionlistview.h"
 #include "../parser/cppparser.h"
 
-enum class HeaderCompletionListItemType {
-    LocalHeader,
-    ProjectHeader,
-    SystemHeader
-};
+enum class HeaderCompletionListItemType { LocalHeader, ProjectHeader, SystemHeader };
 
 struct HeaderCompletionListItem {
     QString filename;
@@ -39,27 +35,29 @@ struct HeaderCompletionListItem {
     HeaderCompletionListItemType itemType;
 };
 
-using PHeaderCompletionListItem=std::shared_ptr<HeaderCompletionListItem>;
+using PHeaderCompletionListItem = std::shared_ptr<HeaderCompletionListItem>;
 
-class HeaderCompletionListModel: public QAbstractListModel {
+class HeaderCompletionListModel : public QAbstractListModel
+{
     Q_OBJECT
 public:
-    explicit HeaderCompletionListModel(const QList<PHeaderCompletionListItem>* files, int matched, QObject *parent = nullptr);
-    int rowCount(const QModelIndex &parent) const override;
-    QVariant data(const QModelIndex &index, int role) const override;
+    explicit HeaderCompletionListModel(const QList<PHeaderCompletionListItem>* files, int matched,
+                                       QObject* parent = nullptr);
+    int rowCount(const QModelIndex& parent) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
     void notifyUpdated();
-    void setLocalColor(const QColor &newColor);
-    void setSystemColor(const QColor &newColor);
-    void setProjectColor(const QColor &newColor);
+    void setLocalColor(const QColor& newColor);
+    void setSystemColor(const QColor& newColor);
+    void setProjectColor(const QColor& newColor);
 
-    void setFolderColor(const QColor &newFolderColor);
+    void setFolderColor(const QColor& newFolderColor);
 
     int matched() const;
 
     void setMatched(int newMatched);
 
 private:
-    const QList<PHeaderCompletionListItem> *mFiles;
+    const QList<PHeaderCompletionListItem>* mFiles;
     QColor mLocalColor;
     QColor mSystemColor;
     QColor mProjectColor;
@@ -67,30 +65,33 @@ private:
     int mMatched;
 };
 
-class HeaderCompletionListItemDelegate: public QStyledItemDelegate {
+class HeaderCompletionListItemDelegate : public QStyledItemDelegate
+{
     Q_OBJECT
 public:
-    HeaderCompletionListItemDelegate(HeaderCompletionListModel *model=nullptr, QWidget *parent = nullptr);
+    HeaderCompletionListItemDelegate(HeaderCompletionListModel* model = nullptr,
+                                     QWidget* parent = nullptr);
 
     // QAbstractItemDelegate interface
 public:
-    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
-    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    void paint(QPainter* painter, const QStyleOptionViewItem& option,
+               const QModelIndex& index) const override;
+    QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
-    const QFont &font() const;
-    void setFont(const QFont &newFont);
+    const QFont& font() const;
+    void setFont(const QFont& newFont);
 
     float lineHeightFactor() const;
     void setLineHeightFactor(float newLineHeightFactor);
 
     QColor matchedColor() const;
-    void setMatchedColor(const QColor &newMatchedColor);
+    void setMatchedColor(const QColor& newMatchedColor);
 
     QColor currentSelectionBackColor() const;
-    void setCurrentSelectionBackColor(const QColor &newCurrentSelectionBackColor);
+    void setCurrentSelectionBackColor(const QColor& newCurrentSelectionBackColor);
 
 private:
-    HeaderCompletionListModel *mModel;
+    HeaderCompletionListModel* mModel;
     QColor mCurrentSelectionBackColor;
     QColor mMatchedColor;
     QFont mFont;
@@ -101,15 +102,13 @@ class HeaderCompletionPopup : public QWidget
 {
     Q_OBJECT
 public:
-    HeaderCompletionPopup(QWidget* parent=nullptr);
+    HeaderCompletionPopup(QWidget* parent = nullptr);
     ~HeaderCompletionPopup();
     void prepareSearch(const QString& phrase, const QString& fileName);
     bool search(const QString& phrase, bool autoHideOnSingleResult);
-    void setKeypressedCallback(const KeyPressedCallback &newKeypressedCallback);
-    void setSuggestionColor(const QColor& localColor,
-                            const QColor& projectColor,
-                            const QColor& systemColor,
-                            const QColor& folderColor);
+    void setKeypressedCallback(const KeyPressedCallback& newKeypressedCallback);
+    void setSuggestionColor(const QColor& localColor, const QColor& projectColor,
+                            const QColor& systemColor, const QColor& folderColor);
     QString selectedFilename(bool updateUsageCount);
     void setLineHeightFactor(float newLineHeightFactor);
 
@@ -117,15 +116,16 @@ private:
     void filterList(const QString& member);
     void getCompletionFor(const QString& phrase);
     void addFilesInPath(const QString& path, HeaderCompletionListItemType type);
-    void addFile(const QDir& dir,  const QFileInfo &fileInfo, HeaderCompletionListItemType type);
-    void addFilesInSubDir(const QString& baseDirPath, const QString& subDirName, HeaderCompletionListItemType type);
-private:
+    void addFile(const QDir& dir, const QFileInfo& fileInfo, HeaderCompletionListItemType type);
+    void addFilesInSubDir(const QString& baseDirPath, const QString& subDirName,
+                          HeaderCompletionListItemType type);
 
+private:
     CodeCompletionListView* mListView;
     HeaderCompletionListModel* mModel;
     QHash<QString, PHeaderCompletionListItem> mFullCompletionList;
     QList<PHeaderCompletionListItem> mCompletionList;
-    QHash<QString,int> mHeaderUsageCounts;
+    QHash<QString, int> mHeaderUsageCounts;
     int mShowCount;
     QSet<QString> mAddedFileNames;
 
@@ -139,13 +139,13 @@ private:
 
     // QWidget interface
 protected:
-    void hideEvent(QHideEvent *event) override;
+    void hideEvent(QHideEvent* event) override;
 
     // QObject interface
 public:
-    bool event(QEvent *event) override;
-    void setParser(const PCppParser &newParser);
-    const QString &phrase() const;
+    bool event(QEvent* event) override;
+    void setParser(const PCppParser& newParser);
+    const QString& phrase() const;
     bool ignoreCase() const;
     void setIgnoreCase(bool newIgnoreCase);
     bool searchLocal() const;

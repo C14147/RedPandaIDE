@@ -28,17 +28,16 @@ namespace Lua {
 static QMap<QString, QMap<QString, lua_CFunction>> apiGroups{
     {"C_Debug",
      {
-         {"debug", &luaApi_Debug_debug}, // (string, ...) -> ()
+         {"debug", &luaApi_Debug_debug},           // (string, ...) -> ()
          {"messageBox", &luaApi_Debug_messageBox}, // (string, ...) -> ()
      }},
     {"C_Desktop",
      {
-         {"desktopEnvironment",
-          &luaApi_Desktop_desktopEnvironment},             // () -> string
-         {"language", &luaApi_Desktop_language},           // () -> string
-         {"qtStyleList", &luaApi_Desktop_qtStyleList},     // () -> [string]
-         {"systemAppMode", &luaApi_Desktop_systemAppMode}, // () -> string
-         {"systemStyle", &luaApi_Desktop_systemStyle},     // () -> string
+         {"desktopEnvironment", &luaApi_Desktop_desktopEnvironment}, // () -> string
+         {"language", &luaApi_Desktop_language},                     // () -> string
+         {"qtStyleList", &luaApi_Desktop_qtStyleList},               // () -> [string]
+         {"systemAppMode", &luaApi_Desktop_systemAppMode},           // () -> string
+         {"systemStyle", &luaApi_Desktop_systemStyle},               // () -> string
      }},
     {"C_FileSystem",
      {
@@ -54,11 +53,9 @@ static QMap<QString, QMap<QString, lua_CFunction>> apiGroups{
          {"appResourceDir", &luaApi_System_appResourceDir}, // () -> string
          {"osArch", &luaApi_System_osArch},                 // () -> string
          {"popen", &luaApi_System_popen},
-         {"supportedAppArchList",
-          &luaApi_System_supportedAppArchList}, // () -> string
+         {"supportedAppArchList", &luaApi_System_supportedAppArchList}, // () -> string
 #ifdef Q_OS_WINDOWS
-         {"readRegistry",
-          &luaApi_System_readRegistry}, // (string, string) -> string|nil
+         {"readRegistry", &luaApi_System_readRegistry}, // (string, string) -> string|nil
 #endif
      }},
     {"C_Util",
@@ -66,18 +63,19 @@ static QMap<QString, QMap<QString, lua_CFunction>> apiGroups{
          {"format", &luaApi_Util_format}, // (string, ...) -> string
      }}};
 
-static void registerApiGroup(RaiiLuaState &L, const QString &name) {
+static void registerApiGroup(RaiiLuaState& L, const QString& name)
+{
     L.push(apiGroups[name]);
     L.setGlobal(name);
 }
 
-extern "C" void luaHook_timeoutKiller(lua_State *L, lua_Debug *ar [[maybe_unused]]) noexcept {
+extern "C" void luaHook_timeoutKiller(lua_State* L, lua_Debug* ar [[maybe_unused]]) noexcept
+{
     using namespace std::chrono;
-    AddOn::LuaExtraState &extraState = AddOn::RaiiLuaState::extraState(L);
+    AddOn::LuaExtraState& extraState = AddOn::RaiiLuaState::extraState(L);
     auto duration = system_clock::now() - extraState.timeStart;
     if (duration > extraState.timeLimit) {
-        lua_pushfstring(L,
-                        "timeout in script '%s' (%d/%d ms)",
+        lua_pushfstring(L, "timeout in script '%s' (%d/%d ms)",
                         extraState.name.toUtf8().constData(),
                         int(duration_cast<milliseconds>(duration).count()),
                         int(duration_cast<milliseconds>(extraState.timeLimit).count()));
@@ -85,14 +83,12 @@ extern "C" void luaHook_timeoutKiller(lua_State *L, lua_Debug *ar [[maybe_unused
     }
 };
 
-ThemeExecutor::ThemeExecutor() : SimpleExecutor(
-    "theme", 0, 1,
-    {"C_Debug", "C_Desktop", "C_Util"})
+ThemeExecutor::ThemeExecutor() : SimpleExecutor("theme", 0, 1, {"C_Debug", "C_Desktop", "C_Util"})
 {
 }
 
-QJsonObject ThemeExecutor::operator()(const QByteArray &script,
-                                      const QString &name) {
+QJsonObject ThemeExecutor::operator()(const QByteArray& script, const QString& name)
+{
     using namespace std::chrono_literals;
     QJsonValue result = SimpleExecutor::runScript(script, "theme:" + name, 100ms);
     if (result.isObject() || result.isNull())
@@ -101,13 +97,15 @@ QJsonObject ThemeExecutor::operator()(const QByteArray &script,
         throw LuaError("Theme script must return an object.");
 }
 
-SimpleExecutor::SimpleExecutor(const QString &kind, int major, int minor, const QList<QString> &apis)
+SimpleExecutor::SimpleExecutor(const QString& kind, int major, int minor,
+                               const QList<QString>& apis)
     : mKind(kind), mMajor(major), mMinor(minor), mApis(apis)
 {
 }
 
-bool SimpleExecutor::apiVersionCheck(const QJsonObject &addonApi) {
-    const QString &addonKind = addonApi["kind"].toString();
+bool SimpleExecutor::apiVersionCheck(const QJsonObject& addonApi)
+{
+    const QString& addonKind = addonApi["kind"].toString();
     if (addonKind != mKind)
         return false;
     if (!addonApi.contains("major") || !addonApi.contains("minor"))
@@ -120,9 +118,9 @@ bool SimpleExecutor::apiVersionCheck(const QJsonObject &addonApi) {
         return addonMajor == mMajor && addonMinor <= mMinor;
 }
 
-QJsonValue SimpleExecutor::runScript(const QByteArray &script,
-                                     const QString &name,
-                                     std::chrono::microseconds timeLimit) {
+QJsonValue SimpleExecutor::runScript(const QByteArray& script, const QString& name,
+                                     std::chrono::microseconds timeLimit)
+{
     RaiiLuaState L(name, timeLimit);
     int retLoad = L.loadBuffer(script, name);
     if (retLoad != 0)
@@ -146,12 +144,14 @@ QJsonValue SimpleExecutor::runScript(const QByteArray &script,
     QJsonObject addonApi = L.popObject();
     if (!apiVersionCheck(addonApi)) {
         throw LuaError(QString("Add-on interface error: API version incompatible with %1:%2.%3.")
-            .arg(mKind).arg(mMajor).arg(mMinor));
+                           .arg(mKind)
+                           .arg(mMajor)
+                           .arg(mMinor));
     }
 
     // inject APIs and call `main()`
     L.openLibs();
-    for (auto &api : mApis)
+    for (auto& api : mApis)
         registerApiGroup(L, api);
     type = L.getGlobal("main");
     if (type != LUA_TFUNCTION) {
@@ -164,13 +164,14 @@ QJsonValue SimpleExecutor::runScript(const QByteArray &script,
     return L.fetch(1);
 }
 
-CompilerHintExecutor::CompilerHintExecutor() : SimpleExecutor(
-    "compiler_hint", 0, 2,
-    {"C_Debug", "C_Desktop", "C_FileSystem", "C_System", "C_Util"})
+CompilerHintExecutor::CompilerHintExecutor()
+    : SimpleExecutor("compiler_hint", 0, 2,
+                     {"C_Debug", "C_Desktop", "C_FileSystem", "C_System", "C_Util"})
 {
 }
 
-QJsonObject CompilerHintExecutor::operator()(const QByteArray &script) {
+QJsonObject CompilerHintExecutor::operator()(const QByteArray& script)
+{
     using namespace std::chrono_literals;
     QJsonValue result = SimpleExecutor::runScript(script, "compiler_hint.lua", 1s);
     if (result.isObject() || result.isNull())
@@ -179,5 +180,5 @@ QJsonObject CompilerHintExecutor::operator()(const QByteArray &script) {
         throw LuaError("Compiler hint script must return an object.");
 }
 
-} //namespace Lua
+} // namespace Lua
 } // namespace AddOn

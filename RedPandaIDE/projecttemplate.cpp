@@ -20,30 +20,33 @@
 #include "mainwindow.h"
 #include "settings.h"
 
-ProjectTemplate::ProjectTemplate(QObject *parent) : QObject(parent)
+ProjectTemplate::ProjectTemplate(QObject* parent) : QObject(parent)
 {
-
 }
 
 int ProjectTemplate::unitCount()
 {
-    if (!mIni || mVersion<=0)
+    if (!mIni || mVersion <= 0)
         return 0;
-    return mIni->GetLongValue("Project","UnitCount",0);
+    return mIni->GetLongValue("Project", "UnitCount", 0);
 }
 
 PTemplateUnit ProjectTemplate::unit(int index)
 {
-    if (!mIni || mVersion<=0)
+    if (!mIni || mVersion <= 0)
         return PTemplateUnit();
     QString section = QString("Unit%1").arg(index);
-    if (mIni->GetSectionSize(toByteArray(section))<0) return PTemplateUnit();
+    if (mIni->GetSectionSize(toByteArray(section)) < 0)
+        return PTemplateUnit();
     PTemplateUnit unit = std::make_shared<TemplateUnit>();
     QString lang = pSettings->environment().language();
     if (!lang.isEmpty()) {
-        unit->Source = fromByteArray(mIni->GetValue(toByteArray(section), QString("Source[%1]").arg(lang).toUtf8(), ""));
-        unit->CText = fromByteArray(mIni->GetValue(toByteArray(section), QString("C[%1]").arg(lang).toUtf8(), ""));
-        unit->CppText = fromByteArray(mIni->GetValue(toByteArray(section), QString("Cpp[%1]").arg(lang).toUtf8(), ""));
+        unit->Source = fromByteArray(
+            mIni->GetValue(toByteArray(section), QString("Source[%1]").arg(lang).toUtf8(), ""));
+        unit->CText = fromByteArray(
+            mIni->GetValue(toByteArray(section), QString("C[%1]").arg(lang).toUtf8(), ""));
+        unit->CppText = fromByteArray(
+            mIni->GetValue(toByteArray(section), QString("Cpp[%1]").arg(lang).toUtf8(), ""));
     }
     if (unit->Source.isEmpty())
         unit->Source = fromByteArray(mIni->GetValue(toByteArray(section), "Source", ""));
@@ -62,37 +65,34 @@ PTemplateUnit ProjectTemplate::unit(int index)
     return unit;
 }
 
-void ProjectTemplate::readTemplateFile(const QString &fileName)
+void ProjectTemplate::readTemplateFile(const QString& fileName)
 {
     if (mIni)
-        mIni=nullptr;
+        mIni = nullptr;
     QFile file(fileName);
     if (file.open(QFile::ReadOnly)) {
         mFileName = fileName;
         mIni = std::make_shared<SimpleIni>();
         QByteArray data = file.readAll();
         if (mIni->LoadData(data.toStdString()) != SI_OK) {
-            QMessageBox::critical(pMainWindow,
-                                  tr("Read failed."),
+            QMessageBox::critical(pMainWindow, tr("Read failed."),
                                   tr("Can't read template file '%1'.").arg(fileName),
                                   QMessageBox::Ok);
             return;
         }
     } else {
-        QMessageBox::critical(pMainWindow,
-                              tr("Can't Open Template"),
+        QMessageBox::critical(pMainWindow, tr("Can't Open Template"),
                               tr("Can't open template file '%1' for read.").arg(fileName),
                               QMessageBox::Ok);
         return;
     }
 
     mVersion = mIni->GetLongValue("Template", "Ver", 0);
-    if (mVersion<=0) {
-        QMessageBox::critical(pMainWindow,
-                              tr("Old version template"),
+    if (mVersion <= 0) {
+        QMessageBox::critical(pMainWindow, tr("Old version template"),
                               tr("Template file '%1' has version '%2', which is unsupported.")
-                              .arg(fileName)
-                              .arg(mVersion),
+                                  .arg(fileName)
+                                  .arg(mVersion),
                               QMessageBox::Ok);
         return;
     }
@@ -101,9 +101,12 @@ void ProjectTemplate::readTemplateFile(const QString &fileName)
     // template info
     mIcon = fromByteArray(mIni->GetValue("Template", "Icon", ""));
     if (!lang.isEmpty()) {
-        mCategory = fromByteArray(mIni->GetValue("Template", QString("Category[%1]").arg(lang).toUtf8(), ""));
-        mName = fromByteArray(mIni->GetValue("Template", QString("Name[%1]").arg(lang).toUtf8(), ""));
-        mDescription = fromByteArray(mIni->GetValue("Template", QString("Description[%1]").arg(lang).toUtf8(), ""));
+        mCategory = fromByteArray(
+            mIni->GetValue("Template", QString("Category[%1]").arg(lang).toUtf8(), ""));
+        mName =
+            fromByteArray(mIni->GetValue("Template", QString("Name[%1]").arg(lang).toUtf8(), ""));
+        mDescription = fromByteArray(
+            mIni->GetValue("Template", QString("Description[%1]").arg(lang).toUtf8(), ""));
     }
     if (mCategory.isEmpty())
         mCategory = fromByteArray(mIni->GetValue("Template", "Category", ""));
@@ -111,19 +114,24 @@ void ProjectTemplate::readTemplateFile(const QString &fileName)
         mName = fromByteArray(mIni->GetValue("Template", "Name", ""));
     if (mDescription.isEmpty())
         mDescription = fromByteArray(mIni->GetValue("Template", "Description", ""));
-    mIconInfo=fromByteArray(mIni->GetValue("Template", "IconInfo", ""));
+    mIconInfo = fromByteArray(mIni->GetValue("Template", "IconInfo", ""));
 
     mOptions.icon = mIni->GetValue("Project", "Icon", "");
-    mOptions.type = static_cast<ProjectType>(mIni->GetLongValue("Project", "Type", 0)); // default = gui
-    mOptions.includeDirs = fromByteArray(mIni->GetValue("Project", "Includes", "")).split(";", Qt::SkipEmptyParts);
-    mOptions.binDirs = fromByteArray(mIni->GetValue("Project", "Bins", "")).split(";", Qt::SkipEmptyParts);
+    mOptions.type =
+        static_cast<ProjectType>(mIni->GetLongValue("Project", "Type", 0)); // default = gui
+    mOptions.includeDirs =
+        fromByteArray(mIni->GetValue("Project", "Includes", "")).split(";", Qt::SkipEmptyParts);
+    mOptions.binDirs =
+        fromByteArray(mIni->GetValue("Project", "Bins", "")).split(";", Qt::SkipEmptyParts);
 
-    mOptions.libDirs = fromByteArray(mIni->GetValue("Project", "Libs", "")).split(";", Qt::SkipEmptyParts);
+    mOptions.libDirs =
+        fromByteArray(mIni->GetValue("Project", "Libs", "")).split(";", Qt::SkipEmptyParts);
 
-    mOptions.resourceIncludes = fromByteArray(mIni->GetValue("Project", "ResourceIncludes", "")).split(";", Qt::SkipEmptyParts);
+    mOptions.resourceIncludes = fromByteArray(mIni->GetValue("Project", "ResourceIncludes", ""))
+                                    .split(";", Qt::SkipEmptyParts);
     mOptions.compilerCmd = fromByteArray(mIni->GetValue("Project", "Compiler", ""));
     mOptions.cppCompilerCmd = fromByteArray(mIni->GetValue("Project", "CppCompiler", ""));
-    mOptions.linkerCmd = fromByteArray(mIni->GetValue("Project", "Linker",""));
+    mOptions.linkerCmd = fromByteArray(mIni->GetValue("Project", "Linker", ""));
     mOptions.resourceCmd = fromByteArray(mIni->GetValue("Project", "ResourceCommand", ""));
     mOptions.isCpp = mIni->GetBoolValue("Project", "IsCpp", false);
     mOptions.includeVersionInfo = mIni->GetBoolValue("Project", "IncludeVersionInfo", false);
@@ -131,57 +139,59 @@ void ProjectTemplate::readTemplateFile(const QString &fileName)
     mOptions.folderForOutput = fromByteArray(mIni->GetValue("Project", "ExeOutput", ""));
     mOptions.folderForObjFiles = fromByteArray(mIni->GetValue("Project", "ObjectOutput", ""));
     mOptions.logFilename = fromByteArray(mIni->GetValue("Project", "LogOutput", ""));
-    mOptions.execEncoding = mIni->GetValue("Project","ExecEncoding", ENCODING_SYSTEM_DEFAULT);
+    mOptions.execEncoding = mIni->GetValue("Project", "ExecEncoding", ENCODING_SYSTEM_DEFAULT);
 
-    mOptions.staticLink  = mIni->GetBoolValue("Project", "StaticLink",true);
-    mOptions.addCharset  = mIni->GetBoolValue("Project", "AddCharset",true);
+    mOptions.staticLink = mIni->GetBoolValue("Project", "StaticLink", true);
+    mOptions.addCharset = mIni->GetBoolValue("Project", "AddCharset", true);
     bool useUTF8 = mIni->GetBoolValue("Project", "UseUTF8", false);
     if (useUTF8) {
-        mOptions.encoding = mIni->GetValue("Project","Encoding", ENCODING_UTF8);
+        mOptions.encoding = mIni->GetValue("Project", "Encoding", ENCODING_UTF8);
     } else {
-        mOptions.encoding = mIni->GetValue("Project","Encoding", pSettings->editor().defaultEncoding());
+        mOptions.encoding =
+            mIni->GetValue("Project", "Encoding", pSettings->editor().defaultEncoding());
     }
     if (mOptions.encoding == ENCODING_AUTO_DETECT)
         mOptions.encoding = ENCODING_SYSTEM_DEFAULT;
-    mOptions.modelType = (ProjectModelType)mIni->GetLongValue("Project", "ModelType", (int)ProjectModelType::FileSystem);
-    mOptions.classBrowserType = (ProjectClassBrowserType)mIni->GetLongValue("Project", "ClassBrowserType", (int)ProjectClassBrowserType::CurrentFile);
-
+    mOptions.modelType = (ProjectModelType)mIni->GetLongValue("Project", "ModelType",
+                                                              (int)ProjectModelType::FileSystem);
+    mOptions.classBrowserType = (ProjectClassBrowserType)mIni->GetLongValue(
+        "Project", "ClassBrowserType", (int)ProjectClassBrowserType::CurrentFile);
 }
 
 bool ProjectTemplate::save()
 {
-  if (mIni) {
-      return mIni->SaveFile(toByteArray(mFileName)) == SI_OK ;
-  }
-  return false;
+    if (mIni) {
+        return mIni->SaveFile(toByteArray(mFileName)) == SI_OK;
+    }
+    return false;
 }
 
-const QString &ProjectTemplate::category() const
+const QString& ProjectTemplate::category() const
 {
     return mCategory;
 }
 
-void ProjectTemplate::setCategory(const QString &newCategory)
+void ProjectTemplate::setCategory(const QString& newCategory)
 {
     mCategory = newCategory;
 }
 
-const QString &ProjectTemplate::description() const
+const QString& ProjectTemplate::description() const
 {
     return mDescription;
 }
 
-void ProjectTemplate::setDescription(const QString &newDescription)
+void ProjectTemplate::setDescription(const QString& newDescription)
 {
     mDescription = newDescription;
 }
 
-const QString &ProjectTemplate::fileName() const
+const QString& ProjectTemplate::fileName() const
 {
     return mFileName;
 }
 
-void ProjectTemplate::setFileName(const QString &newFileName)
+void ProjectTemplate::setFileName(const QString& newFileName)
 {
     mFileName = newFileName;
 }
@@ -191,32 +201,32 @@ const QString ProjectTemplate::folder() const
     return extractFileDir(mFileName);
 }
 
-const QString &ProjectTemplate::icon() const
+const QString& ProjectTemplate::icon() const
 {
     return mIcon;
 }
 
-void ProjectTemplate::setIcon(const QString &newIcon)
+void ProjectTemplate::setIcon(const QString& newIcon)
 {
     mIcon = newIcon;
 }
 
-const QString &ProjectTemplate::name() const
+const QString& ProjectTemplate::name() const
 {
     return mName;
 }
 
-void ProjectTemplate::setName(const QString &newName)
+void ProjectTemplate::setName(const QString& newName)
 {
     mName = newName;
 }
 
-const ProjectOptions &ProjectTemplate::options() const
+const ProjectOptions& ProjectTemplate::options() const
 {
     return mOptions;
 }
 
-void ProjectTemplate::setOptions(const ProjectOptions &newOptions)
+void ProjectTemplate::setOptions(const ProjectOptions& newOptions)
 {
     mOptions = newOptions;
 }
@@ -236,8 +246,7 @@ QString ProjectTemplate::iconInfo() const
     return mIconInfo;
 }
 
-void ProjectTemplate::setIconInfo(const QString &newIconInfo)
+void ProjectTemplate::setIconInfo(const QString& newIconInfo)
 {
     mIconInfo = newIconInfo;
 }
-

@@ -23,7 +23,7 @@ class ShrinkableTabWidget : public QTabWidget
 {
     Q_OBJECT
 public:
-    ShrinkableTabWidget(QWidget* parent=nullptr);
+    ShrinkableTabWidget(QWidget* parent = nullptr);
 
     void setShrinkedFlag(bool shrinked);
     void setShrinked(bool shrinked);
@@ -39,13 +39,14 @@ public:
 public:
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
+
 private:
     bool mShrinked;
-    static QHash<const ShrinkableTabWidget*,QSize> BeforeShrinkSizes;
+    static QHash<const ShrinkableTabWidget*, QSize> BeforeShrinkSizes;
 
     // QWidget interface
 protected:
-    void resizeEvent(QResizeEvent *event) override;
+    void resizeEvent(QResizeEvent* event) override;
 };
 
 #endif // SHRINKABLETABWIDGET_H

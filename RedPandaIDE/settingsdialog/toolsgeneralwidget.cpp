@@ -29,52 +29,41 @@
 #include <QMimeData>
 #include <QUuid>
 
-ToolsGeneralWidget::ToolsGeneralWidget(const QString &name, const QString &group, QWidget *parent) :
-    SettingsWidget(name,group,parent),
-    ui(new Ui::ToolsGeneralWidget)
+ToolsGeneralWidget::ToolsGeneralWidget(const QString& name, const QString& group, QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::ToolsGeneralWidget)
 {
     ui->setupUi(this);
-    ui->cbInput->addItems(
-                {
-                    tr("None"),
-                    tr("Current Selection"),
-                    tr("Whole Document"),
-                });
-    ui->cbOutput->addItems(
-                {
-                    tr("None"),
-                    tr("Tools Output"),
-                    tr("Replace Current Selection"),
-                    tr("Repalce Whole Document"),
-                });
+    ui->cbInput->addItems({
+        tr("None"),
+        tr("Current Selection"),
+        tr("Whole Document"),
+    });
+    ui->cbOutput->addItems({
+        tr("None"),
+        tr("Tools Output"),
+        tr("Replace Current Selection"),
+        tr("Repalce Whole Document"),
+    });
 
     ui->cbMacros->setModel(&mMacroInfoModel);
-    QItemSelectionModel *m=ui->lstTools->selectionModel();
+    QItemSelectionModel* m = ui->lstTools->selectionModel();
     ui->lstTools->setModel(&mToolsModel);
     delete m;
     mCurrentEditingRow = -1;
     showEditPanel(false);
-    connect(ui->lstTools, &QAbstractItemView::doubleClicked,
-            this, &ToolsGeneralWidget::editTool);
-    connect(ui->txtProgram,&QLineEdit::textChanged,
-            this, &ToolsGeneralWidget::updateDemo);
-    connect(ui->txtParameters,&QLineEdit::textChanged,
-            this, &ToolsGeneralWidget::updateDemo);
+    connect(ui->lstTools, &QAbstractItemView::doubleClicked, this, &ToolsGeneralWidget::editTool);
+    connect(ui->txtProgram, &QLineEdit::textChanged, this, &ToolsGeneralWidget::updateDemo);
+    connect(ui->txtParameters, &QLineEdit::textChanged, this, &ToolsGeneralWidget::updateDemo);
 
-    connect(ui->txtTitle,&QLineEdit::textChanged,
-            this, &ToolsGeneralWidget::onEdited);
-    connect(ui->txtProgram,&QLineEdit::textChanged,
-            this, &ToolsGeneralWidget::onEdited);
-    connect(ui->txtParameters,&QLineEdit::textChanged,
-            this, &ToolsGeneralWidget::onEdited);
-    connect(ui->txtDirectory,&QLineEdit::textChanged,
-            this, &ToolsGeneralWidget::onEdited);
-    connect(ui->cbInput, qOverload<int>(&QComboBox::currentIndexChanged),
-            this, &ToolsGeneralWidget::onEdited);
-    connect(ui->cbOutput, qOverload<int>(&QComboBox::currentIndexChanged),
-            this, &ToolsGeneralWidget::onEdited);
-    connect(ui->chkUTF8, &QCheckBox_stateChanged,
-            this, &ToolsGeneralWidget::onEdited);
+    connect(ui->txtTitle, &QLineEdit::textChanged, this, &ToolsGeneralWidget::onEdited);
+    connect(ui->txtProgram, &QLineEdit::textChanged, this, &ToolsGeneralWidget::onEdited);
+    connect(ui->txtParameters, &QLineEdit::textChanged, this, &ToolsGeneralWidget::onEdited);
+    connect(ui->txtDirectory, &QLineEdit::textChanged, this, &ToolsGeneralWidget::onEdited);
+    connect(ui->cbInput, qOverload<int>(&QComboBox::currentIndexChanged), this,
+            &ToolsGeneralWidget::onEdited);
+    connect(ui->cbOutput, qOverload<int>(&QComboBox::currentIndexChanged), this,
+            &ToolsGeneralWidget::onEdited);
+    connect(ui->chkUTF8, &QCheckBox_stateChanged, this, &ToolsGeneralWidget::onEdited);
 }
 
 ToolsGeneralWidget::~ToolsGeneralWidget()
@@ -82,9 +71,9 @@ ToolsGeneralWidget::~ToolsGeneralWidget()
     delete ui;
 }
 
-void ToolsGeneralWidget::editTool(const QModelIndex &index)
+void ToolsGeneralWidget::editTool(const QModelIndex& index)
 {
-    if (mCurrentEditingRow>=0)
+    if (mCurrentEditingRow >= 0)
         return;
     if (!index.isValid())
         return;
@@ -93,24 +82,19 @@ void ToolsGeneralWidget::editTool(const QModelIndex &index)
 
 void ToolsGeneralWidget::finishEditing(bool askSave)
 {
-    auto action = finally([this]{
-        cleanEditor();
-    });
+    auto action = finally([this] { cleanEditor(); });
     if (mCurrentEditingRow == -1)
         return;
     if (!mEdited)
         return;
     if (ui->txtTitle->text().isEmpty()) {
-        QMessageBox::critical(this,
-                              tr("Error"),
-                              tr("Title shouldn't be empty!"));
+        QMessageBox::critical(this, tr("Error"), tr("Title shouldn't be empty!"));
         return;
     }
-    if (askSave && QMessageBox::question(this,
-                          tr("Save Changes?"),
-                          tr("Do you want to save changes to \"%1\"?").arg(ui->txtTitle->text()),
-                          QMessageBox::Yes | QMessageBox::No,
-                          QMessageBox::Yes) != QMessageBox::Yes) {
+    if (askSave && QMessageBox::question(
+                       this, tr("Save Changes?"),
+                       tr("Do you want to save changes to \"%1\"?").arg(ui->txtTitle->text()),
+                       QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) != QMessageBox::Yes) {
         return;
     }
     PToolItem item = mToolsModel.getTool(mCurrentEditingRow);
@@ -156,29 +140,27 @@ void ToolsGeneralWidget::showEditPanel(bool isShow)
 
 void ToolsGeneralWidget::onEdited()
 {
-    mEdited=true;
+    mEdited = true;
 }
 
 void ToolsGeneralWidget::updateDemo()
 {
-    QMap<QString,QString> macros = devCppMacroVariables();
-    ui->txtDemo->setText(escapeCommandForPlatformShell(
-                parseMacros(ui->txtProgram->text(), macros),
-                parseArguments(ui->txtParameters->text(), macros, true)
-    ));
+    QMap<QString, QString> macros = devCppMacroVariables();
+    ui->txtDemo->setText(
+        escapeCommandForPlatformShell(parseMacros(ui->txtProgram->text(), macros),
+                                      parseArguments(ui->txtParameters->text(), macros, true)));
 }
 
-ToolsModel::ToolsModel(QObject *parent):QAbstractListModel(parent)
+ToolsModel::ToolsModel(QObject* parent) : QAbstractListModel(parent)
 {
-
 }
 
-const QList<PToolItem> &ToolsModel::tools() const
+const QList<PToolItem>& ToolsModel::tools() const
 {
     return mTools;
 }
 
-void ToolsModel::setTools(const QList<PToolItem> &newTools)
+void ToolsModel::setTools(const QList<PToolItem>& newTools)
 {
     beginResetModel();
     mTools = newTools;
@@ -187,7 +169,7 @@ void ToolsModel::setTools(const QList<PToolItem> &newTools)
 
 void ToolsModel::addTool(PToolItem item)
 {
-    beginInsertRows(QModelIndex(),mTools.count(),mTools.count());
+    beginInsertRows(QModelIndex(), mTools.count(), mTools.count());
     mTools.append(item);
     endInsertRows();
 }
@@ -200,43 +182,44 @@ PToolItem ToolsModel::getTool(int row)
 void ToolsModel::updateTool(int row, PToolItem item)
 {
     mTools[row] = item;
-    QModelIndex index=createIndex(row, 0);
+    QModelIndex index = createIndex(row, 0);
     emit dataChanged(index, index);
 }
 
 void ToolsModel::removeTool(int row)
 {
-    beginRemoveRows(QModelIndex(),row,row);
+    beginRemoveRows(QModelIndex(), row, row);
     mTools.removeAt(row);
     endRemoveRows();
 }
 
-int ToolsModel::rowCount(const QModelIndex &) const
+int ToolsModel::rowCount(const QModelIndex&) const
 {
     return mTools.count();
 }
 
-QVariant ToolsModel::data(const QModelIndex &index, int role) const
+QVariant ToolsModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid())
         return QVariant();
-    if (role==Qt::DisplayRole) {
+    if (role == Qt::DisplayRole) {
         PToolItem item = mTools[index.row()];
         return item->title;
     }
     return QVariant();
 }
 
-Qt::ItemFlags ToolsModel::flags(const QModelIndex &index) const
+Qt::ItemFlags ToolsModel::flags(const QModelIndex& index) const
 {
     Qt::ItemFlags flags = Qt::NoItemFlags;
     if (index.isValid()) {
-        flags = Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsDropEnabled;
+        flags = Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsEditable |
+                Qt::ItemIsSelectable | Qt::ItemIsDropEnabled;
     } else if (index.row() == -1) {
         // -1 means it's a drop target?
         flags = Qt::ItemIsDropEnabled;
     }
-    return flags ;
+    return flags;
 }
 
 Qt::DropActions ToolsModel::supportedDropActions() const
@@ -244,34 +227,32 @@ Qt::DropActions ToolsModel::supportedDropActions() const
     return Qt::MoveAction;
 }
 
-bool ToolsModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
+bool ToolsModel::dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
+                              const QModelIndex& parent)
 {
     Q_UNUSED(column);
-    mMoveTargetRow=row;
-    if (mMoveTargetRow==-1)
-        mMoveTargetRow=mTools.length();
-    return  QAbstractListModel::dropMimeData(data,action,row,0,parent);
+    mMoveTargetRow = row;
+    if (mMoveTargetRow == -1)
+        mMoveTargetRow = mTools.length();
+    return QAbstractListModel::dropMimeData(data, action, row, 0, parent);
 }
 
-bool ToolsModel::insertRows(int /* row */, int /*count*/, const QModelIndex &/*parent*/)
+bool ToolsModel::insertRows(int /* row */, int /*count*/, const QModelIndex& /*parent*/)
 {
     return true;
 }
 
-bool ToolsModel::removeRows(int row, int count, const QModelIndex &/*parent*/)
+bool ToolsModel::removeRows(int row, int count, const QModelIndex& /*parent*/)
 {
     int sourceRow = row;
     int destinationChild = mMoveTargetRow;
-    mMoveTargetRow=-1;
-    if (sourceRow < 0
-        || sourceRow + count - 1 >= mTools.count()
-        || destinationChild < 0
-        || destinationChild > mTools.count()
-        || sourceRow == destinationChild
-        || count <= 0) {
+    mMoveTargetRow = -1;
+    if (sourceRow < 0 || sourceRow + count - 1 >= mTools.count() || destinationChild < 0 ||
+        destinationChild > mTools.count() || sourceRow == destinationChild || count <= 0) {
         return false;
     }
-    if (!beginMoveRows(QModelIndex(), sourceRow, sourceRow + count - 1, QModelIndex(), destinationChild))
+    if (!beginMoveRows(QModelIndex(), sourceRow, sourceRow + count - 1, QModelIndex(),
+                       destinationChild))
         return false;
 
     int fromRow = sourceRow;
@@ -285,29 +266,26 @@ bool ToolsModel::removeRows(int row, int count, const QModelIndex &/*parent*/)
     return true;
 }
 
-
 void ToolsGeneralWidget::on_btnAdd_clicked()
 {
     ui->lstTools->setCurrentIndex(QModelIndex());
     PToolItem item = std::make_shared<ToolItem>();
-    item->id=QUuid::createUuid().toString();
+    item->id = QUuid::createUuid().toString();
     item->title = tr("untitled");
     item->inputOrigin = ToolItemInputOrigin::None;
     item->outputTarget = ToolItemOutputTarget::RedirectToToolsOutputPanel;
     item->isUTF8 = false;
     mToolsModel.addTool(item);
     int row = mToolsModel.tools().count() - 1;
-    QModelIndex index=mToolsModel.index(row);
+    QModelIndex index = mToolsModel.index(row);
     ui->lstTools->setCurrentIndex(index);
     prepareEdit(row);
 }
-
 
 void ToolsGeneralWidget::on_btnEditOk_clicked()
 {
     finishEditing(false);
 }
-
 
 void ToolsGeneralWidget::on_btnEditCancel_clicked()
 {
@@ -327,15 +305,14 @@ void ToolsGeneralWidget::doSave()
     pMainWindow->updateTools();
 }
 
-void ToolsGeneralWidget::updateIcons(const QSize &)
+void ToolsGeneralWidget::updateIcons(const QSize&)
 {
-    pIconsManager->setIcon(ui->btnAdd,IconsManager::ACTION_MISC_ADD);
+    pIconsManager->setIcon(ui->btnAdd, IconsManager::ACTION_MISC_ADD);
     pIconsManager->setIcon(ui->btnEdit, IconsManager::ACTION_MISC_RENAME);
-    pIconsManager->setIcon(ui->btnRemove,IconsManager::ACTION_MISC_REMOVE);
-    pIconsManager->setIcon(ui->btnBrowseProgram,IconsManager::ACTION_FILE_LOCATE);
-    pIconsManager->setIcon(ui->btnBrowseWorkingDirectory,IconsManager::ACTION_FILE_OPEN_FOLDER);
+    pIconsManager->setIcon(ui->btnRemove, IconsManager::ACTION_MISC_REMOVE);
+    pIconsManager->setIcon(ui->btnBrowseProgram, IconsManager::ACTION_FILE_LOCATE);
+    pIconsManager->setIcon(ui->btnBrowseWorkingDirectory, IconsManager::ACTION_FILE_OPEN_FOLDER);
 }
-
 
 void ToolsGeneralWidget::on_btnRemove_clicked()
 {
@@ -346,31 +323,26 @@ void ToolsGeneralWidget::on_btnRemove_clicked()
     }
 }
 
-
 void ToolsGeneralWidget::on_btnInsertMacro_clicked()
 {
-    ui->txtParameters->setText(
-                ui->txtParameters->text() +
-                ui->cbMacros->currentData(Qt::UserRole).toString());
+    ui->txtParameters->setText(ui->txtParameters->text() +
+                               ui->cbMacros->currentData(Qt::UserRole).toString());
 }
 
 void ToolsGeneralWidget::on_btnBrowseWorkingDirectory_clicked()
 {
-    QString folder = QFileDialog::getExistingDirectory(this,tr("Choose Folder"));
+    QString folder = QFileDialog::getExistingDirectory(this, tr("Choose Folder"));
     if (!folder.isEmpty()) {
         ui->txtDirectory->setText(folder);
     }
 }
 
-
 void ToolsGeneralWidget::on_btnBrowseProgram_clicked()
 {
-    QString fileName = QFileDialog::getOpenFileName(
-        this,
-        tr("Select program"),
-        pSettings->dirs().appDir(),
-        pSystemConsts->executableFileFilter());
-    if (!fileName.isEmpty() ) {
+    QString fileName =
+        QFileDialog::getOpenFileName(this, tr("Select program"), pSettings->dirs().appDir(),
+                                     pSystemConsts->executableFileFilter());
+    if (!fileName.isEmpty()) {
         QString appPath = includeTrailingPathDelimiter(pSettings->dirs().appDir());
         if (fileName.startsWith(appPath))
             fileName = QString("<EXECPATH>") + QDir::separator() + fileName.mid(appPath.length());
@@ -378,12 +350,9 @@ void ToolsGeneralWidget::on_btnBrowseProgram_clicked()
     }
 }
 
-
-
 void ToolsGeneralWidget::on_btnEdit_clicked()
 {
     const QModelIndex& index = ui->lstTools->currentIndex();
     if (index.isValid())
         editTool(index);
 }
-

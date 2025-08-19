@@ -25,19 +25,20 @@ class OJProblemCasesRunner : public Runner
 {
     Q_OBJECT
 public:
-    explicit OJProblemCasesRunner(const QString& filename, const QStringList& arguments, const QString& workDir,
+    explicit OJProblemCasesRunner(const QString& filename, const QStringList& arguments,
+                                  const QString& workDir,
                                   const QVector<POJProblemCase>& problemCases,
-                                  QObject *parent = nullptr);
-    explicit OJProblemCasesRunner(const QString& filename, const QStringList& arguments, const QString& workDir,
-                                  POJProblemCase problemCase,
-                                  QObject *parent = nullptr);
-    OJProblemCasesRunner(const OJProblemCasesRunner&)=delete;
-    OJProblemCasesRunner& operator=(const OJProblemCasesRunner&)=delete;
-    //max size of output buffer
+                                  QObject* parent = nullptr);
+    explicit OJProblemCasesRunner(const QString& filename, const QStringList& arguments,
+                                  const QString& workDir, POJProblemCase problemCase,
+                                  QObject* parent = nullptr);
+    OJProblemCasesRunner(const OJProblemCasesRunner&) = delete;
+    OJProblemCasesRunner& operator=(const OJProblemCasesRunner&) = delete;
+    // max size of output buffer
     int bufferSize() const;
     void setBufferSize(int newBufferSize);
 
-    //max time (in milliseconds) waiting to flush output buffer
+    // max time (in milliseconds) waiting to flush output buffer
     int outputRefreshTime() const;
     void setOutputRefreshTime(int newOutputRefreshTime);
 
@@ -53,19 +54,22 @@ public:
     void setIncludeOutputFromStderr(bool newIncludeOutputFromStderr);
 
 signals:
-    void caseStarted(const QString &caseId, int current, int total);
-    void caseFinished(const QString &caseId, int current, int total);
-    void newOutputGetted(const QString &caseId, const QString &newOutputLine);
-    void resetOutput(const QString &caseId, const QString &newOutputLine);
+    void caseStarted(const QString& caseId, int current, int total);
+    void caseFinished(const QString& caseId, int current, int total);
+    void newOutputGetted(const QString& caseId, const QString& newOutputLine);
+    void resetOutput(const QString& caseId, const QString& newOutputLine);
     void logStderrOutput(const QString& msg);
+
 private:
     void runCase(int index, POJProblemCase problemCase);
+
 private:
     QVector<POJProblemCase> mProblemCases;
 
     // QThread interface
 protected:
     void run() override;
+
 private:
     int mBufferSize;
     int mOutputRefreshTime;

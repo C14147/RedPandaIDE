@@ -30,17 +30,15 @@
 #include <QApplication>
 #include <QPainter>
 
-CodeCompletionPopup::CodeCompletionPopup(QWidget *parent) :
-    QWidget(parent),
-    mListView(nullptr),
-    mMutex()
+CodeCompletionPopup::CodeCompletionPopup(QWidget* parent)
+    : QWidget(parent), mListView(nullptr), mMutex()
 {
     setWindowFlags(Qt::Popup);
 
     mListView = new CodeCompletionListView(this);
-    mModel=new CodeCompletionListModel(&mCompletionStatementList);
-    mDelegate = new CodeCompletionListItemDelegate(mModel,this);
-    QItemSelectionModel *m=mListView->selectionModel();
+    mModel = new CodeCompletionListModel(&mCompletionStatementList);
+    mDelegate = new CodeCompletionListItemDelegate(mModel, this);
+    QItemSelectionModel* m = mListView->selectionModel();
     mListView->setModel(mModel);
     delete m;
     mListView->setItemDelegate(mDelegate);
@@ -49,7 +47,7 @@ CodeCompletionPopup::CodeCompletionPopup(QWidget *parent) :
     layout()->setContentsMargins(0, 0, 0, 0);
     mListView->setFocus();
 
-    mShowKeywords=true;
+    mShowKeywords = true;
     mRecordUsage = false;
     mSortByScope = true;
 
@@ -68,20 +66,16 @@ CodeCompletionPopup::~CodeCompletionPopup()
     delete mModel;
 }
 
-void CodeCompletionPopup::setKeypressedCallback(const KeyPressedCallback &newKeypressedCallback)
+void CodeCompletionPopup::setKeypressedCallback(const KeyPressedCallback& newKeypressedCallback)
 {
     mListView->setKeypressedCallback(newKeypressedCallback);
 }
 
-void CodeCompletionPopup::prepareSearch(
-        const QString &preWord,
-        const QStringList &ownerExpression,
-        const QString& memberOperator,
-        const QStringList& memberExpression,
-        const QString &filename,
-        int line,
-        CodeCompletionType type,
-        const QSet<QString>& customKeywords)
+void CodeCompletionPopup::prepareSearch(const QString& preWord, const QStringList& ownerExpression,
+                                        const QString& memberOperator,
+                                        const QStringList& memberExpression,
+                                        const QString& filename, int line, CodeCompletionType type,
+                                        const QSet<QString>& customKeywords)
 {
     QMutexLocker locker(&mMutex);
     if (!isEnabled())
@@ -91,21 +85,22 @@ void CodeCompletionPopup::prepareSearch(
 
     mMemberPhrase = memberExpression.join("");
     mMemberOperator = memberOperator;
-    switch(type) {
+    switch (type) {
     case CodeCompletionType::ComplexKeyword:
         getCompletionListForComplexKeyword(preWord);
         break;
     case CodeCompletionType::Types:
         mIncludedFiles = mParser->getIncludedFiles(filename);
-        getCompletionListForTypes(preWord,filename,line);
+        getCompletionListForTypes(preWord, filename, line);
         break;
     case CodeCompletionType::FunctionWithoutDefinition:
         mIncludedFiles = mParser->getIncludedFiles(filename);
-        getCompletionForFunctionWithoutDefinition(preWord, ownerExpression,memberOperator,memberExpression, filename,line);
+        getCompletionForFunctionWithoutDefinition(preWord, ownerExpression, memberOperator,
+                                                  memberExpression, filename, line);
         break;
     case CodeCompletionType::Namespaces:
         mIncludedFiles = mParser->getIncludedFiles(filename);
-        getCompletionListForNamespaces(preWord,filename,line);
+        getCompletionListForNamespaces(preWord, filename, line);
         break;
     case CodeCompletionType::KeywordsOnly:
         mIncludedFiles.clear();
@@ -117,16 +112,17 @@ void CodeCompletionPopup::prepareSearch(
         break;
     case CodeCompletionType::LiteralOperators:
         mIncludedFiles = mParser->getIncludedFiles(filename);
-        getCompletionListForLiteralOperators(filename,line);
+        getCompletionListForLiteralOperators(filename, line);
         break;
     default:
         mIncludedFiles = mParser->getIncludedFiles(filename);
-        getCompletionFor(ownerExpression,memberOperator,memberExpression, filename,line, customKeywords);
+        getCompletionFor(ownerExpression, memberOperator, memberExpression, filename, line,
+                         customKeywords);
     }
     setCursor(oldCursor);
 }
 
-bool CodeCompletionPopup::search(const QString &memberPhrase, bool autoHideOnSingleResult)
+bool CodeCompletionPopup::search(const QString& memberPhrase, bool autoHideOnSingleResult)
 {
     QMutexLocker locker(&mMutex);
 
@@ -143,11 +139,11 @@ bool CodeCompletionPopup::search(const QString &memberPhrase, bool autoHideOnSin
     // filter fFullCompletionStatementList to fCompletionStatementList
     filterList(memberPhrase);
 
-    //if can't find a destructor, maybe '~' is only an operator
-//    if (mCompletionStatementList.isEmpty() && phrase.startsWith('~')) {
-//        symbol = phrase.mid(1);
-//        filterList(symbol);
-//    }
+    // if can't find a destructor, maybe '~' is only an operator
+    //    if (mCompletionStatementList.isEmpty() && phrase.startsWith('~')) {
+    //        symbol = phrase.mid(1);
+    //        filterList(symbol);
+    //    }
 
     mModel->notifyUpdated();
     setCursor(oldCursor);
@@ -169,14 +165,14 @@ bool CodeCompletionPopup::search(const QString &memberPhrase, bool autoHideOnSin
             mDelegate->setMatchedColor(item->foreground());
         else
             mDelegate->setMatchedColor(palette().color(QPalette::HighlightedText));
-        mListView->setCurrentIndex(mModel->index(0,0));
-        // if only one suggestion, and is exactly the symbol to search, hide the frame (the search is over)
-        // if only one suggestion and auto hide , don't show the frame
-        if(mCompletionStatementList.count() == 1)
-            if (autoHideOnSingleResult
-                    || (memberPhrase == mCompletionStatementList.front()->command)) {
-            return true;
-        }
+        mListView->setCurrentIndex(mModel->index(0, 0));
+        // if only one suggestion, and is exactly the symbol to search, hide the frame (the search
+        // is over) if only one suggestion and auto hide , don't show the frame
+        if (mCompletionStatementList.count() == 1)
+            if (autoHideOnSingleResult ||
+                (memberPhrase == mCompletionStatementList.front()->command)) {
+                return true;
+            }
     } else {
         hide();
     }
@@ -187,8 +183,7 @@ PStatement CodeCompletionPopup::selectedStatement()
 {
     if (isEnabled()) {
         int index = mListView->currentIndex().row();
-        if (mListView->currentIndex().isValid()
-                && (index<mCompletionStatementList.count()) ) {
+        if (mListView->currentIndex().isValid() && (index < mCompletionStatementList.count())) {
             return mCompletionStatementList[index];
         } else {
             if (!mCompletionStatementList.isEmpty())
@@ -200,91 +195,85 @@ PStatement CodeCompletionPopup::selectedStatement()
         return PStatement();
 }
 
-void CodeCompletionPopup::addChildren(const PStatement& scopeStatement,
-                                      const QString &fileName,
-                                      int line,
-                                      bool onlyTypes)
+void CodeCompletionPopup::addChildren(const PStatement& scopeStatement, const QString& fileName,
+                                      int line, bool onlyTypes)
 {
-    if (scopeStatement && !isIncluded(scopeStatement->fileName)
-      && !isIncluded(scopeStatement->definitionFileName))
+    if (scopeStatement && !isIncluded(scopeStatement->fileName) &&
+        !isIncluded(scopeStatement->definitionFileName))
         return;
     const StatementMap& children = mParser->statementList().childrenStatements(scopeStatement);
     if (children.isEmpty())
         return;
 
     if (onlyTypes) {
-        if (!scopeStatement) { //Global scope
-            for (const PStatement& childStatement: children) {
+        if (!scopeStatement) { // Global scope
+            for (const PStatement& childStatement : children) {
                 if (!isTypeKind(childStatement->kind))
                     continue;
                 if (childStatement->fileName.isEmpty()) {
                     // hard defines
-                    addStatement(childStatement,fileName,-1);
-                } else if (
-                           isIncluded(childStatement->fileName)
-                           || isIncluded(childStatement->definitionFileName)
-                           ) {
-                    //we must check if the statement is included by the file
-                    addStatement(childStatement,fileName,line);
+                    addStatement(childStatement, fileName, -1);
+                } else if (isIncluded(childStatement->fileName) ||
+                           isIncluded(childStatement->definitionFileName)) {
+                    // we must check if the statement is included by the file
+                    addStatement(childStatement, fileName, line);
                 }
             }
         } else {
-            for (const PStatement& childStatement: children) {
+            for (const PStatement& childStatement : children) {
                 if (!isTypeKind(childStatement->kind))
                     continue;
-                addStatement(childStatement,fileName,line);
+                addStatement(childStatement, fileName, line);
             }
         }
     } else {
-        if (!scopeStatement) { //Global scope
-            for (const PStatement& childStatement: children) {
+        if (!scopeStatement) { // Global scope
+            for (const PStatement& childStatement : children) {
                 if (childStatement->fileName.isEmpty()) {
                     // hard defines
-                    addStatement(childStatement,fileName,-1);
-                } else if (
-                           isIncluded(childStatement->fileName)
-                           || isIncluded(childStatement->definitionFileName)
-                           ) {
-                    //we must check if the statement is included by the file
-                    addStatement(childStatement,fileName,line);
+                    addStatement(childStatement, fileName, -1);
+                } else if (isIncluded(childStatement->fileName) ||
+                           isIncluded(childStatement->definitionFileName)) {
+                    // we must check if the statement is included by the file
+                    addStatement(childStatement, fileName, line);
                 }
             }
         } else {
-            for (const PStatement& childStatement: children) {
-                addStatement(childStatement,fileName,line);
+            for (const PStatement& childStatement : children) {
+                addStatement(childStatement, fileName, line);
             }
         }
-
     }
 }
 
-void CodeCompletionPopup::addFunctionWithoutDefinitionChildren(const PStatement& scopeStatement, const QString &fileName, int line)
+void CodeCompletionPopup::addFunctionWithoutDefinitionChildren(const PStatement& scopeStatement,
+                                                               const QString& fileName, int line)
 {
-    if (scopeStatement && !isIncluded(scopeStatement->fileName)
-      && !isIncluded(scopeStatement->definitionFileName))
+    if (scopeStatement && !isIncluded(scopeStatement->fileName) &&
+        !isIncluded(scopeStatement->definitionFileName))
         return;
     const StatementMap& children = mParser->statementList().childrenStatements(scopeStatement);
     if (children.isEmpty())
         return;
 
-    for (const PStatement& childStatement: children) {
+    for (const PStatement& childStatement : children) {
         if (childStatement->inSystemHeader())
             continue;
         if (childStatement->fileName.isEmpty()) {
             // hard defines, do nothing
             continue;
         }
-        switch(childStatement->kind) {
+        switch (childStatement->kind) {
         case StatementKind::Constructor:
         case StatementKind::Function:
         case StatementKind::Destructor:
             if (!childStatement->hasDefinition())
-                addStatement(childStatement,fileName,line);
+                addStatement(childStatement, fileName, line);
             break;
         case StatementKind::Class:
         case StatementKind::Namespace:
             if (isIncluded(childStatement->fileName))
-                addStatement(childStatement,fileName,line);
+                addStatement(childStatement, fileName, line);
             break;
         default:
             break;
@@ -292,36 +281,33 @@ void CodeCompletionPopup::addFunctionWithoutDefinitionChildren(const PStatement&
     }
 }
 
-void CodeCompletionPopup::addStatement(const PStatement& statement, const QString &fileName, int line)
+void CodeCompletionPopup::addStatement(const PStatement& statement, const QString& fileName,
+                                       int line)
 {
     if (mAddedStatements.contains(statement->command))
         return;
-    if (statement->kind == StatementKind::Constructor
-            || statement->kind == StatementKind::Destructor
-            || statement->kind == StatementKind::Block
-            || statement->kind == StatementKind::Lambda
-            || (
-                statement->properties.testFlag(StatementProperty::OperatorOverloading)
-                && statement->kind != StatementKind::LiteralOperator
-                )
-            || statement->properties.testFlag(StatementProperty::DummyStatement)
-            )
+    if (statement->kind == StatementKind::Constructor ||
+        statement->kind == StatementKind::Destructor || statement->kind == StatementKind::Block ||
+        statement->kind == StatementKind::Lambda ||
+        (statement->properties.testFlag(StatementProperty::OperatorOverloading) &&
+         statement->kind != StatementKind::LiteralOperator) ||
+        statement->properties.testFlag(StatementProperty::DummyStatement))
         return;
-    if ((line!=-1)
-            && (line < statement->line)
-            && (fileName == statement->fileName))
+    if ((line != -1) && (line < statement->line) && (fileName == statement->fileName))
         return;
     mAddedStatements.insert(statement->command);
     if (statement->kind == StatementKind::UserCodeSnippet || !statement->command.contains("<"))
         mFullCompletionStatementList.append(statement);
 }
 
-static bool nameComparator(PStatement statement1,PStatement statement2) {
+static bool nameComparator(PStatement statement1, PStatement statement2)
+{
     return statement1->command < statement2->command;
 }
 
-static bool defaultComparator(PStatement statement1,PStatement statement2) {
-    if (statement1->matchPosSpan!=statement2->matchPosSpan)
+static bool defaultComparator(PStatement statement1, PStatement statement2)
+{
+    if (statement1->matchPosSpan != statement2->matchPosSpan)
         return statement1->matchPosSpan < statement2->matchPosSpan;
     if (statement1->firstMatchLength != statement2->firstMatchLength)
         return statement1->firstMatchLength > statement2->firstMatchLength;
@@ -338,18 +324,19 @@ static bool defaultComparator(PStatement statement1,PStatement statement2) {
     } else if (statement2->kind == StatementKind::UserCodeSnippet) {
         return false;
         // show keywords first
-    } else if ((statement1->kind == StatementKind::Keyword)
-               && (statement2->kind != StatementKind::Keyword)) {
+    } else if ((statement1->kind == StatementKind::Keyword) &&
+               (statement2->kind != StatementKind::Keyword)) {
         return true;
-    } else if ((statement1->kind != StatementKind::Keyword)
-               && (statement2->kind == StatementKind::Keyword)) {
+    } else if ((statement1->kind != StatementKind::Keyword) &&
+               (statement2->kind == StatementKind::Keyword)) {
         return false;
     } else
-        return nameComparator(statement1,statement2);
+        return nameComparator(statement1, statement2);
 }
 
-static bool sortByScopeComparator(PStatement statement1,PStatement statement2){
-    if (statement1->matchPosSpan!=statement2->matchPosSpan)
+static bool sortByScopeComparator(PStatement statement1, PStatement statement2)
+{
+    if (statement1->matchPosSpan != statement2->matchPosSpan)
         return statement1->matchPosSpan < statement2->matchPosSpan;
     if (statement1->firstMatchLength != statement2->firstMatchLength)
         return statement1->firstMatchLength > statement2->firstMatchLength;
@@ -368,32 +355,33 @@ static bool sortByScopeComparator(PStatement statement1,PStatement statement2){
         // show non-system defines before keyword
     } else if (statement1->kind == StatementKind::Keyword) {
         if (statement2->kind != StatementKind::Keyword) {
-            //s1 keyword / s2 system defines, s1 < s2, should return true
-            //s1 keyword / s2 not system defines, s2 < s1, should return false;
-            return  statement2->inSystemHeader();
+            // s1 keyword / s2 system defines, s1 < s2, should return true
+            // s1 keyword / s2 not system defines, s2 < s1, should return false;
+            return statement2->inSystemHeader();
         } else
             return statement1->command < statement2->command;
     } else if (statement2->kind == StatementKind::Keyword) {
-        //s1 system defines / s2 keyword, s2 < s1, should return false;
-        //s1 not system defines / s2 keyword, s1 < s2, should return true;
-        return  (!statement1->inSystemHeader());
+        // s1 system defines / s2 keyword, s2 < s1, should return false;
+        // s1 not system defines / s2 keyword, s1 < s2, should return true;
+        return (!statement1->inSystemHeader());
     }
     // Show stuff from local headers first
     if (statement1->inSystemHeader() != statement2->inSystemHeader())
         return !(statement1->inSystemHeader());
-        // Show local statements first
-    if (statement1->scope != StatementScope::Global
-               && statement2->scope == StatementScope::Global ) {
+    // Show local statements first
+    if (statement1->scope != StatementScope::Global &&
+        statement2->scope == StatementScope::Global) {
         return true;
-    } else if (statement1->scope == StatementScope::Global
-               && statement2->scope != StatementScope::Global ) {
+    } else if (statement1->scope == StatementScope::Global &&
+               statement2->scope != StatementScope::Global) {
         return false;
     } else
-        return nameComparator(statement1,statement2);
+        return nameComparator(statement1, statement2);
 }
 
-static bool sortWithUsageComparator(PStatement statement1,PStatement statement2) {
-    if (statement1->matchPosSpan!=statement2->matchPosSpan)
+static bool sortWithUsageComparator(PStatement statement1, PStatement statement2)
+{
+    if (statement1->matchPosSpan != statement2->matchPosSpan)
         return statement1->matchPosSpan < statement2->matchPosSpan;
     if (statement1->firstMatchLength != statement2->firstMatchLength)
         return statement1->firstMatchLength > statement2->firstMatchLength;
@@ -409,23 +397,24 @@ static bool sortWithUsageComparator(PStatement statement1,PStatement statement2)
             return statement1->command < statement2->command;
     } else if (statement2->kind == StatementKind::UserCodeSnippet) {
         return false;
-        //show most freq first
+        // show most freq first
     }
     if (statement1->usageCount != statement2->usageCount)
         return statement1->usageCount > statement2->usageCount;
 
-    if ((statement1->kind != StatementKind::Keyword)
-               && (statement2->kind == StatementKind::Keyword)) {
+    if ((statement1->kind != StatementKind::Keyword) &&
+        (statement2->kind == StatementKind::Keyword)) {
         return true;
-    } else if ((statement1->kind == StatementKind::Keyword)
-               && (statement2->kind != StatementKind::Keyword)) {
+    } else if ((statement1->kind == StatementKind::Keyword) &&
+               (statement2->kind != StatementKind::Keyword)) {
         return false;
     } else
-        return nameComparator(statement1,statement2);
+        return nameComparator(statement1, statement2);
 }
 
-static bool sortByScopeWithUsageComparator(PStatement statement1,PStatement statement2){
-    if (statement1->matchPosSpan!=statement2->matchPosSpan)
+static bool sortByScopeWithUsageComparator(PStatement statement1, PStatement statement2)
+{
+    if (statement1->matchPosSpan != statement2->matchPosSpan)
         return statement1->matchPosSpan < statement2->matchPosSpan;
     if (statement1->firstMatchLength != statement2->firstMatchLength)
         return statement1->firstMatchLength > statement2->firstMatchLength;
@@ -441,56 +430,55 @@ static bool sortByScopeWithUsageComparator(PStatement statement1,PStatement stat
             return statement1->command < statement2->command;
     } else if (statement2->kind == StatementKind::UserCodeSnippet) {
         return false;
-        //show most freq first
+        // show most freq first
     }
     if (statement1->usageCount != statement2->usageCount)
         return statement1->usageCount > statement2->usageCount;
 
-        // show non-system defines before keyword
+    // show non-system defines before keyword
     if (statement1->kind == StatementKind::Keyword) {
         if (statement2->kind != StatementKind::Keyword) {
-            //s1 keyword / s2 system defines, s1 < s2, should return true
-            //s1 keyword / s2 not system defines, s2 < s1, should return false;
-            return  statement2->inSystemHeader();
+            // s1 keyword / s2 system defines, s1 < s2, should return true
+            // s1 keyword / s2 not system defines, s2 < s1, should return false;
+            return statement2->inSystemHeader();
         } else
             return statement1->command < statement2->command;
     } else if (statement2->kind == StatementKind::Keyword) {
-        //s1 system defines / s2 keyword, s2 < s1, should return false;
-        //s1 not system defines / s2 keyword, s1 < s2, should return true;
-        return  (!statement1->inSystemHeader());
+        // s1 system defines / s2 keyword, s2 < s1, should return false;
+        // s1 not system defines / s2 keyword, s1 < s2, should return true;
+        return (!statement1->inSystemHeader());
     }
     // Show stuff from local headers first
     if (statement1->inSystemHeader() != statement2->inSystemHeader())
         return !(statement1->inSystemHeader());
-        // Show local statements first
-    if (statement1->scope != StatementScope::Global
-               && statement2->scope == StatementScope::Global ) {
+    // Show local statements first
+    if (statement1->scope != StatementScope::Global &&
+        statement2->scope == StatementScope::Global) {
         return true;
-    } else if (statement1->scope == StatementScope::Global
-               && statement2->scope != StatementScope::Global ) {
+    } else if (statement1->scope == StatementScope::Global &&
+               statement2->scope != StatementScope::Global) {
         return false;
     } else
-        return nameComparator(statement1,statement2);
+        return nameComparator(statement1, statement2);
 }
 
-void CodeCompletionPopup::filterList(const QString &member)
+void CodeCompletionPopup::filterList(const QString& member)
 {
     QMutexLocker locker(&mMutex);
     mCompletionStatementList.clear();
-//    if (!mParser)
-//        return;
-//    if (!mParser->enabled())
-//        return;
-    //we don't need to freeze here since we use smart pointers
+    //    if (!mParser)
+    //        return;
+    //    if (!mParser->enabled())
+    //        return;
+    // we don't need to freeze here since we use smart pointers
     //  and data have been retrieved from the parser
 
     mCompletionStatementList.clear();
     mCompletionStatementList.reserve(mFullCompletionStatementList.size());
-    bool hideSymbolsTwoUnderline = mHideSymbolsStartWithTwoUnderline && !member.startsWith("__") ;
-    bool hideSymbolsUnderline = mHideSymbolsStartWithUnderline && !member.startsWith("_") ;
+    bool hideSymbolsTwoUnderline = mHideSymbolsStartWithTwoUnderline && !member.startsWith("__");
+    bool hideSymbolsUnderline = mHideSymbolsStartWithUnderline && !member.startsWith("_");
     int len = member.length();
     foreach (const PStatement& statement, mFullCompletionStatementList) {
-
         int matched = 0;
         int caseMatched = 0;
         QString command = statement->command;
@@ -505,44 +493,49 @@ void CodeCompletionPopup::filterList(const QString &member)
         } else {
             foreach (const QChar& ch, member) {
                 if (mIgnoreCase)
-                    pos = command.indexOf(ch,pos,Qt::CaseInsensitive);
+                    pos = command.indexOf(ch, pos, Qt::CaseInsensitive);
                 else
-                    pos = command.indexOf(ch,pos,Qt::CaseSensitive);
-                if (pos<0) {
+                    pos = command.indexOf(ch, pos, Qt::CaseSensitive);
+                if (pos < 0) {
                     break;
                 }
-                if (pos == lastPos+1) {
+                if (pos == lastPos + 1) {
                     statement->matchPositions.last()->end++;
                 } else {
-                    PStatementMathPosition matchPosition=std::make_shared<StatementMatchPosition>();
+                    PStatementMathPosition matchPosition =
+                        std::make_shared<StatementMatchPosition>();
                     matchPosition->start = pos;
-                    matchPosition->end = pos+1;
+                    matchPosition->end = pos + 1;
                     statement->matchPositions.append(matchPosition);
                 }
-                if (ch==command[pos])
+                if (ch == command[pos])
                     caseMatched++;
                 matched++;
                 totalPos += pos;
                 lastPos = pos;
-                pos+=1;
+                pos += 1;
             }
         }
 
-        if (mIgnoreCase && matched== len) {
+        if (mIgnoreCase && matched == len) {
             statement->caseMatched = caseMatched;
             statement->matchPosTotal = totalPos;
-            if (member.length()>0) {
-                statement->firstMatchLength = statement->matchPositions.front()->end - statement->matchPositions.front()->start;
-                statement->matchPosSpan = statement->matchPositions.last()->end - statement->matchPositions.front()->start;
+            if (member.length() > 0) {
+                statement->firstMatchLength = statement->matchPositions.front()->end -
+                                              statement->matchPositions.front()->start;
+                statement->matchPosSpan = statement->matchPositions.last()->end -
+                                          statement->matchPositions.front()->start;
             } else
                 statement->firstMatchLength = 0;
             mCompletionStatementList.append(statement);
         } else if (caseMatched == len) {
             statement->caseMatched = caseMatched;
             statement->matchPosTotal = totalPos;
-            if (member.length()>0) {
-                statement->firstMatchLength = statement->matchPositions.front()->end - statement->matchPositions.front()->start;
-                statement->matchPosSpan = statement->matchPositions.last()->end - statement->matchPositions.front()->start;
+            if (member.length() > 0) {
+                statement->firstMatchLength = statement->matchPositions.front()->end -
+                                              statement->matchPositions.front()->start;
+                statement->matchPosSpan = statement->matchPositions.last()->end -
+                                          statement->matchPositions.front()->start;
             } else
                 statement->firstMatchLength = 0;
             mCompletionStatementList.append(statement);
@@ -556,9 +549,10 @@ void CodeCompletionPopup::filterList(const QString &member)
     }
     if (mRecordUsage) {
         int usageCount;
-        foreach (const PStatement& statement,mCompletionStatementList) {
+        foreach (const PStatement& statement, mCompletionStatementList) {
             if (statement->usageCount == -1) {
-                PSymbolUsage usage = pMainWindow->symbolUsageManager()->findUsage(statement->fullName);
+                PSymbolUsage usage =
+                    pMainWindow->symbolUsageManager()->findUsage(statement->fullName);
                 if (usage) {
                     usageCount = usage->count;
                 } else {
@@ -568,64 +562,55 @@ void CodeCompletionPopup::filterList(const QString &member)
             }
         }
         if (mSortByScope) {
-            std::sort(mCompletionStatementList.begin(),
-                      mCompletionStatementList.end(),
+            std::sort(mCompletionStatementList.begin(), mCompletionStatementList.end(),
                       sortByScopeWithUsageComparator);
         } else {
-            std::sort(mCompletionStatementList.begin(),
-                      mCompletionStatementList.end(),
+            std::sort(mCompletionStatementList.begin(), mCompletionStatementList.end(),
                       sortWithUsageComparator);
         }
     } else if (mSortByScope) {
-        std::sort(mCompletionStatementList.begin(),
-                  mCompletionStatementList.end(),
+        std::sort(mCompletionStatementList.begin(), mCompletionStatementList.end(),
                   sortByScopeComparator);
     } else {
-        std::sort(mCompletionStatementList.begin(),
-                  mCompletionStatementList.end(),
+        std::sort(mCompletionStatementList.begin(), mCompletionStatementList.end(),
                   defaultComparator);
     }
     //    }
 }
 
-void CodeCompletionPopup::getKeywordCompletionFor(const QSet<QString> &customKeywords)
+void CodeCompletionPopup::getKeywordCompletionFor(const QSet<QString>& customKeywords)
 {
-    //add keywords
+    // add keywords
     if (!customKeywords.isEmpty()) {
-        foreach (const QString& keyword,customKeywords) {
+        foreach (const QString& keyword, customKeywords) {
             addKeyword(keyword);
         }
     }
 }
 
-void CodeCompletionPopup::getMacroCompletionList(const QString &fileName, int line)
+void CodeCompletionPopup::getMacroCompletionList(const QString& fileName, int line)
 {
     const StatementMap& statementMap = mParser->statementList().childrenStatements(nullptr);
-    foreach(const PStatement& statement, statementMap.values()) {
-        if (statement->kind==StatementKind::Preprocessor)
-            addStatement(statement,fileName,line);
+    foreach (const PStatement& statement, statementMap.values()) {
+        if (statement->kind == StatementKind::Preprocessor)
+            addStatement(statement, fileName, line);
     }
 }
 
-void CodeCompletionPopup::getCompletionFor(
-        QStringList ownerExpression,
-        const QString& memberOperator,
-        const QStringList& memberExpression,
-        const QString &fileName,
-        int line,
-        const QSet<QString>& customKeywords)
+void CodeCompletionPopup::getCompletionFor(QStringList ownerExpression,
+                                           const QString& memberOperator,
+                                           const QStringList& memberExpression,
+                                           const QString& fileName, int line,
+                                           const QSet<QString>& customKeywords)
 {
-
     if (memberOperator.isEmpty() && ownerExpression.isEmpty() && memberExpression.isEmpty())
         return;
 
-    bool isLambdaReturnType = (
-                memberOperator=="->"
-                && ownerExpression.startsWith("[")
-                && ownerExpression.endsWith(")"));
+    bool isLambdaReturnType = (memberOperator == "->" && ownerExpression.startsWith("[") &&
+                               ownerExpression.endsWith(")"));
 
     if (memberOperator.isEmpty()) {
-        //C++ preprocessor directives
+        // C++ preprocessor directives
         if (mMemberPhrase.startsWith('#')) {
             if (mShowKeywords) {
                 foreach (const QString& keyword, CppDirectives) {
@@ -635,20 +620,20 @@ void CodeCompletionPopup::getCompletionFor(
             return;
         }
 
-        //docstring tags (javadoc style)
+        // docstring tags (javadoc style)
         if (mMemberPhrase.startsWith('@')) {
             if (mShowKeywords) {
-                foreach (const QString& keyword,JavadocTags) {
+                foreach (const QString& keyword, JavadocTags) {
                     addKeyword(keyword);
                 }
             }
             return;
         }
 
-        //the identifier to be completed is not a member of variable/class
+        // the identifier to be completed is not a member of variable/class
         if (mShowCodeSnippets) {
-            //add custom code templates
-            foreach (const PCodeSnippet& codeIn,mCodeSnippets) {
+            // add custom code templates
+            foreach (const PCodeSnippet& codeIn, mCodeSnippets) {
                 if (!codeIn->code.isEmpty()) {
                     PStatement statement = std::make_shared<Statement>();
                     statement->command = codeIn->prefix;
@@ -662,17 +647,17 @@ void CodeCompletionPopup::getCompletionFor(
         }
 
         if (mShowKeywords) {
-            //add keywords
+            // add keywords
             if (!customKeywords.isEmpty()) {
-                foreach (const QString& keyword,customKeywords) {
+                foreach (const QString& keyword, customKeywords) {
                     addKeyword(keyword);
                 }
             }
         }
-    } else if  (isLambdaReturnType) {
-            foreach (const QString& keyword,CppTypeKeywords) {
-                addKeyword(keyword);
-            }
+    } else if (isLambdaReturnType) {
+        foreach (const QString& keyword, CppTypeKeywords) {
+            addKeyword(keyword);
+        }
     }
 
     if (!mParser || !mParser->enabled())
@@ -681,19 +666,17 @@ void CodeCompletionPopup::getCompletionFor(
     if (!mParser->freeze())
         return;
     {
-        auto action = finally([this]{
-            mParser->unFreeze();
-        });
+        auto action = finally([this] { mParser->unFreeze(); });
 
         if (memberOperator.isEmpty() || isLambdaReturnType) {
             PStatement scopeStatement = mCurrentScope;
             // repeat until reach global
             while (scopeStatement) {
-                //add members of current scope that not added before
+                // add members of current scope that not added before
                 if (scopeStatement->kind == StatementKind::Namespace) {
                     PStatementList namespaceStatementsList =
-                            mParser->findNamespace(scopeStatement->fullName);
-                    foreach (const PStatement& namespaceStatement,*namespaceStatementsList) {
+                        mParser->findNamespace(scopeStatement->fullName);
+                    foreach (const PStatement& namespaceStatement, *namespaceStatementsList) {
                         addChildren(namespaceStatement, fileName, line, isLambdaReturnType);
                     }
                 } else if (scopeStatement->kind == StatementKind::Class) {
@@ -703,41 +686,40 @@ void CodeCompletionPopup::getCompletionFor(
                 }
 
                 // add members of all usings (in current scope ) and not added before
-                foreach (const QString& namespaceName,scopeStatement->usingList) {
-                    PStatementList namespaceStatementsList =
-                            mParser->findNamespace(namespaceName);
+                foreach (const QString& namespaceName, scopeStatement->usingList) {
+                    PStatementList namespaceStatementsList = mParser->findNamespace(namespaceName);
                     if (!namespaceStatementsList)
                         continue;
-                    foreach (const PStatement& namespaceStatement,*namespaceStatementsList) {
+                    foreach (const PStatement& namespaceStatement, *namespaceStatementsList) {
                         addChildren(namespaceStatement, fileName, line, isLambdaReturnType);
                     }
                 }
                 if (scopeStatement->kind == StatementKind::Lambda) {
                     foreach (const QString& phrase, scopeStatement->lambdaCaptures) {
-                        if (phrase=="&" || phrase == "=" || phrase =="this")
+                        if (phrase == "&" || phrase == "=" || phrase == "this")
                             continue;
                         PStatement statement = mParser->findStatementOf(
-                            scopeStatement->fileName,
-                                phrase,scopeStatement->line);
+                            scopeStatement->fileName, phrase, scopeStatement->line);
                         if (statement)
-                            addStatement(statement,scopeStatement->fileName, scopeStatement->line);
+                            addStatement(statement, scopeStatement->fileName, scopeStatement->line);
                     }
-                    if (scopeStatement->lambdaCaptures.contains("&")
-                            || scopeStatement->lambdaCaptures.contains("=")) {
+                    if (scopeStatement->lambdaCaptures.contains("&") ||
+                        scopeStatement->lambdaCaptures.contains("=")) {
                         scopeStatement = scopeStatement->parentScope.lock();
                     } else if (scopeStatement->lambdaCaptures.contains("this")) {
                         do {
                             scopeStatement = scopeStatement->parentScope.lock();
-                        } while (scopeStatement && scopeStatement->kind!=StatementKind::Class
-                                 && scopeStatement->kind!=StatementKind::Namespace);
+                        } while (scopeStatement && scopeStatement->kind != StatementKind::Class &&
+                                 scopeStatement->kind != StatementKind::Namespace);
                     } else {
                         do {
                             scopeStatement = scopeStatement->parentScope.lock();
-                        } while (scopeStatement && scopeStatement->kind!=StatementKind::Namespace);
+                        } while (scopeStatement &&
+                                 scopeStatement->kind != StatementKind::Namespace);
                     }
                     continue;
                 }
-                scopeStatement=scopeStatement->parentScope.lock();
+                scopeStatement = scopeStatement->parentScope.lock();
             }
 
             // add all global members and not added before
@@ -746,8 +728,7 @@ void CodeCompletionPopup::getCompletionFor(
             // add members of all fusings
             mUsings = mParser->getFileUsings(fileName);
             foreach (const QString& namespaceName, mUsings) {
-                PStatementList namespaceStatementsList =
-                        mParser->findNamespace(namespaceName);
+                PStatementList namespaceStatementsList = mParser->findNamespace(namespaceName);
                 if (!namespaceStatementsList)
                     continue;
                 foreach (const PStatement& namespaceStatement, *namespaceStatementsList) {
@@ -756,32 +737,31 @@ void CodeCompletionPopup::getCompletionFor(
             }
 
         } else {
-            //the identifier to be completed is a member of variable/class
+            // the identifier to be completed is a member of variable/class
             if (memberOperator == "::" && ownerExpression.isEmpty()) {
                 // start with '::', we only find in global
                 // add all global members and not added before
                 addChildren(nullptr, fileName, line);
                 return;
             }
-            if (memberExpression.length()==2 && memberExpression.front()!="~")
+            if (memberExpression.length() == 2 && memberExpression.front() != "~")
                 return;
-            if (memberExpression.length()>2)
+            if (memberExpression.length() > 2)
                 return;
 
-            PStatement scope = mCurrentScope;//the scope the expression in
+            PStatement scope = mCurrentScope; // the scope the expression in
             PStatement parentTypeStatement;
-            PEvalStatement ownerStatement = mParser->evalExpression(fileName,
-                                        ownerExpression,
-                                        scope);
+            PEvalStatement ownerStatement =
+                mParser->evalExpression(fileName, ownerExpression, scope);
 
-            if(!ownerStatement || !ownerStatement->effectiveTypeStatement) {
+            if (!ownerStatement || !ownerStatement->effectiveTypeStatement) {
                 return;
             }
             if (memberOperator == "::") {
-                if (ownerStatement->kind==EvalStatementKind::Namespace) {
-                    //there might be many statements corresponding to one namespace;
+                if (ownerStatement->kind == EvalStatementKind::Namespace) {
+                    // there might be many statements corresponding to one namespace;
                     PStatementList namespaceStatementsList =
-                            mParser->findNamespace(ownerStatement->baseType);
+                        mParser->findNamespace(ownerStatement->baseType);
                     if (namespaceStatementsList) {
                         foreach (const PStatement& namespaceStatement, *namespaceStatementsList) {
                             addChildren(namespaceStatement, fileName, line);
@@ -796,128 +776,115 @@ void CodeCompletionPopup::getCompletionFor(
             while (scopeTypeStatement && !isScopeTypeKind(scopeTypeStatement->kind)) {
                 scopeTypeStatement = scopeTypeStatement->parentScope.lock();
             }
-            if (
-                    (memberOperator != "::")
-                    && (
-                        ownerStatement->kind == EvalStatementKind::Variable)
-                    ) {
+            if ((memberOperator != "::") && (ownerStatement->kind == EvalStatementKind::Variable)) {
                 // Get type statement  of current (scope) statement
                 PStatement classTypeStatement = ownerStatement->effectiveTypeStatement;
 
                 if (!classTypeStatement)
                     return;
                 // It's a iterator
-                if (ownerStatement
-                        && ownerStatement->typeStatement
-                        && STLIterators.contains(ownerStatement->typeStatement->command)
-                        && (memberOperator == "->"
-                            || memberOperator == "->*")
-                ) {
+                if (ownerStatement && ownerStatement->typeStatement &&
+                    STLIterators.contains(ownerStatement->typeStatement->command) &&
+                    (memberOperator == "->" || memberOperator == "->*")) {
                     PStatement parentScope = ownerStatement->typeStatement->parentScope.lock();
                     if (STLContainers.contains(parentScope->fullName)) {
-                        QString typeName=mParser->findFirstTemplateParamOf(fileName,ownerStatement->templateParams, parentScope);
-//                        qDebug()<<"typeName"<<typeName<<lastResult->baseStatement->type<<lastResult->baseStatement->command;
-                        classTypeStatement=mParser->findTypeDefinitionOf(fileName, typeName,parentScope);
+                        QString typeName = mParser->findFirstTemplateParamOf(
+                            fileName, ownerStatement->templateParams, parentScope);
+                        //                        qDebug()<<"typeName"<<typeName<<lastResult->baseStatement->type<<lastResult->baseStatement->command;
+                        classTypeStatement =
+                            mParser->findTypeDefinitionOf(fileName, typeName, parentScope);
                         if (!classTypeStatement)
                             return;
                     } else if (STLMaps.contains(parentScope->fullName)) {
-                        QString typeName="std::pair";
-                        classTypeStatement=mParser->findTypeDefinitionOf(fileName, typeName,parentScope);
+                        QString typeName = "std::pair";
+                        classTypeStatement =
+                            mParser->findTypeDefinitionOf(fileName, typeName, parentScope);
                         if (!classTypeStatement)
                             return;
                     }
-                } else if (STLPointers.contains(classTypeStatement->fullName)
-                   && (memberOperator == "->"
-                       || memberOperator == "->*")
-                        && ownerStatement->baseStatement) {
-                                   //is a smart pointer
-                    QString typeName= mParser->findFirstTemplateParamOf(
-                                fileName,
-                                ownerStatement->baseStatement->type,
-                                scope);
-                    classTypeStatement = mParser->findTypeDefinitionOf(
-                                fileName,
-                                typeName,
-                                scope);
+                } else if (STLPointers.contains(classTypeStatement->fullName) &&
+                           (memberOperator == "->" || memberOperator == "->*") &&
+                           ownerStatement->baseStatement) {
+                    // is a smart pointer
+                    QString typeName = mParser->findFirstTemplateParamOf(
+                        fileName, ownerStatement->baseStatement->type, scope);
+                    classTypeStatement = mParser->findTypeDefinitionOf(fileName, typeName, scope);
                     if (!classTypeStatement)
                         return;
                 } else {
-                    //normal member access
-                    if (memberOperator=="." && ownerStatement->pointerLevel !=0)
+                    // normal member access
+                    if (memberOperator == "." && ownerStatement->pointerLevel != 0)
                         return;
-                    if (memberOperator=="->" && ownerStatement->pointerLevel!=1)
+                    if (memberOperator == "->" && ownerStatement->pointerLevel != 1)
                         return;
                 }
                 if (!isIncluded(classTypeStatement->fileName) &&
                     !isIncluded(classTypeStatement->definitionFileName))
                     return;
-                if ((classTypeStatement == scopeTypeStatement) || (ownerStatement->effectiveTypeStatement->command == "this")) {
-                    //we can use all members
-                    addChildren(classTypeStatement,fileName,-1);
+                if ((classTypeStatement == scopeTypeStatement) ||
+                    (ownerStatement->effectiveTypeStatement->command == "this")) {
+                    // we can use all members
+                    addChildren(classTypeStatement, fileName, -1);
                 } else { // we can only use public members
-                    const StatementMap& children = mParser->statementList().childrenStatements(classTypeStatement);
+                    const StatementMap& children =
+                        mParser->statementList().childrenStatements(classTypeStatement);
                     if (children.isEmpty())
                         return;
                     foreach (const PStatement& childStatement, children) {
-                        if ((childStatement->accessibility==StatementAccessibility::Public)
-                                && !(
-                                    childStatement->kind == StatementKind::Constructor
-                                    || childStatement->kind == StatementKind::Destructor)
-                                && !mAddedStatements.contains(childStatement->command)) {
-                            addStatement(childStatement,fileName,-1);
+                        if ((childStatement->accessibility == StatementAccessibility::Public) &&
+                            !(childStatement->kind == StatementKind::Constructor ||
+                              childStatement->kind == StatementKind::Destructor) &&
+                            !mAddedStatements.contains(childStatement->command)) {
+                            addStatement(childStatement, fileName, -1);
                         }
                     }
                 }
-            //todo friend
-            } else if ((memberOperator == "::")
-                       && (ownerStatement->kind == EvalStatementKind::Type)) {
-                //we can add all child enum definess
+                // todo friend
+            } else if ((memberOperator == "::") &&
+                       (ownerStatement->kind == EvalStatementKind::Type)) {
+                // we can add all child enum definess
                 PStatement classTypeStatement = ownerStatement->effectiveTypeStatement;
                 if (!classTypeStatement)
                     return;
                 if (!isIncluded(classTypeStatement->fileName) &&
                     !isIncluded(classTypeStatement->definitionFileName))
                     return;
-                if (classTypeStatement->kind == StatementKind::EnumType
-                        || classTypeStatement->kind == StatementKind::EnumClassType) {
+                if (classTypeStatement->kind == StatementKind::EnumType ||
+                    classTypeStatement->kind == StatementKind::EnumClassType) {
                     const StatementMap& children =
-                            mParser->statementList().childrenStatements(classTypeStatement);
-                    foreach (const PStatement& child,children) {
-                        addStatement(child,fileName,line);
+                        mParser->statementList().childrenStatements(classTypeStatement);
+                    foreach (const PStatement& child, children) {
+                        addStatement(child, fileName, line);
                     }
                 } else {
-                    //class
+                    // class
                     if (classTypeStatement == scopeTypeStatement) {
-                        //we can use all static members
+                        // we can use all static members
                         const StatementMap& children =
-                                mParser->statementList().childrenStatements(classTypeStatement);
+                            mParser->statementList().childrenStatements(classTypeStatement);
                         foreach (const PStatement& childStatement, children) {
-                            if (
-                              (childStatement->isStatic())
-                               || (childStatement->kind == StatementKind::Typedef
-                                || childStatement->kind == StatementKind::Class
-                                || childStatement->kind == StatementKind::Enum
-                                || childStatement->kind == StatementKind::EnumClassType
-                                || childStatement->kind == StatementKind::EnumType
-                                   )) {
-                                addStatement(childStatement,fileName,-1);
+                            if ((childStatement->isStatic()) ||
+                                (childStatement->kind == StatementKind::Typedef ||
+                                 childStatement->kind == StatementKind::Class ||
+                                 childStatement->kind == StatementKind::Enum ||
+                                 childStatement->kind == StatementKind::EnumClassType ||
+                                 childStatement->kind == StatementKind::EnumType)) {
+                                addStatement(childStatement, fileName, -1);
                             }
                         }
                     } else {
                         // we can only use public static members
                         const StatementMap& children =
-                                mParser->statementList().childrenStatements(classTypeStatement);
-                        foreach (const PStatement& childStatement,children) {
-                            if (
-                              (childStatement->isStatic())
-                               || (childStatement->kind == StatementKind::Typedef
-                                || childStatement->kind == StatementKind::Class
-                                || childStatement->kind == StatementKind::Enum
-                                || childStatement->kind == StatementKind::EnumClassType
-                                || childStatement->kind == StatementKind::EnumType
-                                   )) {
+                            mParser->statementList().childrenStatements(classTypeStatement);
+                        foreach (const PStatement& childStatement, children) {
+                            if ((childStatement->isStatic()) ||
+                                (childStatement->kind == StatementKind::Typedef ||
+                                 childStatement->kind == StatementKind::Class ||
+                                 childStatement->kind == StatementKind::Enum ||
+                                 childStatement->kind == StatementKind::EnumClassType ||
+                                 childStatement->kind == StatementKind::EnumType)) {
                                 if (childStatement->accessibility == StatementAccessibility::Public)
-                                    addStatement(childStatement,fileName,-1);
+                                    addStatement(childStatement, fileName, -1);
                             }
                         }
                     }
@@ -927,9 +894,11 @@ void CodeCompletionPopup::getCompletionFor(
     }
 }
 
-void CodeCompletionPopup::getCompletionForFunctionWithoutDefinition(const QString& preWord, QStringList ownerExpression, const QString &memberOperator, const QStringList &memberExpression, const QString &fileName, int line)
+void CodeCompletionPopup::getCompletionForFunctionWithoutDefinition(
+    const QString& preWord, QStringList ownerExpression, const QString& memberOperator,
+    const QStringList& memberExpression, const QString& fileName, int line)
 {
-    if(!mParser) {
+    if (!mParser) {
         return;
     }
     if (!mParser->enabled())
@@ -940,41 +909,40 @@ void CodeCompletionPopup::getCompletionForFunctionWithoutDefinition(const QStrin
     if (!mParser->freeze())
         return;
     {
-        auto action = finally([this]{
-            mParser->unFreeze();
-        });
+        auto action = finally([this] { mParser->unFreeze(); });
 
         if (memberOperator.isEmpty()) {
             getCompletionListForComplexKeyword(preWord);
             PStatement scopeStatement = mCurrentScope;
-            //add members of current scope that not added before
-            while (scopeStatement && scopeStatement->kind!=StatementKind::Namespace
-                   && scopeStatement->kind!=StatementKind::Class) {
+            // add members of current scope that not added before
+            while (scopeStatement && scopeStatement->kind != StatementKind::Namespace &&
+                   scopeStatement->kind != StatementKind::Class) {
                 scopeStatement = scopeStatement->parentScope.lock();
             }
             if (scopeStatement) {
                 if (scopeStatement->kind == StatementKind::Namespace) {
-                    //namespace;
+                    // namespace;
                     PStatementList namespaceStatementsList =
-                            mParser->findNamespace(scopeStatement->fullName);
+                        mParser->findNamespace(scopeStatement->fullName);
                     if (namespaceStatementsList) {
                         foreach (const PStatement& namespaceStatement, *namespaceStatementsList) {
-                            addFunctionWithoutDefinitionChildren(namespaceStatement, fileName, line);
+                            addFunctionWithoutDefinitionChildren(namespaceStatement, fileName,
+                                                                 line);
                         }
                     }
                 } else {
-                    //class
+                    // class
                     addKeyword("operator");
                     addFunctionWithoutDefinitionChildren(scopeStatement, fileName, line);
                 }
             } else {
-                //global
+                // global
                 addFunctionWithoutDefinitionChildren(scopeStatement, fileName, line);
             }
         } else {
             if (memberOperator != "::")
                 return;
-            //the identifier to be completed is a member of variable/class
+            // the identifier to be completed is a member of variable/class
 
             if (ownerExpression.isEmpty()) {
                 // start with '::', we only find in global
@@ -982,23 +950,22 @@ void CodeCompletionPopup::getCompletionForFunctionWithoutDefinition(const QStrin
                 addFunctionWithoutDefinitionChildren(nullptr, fileName, line);
                 return;
             }
-            if (memberExpression.length()==2 && memberExpression.front()!="~")
+            if (memberExpression.length() == 2 && memberExpression.front() != "~")
                 return;
-            if (memberExpression.length()>2)
+            if (memberExpression.length() > 2)
                 return;
 
-            PStatement scope = mCurrentScope;//the scope the expression in
+            PStatement scope = mCurrentScope; // the scope the expression in
             PStatement parentTypeStatement;
-            PEvalStatement ownerStatement = mParser->evalExpression(fileName,
-                                        ownerExpression,
-                                        scope);
-            if(!ownerStatement  || !ownerStatement->effectiveTypeStatement) {
+            PEvalStatement ownerStatement =
+                mParser->evalExpression(fileName, ownerExpression, scope);
+            if (!ownerStatement || !ownerStatement->effectiveTypeStatement) {
                 return;
             }
-            if (ownerStatement->kind==EvalStatementKind::Namespace) {
-                //there might be many statements corresponding to one namespace;
+            if (ownerStatement->kind == EvalStatementKind::Namespace) {
+                // there might be many statements corresponding to one namespace;
                 PStatementList namespaceStatementsList =
-                        mParser->findNamespace(ownerStatement->baseType);
+                    mParser->findNamespace(ownerStatement->baseType);
                 if (namespaceStatementsList) {
                     foreach (const PStatement& namespaceStatement, *namespaceStatementsList) {
                         addFunctionWithoutDefinitionChildren(namespaceStatement, fileName, line);
@@ -1007,13 +974,14 @@ void CodeCompletionPopup::getCompletionForFunctionWithoutDefinition(const QStrin
                 return;
             } else if (ownerStatement->effectiveTypeStatement->kind == StatementKind::Class) {
                 addKeyword("operator");
-                addFunctionWithoutDefinitionChildren(ownerStatement->effectiveTypeStatement, fileName, line);
+                addFunctionWithoutDefinitionChildren(ownerStatement->effectiveTypeStatement,
+                                                     fileName, line);
             }
         }
     }
 }
 
-void CodeCompletionPopup::getCompletionListForComplexKeyword(const QString &preWord)
+void CodeCompletionPopup::getCompletionListForComplexKeyword(const QString& preWord)
 {
     mFullCompletionStatementList.clear();
     if (preWord == "long") {
@@ -1037,9 +1005,8 @@ void CodeCompletionPopup::getCompletionListForComplexKeyword(const QString &preW
     }
 }
 
-void CodeCompletionPopup::getCompletionListForNamespaces(const QString &/*preWord*/,
-                                                         const QString& fileName,
-                                                         int line)
+void CodeCompletionPopup::getCompletionListForNamespaces(const QString& /*preWord*/,
+                                                         const QString& fileName, int line)
 {
     if (!mParser->enabled())
         return;
@@ -1047,35 +1014,32 @@ void CodeCompletionPopup::getCompletionListForNamespaces(const QString &/*preWor
     if (!mParser->freeze())
         return;
     {
-        auto action = finally([this]{
-            mParser->unFreeze();
-        });
+        auto action = finally([this] { mParser->unFreeze(); });
         QList<QString> namespaceNames = mParser->namespaces();
         foreach (const QString& name, namespaceNames) {
             PStatementList namespaces = mParser->findNamespace(name);
-            foreach(const PStatement& statement, *namespaces) {
-                if (isIncluded(statement->fileName)
-                        || isIncluded(statement->definitionFileName)) {
-                    addStatement(statement,fileName,line);
+            foreach (const PStatement& statement, *namespaces) {
+                if (isIncluded(statement->fileName) || isIncluded(statement->definitionFileName)) {
+                    addStatement(statement, fileName, line);
                     continue;
                 }
             }
-
         }
     }
 }
 
-void CodeCompletionPopup::getCompletionListForTypes(const QString &preWord, const QString &fileName, int line)
+void CodeCompletionPopup::getCompletionListForTypes(const QString& preWord, const QString& fileName,
+                                                    int line)
 {
-    if (preWord=="typedef") {
+    if (preWord == "typedef") {
         addKeyword("const");
         addKeyword("struct");
         addKeyword("class");
     }
 
     if (mShowKeywords) {
-        //add keywords
-        foreach (const QString& keyword,CppTypeKeywords) {
+        // add keywords
+        foreach (const QString& keyword, CppTypeKeywords) {
             addKeyword(keyword);
         }
     }
@@ -1085,20 +1049,17 @@ void CodeCompletionPopup::getCompletionListForTypes(const QString &preWord, cons
     if (!mParser->freeze())
         return;
     {
-        auto action = finally([this]{
-            mParser->unFreeze();
-        });
-        QList<PStatement> statements = mParser->listTypeStatements(fileName,line);
-        foreach(const PStatement& statement, statements) {
-            if (isIncluded(statement->fileName)
-                    || isIncluded(statement->definitionFileName)) {
-                addStatement(statement,fileName,line);
+        auto action = finally([this] { mParser->unFreeze(); });
+        QList<PStatement> statements = mParser->listTypeStatements(fileName, line);
+        foreach (const PStatement& statement, statements) {
+            if (isIncluded(statement->fileName) || isIncluded(statement->definitionFileName)) {
+                addStatement(statement, fileName, line);
             }
         }
     }
 }
 
-void CodeCompletionPopup::getCompletionListForLiteralOperators(const QString &fileName, int line)
+void CodeCompletionPopup::getCompletionListForLiteralOperators(const QString& fileName, int line)
 {
     if (!mParser->enabled())
         return;
@@ -1106,20 +1067,17 @@ void CodeCompletionPopup::getCompletionListForLiteralOperators(const QString &fi
     if (!mParser->freeze())
         return;
     {
-        auto action = finally([this]{
-            mParser->unFreeze();
-        });
-        QList<PStatement> statements = mParser->listLiteralOperators(fileName,line);
-        foreach(const PStatement& statement, statements) {
-            if (isIncluded(statement->fileName)
-                    || isIncluded(statement->definitionFileName)) {
-                addStatement(statement,fileName,line);
+        auto action = finally([this] { mParser->unFreeze(); });
+        QList<PStatement> statements = mParser->listLiteralOperators(fileName, line);
+        foreach (const PStatement& statement, statements) {
+            if (isIncluded(statement->fileName) || isIncluded(statement->definitionFileName)) {
+                addStatement(statement, fileName, line);
             }
         }
     }
 }
 
-void CodeCompletionPopup::addKeyword(const QString &keyword)
+void CodeCompletionPopup::addKeyword(const QString& keyword)
 {
     PStatement statement = std::make_shared<Statement>();
     statement->command = keyword;
@@ -1129,12 +1087,13 @@ void CodeCompletionPopup::addKeyword(const QString &keyword)
     mFullCompletionStatementList.append(statement);
 }
 
-bool CodeCompletionPopup::isIncluded(const QString &fileName)
+bool CodeCompletionPopup::isIncluded(const QString& fileName)
 {
     return mIncludedFiles.contains(fileName);
 }
 
-void CodeCompletionPopup::setHideSymbolsStartWithTwoUnderline(bool newHideSymbolsStartWithTwoUnderline)
+void CodeCompletionPopup::setHideSymbolsStartWithTwoUnderline(
+    bool newHideSymbolsStartWithTwoUnderline)
 {
     mHideSymbolsStartWithTwoUnderline = newHideSymbolsStartWithTwoUnderline;
 }
@@ -1159,42 +1118,44 @@ void CodeCompletionPopup::setHideSymbolsStartWithUnderline(bool newHideSymbolsSt
     mHideSymbolsStartWithUnderline = newHideSymbolsStartWithUnderline;
 }
 
-const QString &CodeCompletionPopup::memberOperator() const
+const QString& CodeCompletionPopup::memberOperator() const
 {
     return mMemberOperator;
 }
 
-const QList<PCodeSnippet> &CodeCompletionPopup::codeSnippets() const
+const QList<PCodeSnippet>& CodeCompletionPopup::codeSnippets() const
 {
     return mCodeSnippets;
 }
 
-void CodeCompletionPopup::setCodeSnippets(const QList<PCodeSnippet> &newCodeSnippets)
+void CodeCompletionPopup::setCodeSnippets(const QList<PCodeSnippet>& newCodeSnippets)
 {
     mCodeSnippets = newCodeSnippets;
 }
 
-void CodeCompletionPopup::setColors(const std::shared_ptr<QHash<StatementKind, std::shared_ptr<ColorSchemeItem> > > &newColors)
+void CodeCompletionPopup::setColors(
+    const std::shared_ptr<QHash<StatementKind, std::shared_ptr<ColorSchemeItem>>>& newColors)
 {
     mColors = newColors;
 }
 
-const QString &CodeCompletionPopup::memberPhrase() const
+const QString& CodeCompletionPopup::memberPhrase() const
 {
     return mMemberPhrase;
 }
 
-const PStatement &CodeCompletionPopup::currentScope() const
+const PStatement& CodeCompletionPopup::currentScope() const
 {
     return mCurrentScope;
 }
 
-void CodeCompletionPopup::setCurrentScope(const PStatement &newCurrentStatement)
+void CodeCompletionPopup::setCurrentScope(const PStatement& newCurrentStatement)
 {
     mCurrentScope = newCurrentStatement;
 }
 
-const std::shared_ptr<QHash<StatementKind, std::shared_ptr<ColorSchemeItem> > >& CodeCompletionPopup::colors() const
+const std::shared_ptr<QHash<StatementKind, std::shared_ptr<ColorSchemeItem>>>&
+CodeCompletionPopup::colors() const
 {
     return mColors;
 }
@@ -1259,24 +1220,24 @@ void CodeCompletionPopup::setShowCount(int newShowCount)
     mShowCount = newShowCount;
 }
 
-const PCppParser &CodeCompletionPopup::parser() const
+const PCppParser& CodeCompletionPopup::parser() const
 {
     return mParser;
 }
 
-void CodeCompletionPopup::setParser(const PCppParser &newParser)
+void CodeCompletionPopup::setParser(const PCppParser& newParser)
 {
     mParser = newParser;
 }
 
-void CodeCompletionPopup::hideEvent(QHideEvent *event)
+void CodeCompletionPopup::hideEvent(QHideEvent* event)
 {
     QMutexLocker locker(&mMutex);
     mListView->setKeypressedCallback(nullptr);
     mCompletionStatementList.clear();
-//    foreach (PStatement statement, mFullCompletionStatementList) {
-//        statement->matchPositions.clear();
-//    }
+    //    foreach (PStatement statement, mFullCompletionStatementList) {
+    //        statement->matchPositions.clear();
+    //    }
     mFullCompletionStatementList.clear();
     mIncludedFiles.clear();
     mUsings.clear();
@@ -1286,7 +1247,7 @@ void CodeCompletionPopup::hideEvent(QHideEvent *event)
     QWidget::hideEvent(event);
 }
 
-bool CodeCompletionPopup::event(QEvent *event)
+bool CodeCompletionPopup::event(QEvent* event)
 {
     bool result = QWidget::event(event);
     if (event->type() == QEvent::FontChange) {
@@ -1298,48 +1259,46 @@ bool CodeCompletionPopup::event(QEvent *event)
     return result;
 }
 
-CodeCompletionListModel::CodeCompletionListModel(const StatementList *statements, QObject *parent):
-    QAbstractListModel(parent),
-    mStatements(statements)
+CodeCompletionListModel::CodeCompletionListModel(const StatementList* statements, QObject* parent)
+    : QAbstractListModel(parent), mStatements(statements)
 {
-
 }
 
-int CodeCompletionListModel::rowCount(const QModelIndex &) const
+int CodeCompletionListModel::rowCount(const QModelIndex&) const
 {
     return mStatements->count();
 }
 
-QVariant CodeCompletionListModel::data(const QModelIndex &index, int role) const
+QVariant CodeCompletionListModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid())
         return QVariant();
-    if (index.row()>=mStatements->count())
+    if (index.row() >= mStatements->count())
         return QVariant();
 
-    switch(role) {
+    switch (role) {
     case Qt::DisplayRole: {
         PStatement statement = mStatements->at(index.row());
         return statement->command;
-        }
+    }
     }
     return QVariant();
 }
 
-PStatement CodeCompletionListModel::statement(const QModelIndex &index) const
+PStatement CodeCompletionListModel::statement(const QModelIndex& index) const
 {
     if (!index.isValid())
         return PStatement();
-    if (index.row()>=mStatements->count())
+    if (index.row() >= mStatements->count())
         return PStatement();
     return mStatements->at(index.row());
 }
 
-QPixmap CodeCompletionListModel::statementIcon(const QModelIndex &index, int size) const
+QPixmap CodeCompletionListModel::statementIcon(const QModelIndex& index, int size) const
 {
     if (!index.isValid())
         return QPixmap();
-    if (index.row()>=mStatements->count())
+    if (index.row() >= mStatements->count())
         return QPixmap();
     PStatement statement = mStatements->at(index.row());
     return pIconsManager->getPixmapForStatement(statement, size);
@@ -1351,10 +1310,11 @@ void CodeCompletionListModel::notifyUpdated()
     endResetModel();
 }
 
-void CodeCompletionListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void CodeCompletionListItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option,
+                                           const QModelIndex& index) const
 {
     PStatement statement;
-    if (mModel && (statement = mModel->statement(index)) ) {
+    if (mModel && (statement = mModel->statement(index))) {
         QFont normalFont{font()};
         QFont matchedFont{font()};
         normalFont.setBold(false);
@@ -1367,41 +1327,41 @@ void CodeCompletionListItemDelegate::paint(QPainter *painter, const QStyleOption
             painter->fillRect(option.rect, mCurrentSelectionColor);
         }
         QFontMetrics fm{font()};
-        int iconSize = fm.height()*0.8;
+        int iconSize = fm.height() * 0.8;
         QPixmap icon = mModel->statementIcon(index, iconSize);
-        int x=option.rect.left();
+        int x = option.rect.left();
         if (!icon.isNull()) {
-            qreal dpr=icon.devicePixelRatioF();
-            int x1=x+(option.rect.height()-icon.width()/dpr)/2;
-            int y1=option.rect.top()+(option.rect.height()-icon.height()/dpr)/2;
-            painter->drawPixmap(x1,y1,icon);
-            x+=option.rect.height();
+            qreal dpr = icon.devicePixelRatioF();
+            int x1 = x + (option.rect.height() - icon.width() / dpr) / 2;
+            int y1 = option.rect.top() + (option.rect.height() - icon.height() / dpr) / 2;
+            painter->drawPixmap(x1, y1, icon);
+            x += option.rect.height();
         }
         QString text = statement->command;
-        int pos=0;
-        int padding = (option.rect.height()-painter->fontMetrics().height())/2;
-        int y=option.rect.bottom()-painter->fontMetrics().descent()-padding;
+        int pos = 0;
+        int padding = (option.rect.height() - painter->fontMetrics().height()) / 2;
+        int y = option.rect.bottom() - painter->fontMetrics().descent() - padding;
         foreach (const PStatementMathPosition& matchPosition, statement->matchPositions) {
-            if (pos<matchPosition->start) {
-                QString t = text.mid(pos,matchPosition->start-pos);
+            if (pos < matchPosition->start) {
+                QString t = text.mid(pos, matchPosition->start - pos);
                 painter->setPen(normalColor);
                 painter->setFont(normalFont);
-                painter->drawText(x,y,t);
-                x+=painter->fontMetrics().horizontalAdvance(t);
+                painter->drawText(x, y, t);
+                x += painter->fontMetrics().horizontalAdvance(t);
             }
-            QString t = text.mid(matchPosition->start, matchPosition->end-matchPosition->start);
+            QString t = text.mid(matchPosition->start, matchPosition->end - matchPosition->start);
             painter->setPen(matchedColor);
             painter->setFont(matchedFont);
-            painter->drawText(x,y,t);
-            x+=painter->fontMetrics().horizontalAdvance(t);
-            pos=matchPosition->end;
+            painter->drawText(x, y, t);
+            x += painter->fontMetrics().horizontalAdvance(t);
+            pos = matchPosition->end;
         }
-        if (pos<text.length()) {
-            QString t = text.mid(pos,text.length()-pos);
+        if (pos < text.length()) {
+            QString t = text.mid(pos, text.length() - pos);
             painter->setPen(normalColor);
             painter->setFont(normalFont);
-            painter->drawText(x,y,t);
-            x+=painter->fontMetrics().horizontalAdvance(t);
+            painter->drawText(x, y, t);
+            x += painter->fontMetrics().horizontalAdvance(t);
         }
         painter->restore();
     } else {
@@ -1409,40 +1369,41 @@ void CodeCompletionListItemDelegate::paint(QPainter *painter, const QStyleOption
     }
 }
 
-const QColor &CodeCompletionListItemDelegate::normalColor() const
+const QColor& CodeCompletionListItemDelegate::normalColor() const
 {
     return mNormalColor;
 }
 
-void CodeCompletionListItemDelegate::setNormalColor(const QColor &newNormalColor)
+void CodeCompletionListItemDelegate::setNormalColor(const QColor& newNormalColor)
 {
     mNormalColor = newNormalColor;
 }
 
-const QColor &CodeCompletionListItemDelegate::matchedColor() const
+const QColor& CodeCompletionListItemDelegate::matchedColor() const
 {
     return mMatchedColor;
 }
 
-void CodeCompletionListItemDelegate::setMatchedColor(const QColor &newMatchedColor)
+void CodeCompletionListItemDelegate::setMatchedColor(const QColor& newMatchedColor)
 {
     mMatchedColor = newMatchedColor;
 }
 
-const QFont &CodeCompletionListItemDelegate::font() const
+const QFont& CodeCompletionListItemDelegate::font() const
 {
     return mFont;
 }
 
-void CodeCompletionListItemDelegate::setFont(const QFont &newFont)
+void CodeCompletionListItemDelegate::setFont(const QFont& newFont)
 {
     mFont = newFont;
 }
 
-QSize CodeCompletionListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+QSize CodeCompletionListItemDelegate::sizeHint(const QStyleOptionViewItem& option,
+                                               const QModelIndex& index) const
 {
     QSize size = QStyledItemDelegate::sizeHint(option, index);
-    size.setHeight(QFontMetrics(mFont).height()*mLineHeightFactor);
+    size.setHeight(QFontMetrics(mFont).height() * mLineHeightFactor);
     return size;
 }
 
@@ -1461,13 +1422,15 @@ QColor CodeCompletionListItemDelegate::currentSelectionColor() const
     return mCurrentSelectionColor;
 }
 
-void CodeCompletionListItemDelegate::setCurrentSelectionColor(const QColor &newCurrentSelectionColor)
+void CodeCompletionListItemDelegate::setCurrentSelectionColor(
+    const QColor& newCurrentSelectionColor)
 {
     mCurrentSelectionColor = newCurrentSelectionColor;
 }
 
-CodeCompletionListItemDelegate::CodeCompletionListItemDelegate(CodeCompletionListModel *model, QWidget *parent) : QStyledItemDelegate(parent),
-    mModel(model)
+CodeCompletionListItemDelegate::CodeCompletionListItemDelegate(CodeCompletionListModel* model,
+                                                               QWidget* parent)
+    : QStyledItemDelegate(parent), mModel(model)
 {
     mNormalColor = qApp->palette().color(QPalette::Text);
     mMatchedColor = qApp->palette().color(QPalette::BrightText);

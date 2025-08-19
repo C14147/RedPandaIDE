@@ -27,12 +27,13 @@ namespace Ui {
 class ToolsGeneralWidget;
 }
 
-class ToolsModel: public QAbstractListModel {
+class ToolsModel : public QAbstractListModel
+{
 public:
     explicit ToolsModel(QObject* parent = nullptr);
 
-    const QList<PToolItem> &tools() const;
-    void setTools(const QList<PToolItem> &newTools);
+    const QList<PToolItem>& tools() const;
+    void setTools(const QList<PToolItem>& newTools);
     void addTool(PToolItem item);
     PToolItem getTool(int row);
     void updateTool(int row, PToolItem item);
@@ -44,26 +45,27 @@ private:
 
     // QAbstractItemModel interface
 public:
-    int rowCount(const QModelIndex &parent) const override;
-    QVariant data(const QModelIndex &index, int role) const override;
+    int rowCount(const QModelIndex& parent) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
 
     // QAbstractItemModel interface
 public:
-    Qt::ItemFlags flags(const QModelIndex &index) const override;
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
     Qt::DropActions supportedDropActions() const override;
-    bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
-    bool insertRows(int row, int count, const QModelIndex &parent) override;
-    bool removeRows(int row, int count, const QModelIndex &parent) override;
-
+    bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
+                      const QModelIndex& parent) override;
+    bool insertRows(int row, int count, const QModelIndex& parent) override;
+    bool removeRows(int row, int count, const QModelIndex& parent) override;
 };
-
 
 class ToolsGeneralWidget : public SettingsWidget
 {
     Q_OBJECT
 public:
-    explicit ToolsGeneralWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit ToolsGeneralWidget(const QString& name, const QString& group,
+                                QWidget* parent = nullptr);
     ~ToolsGeneralWidget();
+
 private:
     void finishEditing(bool askSave);
     void cleanEditor();
@@ -71,7 +73,7 @@ private:
     void showEditPanel(bool isShow);
 private slots:
     void onEdited();
-    void editTool(const QModelIndex &index);
+    void editTool(const QModelIndex& index);
     void updateDemo();
     void on_btnAdd_clicked();
 
@@ -89,7 +91,7 @@ private slots:
     void on_btnEdit_clicked();
 
 private:
-    Ui::ToolsGeneralWidget *ui;
+    Ui::ToolsGeneralWidget* ui;
     MacroInfoModel mMacroInfoModel;
     ToolsModel mToolsModel;
     bool mEdited;
@@ -102,7 +104,7 @@ protected:
 
     // SettingsWidget interface
 protected:
-    void updateIcons(const QSize &size) override;
+    void updateIcons(const QSize& size) override;
 };
 
 #endif // TOOLSGENERALWIDGET_H

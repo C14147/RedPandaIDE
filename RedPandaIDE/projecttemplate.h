@@ -22,13 +22,13 @@
 #include "projectoptions.h"
 
 struct TemplateUnit {
-  QString CName;
-  QString CppName;
-  QString CText;
-  QString CppText;
-  QString Source;
-  QString Target;
-  bool overwrite;
+    QString CName;
+    QString CppName;
+    QString CText;
+    QString CppText;
+    QString Source;
+    QString Target;
+    bool overwrite;
 };
 
 using PTemplateUnit = std::shared_ptr<TemplateUnit>;
@@ -37,37 +37,37 @@ class ProjectTemplate : public QObject
 {
     Q_OBJECT
 public:
-    explicit ProjectTemplate(QObject *parent = nullptr);
+    explicit ProjectTemplate(QObject* parent = nullptr);
     int unitCount();
     PTemplateUnit unit(int index);
     void readTemplateFile(const QString& fileName);
     bool save();
-    const QString &category() const;
-    void setCategory(const QString &newCategory);
+    const QString& category() const;
+    void setCategory(const QString& newCategory);
 
-    const QString &description() const;
-    void setDescription(const QString &newDescription);
+    const QString& description() const;
+    void setDescription(const QString& newDescription);
 
-    const QString &fileName() const;
-    void setFileName(const QString &newFileName);
+    const QString& fileName() const;
+    void setFileName(const QString& newFileName);
 
     const QString folder() const;
 
-    const QString &icon() const;
-    void setIcon(const QString &newIcon);
+    const QString& icon() const;
+    void setIcon(const QString& newIcon);
 
-    const QString &name() const;
-    void setName(const QString &newName);
+    const QString& name() const;
+    void setName(const QString& newName);
 
-    const ProjectOptions &options() const;
-    void setOptions(const ProjectOptions &newOptions);
+    const ProjectOptions& options() const;
+    void setOptions(const ProjectOptions& newOptions);
 
     int version() const;
 
     void setVersion(int newVersion);
 
     QString iconInfo() const;
-    void setIconInfo(const QString &newIconInfo);
+    void setIconInfo(const QString& newIconInfo);
 
 private:
     QString mFileName;

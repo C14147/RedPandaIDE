@@ -17,9 +17,7 @@
 #include "infomessagebox.h"
 #include "ui_infomessagebox.h"
 
-InfoMessageBox::InfoMessageBox(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::InfoMessageBox)
+InfoMessageBox::InfoMessageBox(QWidget* parent) : QDialog(parent), ui(new Ui::InfoMessageBox)
 {
     ui->setupUi(this);
 }
@@ -44,4 +42,3 @@ void InfoMessageBox::on_btnOk_clicked()
 {
     accept();
 }
-

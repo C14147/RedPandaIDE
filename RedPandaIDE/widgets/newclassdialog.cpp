@@ -21,17 +21,14 @@
 #include <QFileDialog>
 #include <algorithm>
 
-NewClassDialog::NewClassDialog(PCppParser parser, QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::NewClassDialog),
-    mModel(parser)
+NewClassDialog::NewClassDialog(PCppParser parser, QWidget* parent)
+    : QDialog(parent), ui(new Ui::NewClassDialog), mModel(parser)
 {
-    setWindowFlag(Qt::WindowContextHelpButtonHint,false);
+    setWindowFlag(Qt::WindowContextHelpButtonHint, false);
     ui->setupUi(this);
-    resize(pSettings->ui().newClassDialogWidth(),pSettings->ui().newClassDialogHeight());
+    resize(pSettings->ui().newClassDialogWidth(), pSettings->ui().newClassDialogHeight());
     onUpdateIcons();
-    connect(pIconsManager,&IconsManager::actionIconsUpdated,
-            this, &NewClassDialog::onUpdateIcons);
+    connect(pIconsManager, &IconsManager::actionIconsUpdated, this, &NewClassDialog::onUpdateIcons);
     ui->txtClassName->setFocus();
     ui->cbBaseClass->setModel(&mModel);
 }
@@ -65,7 +62,7 @@ QString NewClassDialog::path() const
     return ui->txtPath->text();
 }
 
-void NewClassDialog::setPath(const QString &location)
+void NewClassDialog::setPath(const QString& location)
 {
     ui->txtPath->setText(location);
 }
@@ -75,11 +72,10 @@ void NewClassDialog::on_btnCancel_clicked()
     this->reject();
 }
 
-void NewClassDialog::closeEvent(QCloseEvent */*event*/)
+void NewClassDialog::closeEvent(QCloseEvent* /*event*/)
 {
     this->reject();
 }
-
 
 void NewClassDialog::on_btnCreate_clicked()
 {
@@ -91,38 +87,32 @@ void NewClassDialog::onUpdateIcons()
     pIconsManager->setIcon(ui->btnBrowsePath, IconsManager::ACTION_FILE_OPEN_FOLDER);
 }
 
-
 void NewClassDialog::on_btnBrowsePath_clicked()
 {
-    QString fileName = QFileDialog::getExistingDirectory(
-                this,
-                tr("Path"),
-                ui->txtPath->text());
+    QString fileName = QFileDialog::getExistingDirectory(this, tr("Path"), ui->txtPath->text());
     ui->txtPath->setText(fileName);
 }
 
-
-void NewClassDialog::on_txtClassName_textChanged(const QString &/* arg1 */)
+void NewClassDialog::on_txtClassName_textChanged(const QString& /* arg1 */)
 {
-    ui->txtHeaderName->setText(ui->txtClassName->text().toLower()+".h");
-    ui->txtSourceName->setText(ui->txtClassName->text().toLower()+".cpp");
+    ui->txtHeaderName->setText(ui->txtClassName->text().toLower() + ".h");
+    ui->txtSourceName->setText(ui->txtClassName->text().toLower() + ".cpp");
 }
 
-NewClassCandidatesModel::NewClassCandidatesModel(PCppParser parser):QAbstractListModel(),
-    mParser(parser)
+NewClassCandidatesModel::NewClassCandidatesModel(PCppParser parser)
+    : QAbstractListModel(), mParser(parser)
 {
     fillClasses();
 }
 
 PStatement NewClassCandidatesModel::getCandidate(int row) const
 {
-    if (row<0)
+    if (row < 0)
         return PStatement();
-    if (row==0)
+    if (row == 0)
         return PStatement();
-    return mCandidates[row-1];
+    return mCandidates[row - 1];
 }
-
 
 void NewClassCandidatesModel::fillClasses()
 {
@@ -130,62 +120,53 @@ void NewClassCandidatesModel::fillClasses()
         return;
     if (!mParser->freeze())
         return;
-    foreach( const PStatement& s, mParser->statementList().childrenStatements()) {
-        if (s->kind==StatementKind::Class
-                && s->inProject()
-                && !s->command.startsWith("_")
-                && !s->command.contains("<")
-                && !mClassNames.contains(s->fullName)) {
-            if (isC_CPPHeaderFile(getFileType(s->fileName))){
-                mCandidates.append(s);
-                mClassNames.insert(s->fullName);
-            }
-        } else if (s->kind == StatementKind::Namespace
-                   && !s->command.startsWith("_")
-                   && !s->command.contains("<")) {
-            fillClassesInNamespace(s);
-        }
-    }
-    mParser->unFreeze();
-    std::sort(mCandidates.begin(),mCandidates.end(),[](const PStatement& s1, const PStatement& s2){
-        return s1->fullName<s2->fullName;
-    });
-
-}
-
-void NewClassCandidatesModel::fillClassesInNamespace(PStatement ns)
-{
-    foreach( const PStatement& s, mParser->statementList().childrenStatements(ns)) {
-        if (s->kind==StatementKind::Class
-                && s->inProject()
-                && !s->command.startsWith("_")
-                && !s->command.contains("<")
-                && !mClassNames.contains(s->fullName)) {
+    foreach (const PStatement& s, mParser->statementList().childrenStatements()) {
+        if (s->kind == StatementKind::Class && s->inProject() && !s->command.startsWith("_") &&
+            !s->command.contains("<") && !mClassNames.contains(s->fullName)) {
             if (isC_CPPHeaderFile(getFileType(s->fileName))) {
                 mCandidates.append(s);
                 mClassNames.insert(s->fullName);
             }
-        } else if (s->kind == StatementKind::Namespace
-                   && !s->command.startsWith("_")
-                   && !s->command.contains("<")) {
+        } else if (s->kind == StatementKind::Namespace && !s->command.startsWith("_") &&
+                   !s->command.contains("<")) {
+            fillClassesInNamespace(s);
+        }
+    }
+    mParser->unFreeze();
+    std::sort(
+        mCandidates.begin(), mCandidates.end(),
+        [](const PStatement& s1, const PStatement& s2) { return s1->fullName < s2->fullName; });
+}
+
+void NewClassCandidatesModel::fillClassesInNamespace(PStatement ns)
+{
+    foreach (const PStatement& s, mParser->statementList().childrenStatements(ns)) {
+        if (s->kind == StatementKind::Class && s->inProject() && !s->command.startsWith("_") &&
+            !s->command.contains("<") && !mClassNames.contains(s->fullName)) {
+            if (isC_CPPHeaderFile(getFileType(s->fileName))) {
+                mCandidates.append(s);
+                mClassNames.insert(s->fullName);
+            }
+        } else if (s->kind == StatementKind::Namespace && !s->command.startsWith("_") &&
+                   !s->command.contains("<")) {
             fillClassesInNamespace(s);
         }
     }
 }
 
-int NewClassCandidatesModel::rowCount(const QModelIndex &/*parent*/) const
+int NewClassCandidatesModel::rowCount(const QModelIndex& /*parent*/) const
 {
-    return mCandidates.count()+1;
+    return mCandidates.count() + 1;
 }
 
-QVariant NewClassCandidatesModel::data(const QModelIndex &index, int role) const
+QVariant NewClassCandidatesModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid())
         return QVariant();
-    if (role==Qt::DisplayRole) {
-        if (index.row()==0)
+    if (role == Qt::DisplayRole) {
+        if (index.row() == 0)
             return "";
-        return mCandidates[index.row()-1]->fullName;
+        return mCandidates[index.row() - 1]->fullName;
     }
     return QVariant();
 }

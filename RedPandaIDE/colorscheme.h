@@ -25,8 +25,8 @@
 #define EXT_PREFIX_CUSTOM ".custom"
 
 #define COLOR_SCHEME_BREAKPOINT "Breakpoint"
-#define COLOR_SCHEME_ERROR  "Error"
-#define COLOR_SCHEME_ACTIVE_BREAKPOINT  "Active Breakpoint"
+#define COLOR_SCHEME_ERROR "Error"
+#define COLOR_SCHEME_ACTIVE_BREAKPOINT "Active Breakpoint"
 #define COLOR_SCHEME_GUTTER "Gutter"
 #define COLOR_SCHEME_GUTTER_ACTIVE_LINE "Gutter Active Line"
 #define COLOR_SCHEME_SELECTION "Selected text"
@@ -41,19 +41,18 @@
 #define COLOR_SCHEME_BRACE_3 "brace/parenthesis/bracket level 3"
 #define COLOR_SCHEME_BRACE_4 "brace/parenthesis/bracket level 4"
 
-
 class ColorSchemeItem;
 using PColorSchemeItem = std::shared_ptr<ColorSchemeItem>;
-class ColorSchemeItem {
-
+class ColorSchemeItem
+{
 public:
     explicit ColorSchemeItem();
 
     QColor foreground() const;
-    void setForeground(const QColor &foreground);
+    void setForeground(const QColor& foreground);
 
     QColor background() const;
-    void setBackground(const QColor &background);
+    void setBackground(const QColor& background);
 
     bool bold() const;
     void setBold(bool bold);
@@ -79,7 +78,6 @@ private:
     bool mStrikeout;
 };
 
-
 class ColorScheme;
 using PColorScheme = std::shared_ptr<ColorScheme>;
 class ColorScheme
@@ -91,12 +89,12 @@ public:
 
     void addItem(const QString& name);
 
-    QMap<QString,PColorSchemeItem> items();
+    QMap<QString, PColorSchemeItem> items();
 
     static PColorScheme fromJson(const QJsonObject& json);
     void toJson(QJsonObject& json);
 
-    //void load();
+    // void load();
     void save(const QString& filename);
 
     bool bundled() const;
@@ -106,15 +104,17 @@ public:
     void setCustomed(bool customed);
 
     QString preferThemeType() const;
-    void setPreferThemeType(const QString &preferThemeType);
+    void setPreferThemeType(const QString& preferThemeType);
+
 private:
-    QMap<QString,PColorSchemeItem> mItems;
+    QMap<QString, PColorSchemeItem> mItems;
     QString mPreferThemeType;
     bool mBundled;
     bool mCustomed;
 };
 
-class ColorSchemeItemDefine {
+class ColorSchemeItemDefine
+{
 public:
     explicit ColorSchemeItemDefine();
     bool hasBackground() const;
@@ -127,10 +127,10 @@ public:
     void setHasFontStyle(bool value);
 
     QString group() const;
-    void setGroup(const QString &group);
+    void setGroup(const QString& group);
 
     QString displayName() const;
-    void setDisplayName(const QString &displayName);
+    void setDisplayName(const QString& displayName);
 
 private:
     bool mHasBackground;
@@ -142,7 +142,8 @@ private:
 
 using PColorSchemeItemDefine = std::shared_ptr<ColorSchemeItemDefine>;
 
-class ColorManager {
+class ColorManager
+{
 public:
     explicit ColorManager();
     void init();
@@ -159,24 +160,27 @@ public:
     PColorScheme get(const QString& name);
     PColorSchemeItem getItem(const QString& schemeName, const QString& itemName);
     bool isValidName(const QString& name);
-    void addDefine(const QString& name, const QString& displayName, const QString& group, bool hasForeground, bool hasBackground, bool hasFontStyle);
-    bool removeDefine(const QString &name);
+    void addDefine(const QString& name, const QString& displayName, const QString& group,
+                   bool hasForeground, bool hasBackground, bool hasFontStyle);
+    bool removeDefine(const QString& name);
     PColorSchemeItemDefine getDefine(const QString& name);
-    bool saveScheme(const QString &name);
+    bool saveScheme(const QString& name);
     void updateStatementColors(
-            std::shared_ptr<QHash<StatementKind, std::shared_ptr<ColorSchemeItem> > > statementColors,
-            const QString& schemeName);
+        std::shared_ptr<QHash<StatementKind, std::shared_ptr<ColorSchemeItem>>> statementColors,
+        const QString& schemeName);
+
 private:
     QString generateFullPathname(const QString& name, bool isBundled, bool isCustomed);
     QString generateFilename(const QString& name, bool isCustomed);
     void loadSchemesInDir(const QString& dirName, bool isBundled, bool isCustomed);
     void initItemDefines();
+
 private:
-    QMap<QString,PColorSchemeItemDefine> mSchemeItemDefines;
-    QMap<QString,PColorScheme> mSchemes;
+    QMap<QString, PColorSchemeItemDefine> mSchemeItemDefines;
+    QMap<QString, PColorScheme> mSchemes;
     PColorSchemeItemDefine mDefaultSchemeItemDefine;
 };
 
-extern ColorManager * pColorManager;
+extern ColorManager* pColorManager;
 
 #endif // COLORSCHEME_H

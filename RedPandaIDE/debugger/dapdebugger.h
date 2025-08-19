@@ -19,11 +19,11 @@
 
 #include "debugger.h"
 
-class DAPDebuggerClient : public DebuggerClient {
+class DAPDebuggerClient : public DebuggerClient
+{
     Q_OBJECT
 public:
-    explicit DAPDebuggerClient(Debugger* debugger, QObject *parent = nullptr);
-
+    explicit DAPDebuggerClient(Debugger* debugger, QObject* parent = nullptr);
 
     // QThread interface
 protected:
@@ -35,6 +35,7 @@ public:
 
 private:
     void initializeRequest();
+
 private:
     std::shared_ptr<QProcess> mProcess;
     bool mStop;

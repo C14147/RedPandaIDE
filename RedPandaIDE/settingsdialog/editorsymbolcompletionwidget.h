@@ -29,11 +29,12 @@ class EditorSymbolCompletionWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit EditorSymbolCompletionWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit EditorSymbolCompletionWidget(const QString& name, const QString& group,
+                                          QWidget* parent = nullptr);
     ~EditorSymbolCompletionWidget();
 
 private:
-    Ui::EditorSymbolCompletionWidget *ui;
+    Ui::EditorSymbolCompletionWidget* ui;
 
     // SettingsWidget interface
 protected:

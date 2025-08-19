@@ -23,9 +23,9 @@
 
 #include <QFileDialog>
 
-ProjectDLLHostWidget::ProjectDLLHostWidget(const QString &name, const QString &group, QWidget *parent) :
-    SettingsWidget(name,group,parent),
-    ui(new Ui::ProjectDLLHostWidget)
+ProjectDLLHostWidget::ProjectDLLHostWidget(const QString& name, const QString& group,
+                                           QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::ProjectDLLHostWidget)
 {
     ui->setupUi(this);
 }
@@ -48,22 +48,19 @@ void ProjectDLLHostWidget::doSave()
 
 void ProjectDLLHostWidget::on_btnBrowse_clicked()
 {
-    QString currentFile=ui->txtHost->text();
+    QString currentFile = ui->txtHost->text();
     if (currentFile.isEmpty()) {
         currentFile = pMainWindow->project()->directory();
     }
-    QString filename = QFileDialog::getOpenFileName(
-                this,
-                tr("Choose host application"),
-                currentFile,
-                tr("All files (%1)").arg(ALL_FILE_WILDCARD));
+    QString filename =
+        QFileDialog::getOpenFileName(this, tr("Choose host application"), currentFile,
+                                     tr("All files (%1)").arg(ALL_FILE_WILDCARD));
     if (!filename.isEmpty() && fileExists(filename)) {
         ui->txtHost->setText(filename);
     }
 }
 
-void ProjectDLLHostWidget::updateIcons(const QSize &/*size*/)
+void ProjectDLLHostWidget::updateIcons(const QSize& /*size*/)
 {
     pIconsManager->setIcon(ui->btnBrowse, IconsManager::ACTION_FILE_OPEN_FOLDER);
 }
-

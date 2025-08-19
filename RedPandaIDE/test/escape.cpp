@@ -23,7 +23,7 @@ void testMake(QString name)
     auto binName = name + ".exe";
 #else
     auto binName = name;
-#endif 
+#endif
     auto includeMfName = name + ".mf";
 
     auto fail = [&name](const QString& msg) {
@@ -75,8 +75,10 @@ void testMake(QString name)
         mf << "all: $(BIN_DEP)";
         mf << "$(BIN_TAR): $(OBJS_DEP)";
         mf << "\tgcc -o $(BIN_ARG) $(OBJS_ARG)";
-        mf << escapeFilenameForMakefileTarget(objName) + ": " + escapeFilenameForMakefilePrerequisite(srcName);
-        mf << "\tgcc -o " + escapeArgumentForMakefileRecipe(objName, false) + " -c " + escapeArgumentForMakefileRecipe(srcName, false);
+        mf << escapeFilenameForMakefileTarget(objName) + ": " +
+                  escapeFilenameForMakefilePrerequisite(srcName);
+        mf << "\tgcc -o " + escapeArgumentForMakefileRecipe(objName, false) + " -c " +
+                  escapeArgumentForMakefileRecipe(srcName, false);
         mf << "clean:";
         mf << "\trm -f $(BIN_ARG) $(OBJS_ARG)";
 

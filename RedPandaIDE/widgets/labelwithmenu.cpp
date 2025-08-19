@@ -20,37 +20,36 @@
 #include <QContextMenuEvent>
 #include <QMouseEvent>
 
-LabelWithMenu::LabelWithMenu(QWidget* parent):QLabel(parent)
+LabelWithMenu::LabelWithMenu(QWidget* parent) : QLabel(parent)
 {
     mCursor = Qt::ArrowCursor;
 }
 
-void LabelWithMenu::mousePressEvent(QMouseEvent *event)
+void LabelWithMenu::mousePressEvent(QMouseEvent* event)
 {
-    QContextMenuEvent *e = new QContextMenuEvent(QContextMenuEvent::Reason::Mouse,
-                                                 event->pos());
-    QApplication::instance()->postEvent(this,e);
+    QContextMenuEvent* e = new QContextMenuEvent(QContextMenuEvent::Reason::Mouse, event->pos());
+    QApplication::instance()->postEvent(this, e);
     event->accept();
 }
 
 #if QT_VERSION_MAJOR >= 6
-void LabelWithMenu::enterEvent(QEnterEvent *event)
+void LabelWithMenu::enterEvent(QEnterEvent* event)
 #else
-void LabelWithMenu::enterEvent(QEvent *event)
+void LabelWithMenu::enterEvent(QEvent* event)
 #endif
 {
     mCursor = cursor();
     setCursor(Qt::PointingHandCursor);
     setTextInteractionFlags(Qt::TextInteractionFlag::TextSelectableByKeyboard);
-    setSelection(0,text().length());
+    setSelection(0, text().length());
     QLabel::enterEvent(event);
 }
 
-void LabelWithMenu::leaveEvent(QEvent *event)
+void LabelWithMenu::leaveEvent(QEvent* event)
 {
     setCursor(mCursor);
     mCursor = Qt::ArrowCursor;
-    setSelection(0,0);
+    setSelection(0, 0);
     setTextInteractionFlags(Qt::TextInteractionFlag::NoTextInteraction);
     QLabel::leaveEvent(event);
 }

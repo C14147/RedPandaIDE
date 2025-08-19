@@ -12,11 +12,11 @@ class GitPushDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit GitPushDialog(QWidget *parent = nullptr);
+    explicit GitPushDialog(QWidget* parent = nullptr);
     ~GitPushDialog();
 
 private:
-    Ui::GitPushDialog *ui;
+    Ui::GitPushDialog* ui;
 };
 
 #endif // GITPUSHDIALOG_H

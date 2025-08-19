@@ -5,10 +5,9 @@
 
 #include <QFileInfo>
 
-DAPDebuggerClient::DAPDebuggerClient(Debugger *debugger, QObject *parent):
-    DebuggerClient{debugger, parent}
+DAPDebuggerClient::DAPDebuggerClient(Debugger* debugger, QObject* parent)
+    : DebuggerClient{debugger, parent}
 {
-
 }
 
 void DAPDebuggerClient::run()
@@ -18,14 +17,12 @@ void DAPDebuggerClient::run()
     mInferiorRunning = false;
     mProcessExited = false;
     QString cmd = debuggerPath();
-//    QString arguments = "--annotate=2";
+    //    QString arguments = "--annotate=2";
     QStringList arguments{"--interpret=mi", "--silent"};
     QString workingDir = QFileInfo(debuggerPath()).path();
 
     mProcess = std::make_shared<QProcess>();
-    auto action = finally([&]{
-        mProcess.reset();
-    });
+    auto action = finally([&] { mProcess.reset(); });
     mProcess->setProgram(cmd);
     mProcess->setArguments(arguments);
 
@@ -41,15 +38,12 @@ void DAPDebuggerClient::run()
     if (!cmdDir.isEmpty()) {
         path = cmdDir + PATH_SEPARATOR + path;
     }
-    env.insert("PATH",path);
+    env.insert("PATH", path);
     mProcess->setProcessEnvironment(env);
 
     mProcess->setWorkingDirectory(workingDir);
 
-    connect(mProcess.get(), &QProcess::errorOccurred,
-                    [&](){
-                        errorOccured= true;
-                    });
+    connect(mProcess.get(), &QProcess::errorOccurred, [&]() { errorOccured = true; });
     QByteArray buffer;
     QByteArray readed;
 
@@ -58,7 +52,7 @@ void DAPDebuggerClient::run()
     mStartSemaphore.release(1);
     while (true) {
         mProcess->waitForFinished(1);
-        if (mProcess->state()!=QProcess::Running) {
+        if (mProcess->state() != QProcess::Running) {
             break;
         }
         if (mStop) {

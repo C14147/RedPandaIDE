@@ -22,27 +22,28 @@
 #include <QJsonObject>
 #include <qt_utils/utils.h>
 
-class DAPMessageError : public BaseError {
+class DAPMessageError : public BaseError
+{
 public:
     explicit DAPMessageError(const QString& reason);
 };
 
-struct DAPProtocolMessage{
+struct DAPProtocolMessage {
     qint64 seq;
     QString type;
 };
 
-struct DAPRequest: public DAPProtocolMessage {
+struct DAPRequest : public DAPProtocolMessage {
     QString command;
     QJsonObject arguments;
 };
 
-struct DAPEvent: public DAPProtocolMessage {
+struct DAPEvent : public DAPProtocolMessage {
     QString event;
     QJsonObject body;
 };
 
-struct DAPResponse: public DAPProtocolMessage {
+struct DAPResponse : public DAPProtocolMessage {
     qint64 request_seq;
     bool success;
     QString command;
@@ -50,15 +51,13 @@ struct DAPResponse: public DAPProtocolMessage {
     QJsonObject body;
 };
 
-QString createDAPRequestMessage(
-        qint64 seq, const QString &command, const QJsonObject& arguments);
+QString createDAPRequestMessage(qint64 seq, const QString& command, const QJsonObject& arguments);
 
-QString createDAPResponseMessage(
-        qint64 seq, qint64 request_seq, bool success,
-        const QString& command, const QString& message, const QJsonObject& body);
+QString createDAPResponseMessage(qint64 seq, qint64 request_seq, bool success,
+                                 const QString& command, const QString& message,
+                                 const QJsonObject& body);
 
-QString createDAPEventMessage(
-        qint64 seq, const QString& event, const QJsonObject& body);
+QString createDAPEventMessage(qint64 seq, const QString& event, const QJsonObject& body);
 
 std::shared_ptr<DAPProtocolMessage> parseDAPMessage(const QByteArray& contentPart);
 

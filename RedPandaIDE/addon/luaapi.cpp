@@ -26,7 +26,7 @@
 #include <chrono>
 
 #ifdef Q_OS_WINDOWS
-# include <windows.h>
+#include <windows.h>
 #endif
 
 #include <lua/lua.hpp>
@@ -41,20 +41,17 @@
 constexpr int win32_flag_UserEnabled = 0x00000001;
 
 // added in Windows 11 21H2, use GetProcAddress to detect availability.
-using pGetMachineTypeAttributes_t = HRESULT (WINAPI *)(
-	USHORT Machine, int *MachineTypeAttributes
-);
+using pGetMachineTypeAttributes_t = HRESULT(WINAPI*)(USHORT Machine, int* MachineTypeAttributes);
 
 // added in Windows 10 1709, use GetProcAddress to detect availability.
-using pIsWow64GuestMachineSupported_t = HRESULT (WINAPI *)(
-	USHORT WowGuestMachine, BOOL *MachineIsSupported
-);
-using pIsWow64Process2_t = BOOL (WINAPI *)(
-	HANDLE hProcess, USHORT *pProcessMachine, USHORT *pNativeMachine
-);
+using pIsWow64GuestMachineSupported_t = HRESULT(WINAPI*)(USHORT WowGuestMachine,
+                                                         BOOL* MachineIsSupported);
+using pIsWow64Process2_t = BOOL(WINAPI*)(HANDLE hProcess, USHORT* pProcessMachine,
+                                         USHORT* pNativeMachine);
 #endif
 
-static QString luaDump(const QJsonValue &value) {
+static QString luaDump(const QJsonValue& value)
+{
     if (value.isNull())
         return "nil";
     if (value.isBool())
@@ -72,7 +69,7 @@ static QString luaDump(const QJsonValue &value) {
     }
     if (value.isArray()) {
         QString s = "{";
-        for (const QJsonValue &v : value.toArray())
+        for (const QJsonValue& v : value.toArray())
             s += luaDump(v) + ',';
         s += '}';
         return s;
@@ -80,7 +77,7 @@ static QString luaDump(const QJsonValue &value) {
     if (value.isObject()) {
         QJsonObject o = value.toObject();
         QString s = "{";
-        for (const QString &k : o.keys())
+        for (const QString& k : o.keys())
             s += '[' + luaDump(k) + "]=" + luaDump(o[k]) + ',';
         s += '}';
         return s;
@@ -88,7 +85,8 @@ static QString luaDump(const QJsonValue &value) {
     return "nil";
 }
 
-static QString stringify(const QJsonValue &value) {
+static QString stringify(const QJsonValue& value)
+{
     if (value.isString())
         return value.toString();
     if (value.isNull())
@@ -110,14 +108,15 @@ static QString stringify(const QJsonValue &value) {
  *
  * Use impl function so the API boundary contains only POD types.
  */
-void luaApiImpl_Debug_debug(lua_State *L) {
+void luaApiImpl_Debug_debug(lua_State* L)
+{
     QString s = AddOn::RaiiLuaState::fetchString(L, 1);
     int nArgs = lua_gettop(L);
     for (int i = 2; i <= nArgs; ++i) {
         QJsonValue arg;
         try {
             arg = AddOn::RaiiLuaState::fetch(L, i);
-        } catch (const AddOn::LuaError &e) {
+        } catch (const AddOn::LuaError& e) {
             QString reason = e.reason() + QString(" ('C_Debug.debug' argument #%1)").arg(i);
             throw AddOn::LuaError(reason);
         }
@@ -127,11 +126,12 @@ void luaApiImpl_Debug_debug(lua_State *L) {
 }
 
 // C_Debug.debug(string, ...) -> ()
-extern "C" int luaApi_Debug_debug(lua_State *L) noexcept {
+extern "C" int luaApi_Debug_debug(lua_State* L) noexcept
+{
     bool error = false;
     try {
         luaApiImpl_Debug_debug(L);
-    } catch (const AddOn::LuaError &e) {
+    } catch (const AddOn::LuaError& e) {
         error = true;
         AddOn::RaiiLuaState::push(L, e.reason());
     }
@@ -143,14 +143,15 @@ extern "C" int luaApi_Debug_debug(lua_State *L) noexcept {
     }
 }
 
-void luaApiImpl_Debug_messageBox(lua_State *L) {
+void luaApiImpl_Debug_messageBox(lua_State* L)
+{
     QString s = AddOn::RaiiLuaState::fetchString(L, 1);
     int nArgs = lua_gettop(L);
     for (int i = 2; i <= nArgs; ++i) {
         QJsonValue arg;
         try {
             arg = AddOn::RaiiLuaState::fetch(L, i);
-        } catch (const AddOn::LuaError &e) {
+        } catch (const AddOn::LuaError& e) {
             QString reason = e.reason() + QString(" ('C_Debug.messageBox' argument #%1)").arg(i);
             throw AddOn::LuaError(reason);
         }
@@ -160,11 +161,12 @@ void luaApiImpl_Debug_messageBox(lua_State *L) {
 }
 
 // C_Debug.messageBox(string, ...) -> ()
-extern "C" int luaApi_Debug_messageBox(lua_State *L) noexcept {
+extern "C" int luaApi_Debug_messageBox(lua_State* L) noexcept
+{
     bool error = false;
     try {
         luaApiImpl_Debug_messageBox(L);
-    } catch (const AddOn::LuaError &e) {
+    } catch (const AddOn::LuaError& e) {
         error = true;
         AddOn::RaiiLuaState::push(L, e.reason());
     }
@@ -177,14 +179,18 @@ extern "C" int luaApi_Debug_messageBox(lua_State *L) noexcept {
 }
 
 // C_Desktop.desktopEnvironment() -> string
-extern "C" int luaApi_Desktop_desktopEnvironment(lua_State *L) noexcept {
+extern "C" int luaApi_Desktop_desktopEnvironment(lua_State* L) noexcept
+{
 #if defined(Q_OS_WIN32)
     // exclude WinRT intentionally
     lua_pushliteral(L, "windows");
 #elif defined(Q_OS_MACOS)
     lua_pushliteral(L, "macos");
-#elif (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)) || defined(Q_OS_HURD) || defined(Q_OS_FREEBSD) || defined(Q_OS_NETBSD) || defined(Q_OS_OPENBSD) || defined(Q_OS_SOLARIS)
-    // desktops that follows to freedesktop.org specs, i.e. GNU/Linux, GNU/Hurd, BSD, Solaris (illumos)
+#elif (defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)) || defined(Q_OS_HURD) ||                     \
+    defined(Q_OS_FREEBSD) || defined(Q_OS_NETBSD) || defined(Q_OS_OPENBSD) ||                      \
+    defined(Q_OS_SOLARIS)
+    // desktops that follows to freedesktop.org specs, i.e. GNU/Linux, GNU/Hurd, BSD, Solaris
+    // (illumos)
     lua_pushliteral(L, "xdg");
 #else
     lua_pushliteral(L, "unknown");
@@ -193,21 +199,24 @@ extern "C" int luaApi_Desktop_desktopEnvironment(lua_State *L) noexcept {
 }
 
 // C_Desktop.language() -> string
-extern "C" int luaApi_Desktop_language(lua_State *L) noexcept {
+extern "C" int luaApi_Desktop_language(lua_State* L) noexcept
+{
     QString lang = pSettings->environment().language();
     AddOn::RaiiLuaState::push(L, lang);
     return 1;
 }
 
 // C_Desktop.qtStyleList() -> [string]
-extern "C" int luaApi_Desktop_qtStyleList(lua_State *L) noexcept {
+extern "C" int luaApi_Desktop_qtStyleList(lua_State* L) noexcept
+{
     QStringList styles = QStyleFactory::keys();
     AddOn::RaiiLuaState::push(L, styles);
     return 1;
 }
 
 // C_Desktop.systemAppMode() -> string
-extern "C" int luaApi_Desktop_systemAppMode(lua_State *L) noexcept {
+extern "C" int luaApi_Desktop_systemAppMode(lua_State* L) noexcept
+{
     if (AppTheme::isSystemInDarkMode())
         lua_pushliteral(L, "dark");
     else
@@ -216,13 +225,15 @@ extern "C" int luaApi_Desktop_systemAppMode(lua_State *L) noexcept {
 }
 
 // C_Desktop.systemStyle() -> string
-extern "C" int luaApi_Desktop_systemStyle(lua_State *L) noexcept {
+extern "C" int luaApi_Desktop_systemStyle(lua_State* L) noexcept
+{
     AddOn::RaiiLuaState::push(L, AppTheme::initialStyle());
     return 1;
 }
 
 // C_FileSystem.exists(string) -> bool
-extern "C" int luaApi_FileSystem_exists(lua_State *L) noexcept {
+extern "C" int luaApi_FileSystem_exists(lua_State* L) noexcept
+{
     QString path = AddOn::RaiiLuaState::fetchString(L, 1);
     QFileInfo fileInfo(path);
     AddOn::RaiiLuaState::push(L, fileInfo.exists());
@@ -230,7 +241,8 @@ extern "C" int luaApi_FileSystem_exists(lua_State *L) noexcept {
 }
 
 // C_FileSystem.isExecutable(string) -> bool
-extern "C" int luaApi_FileSystem_isExecutable(lua_State *L) noexcept {
+extern "C" int luaApi_FileSystem_isExecutable(lua_State* L) noexcept
+{
     QString path = AddOn::RaiiLuaState::fetchString(L, 1);
     QFileInfo fileInfo(path);
     bool isExecutable = fileInfo.isFile() && fileInfo.isReadable() && fileInfo.isExecutable();
@@ -239,7 +251,8 @@ extern "C" int luaApi_FileSystem_isExecutable(lua_State *L) noexcept {
 }
 
 // C_FileSystem.matchFiles(string, string) -> {string}
-extern "C" int luaApi_FileSystem_matchFiles(lua_State *L) noexcept {
+extern "C" int luaApi_FileSystem_matchFiles(lua_State* L) noexcept
+{
     QString dir = AddOn::RaiiLuaState::fetchString(L, 1);
     QString pattern = AddOn::RaiiLuaState::fetchString(L, 2);
     QRegularExpression re(pattern);
@@ -256,39 +269,45 @@ extern "C" int luaApi_FileSystem_matchFiles(lua_State *L) noexcept {
 }
 
 // C_System.appArch() -> string
-extern "C" int luaApi_System_appArch(lua_State *L) noexcept {
+extern "C" int luaApi_System_appArch(lua_State* L) noexcept
+{
     AddOn::RaiiLuaState::push(L, appArch());
     return 1;
 }
 
 // C_System.appDir() -> string
-extern "C" int luaApi_System_appDir(lua_State *L) noexcept {
+extern "C" int luaApi_System_appDir(lua_State* L) noexcept
+{
     QString appDir = pSettings->dirs().appDir();
     AddOn::RaiiLuaState::push(L, appDir);
     return 1;
 }
 
 // C_System.appLibexecDir() -> string
-extern "C" int luaApi_System_appLibexecDir(lua_State *L) noexcept {
+extern "C" int luaApi_System_appLibexecDir(lua_State* L) noexcept
+{
     QString appLibexecDir = pSettings->dirs().appLibexecDir();
     AddOn::RaiiLuaState::push(L, appLibexecDir);
     return 1;
 }
 
 // C_System.appResourceDir() -> string
-extern "C" int luaApi_System_appResourceDir(lua_State *L) noexcept {
+extern "C" int luaApi_System_appResourceDir(lua_State* L) noexcept
+{
     QString appResourceDir = pSettings->dirs().appResourceDir();
     AddOn::RaiiLuaState::push(L, appResourceDir);
     return 1;
 }
 
 // C_System.osArch() -> string
-extern "C" int luaApi_System_osArch(lua_State *L) noexcept {
+extern "C" int luaApi_System_osArch(lua_State* L) noexcept
+{
     AddOn::RaiiLuaState::push(L, osArch());
     return 1;
 }
 
-void luaApiImpl_System_popen(lua_State *L) {
+void luaApiImpl_System_popen(lua_State* L)
+{
     using namespace std::chrono;
     QMetaEnum exitStatusEnum = QMetaEnum::fromType<QProcess::ExitStatus>();
     QMetaEnum processErrorEnum = QMetaEnum::fromType<QProcess::ProcessError>();
@@ -297,16 +316,16 @@ void luaApiImpl_System_popen(lua_State *L) {
     QStringList args;
     try {
         QJsonArray argsArray = AddOn::RaiiLuaState::fetchArray(L, 2);
-        for (const QJsonValue &arg : argsArray)
+        for (const QJsonValue& arg : argsArray)
             args.append(arg.toString());
-    } catch (const AddOn::LuaError &e) {
+    } catch (const AddOn::LuaError& e) {
         QString reason = e.reason() + " ('C_System.popen' argument #2)";
         throw AddOn::LuaError(reason);
     }
 
     // fetch and normalize timeout
     microseconds timeout;
-    AddOn::LuaExtraState &extraState = AddOn::RaiiLuaState::extraState(L);
+    AddOn::LuaExtraState& extraState = AddOn::RaiiLuaState::extraState(L);
     try {
         QJsonObject option;
         if (lua_type(L, 3) == LUA_TTABLE)
@@ -315,7 +334,7 @@ void luaApiImpl_System_popen(lua_State *L) {
             timeout = milliseconds(option["timeout"].toInt());
         else
             timeout = AddOn::RaiiLuaState::extraState(L).timeLimit;
-    } catch (const AddOn::LuaError &e) {
+    } catch (const AddOn::LuaError& e) {
         QString reason = e.reason() + " ('C_System.popen' argument #3)";
         throw AddOn::LuaError(reason);
     }
@@ -347,10 +366,8 @@ void luaApiImpl_System_popen(lua_State *L) {
     QByteArray stdoutData = process.readAllStandardOutput();
     QByteArray stderrData = process.readAllStandardError();
 
-    if (
-        QProcess::ExitStatus exitStatus = process.exitStatus();
-        exitStatus == QProcess::NormalExit
-    ) {
+    if (QProcess::ExitStatus exitStatus = process.exitStatus();
+        exitStatus == QProcess::NormalExit) {
         QJsonObject result{
             {"exitStatus", exitStatusEnum.valueToKey(exitStatus)},
             {"exitCode", process.exitCode()},
@@ -370,11 +387,12 @@ void luaApiImpl_System_popen(lua_State *L) {
 }
 
 // C_System.popen(string, {string}, PopenOption) -> string, string, PopenResult
-extern "C" int luaApi_System_popen(lua_State *L) noexcept {
+extern "C" int luaApi_System_popen(lua_State* L) noexcept
+{
     bool error = false;
     try {
         luaApiImpl_System_popen(L);
-    } catch (const AddOn::LuaError &e) {
+    } catch (const AddOn::LuaError& e) {
         error = true;
         AddOn::RaiiLuaState::push(L, e.reason());
     }
@@ -386,7 +404,8 @@ extern "C" int luaApi_System_popen(lua_State *L) noexcept {
     }
 }
 
-static QString qtArchitectureNormalization(const QString &arch) {
+static QString qtArchitectureNormalization(const QString& arch)
+{
     // adjust QEMU user emulation arches to match QSysInfo::currentCpuArchitecture
     if (arch == "aarch64")
         return "arm64";
@@ -398,31 +417,35 @@ static QString qtArchitectureNormalization(const QString &arch) {
 }
 
 // C_System.supportedAppArchList() -> [string]
-extern "C" int luaApi_System_supportedAppArchList(lua_State *L) noexcept {
+extern "C" int luaApi_System_supportedAppArchList(lua_State* L) noexcept
+{
 #ifdef Q_OS_WINDOWS
     QSet<QString> arches;
     pGetMachineTypeAttributes_t pGetMachineTypeAttributes =
-        reinterpret_cast<pGetMachineTypeAttributes_t>(GetProcAddress(
-            GetModuleHandleW(L"kernel32"), "GetMachineTypeAttributes"));
+        reinterpret_cast<pGetMachineTypeAttributes_t>(
+            GetProcAddress(GetModuleHandleW(L"kernel32"), "GetMachineTypeAttributes"));
     if (pGetMachineTypeAttributes) {
         // the direct way
         int result;
-        if (pGetMachineTypeAttributes(IMAGE_FILE_MACHINE_I386, &result) == 0 && result & win32_flag_UserEnabled)
+        if (pGetMachineTypeAttributes(IMAGE_FILE_MACHINE_I386, &result) == 0 &&
+            result & win32_flag_UserEnabled)
             arches.insert("i386");
-        if (pGetMachineTypeAttributes(IMAGE_FILE_MACHINE_AMD64, &result) == 0 && result & win32_flag_UserEnabled)
+        if (pGetMachineTypeAttributes(IMAGE_FILE_MACHINE_AMD64, &result) == 0 &&
+            result & win32_flag_UserEnabled)
             arches.insert("x86_64");
-        if (pGetMachineTypeAttributes(IMAGE_FILE_MACHINE_ARM64, &result) == 0 && result & win32_flag_UserEnabled)
+        if (pGetMachineTypeAttributes(IMAGE_FILE_MACHINE_ARM64, &result) == 0 &&
+            result & win32_flag_UserEnabled)
             arches.insert("arm64");
     } else {
         pIsWow64GuestMachineSupported_t pIsWow64GuestMachineSupported =
-            reinterpret_cast<pIsWow64GuestMachineSupported_t>(GetProcAddress(
-                GetModuleHandleW(L"kernel32"), "IsWow64GuestMachineSupported"));
-        pIsWow64Process2_t pIsWow64Process2 = 
-        reinterpret_cast<pIsWow64Process2_t>(GetProcAddress(
-            GetModuleHandleW(L"kernel32"), "IsWow64Process2"));
+            reinterpret_cast<pIsWow64GuestMachineSupported_t>(
+                GetProcAddress(GetModuleHandleW(L"kernel32"), "IsWow64GuestMachineSupported"));
+        pIsWow64Process2_t pIsWow64Process2 = reinterpret_cast<pIsWow64Process2_t>(
+            GetProcAddress(GetModuleHandleW(L"kernel32"), "IsWow64Process2"));
         if (pIsWow64GuestMachineSupported && pIsWow64Process2) {
             // recent Windows 10, native + WoW64 arches
-            // IsWow64Process2 returns real native architecture under xtajit, while GetNativeSystemInfo does not.
+            // IsWow64Process2 returns real native architecture under xtajit, while
+            // GetNativeSystemInfo does not.
             USHORT processMachineResult, nativeMachineResult;
             if (pIsWow64Process2(GetCurrentProcess(), &processMachineResult, &nativeMachineResult))
                 switch (nativeMachineResult) {
@@ -437,7 +460,9 @@ extern "C" int luaApi_System_supportedAppArchList(lua_State *L) noexcept {
                     break;
                 }
             BOOL wow64SupportResult;
-            if (pIsWow64GuestMachineSupported(IMAGE_FILE_MACHINE_I386, &wow64SupportResult) == S_OK && wow64SupportResult)
+            if (pIsWow64GuestMachineSupported(IMAGE_FILE_MACHINE_I386, &wow64SupportResult) ==
+                    S_OK &&
+                wow64SupportResult)
                 arches.insert("i386");
         } else {
             // legacy Windows, hardcode
@@ -483,7 +508,7 @@ extern "C" int luaApi_System_supportedAppArchList(lua_State *L) noexcept {
     QDir binfmt_misc("/proc/sys/fs/binfmt_misc");
     if (binfmt_misc.exists()) {
         QFileInfoList entries = binfmt_misc.entryInfoList(QDir::Files);
-        for (const QFileInfo &entry : entries) {
+        for (const QFileInfo& entry : entries) {
             if (entry.fileName().startsWith("qemu-")) {
                 QString arch = entry.fileName().mid(5);
                 arches.insert(qtArchitectureNormalization(arch));
@@ -499,7 +524,7 @@ extern "C" int luaApi_System_supportedAppArchList(lua_State *L) noexcept {
 
 #ifdef Q_OS_WINDOWS
 // C_System.readRegistry(string, string) -> string|nil
-extern "C" int luaApi_System_readRegistry(lua_State *L) noexcept
+extern "C" int luaApi_System_readRegistry(lua_State* L) noexcept
 {
     QString subKey = AddOn::RaiiLuaState::fetchString(L, 1);
     QString name = AddOn::RaiiLuaState::fetchString(L, 2);
@@ -518,7 +543,7 @@ extern "C" int luaApi_System_readRegistry(lua_State *L) noexcept
 }
 #endif
 
-void luaApiImpl_Util_format(lua_State *L)
+void luaApiImpl_Util_format(lua_State* L)
 {
     QString s = AddOn::RaiiLuaState::fetchString(L, 1);
     int nArgs = lua_gettop(L);
@@ -526,7 +551,7 @@ void luaApiImpl_Util_format(lua_State *L)
         QJsonValue arg;
         try {
             arg = AddOn::RaiiLuaState::fetch(L, i);
-        } catch (const AddOn::LuaError &e) {
+        } catch (const AddOn::LuaError& e) {
             QString reason = e.reason() + QString(" ('C_Util.format' argument #%1)").arg(i);
             throw AddOn::LuaError(reason);
         }
@@ -536,12 +561,12 @@ void luaApiImpl_Util_format(lua_State *L)
 }
 
 // C_Util.format(string, ...) -> string
-extern "C" int luaApi_Util_format(lua_State *L) noexcept
+extern "C" int luaApi_Util_format(lua_State* L) noexcept
 {
     bool error = false;
     try {
         luaApiImpl_Util_format(L);
-    } catch (const AddOn::LuaError &e) {
+    } catch (const AddOn::LuaError& e) {
         error = true;
         AddOn::RaiiLuaState::push(L, e.reason());
     }

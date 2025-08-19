@@ -29,18 +29,17 @@
 #include <QImageWriter>
 #include <QMessageBox>
 
-ProjectGeneralWidget::ProjectGeneralWidget(const QString &name, const QString &group, QWidget *parent) :
-    SettingsWidget(name,group,parent),
-    ui(new Ui::ProjectGeneralWidget)
+ProjectGeneralWidget::ProjectGeneralWidget(const QString& name, const QString& group,
+                                           QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::ProjectGeneralWidget)
 {
     ui->setupUi(this);
-    ui->cbType->addItems(
-                {
-                    "Win32 GUI",
-                    "Win32 Console",
-                    "Win32 Static Library",
-                    "Win32 DLL",
-                });
+    ui->cbType->addItems({
+        "Win32 GUI",
+        "Win32 Console",
+        "Win32 Static Library",
+        "Win32 DLL",
+    });
 }
 
 ProjectGeneralWidget::~ProjectGeneralWidget()
@@ -60,7 +59,7 @@ void ProjectGeneralWidget::doLoad()
     if (!project)
         return;
 #ifdef ENABLE_SDCC
-    bool isMicroControllerProject = (project->options().type==ProjectType::MicroController);
+    bool isMicroControllerProject = (project->options().type == ProjectType::MicroController);
 #else
     bool isMicroControllerProject = false;
 #endif
@@ -75,9 +74,9 @@ void ProjectGeneralWidget::doLoad()
     ui->txtFileName->setText(project->filename());
     ui->txtOutputFile->setText(project->outputFilename());
 
-    int srcCount=0,headerCount=0,resCount=0,otherCount=0, totalCount=0;
+    int srcCount = 0, headerCount = 0, resCount = 0, otherCount = 0, totalCount = 0;
     foreach (const PProjectUnit& unit, project->unitList()) {
-        switch(getFileType(unit->fileName())) {
+        switch (getFileType(unit->fileName())) {
         case FileType::CSource:
         case FileType::CppSource:
             srcCount++;
@@ -94,15 +93,16 @@ void ProjectGeneralWidget::doLoad()
         totalCount++;
     }
     ui->lblFiles->setText(tr("%1 files [ %2 sources, %3 headers, %4 resources, %5 other files ]")
-                          .arg(totalCount).arg(srcCount).arg(headerCount)
-                          .arg(resCount).arg(otherCount));
+                              .arg(totalCount)
+                              .arg(srcCount)
+                              .arg(headerCount)
+                              .arg(resCount)
+                              .arg(otherCount));
 
     QByteArray defaultEncoding = project->options().encoding;
-    if (defaultEncoding == ENCODING_AUTO_DETECT
-            || defaultEncoding == ENCODING_SYSTEM_DEFAULT
-            || defaultEncoding == ENCODING_UTF8
-            || defaultEncoding == ENCODING_UTF8_BOM) {
-        int index =ui->cbEncoding->findData(defaultEncoding);
+    if (defaultEncoding == ENCODING_AUTO_DETECT || defaultEncoding == ENCODING_SYSTEM_DEFAULT ||
+        defaultEncoding == ENCODING_UTF8 || defaultEncoding == ENCODING_UTF8_BOM) {
+        int index = ui->cbEncoding->findData(defaultEncoding);
         ui->cbEncoding->setCurrentIndex(index);
         ui->cbEncodingDetail->clear();
         ui->cbEncodingDetail->setVisible(false);
@@ -139,7 +139,7 @@ void ProjectGeneralWidget::doSave()
         project->setEncoding(ui->cbEncoding->currentData().toByteArray());
     }
 
-    int row = std::max(0,ui->cbType->currentIndex());
+    int row = std::max(0, ui->cbType->currentIndex());
     project->options().type = static_cast<ProjectType>(row);
 
     project->options().isCpp = ui->cbDefaultCpp->isChecked();
@@ -147,22 +147,21 @@ void ProjectGeneralWidget::doSave()
     if (mIconPath.isEmpty() || ui->lbIcon->pixmap(Qt::ReturnByValue).isNull()) {
         project->options().icon = "";
     } else {
-        QString iconPath = generateAbsolutePath(project->directory(),"app.ico");
-        if (iconPath!=mIconPath) {
+        QString iconPath = generateAbsolutePath(project->directory(), "app.ico");
+        if (iconPath != mIconPath) {
             if (fileExists(iconPath)) {
                 if (!QFile::remove(iconPath)) {
-                    QMessageBox::critical(this,
-                                          tr("Can't remove old icon file"),
-                                          tr("Can't remove old icon file '%1'")
-                                          .arg(iconPath),
+                    QMessageBox::critical(this, tr("Can't remove old icon file"),
+                                          tr("Can't remove old icon file '%1'").arg(iconPath),
                                           QMessageBox::Ok);
                     return;
                 }
             }
-            if (!mIconPath.endsWith(".ico",PATH_SENSITIVITY) && QImageWriter::supportedImageFormats().contains("ico")) {
-                ui->lbIcon->pixmap(Qt::ReturnByValue).save(iconPath,"ico");
+            if (!mIconPath.endsWith(".ico", PATH_SENSITIVITY) &&
+                QImageWriter::supportedImageFormats().contains("ico")) {
+                ui->lbIcon->pixmap(Qt::ReturnByValue).save(iconPath, "ico");
             } else
-                copyFile(mIconPath, iconPath,true);
+                copyFile(mIconPath, iconPath, true);
         }
         project->options().icon = iconPath;
         mIconPath = iconPath;
@@ -174,8 +173,7 @@ void ProjectGeneralWidget::doSave()
 
 void ProjectGeneralWidget::on_btnBrowse_clicked()
 {
-    QString fileName = QFileDialog::getOpenFileName(this,
-                                                    tr("Select icon file"),
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Select icon file"),
                                                     pMainWindow->project()->directory(),
                                                     tr("Image Files (*.ico *.png *.jpg)"));
     if (!fileName.isEmpty()) {
@@ -186,7 +184,6 @@ void ProjectGeneralWidget::on_btnBrowse_clicked()
     ui->btnRemove->setEnabled(!mIconPath.isEmpty());
 }
 
-
 void ProjectGeneralWidget::on_btnRemove_clicked()
 {
     mIconPath = "";
@@ -195,13 +192,11 @@ void ProjectGeneralWidget::on_btnRemove_clicked()
     setSettingsChanged();
 }
 
-void ProjectGeneralWidget::on_cbEncoding_currentTextChanged(const QString &/*arg1*/)
+void ProjectGeneralWidget::on_cbEncoding_currentTextChanged(const QString& /*arg1*/)
 {
     QString userData = ui->cbEncoding->currentData().toString();
-    if (userData == ENCODING_AUTO_DETECT
-            || userData == ENCODING_SYSTEM_DEFAULT
-            || userData == ENCODING_UTF8
-            || userData == ENCODING_UTF8_BOM) {
+    if (userData == ENCODING_AUTO_DETECT || userData == ENCODING_SYSTEM_DEFAULT ||
+        userData == ENCODING_UTF8 || userData == ENCODING_UTF8_BOM) {
         ui->cbEncodingDetail->setVisible(false);
         ui->cbEncodingDetail->clear();
     } else {
@@ -218,21 +213,22 @@ void ProjectGeneralWidget::init()
 {
     ui->cbEncodingDetail->setVisible(false);
     ui->cbEncoding->clear();
-    ui->cbEncoding->addItem(tr("System Default(%1)").arg(QString(pCharsetInfoManager->getDefaultSystemEncoding())),ENCODING_SYSTEM_DEFAULT);
-    ui->cbEncoding->addItem(tr("UTF-8"),ENCODING_UTF8);
-    ui->cbEncoding->addItem(tr("UTF-8 BOM"),ENCODING_UTF8_BOM);
+    ui->cbEncoding->addItem(
+        tr("System Default(%1)").arg(QString(pCharsetInfoManager->getDefaultSystemEncoding())),
+        ENCODING_SYSTEM_DEFAULT);
+    ui->cbEncoding->addItem(tr("UTF-8"), ENCODING_UTF8);
+    ui->cbEncoding->addItem(tr("UTF-8 BOM"), ENCODING_UTF8_BOM);
     foreach (const QString& langName, pCharsetInfoManager->languageNames()) {
-        ui->cbEncoding->addItem(langName,langName);
+        ui->cbEncoding->addItem(langName, langName);
     }
     SettingsWidget::init();
 }
 
-void ProjectGeneralWidget::updateIcons(const QSize &)
+void ProjectGeneralWidget::updateIcons(const QSize&)
 {
-    pIconsManager->setIcon(ui->btnBrowse,IconsManager::ACTION_FILE_OPEN_FOLDER);
+    pIconsManager->setIcon(ui->btnBrowse, IconsManager::ACTION_FILE_OPEN_FOLDER);
     pIconsManager->setIcon(ui->btnRemove, IconsManager::ACTION_MISC_CROSS);
 }
-
 
 void ProjectGeneralWidget::on_cbType_currentIndexChanged(int /*index*/)
 {
@@ -241,4 +237,3 @@ void ProjectGeneralWidget::on_cbType_currentIndexChanged(int /*index*/)
         return;
     ui->txtOutputFile->setText(project->outputFilename());
 }
-

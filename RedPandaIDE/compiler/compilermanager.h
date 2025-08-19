@@ -35,32 +35,28 @@ class CompilerManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit CompilerManager(QObject *parent = nullptr);
-    CompilerManager(const CompilerManager&)=delete;
-    CompilerManager& operator=(const CompilerManager&)=delete;
+    explicit CompilerManager(QObject* parent = nullptr);
+    CompilerManager(const CompilerManager&) = delete;
+    CompilerManager& operator=(const CompilerManager&) = delete;
     ~CompilerManager();
 
     bool compiling();
     bool backgroundSyntaxChecking();
     bool running();
 
-    void compile(const QString& filename, const QByteArray& encoding, bool rebuild, CppCompileType compileType);
+    void compile(const QString& filename, const QByteArray& encoding, bool rebuild,
+                 CppCompileType compileType);
     void compileProject(std::shared_ptr<Project> project, bool rebuild);
     void cleanProject(std::shared_ptr<Project> project);
     void buildProjectMakefile(std::shared_ptr<Project> project);
-    void checkSyntax(const QString&filename, const QByteArray& encoding, const QString& content, std::shared_ptr<Project> project);
-    void run(
-            const QString& filename,
-            const QString& arguments,
-            const QString& workDir,
-            const QStringList& extraBinDir);
-    void runProblem(
-            const QString& filename, const QString& arguments, const QString& workDir, POJProblemCase problemCase,
-            const POJProblem& problem
-            );
-    void runProblem(const QString& filename, const QString& arguments, const QString& workDir, const QVector<POJProblemCase> &problemCases,
-                    const POJProblem& problem
-                    );
+    void checkSyntax(const QString& filename, const QByteArray& encoding, const QString& content,
+                     std::shared_ptr<Project> project);
+    void run(const QString& filename, const QString& arguments, const QString& workDir,
+             const QStringList& extraBinDir);
+    void runProblem(const QString& filename, const QString& arguments, const QString& workDir,
+                    POJProblemCase problemCase, const POJProblem& problem);
+    void runProblem(const QString& filename, const QString& arguments, const QString& workDir,
+                    const QVector<POJProblemCase>& problemCases, const POJProblem& problem);
     void stopRun();
     void stopAllRunners();
     void stopPausing();
@@ -80,17 +76,18 @@ signals:
     void compileFinished(const QString& filename, bool isSyntaxCheck);
 
 private slots:
-    void doRunProblem(const QString& filename, const QString& arguments, const QString& workDir, const QVector<POJProblemCase> &problemCases,
-                      const POJProblem& problem
-                      );
+    void doRunProblem(const QString& filename, const QString& arguments, const QString& workDir,
+                      const QVector<POJProblemCase>& problemCases, const POJProblem& problem);
     void onRunnerTerminated();
     void onRunnerPausing();
     void onCompileFinished(const QString& filename);
     void onCompileIssue(PCompileIssue issue);
     void onSyntaxCheckFinished(const QString& filename);
     void onSyntaxCheckIssue(PCompileIssue issue);
+
 private:
     ProjectCompiler* createProjectCompiler(std::shared_ptr<Project> project);
+
 private:
     Compiler* mCompiler;
     int mCompileErrorCount;
@@ -105,7 +102,8 @@ private:
     QRecursiveMutex mRunnerMutex;
 };
 
-class CompileError : public BaseError {
+class CompileError : public BaseError
+{
 public:
     explicit CompileError(const QString& reason);
 };

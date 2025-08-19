@@ -20,22 +20,17 @@
 #include "../editorlist.h"
 #include <QDebug>
 
-CodeCompletionListView::CodeCompletionListView(QWidget *parent) : QListView(parent)
+CodeCompletionListView::CodeCompletionListView(QWidget* parent) : QListView(parent)
 {
     setUniformItemSizes(true);
 }
 
-void CodeCompletionListView::keyPressEvent(QKeyEvent *event)
+void CodeCompletionListView::keyPressEvent(QKeyEvent* event)
 {
-
-    if (event->key() == Qt::Key_Up
-            || event->key() == Qt::Key_Down
-            || event->key() == Qt::Key_PageDown
-            || event->key() == Qt::Key_PageUp
-            || event->key() == Qt::Key_Home
-            || event->key() == Qt::Key_End
-            || event->key() == Qt::Key_CapsLock
-            ) {
+    if (event->key() == Qt::Key_Up || event->key() == Qt::Key_Down ||
+        event->key() == Qt::Key_PageDown || event->key() == Qt::Key_PageUp ||
+        event->key() == Qt::Key_Home || event->key() == Qt::Key_End ||
+        event->key() == Qt::Key_CapsLock) {
         QListView::keyPressEvent(event);
         return;
     }
@@ -44,27 +39,27 @@ void CodeCompletionListView::keyPressEvent(QKeyEvent *event)
     }
 }
 
-void CodeCompletionListView::focusInEvent(QFocusEvent *)
+void CodeCompletionListView::focusInEvent(QFocusEvent*)
 {
-    Editor *editor = pMainWindow->editorList()->getEditor();
+    Editor* editor = pMainWindow->editorList()->getEditor();
     if (editor) {
         editor->showCaret();
     }
 }
 
-void CodeCompletionListView::mouseDoubleClickEvent(QMouseEvent */*event*/)
+void CodeCompletionListView::mouseDoubleClickEvent(QMouseEvent* /*event*/)
 {
-    QKeyEvent keyEvent(QKeyEvent::Type::KeyPress,Qt::Key_Tab,Qt::KeyboardModifier::NoModifier,
-                    "\t");
+    QKeyEvent keyEvent(QKeyEvent::Type::KeyPress, Qt::Key_Tab, Qt::KeyboardModifier::NoModifier,
+                       "\t");
     keyPressEvent(&keyEvent);
 }
 
-const KeyPressedCallback &CodeCompletionListView::keypressedCallback() const
+const KeyPressedCallback& CodeCompletionListView::keypressedCallback() const
 {
     return mKeypressedCallback;
 }
 
-void CodeCompletionListView::setKeypressedCallback(const KeyPressedCallback &newKeypressedCallback)
+void CodeCompletionListView::setKeypressedCallback(const KeyPressedCallback& newKeypressedCallback)
 {
     mKeypressedCallback = newKeypressedCallback;
 }

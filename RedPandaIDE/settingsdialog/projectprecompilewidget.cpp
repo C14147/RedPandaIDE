@@ -22,9 +22,9 @@
 
 #include <QFileDialog>
 
-ProjectPreCompileWidget::ProjectPreCompileWidget(const QString &name, const QString &group, QWidget *parent) :
-    SettingsWidget(name,group,parent),
-    ui(new Ui::ProjectPreCompileWidget)
+ProjectPreCompileWidget::ProjectPreCompileWidget(const QString& name, const QString& group,
+                                                 QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::ProjectPreCompileWidget)
 {
     ui->setupUi(this);
 }
@@ -49,7 +49,7 @@ void ProjectPreCompileWidget::doSave()
 
 void ProjectPreCompileWidget::on_btnBrowse_clicked()
 {
-    QString currentFile=ui->txtPrecompileHeader->text();
+    QString currentFile = ui->txtPrecompileHeader->text();
     QString currentDir;
     if (currentFile.isEmpty()) {
         currentDir = pMainWindow->project()->directory();
@@ -57,19 +57,14 @@ void ProjectPreCompileWidget::on_btnBrowse_clicked()
         currentDir = extractFilePath(currentFile);
     }
     QString fileName = QFileDialog::getOpenFileName(
-                this,
-                tr("Select the header file to be precompiled"),
-                currentDir,
-                tr("Header files (*.h *.hh *.hpp)"),
-                nullptr,
-                QFileDialog::Options());
+        this, tr("Select the header file to be precompiled"), currentDir,
+        tr("Header files (*.h *.hh *.hpp)"), nullptr, QFileDialog::Options());
     if (!fileName.isEmpty()) {
         ui->txtPrecompileHeader->setText(fileName);
     }
 }
 
-void ProjectPreCompileWidget::updateIcons(const QSize &/*size*/)
+void ProjectPreCompileWidget::updateIcons(const QSize& /*size*/)
 {
     pIconsManager->setIcon(ui->btnBrowse, IconsManager::ACTION_FILE_OPEN_FOLDER);
 }
-

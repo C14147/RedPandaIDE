@@ -33,19 +33,21 @@ struct TodoItem {
 
 using PTodoItem = std::shared_ptr<TodoItem>;
 
-class TodoModel : public QAbstractListModel {
+class TodoModel : public QAbstractListModel
+{
     Q_OBJECT
 public:
-    explicit TodoModel(QObject* parent=nullptr);
-    void addItem(const QString& filename, int lineNo,
-                 int ch, const QString& line);
+    explicit TodoModel(QObject* parent = nullptr);
+    void addItem(const QString& filename, int lineNo, int ch, const QString& line);
     void removeTodosForFile(const QString& filename);
     void clear();
     void clear(bool forProject);
     PTodoItem getItem(const QModelIndex& index);
+
 private:
-    QList<PTodoItem> &getItems(bool forProject);
-    const QList<PTodoItem> &getConstItems(bool forProject) const;
+    QList<PTodoItem>& getItems(bool forProject);
+    const QList<PTodoItem>& getConstItems(bool forProject) const;
+
 private:
     QList<PTodoItem> mItems;
     QList<PTodoItem> mProjectItems;
@@ -53,16 +55,15 @@ private:
 
     // QAbstractItemModel interface
 public:
-    int rowCount(const QModelIndex &parent) const override;
-    QVariant data(const QModelIndex &index, int role) const override;
+    int rowCount(const QModelIndex& parent) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-    int columnCount(const QModelIndex &parent) const override;
+    int columnCount(const QModelIndex& parent) const override;
     bool isForProject() const;
     void setIsForProject(bool newIsForProject);
-
 };
 
-class TodoThread: public QThread
+class TodoThread : public QThread
 {
     Q_OBJECT
 public:
@@ -73,10 +74,12 @@ signals:
     void parsingFile(const QString& fileName);
     void todoFound(const QString& filename, int lineNo, int ch, const QString& line);
     void parseFinished();
+
 private:
     void parseFile();
     void parseFiles();
     void doParseFile(const QString& filename, QSynedit::PSyntaxer syntaxer);
+
 private:
     QString mFilename;
     QStringList mFiles;
@@ -93,8 +96,8 @@ class TodoParser : public QObject
 {
     Q_OBJECT
 public:
-    explicit TodoParser(QObject *parent = nullptr);
-    void parseFile(const QString& filename,bool isForProject);
+    explicit TodoParser(QObject* parent = nullptr);
+    void parseFile(const QString& filename, bool isForProject);
     void parseFiles(const QStringList& files);
     bool parsing() const;
 

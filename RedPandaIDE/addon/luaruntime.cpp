@@ -20,19 +20,23 @@
 
 namespace AddOn {
 
-LuaError::LuaError(const QString &reason): BaseError(reason) {}
+LuaError::LuaError(const QString& reason) : BaseError(reason)
+{
+}
 
-RaiiLuaState::RaiiLuaState(const QString &name, std::chrono::microseconds timeLimit)
-    : mLua(luaL_newstate()) {
+RaiiLuaState::RaiiLuaState(const QString& name, std::chrono::microseconds timeLimit)
+    : mLua(luaL_newstate())
+{
     mExtraState.insert(mLua, {name, timeLimit, /* .timeStart = */ {}});
 }
 
-RaiiLuaState::RaiiLuaState(RaiiLuaState &&rhs)
-    : mLua(rhs.mLua) {
+RaiiLuaState::RaiiLuaState(RaiiLuaState&& rhs) : mLua(rhs.mLua)
+{
     rhs.mLua = nullptr;
 }
 
-RaiiLuaState &RaiiLuaState::operator=(RaiiLuaState &&rhs) {
+RaiiLuaState& RaiiLuaState::operator=(RaiiLuaState&& rhs)
+{
     // do not check self assignment intentionally, following STL semantics
     this->~RaiiLuaState();
     // if self assignment, move constructor guarantees to place the object
@@ -41,7 +45,8 @@ RaiiLuaState &RaiiLuaState::operator=(RaiiLuaState &&rhs) {
     return *this;
 }
 
-RaiiLuaState::~RaiiLuaState() {
+RaiiLuaState::~RaiiLuaState()
+{
     if (mLua) {
         mExtraState.remove(mLua);
         lua_close(mLua);
@@ -78,37 +83,37 @@ QJsonValue RaiiLuaState::fetch(int index)
     return fetchValueImpl(mLua, index, 0);
 }
 
-bool RaiiLuaState::fetchBoolean(lua_State *L, int index)
+bool RaiiLuaState::fetchBoolean(lua_State* L, int index)
 {
     return lua_toboolean(L, index);
 }
 
-long long RaiiLuaState::fetchInteger(lua_State *L, int index)
+long long RaiiLuaState::fetchInteger(lua_State* L, int index)
 {
     return lua_tointeger(L, index);
 }
 
-double RaiiLuaState::fetchNumber(lua_State *L, int index)
+double RaiiLuaState::fetchNumber(lua_State* L, int index)
 {
     return lua_tonumber(L, index);
 }
 
-QString RaiiLuaState::fetchString(lua_State *L, int index)
+QString RaiiLuaState::fetchString(lua_State* L, int index)
 {
     return lua_tostring(L, index);
 }
 
-QJsonArray RaiiLuaState::fetchArray(lua_State *L, int index)
+QJsonArray RaiiLuaState::fetchArray(lua_State* L, int index)
 {
     return fetchTableImpl(L, index, 0).toArray();
 }
 
-QJsonObject RaiiLuaState::fetchObject(lua_State *L, int index)
+QJsonObject RaiiLuaState::fetchObject(lua_State* L, int index)
 {
     return fetchTableImpl(L, index, 0).toObject();
 }
 
-QJsonValue RaiiLuaState::fetch(lua_State *L, int index)
+QJsonValue RaiiLuaState::fetch(lua_State* L, int index)
 {
     return fetchValueImpl(L, index, 0);
 }
@@ -141,7 +146,7 @@ QJsonValue RaiiLuaState::pop()
     return value;
 }
 
-QJsonValue RaiiLuaState::pop(lua_State *L)
+QJsonValue RaiiLuaState::pop(lua_State* L)
 {
     QJsonValue value = fetch(L, -1);
     lua_pop(L, 1);
@@ -153,7 +158,7 @@ void RaiiLuaState::push(decltype(nullptr))
     lua_pushnil(mLua);
 }
 
-void RaiiLuaState::push(const QMap<QString, lua_CFunction> &value)
+void RaiiLuaState::push(const QMap<QString, lua_CFunction>& value)
 {
     lua_newtable(mLua);
     for (auto it = value.cbegin(); it != value.cend(); ++it) {
@@ -163,22 +168,22 @@ void RaiiLuaState::push(const QMap<QString, lua_CFunction> &value)
     }
 }
 
-void RaiiLuaState::push(lua_State *L, decltype(nullptr))
+void RaiiLuaState::push(lua_State* L, decltype(nullptr))
 {
     lua_pushnil(L);
 }
 
-void RaiiLuaState::push(lua_State *L, bool value)
+void RaiiLuaState::push(lua_State* L, bool value)
 {
     lua_pushboolean(L, value);
 }
 
-void RaiiLuaState::push(lua_State *L, const QString &value)
+void RaiiLuaState::push(lua_State* L, const QString& value)
 {
     lua_pushstring(L, value.toUtf8().constData());
 }
 
-void RaiiLuaState::push(lua_State *L, const QStringList &value)
+void RaiiLuaState::push(lua_State* L, const QStringList& value)
 {
     lua_newtable(L);
     for (int i = 0; i < value.length(); i++) {
@@ -188,12 +193,12 @@ void RaiiLuaState::push(lua_State *L, const QStringList &value)
     }
 }
 
-void RaiiLuaState::push(lua_State *L, const QJsonArray &value)
+void RaiiLuaState::push(lua_State* L, const QJsonArray& value)
 {
     pushArrayImpl(L, value, 0);
 }
 
-void RaiiLuaState::push(lua_State *L, const QJsonObject &value)
+void RaiiLuaState::push(lua_State* L, const QJsonObject& value)
 {
     pushObjectImpl(L, value, 0);
 }
@@ -203,12 +208,12 @@ int RaiiLuaState::getTop()
     return lua_gettop(mLua);
 }
 
-int RaiiLuaState::getTop(lua_State *L)
+int RaiiLuaState::getTop(lua_State* L)
 {
     return lua_gettop(L);
 }
 
-int RaiiLuaState::loadBuffer(const QByteArray &buff, const QString &name)
+int RaiiLuaState::loadBuffer(const QByteArray& buff, const QString& name)
 {
     return luaL_loadbuffer(mLua, buff.constData(), buff.size(), name.toUtf8().constData());
 }
@@ -223,12 +228,12 @@ int RaiiLuaState::pCall(int nargs, int nresults, int msgh)
     return lua_pcall(mLua, nargs, nresults, msgh);
 }
 
-int RaiiLuaState::getGlobal(const QString &name)
+int RaiiLuaState::getGlobal(const QString& name)
 {
     return lua_getglobal(mLua, name.toUtf8().constData());
 }
 
-void RaiiLuaState::setGlobal(const QString &name)
+void RaiiLuaState::setGlobal(const QString& name)
 {
     return lua_setglobal(mLua, name.toUtf8().constData());
 }
@@ -238,19 +243,22 @@ void RaiiLuaState::setHook(lua_Hook f, int mask, int count)
     lua_sethook(mLua, f, mask, count);
 }
 
-void RaiiLuaState::setTimeStart() {
+void RaiiLuaState::setTimeStart()
+{
     extraState().timeStart = std::chrono::system_clock::now();
 }
 
-LuaExtraState &RaiiLuaState::extraState() {
+LuaExtraState& RaiiLuaState::extraState()
+{
     return mExtraState[mLua];
 }
 
-LuaExtraState &RaiiLuaState::extraState(lua_State *lua) {
+LuaExtraState& RaiiLuaState::extraState(lua_State* lua)
+{
     return mExtraState[lua];
 }
 
-QJsonValue RaiiLuaState::fetchTableImpl(lua_State *L, int index, int depth)
+QJsonValue RaiiLuaState::fetchTableImpl(lua_State* L, int index, int depth)
 {
     if (depth == 1)
         // check stack size at first recursion to avoid multiple reallocations
@@ -258,7 +266,7 @@ QJsonValue RaiiLuaState::fetchTableImpl(lua_State *L, int index, int depth)
     if (depth > TABLE_MAX_DEPTH)
         throw LuaError("Lua runtime error: table nested too deeply");
 
-    push(L, nullptr); // make sure lua_next starts at beginning
+    push(L, nullptr);                             // make sure lua_next starts at beginning
     int newIndex = index < 0 ? index - 1 : index; // after push negative index changes
 
     QJsonObject hashPart;
@@ -270,14 +278,15 @@ QJsonValue RaiiLuaState::fetchTableImpl(lua_State *L, int index, int depth)
         QJsonValue v;
         try {
             v = fetchValueImpl(L, -1, depth);
-        } catch (const LuaError &e) {
+        } catch (const LuaError& e) {
             QString key = fetchString(L, -2);
             QString reason = e.reason() + QString(" (at table key '%1')").arg(key);
             lua_pop(L, 2);
             throw LuaError(reason);
         }
         lua_pop(L, 1);
-        if (processingArrayPart && lua_isinteger(L, -1) && fetchInteger(L, -1) == arrayPart.size() + 1)
+        if (processingArrayPart && lua_isinteger(L, -1) &&
+            fetchInteger(L, -1) == arrayPart.size() + 1)
             // we are still in array part
             arrayPart.push_back(v);
         else {
@@ -295,17 +304,16 @@ QJsonValue RaiiLuaState::fetchTableImpl(lua_State *L, int index, int depth)
         else
             // is array
             return arrayPart;
+    else if (!hashPart.empty())
+        // is object
+        return hashPart;
     else
-        if (!hashPart.empty())
-            // is object
-            return hashPart;
-        else
-            // empty table, okay
-            // return null since we cannot determine
-            return {};
+        // empty table, okay
+        // return null since we cannot determine
+        return {};
 }
 
-QJsonValue RaiiLuaState::fetchValueImpl(lua_State *L, int index, int depth)
+QJsonValue RaiiLuaState::fetchValueImpl(lua_State* L, int index, int depth)
 {
     if (lua_isnil(L, index))
         return {};
@@ -323,12 +331,12 @@ QJsonValue RaiiLuaState::fetchValueImpl(lua_State *L, int index, int depth)
         return fetchTableImpl(L, index, depth + 1);
     else {
         int type = lua_type(L, index);
-        const char *name = lua_typename(L, type);
+        const char* name = lua_typename(L, type);
         throw LuaError(QString("Lua type error: unknown type %1.").arg(name));
     }
 }
 
-void RaiiLuaState::pushArrayImpl(lua_State *L, const QJsonArray &value, int depth)
+void RaiiLuaState::pushArrayImpl(lua_State* L, const QJsonArray& value, int depth)
 {
     if (depth == 1)
         // check stack size at first recursion to avoid multiple reallocations
@@ -344,7 +352,7 @@ void RaiiLuaState::pushArrayImpl(lua_State *L, const QJsonArray &value, int dept
     }
 }
 
-void RaiiLuaState::pushObjectImpl(lua_State *L, const QJsonObject &value, int depth)
+void RaiiLuaState::pushObjectImpl(lua_State* L, const QJsonObject& value, int depth)
 {
     if (depth == 1)
         // check stack size at first recursion to avoid multiple reallocations
@@ -360,7 +368,7 @@ void RaiiLuaState::pushObjectImpl(lua_State *L, const QJsonObject &value, int de
     }
 }
 
-void RaiiLuaState::pushValueImpl(lua_State *L, const QJsonValue &value, int depth)
+void RaiiLuaState::pushValueImpl(lua_State* L, const QJsonValue& value, int depth)
 {
     if (value.isNull())
         lua_pushnil(L);
@@ -378,6 +386,6 @@ void RaiiLuaState::pushValueImpl(lua_State *L, const QJsonValue &value, int dept
         throw LuaError("Lua type error: unknown type.");
 }
 
-QHash<lua_State *, LuaExtraState> RaiiLuaState::mExtraState;
+QHash<lua_State*, LuaExtraState> RaiiLuaState::mExtraState;
 
 } // namespace AddOn

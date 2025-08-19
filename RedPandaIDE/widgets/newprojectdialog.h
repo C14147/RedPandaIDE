@@ -31,7 +31,7 @@ class NewProjectDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit NewProjectDialog(QWidget *parent = nullptr);
+    explicit NewProjectDialog(QWidget* parent = nullptr);
     ~NewProjectDialog();
     PProjectTemplate getTemplate();
     QString getLocation();
@@ -43,9 +43,9 @@ public:
 private slots:
     void updateView();
     void updateProjectLocation();
-    void on_lstTemplates_itemDoubleClicked(QListWidgetItem *item);
+    void on_lstTemplates_itemDoubleClicked(QListWidgetItem* item);
 
-    void on_lstTemplates_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
+    void on_lstTemplates_currentItemChanged(QListWidgetItem* current, QListWidgetItem* previous);
     void on_btnBrowse_clicked();
     void onUpdateIcons();
 
@@ -60,10 +60,10 @@ private:
     void rebuildTabs();
 
 private:
-    Ui::NewProjectDialog *ui;
+    Ui::NewProjectDialog* ui;
     QList<PProjectTemplate> mTemplates;
     QTabBar* mTemplatesTabBar;
-    QMap<QString,int> mCategories;
+    QMap<QString, int> mCategories;
 };
 
 #endif // NEWPROJECTDIALOG_H

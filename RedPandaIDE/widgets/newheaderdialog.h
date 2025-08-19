@@ -28,7 +28,7 @@ class NewHeaderDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit NewHeaderDialog(QWidget *parent = nullptr);
+    explicit NewHeaderDialog(QWidget* parent = nullptr);
     ~NewHeaderDialog();
     QString headerName() const;
     QString path() const;
@@ -36,14 +36,14 @@ public:
     void setPath(const QString& location);
 
 private:
-    Ui::NewHeaderDialog *ui;
+    Ui::NewHeaderDialog* ui;
 
 private:
     void onUpdateIcons();
 
     // QWidget interface
 protected:
-    void closeEvent(QCloseEvent *event) override;
+    void closeEvent(QCloseEvent* event) override;
 private slots:
     void on_btnCreate_clicked();
     void on_btnCancel_clicked();

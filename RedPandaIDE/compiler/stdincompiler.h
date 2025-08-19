@@ -24,9 +24,10 @@ class StdinCompiler : public Compiler
     Q_OBJECT
 
 public:
-    explicit StdinCompiler(const QString& filename, const QByteArray& encoding, const QString& content, bool onlyCheckSyntax);
-    StdinCompiler(const StdinCompiler&)=delete;
-    StdinCompiler& operator=(const StdinCompiler&)=delete;
+    explicit StdinCompiler(const QString& filename, const QByteArray& encoding,
+                           const QString& content, bool onlyCheckSyntax);
+    StdinCompiler(const StdinCompiler&) = delete;
+    StdinCompiler& operator=(const StdinCompiler&) = delete;
 
 protected:
     bool prepareForCompile() override;
@@ -42,7 +43,6 @@ protected:
     // Compiler interface
 protected:
     bool prepareForRebuild() override;
-
 };
 
 #endif // STDINCOMPILER_H

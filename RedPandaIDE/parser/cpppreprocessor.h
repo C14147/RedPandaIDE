@@ -22,14 +22,7 @@
 #include "parserutils.h"
 
 #define MAX_DEFINE_EXPAND_DEPTH 20
-enum class DefineArgTokenType{
-    Symbol,
-    Identifier,
-    Space,
-    Sharp,
-    DSharp,
-    Other
-};
+enum class DefineArgTokenType { Symbol, Identifier, Space, Sharp, DSharp, Other };
 struct DefineArgToken {
     QString value;
     DefineArgTokenType type;
@@ -37,10 +30,10 @@ struct DefineArgToken {
 using PDefineArgToken = std::shared_ptr<DefineArgToken>;
 
 struct ParsedFile {
-    int index; // 0-based for programming convenience
-    QString fileName; // Record filename, but not used now
-    QStringList buffer; // do not concat them all
-    int branches; //branch levels;
+    int index;                // 0-based for programming convenience
+    QString fileName;         // Record filename, but not used now
+    QStringList buffer;       // do not concat them all
+    int branches;             // branch levels;
     PParsedFileInfo fileInfo; // info of this file
 };
 
@@ -60,19 +53,22 @@ class CppPreprocessor
     };
 
 public:
-
     explicit CppPreprocessor();
-    CppPreprocessor(const CppPreprocessor&)=delete;
-    CppPreprocessor& operator=(const CppPreprocessor&)=delete;
+    CppPreprocessor(const CppPreprocessor&) = delete;
+    CppPreprocessor& operator=(const CppPreprocessor&) = delete;
 
     void clear();
 
     void clearTempResults();
-    void getDefineParts(const QString& input, QString &name, QString &args, QString &value);
-    void addHardDefineByLine(const QString& line) { addDefineByLine(line,true); }
-    void setScanOptions(bool parseSystem, bool parseLocal) {
+    void getDefineParts(const QString& input, QString& name, QString& args, QString& value);
+    void addHardDefineByLine(const QString& line)
+    {
+        addDefineByLine(line, true);
+    }
+    void setScanOptions(bool parseSystem, bool parseLocal)
+    {
         mParseSystem = parseSystem;
-        mParseLocal=parseLocal;
+        mParseLocal = parseLocal;
     }
     void preprocess(const QString& fileName);
 
@@ -80,124 +76,152 @@ public:
     void dumpIncludesListTo(const QString& fileName) const;
     void addIncludePath(const QString& fileName);
     void addProjectIncludePath(const QString& fileName);
-    void clearIncludePaths() {
+    void clearIncludePaths()
+    {
         mIncludePaths.clear();
         mIncludePathList.clear();
     }
-    void clearProjectIncludePaths() {
+    void clearProjectIncludePaths()
+    {
         mProjectIncludePaths.clear();
         mProjectIncludePathList.clear();
     }
     void removeScannedFile(const QString& filename);
 
-    PDefine getDefine(const QString& name) const{
-        return mDefines.value(name,PDefine());
+    PDefine getDefine(const QString& name) const
+    {
+        return mDefines.value(name, PDefine());
     }
 
     QString expandMacros(const QString& text, QSet<QString> usedMacros) const;
-    void expandMacro(const QString &text, QString &newText, const QString &word, int &i, QSet<QString> usedMacros) const;
+    void expandMacro(const QString& text, QString& newText, const QString& word, int& i,
+                     QSet<QString> usedMacros) const;
 
-    const QStringList& result() const{
+    const QStringList& result() const
+    {
         return mResult;
     };
 
-    PParsedFileInfo findFileInfo(const QString& fileName) const {
+    PParsedFileInfo findFileInfo(const QString& fileName) const
+    {
         return mFileInfos.value(fileName);
     }
 
-    void removeFileInfo(const QString& fileName) {
+    void removeFileInfo(const QString& fileName)
+    {
         mFileInfos.remove(fileName);
     }
 
-    bool fileScanned(const QString& fileName) const {
+    bool fileScanned(const QString& fileName) const
+    {
         return mScannedFiles.contains(fileName);
     }
 
-    const QSet<QString>& includePaths() const {
+    const QSet<QString>& includePaths() const
+    {
         return mIncludePaths;
     }
 
-    const QSet<QString>& scannedFiles() const {
+    const QSet<QString>& scannedFiles() const
+    {
         return mScannedFiles;
     }
 
-    const QSet<QString> &projectIncludePaths() const {
+    const QSet<QString>& projectIncludePaths() const
+    {
         return mProjectIncludePaths;
     }
 
-    const DefineMap &hardDefines() const { return mHardDefines; }
+    const DefineMap& hardDefines() const
+    {
+        return mHardDefines;
+    }
 
-    const QList<QString> &includePathList() const { return mIncludePathList; }
+    const QList<QString>& includePathList() const
+    {
+        return mIncludePathList;
+    }
 
-    const QList<QString> &projectIncludePathList() const { return mProjectIncludePathList; }
-    void setOnGetFileStream(const GetFileStreamCallBack &newOnGetFileStream) { mOnGetFileStream = newOnGetFileStream; }
+    const QList<QString>& projectIncludePathList() const
+    {
+        return mProjectIncludePathList;
+    }
+    void setOnGetFileStream(const GetFileStreamCallBack& newOnGetFileStream)
+    {
+        mOnGetFileStream = newOnGetFileStream;
+    }
 
     static QList<PDefineArgToken> tokenizeValue(const QString& value);
 
 private:
-
     enum class BranchResult {
-        isTrue,   /* This branch is true */
+        isTrue,            /* This branch is true */
         isFalse_but_trued, /* This branch is false, but a previous branch is true */
-        isFalse, /* This branch and all previous branches is false */
+        isFalse,           /* This branch and all previous branches is false */
         parentIsFalse
     };
 
-    static QString expandFunction(PDefine define,const QString &args);
+    static QString expandFunction(PDefine define, const QString& args);
     void preprocessBuffer();
     void skipToEndOfPreprocessor();
     void skipToPreprocessor();
     QString getNextPreprocessor();
     void handleBranch(const QString& line);
     void handleDefine(const QString& line);
-    void handleInclude(const QString& line, bool fromNext=false);
+    void handleInclude(const QString& line, bool fromNext = false);
     void handlePreprocessor(const QString& value);
     void handleUndefine(const QString& line);
     QString expandMacros();
-    void expandMacro(QString &newLine, const QString &word, int& i, QSet<QString> usedMacros);
+    void expandMacro(QString& newLine, const QString& word, int& i, QSet<QString> usedMacros);
     QString removeGCCAttributes(const QString& line);
-    void removeGCCAttribute(const QString&line, QString& newLine, int &i, const QString& word);
+    void removeGCCAttribute(const QString& line, QString& newLine, int& i, const QString& word);
 
     // current file stuff
-    PParsedFile getInclude(int index) const {
+    PParsedFile getInclude(int index) const
+    {
         return mIncludeStack[index];
     }
     void openInclude(QString fileName);
     void closeInclude();
 
     // branch stuff
-    BranchResult getCurrentBranch(){
+    BranchResult getCurrentBranch()
+    {
         if (!mBranchResults.isEmpty())
             return mBranchResults.last();
         else
             return BranchResult::isTrue;
     }
     BranchResult calcElseBranchResult(BranchResult oldResult);
-    bool sameResultWithCurrentBranch(BranchResult value) {
-        return (getCurrentBranch()==BranchResult::isTrue && value == BranchResult::isTrue)
-                || (getCurrentBranch()!=BranchResult::isTrue && value != BranchResult::isTrue);
+    bool sameResultWithCurrentBranch(BranchResult value)
+    {
+        return (getCurrentBranch() == BranchResult::isTrue && value == BranchResult::isTrue) ||
+               (getCurrentBranch() != BranchResult::isTrue && value != BranchResult::isTrue);
     }
-    void setCurrentBranch(BranchResult value){
+    void setCurrentBranch(BranchResult value)
+    {
         if (!sameResultWithCurrentBranch(value)) {
-            mCurrentFileInfo->insertBranch(mIndex+1,value==BranchResult::isTrue);
+            mCurrentFileInfo->insertBranch(mIndex + 1, value == BranchResult::isTrue);
         }
         mBranchResults.append(value);
     }
-    void removeCurrentBranch(){
+    void removeCurrentBranch()
+    {
         BranchResult value = getCurrentBranch();
-        if (mBranchResults.size()>0) {
+        if (mBranchResults.size() > 0) {
             mBranchResults.pop_back();
         }
         if (!sameResultWithCurrentBranch(value)) {
-            mCurrentFileInfo->insertBranch(mIndex,getCurrentBranch()==BranchResult::isTrue);
+            mCurrentFileInfo->insertBranch(mIndex, getCurrentBranch() == BranchResult::isTrue);
         }
     }
     void addDefinesInFile(const QString& fileName);
-    void addDefineByParts(const QString& name, const QString& args,
-                          const QString& value, bool hardCoded);
+    void addDefineByParts(const QString& name, const QString& args, const QString& value,
+                          bool hardCoded);
     void addDefineByLine(const QString& line, bool hardCoded);
-    PDefine getHardDefine(const QString& name){
-        return mHardDefines.value(name,PDefine());
+    PDefine getHardDefine(const QString& name)
+    {
+        return mHardDefines.value(name, PDefine());
     };
     void invalidDefinesInFile(const QString& fileName);
 
@@ -207,93 +231,109 @@ private:
     /*
      * '_','a'..'z','A'..'Z','0'..'9'
      */
-    static  bool isWordChar(const QChar& ch) {
-        return (ch=='_'
-                || ch.isLetter()
-                || (ch>='0' && ch<='9'));
+    static bool isWordChar(const QChar& ch)
+    {
+        return (ch == '_' || ch.isLetter() || (ch >= '0' && ch <= '9'));
     }
 
     /*
      * 'A'..'Z', '0'..'9', 'a'..'z', '_', '*', '&', '~'
      */
-    static  bool isIdentChar(const QChar& ch) {
-        return (ch=='_' || ch == '*' || ch == '&' || ch == '~' ||
-                ch.isLetter()
-                || (ch>='0' && ch<='9'));
+    static bool isIdentChar(const QChar& ch)
+    {
+        return (ch == '_' || ch == '*' || ch == '&' || ch == '~' || ch.isLetter() ||
+                (ch >= '0' && ch <= '9'));
     }
 
     /*
      * '\r','\n'
      */
-    static  bool isLineChar(const QChar& ch) { return ch=='\r' || ch == '\n'; }
+    static bool isLineChar(const QChar& ch)
+    {
+        return ch == '\r' || ch == '\n';
+    }
     /*
      *  '\t' ' '
      */
-    static  bool isSpaceChar(const QChar& ch) { return ch == ' ' || ch == '\t'; }
+    static bool isSpaceChar(const QChar& ch)
+    {
+        return ch == ' ' || ch == '\t';
+    }
 
     /*
      * 'A'..'Z', 'a'..'z', '_'
      */
-    static  bool isMacroIdentChar(const QChar& ch) { return ch.isLetter() || ch == '_'; }
+    static bool isMacroIdentChar(const QChar& ch)
+    {
+        return ch.isLetter() || ch == '_';
+    }
 
     /*
      * '0'..'9'
      */
-    static  bool isDigit(const QChar& ch) { return (ch>='0' && ch<='9'); }
+    static bool isDigit(const QChar& ch)
+    {
+        return (ch >= '0' && ch <= '9');
+    }
 
     /*
      * '0'..'9','x',X','a'..'f','A'..'F','u','U','l','L'
      */
-    static  bool isNumberChar(const QChar& ch);
+    static bool isNumberChar(const QChar& ch);
 
-    QString lineBreak() { return "\n"; }
+    QString lineBreak()
+    {
+        return "\n";
+    }
 
     bool evaluateIf(const QString& line);
     QString expandDefines(QString line);
-    bool skipParenthesis(const QString&line, int& index, int step = 1);
-    bool skipSpaces(const QString &expr, int& pos);
-    bool evalNumber(const QString &expr, int& result, int& pos);
-    bool evalTerm(const QString &expr, int& result, int& pos);
-    bool evalUnaryExpr(const QString &expr, int& result, int& pos);
-    bool evalMulExpr(const QString &expr, int& result, int& pos);
-    bool evalAddExpr(const QString &expr, int& result, int& pos);
-    bool evalShiftExpr(const QString &expr, int& result, int& pos);
-    bool evalRelationExpr(const QString &expr, int& result, int& pos);
-    bool evalEqualExpr(const QString &expr, int& result, int& pos);
-    bool evalBitAndExpr(const QString &expr, int& result, int& pos);
-    bool evalBitXorExpr(const QString &expr, int& result, int& pos);
-    bool evalBitOrExpr(const QString &expr, int& result, int& pos);
-    bool evalLogicAndExpr(const QString &expr, int& result, int& pos);
-    bool evalLogicOrExpr(const QString &expr, int& result, int& pos);
-    bool evalExpr(const QString &expr, int& result, int& pos);
+    bool skipParenthesis(const QString& line, int& index, int step = 1);
+    bool skipSpaces(const QString& expr, int& pos);
+    bool evalNumber(const QString& expr, int& result, int& pos);
+    bool evalTerm(const QString& expr, int& result, int& pos);
+    bool evalUnaryExpr(const QString& expr, int& result, int& pos);
+    bool evalMulExpr(const QString& expr, int& result, int& pos);
+    bool evalAddExpr(const QString& expr, int& result, int& pos);
+    bool evalShiftExpr(const QString& expr, int& result, int& pos);
+    bool evalRelationExpr(const QString& expr, int& result, int& pos);
+    bool evalEqualExpr(const QString& expr, int& result, int& pos);
+    bool evalBitAndExpr(const QString& expr, int& result, int& pos);
+    bool evalBitXorExpr(const QString& expr, int& result, int& pos);
+    bool evalBitOrExpr(const QString& expr, int& result, int& pos);
+    bool evalLogicAndExpr(const QString& expr, int& result, int& pos);
+    bool evalLogicOrExpr(const QString& expr, int& result, int& pos);
+    bool evalExpr(const QString& expr, int& result, int& pos);
 
     int evaluateExpression(QString line);
+
 private:
-    //temporary data when preprocessing single file
+    // temporary data when preprocessing single file
     int mIndex; // points to current file buffer.
     QString mFileName;
     QStringList mBuffer;
     QStringList mResult;
     PParsedFileInfo mCurrentFileInfo;
-    int mPreProcIndex;    
-    QList<PParsedFile> mIncludeStack; // stack of files we've stepped into. last one is current file, first one is source file
-    QList<BranchResult> mBranchResults;// stack of branch results (boolean). last one is current branch, first one is outermost branch
-    DefineMap mDefines; // working set, editable
-    QSet<QString> mProcessed; // dictionary to save filename already processed
+    int mPreProcIndex;
+    QList<PParsedFile> mIncludeStack;   // stack of files we've stepped into. last one is current
+                                        // file, first one is source file
+    QList<BranchResult> mBranchResults; // stack of branch results (boolean). last one is current
+                                        // branch, first one is outermost branch
+    DefineMap mDefines;                 // working set, editable
+    QSet<QString> mProcessed;           // dictionary to save filename already processed
 
-
-    //Result across processings.
-    //used by parser even preprocess finished
+    // Result across processings.
+    // used by parser even preprocess finished
     QHash<QString, PParsedFileInfo> mFileInfos;
-    QHash<QString, PDefineMap> mFileDefines; //dictionary to save defines for each headerfile;
-    QHash<QString, PDefineMap> mFileUndefines; //dictionary to save defines for each headerfile;
+    QHash<QString, PDefineMap> mFileDefines;   // dictionary to save defines for each headerfile;
+    QHash<QString, PDefineMap> mFileUndefines; // dictionary to save defines for each headerfile;
     QSet<QString> mScannedFiles;
 
-    //option data for the parser
+    // option data for the parser
     //{ List of current project's include path }
     DefineMap mHardDefines; // set by "cpp -dM -E -xc NUL"
     QSet<QString> mProjectIncludePaths;
-    //we also need include paths in order (for #include_next)
+    // we also need include paths in order (for #include_next)
     QList<QString> mIncludePathList;
     QList<QString> mProjectIncludePathList;
     //{ List of current compiler set's include path}

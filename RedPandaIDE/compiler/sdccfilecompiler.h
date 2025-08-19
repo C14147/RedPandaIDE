@@ -24,9 +24,9 @@ class SDCCFileCompiler : public Compiler
     Q_OBJECT
 public:
     SDCCFileCompiler(const QString& filename, const QByteArray& encoding,
-                 CppCompileType compileType, bool onlyCheckSyntax);
-    SDCCFileCompiler(const SDCCFileCompiler&)=delete;
-    SDCCFileCompiler& operator=(const SDCCFileCompiler&)=delete;
+                     CppCompileType compileType, bool onlyCheckSyntax);
+    SDCCFileCompiler(const SDCCFileCompiler&) = delete;
+    SDCCFileCompiler& operator=(const SDCCFileCompiler&) = delete;
 
 protected:
     bool prepareForCompile() override;

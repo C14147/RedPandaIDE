@@ -12,11 +12,11 @@ class GitFetchDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit GitFetchDialog(QWidget *parent = nullptr);
+    explicit GitFetchDialog(QWidget* parent = nullptr);
     ~GitFetchDialog();
 
 private:
-    Ui::GitFetchDialog *ui;
+    Ui::GitFetchDialog* ui;
 };
 
 #endif // GITFETCHDIALOG_H

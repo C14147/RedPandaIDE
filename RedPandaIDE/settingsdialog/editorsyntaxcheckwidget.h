@@ -29,11 +29,12 @@ class EditorSyntaxCheckWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit EditorSyntaxCheckWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit EditorSyntaxCheckWidget(const QString& name, const QString& group,
+                                     QWidget* parent = nullptr);
     ~EditorSyntaxCheckWidget();
 
 private:
-    Ui::EditorSyntaxCheckWidget *ui;
+    Ui::EditorSyntaxCheckWidget* ui;
 
     // SettingsWidget interface
 protected:

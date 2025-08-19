@@ -20,9 +20,8 @@
 #include "../systemconsts.h"
 #include <qt_utils/charsetinfo.h>
 
-ProjectFilesWidget::ProjectFilesWidget(const QString &name, const QString &group, QWidget *parent) :
-    SettingsWidget(name,group,parent),
-    ui(new Ui::ProjectFilesWidget)
+ProjectFilesWidget::ProjectFilesWidget(const QString& name, const QString& group, QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::ProjectFilesWidget)
 {
     ui->setupUi(this);
 }
@@ -34,11 +33,12 @@ ProjectFilesWidget::~ProjectFilesWidget()
 
 void ProjectFilesWidget::doLoad()
 {
-    if (ui->cbEncoding->count()>0) {
-        if (pMainWindow->project()->options().encoding==ENCODING_SYSTEM_DEFAULT) {
-            ui->cbEncoding->setItemText(0,tr("Project(%1)").arg(tr("System Default")));
+    if (ui->cbEncoding->count() > 0) {
+        if (pMainWindow->project()->options().encoding == ENCODING_SYSTEM_DEFAULT) {
+            ui->cbEncoding->setItemText(0, tr("Project(%1)").arg(tr("System Default")));
         } else {
-            ui->cbEncoding->setItemText(0,tr("Project(%1)").arg(QString(pMainWindow->project()->options().encoding)));
+            ui->cbEncoding->setItemText(
+                0, tr("Project(%1)").arg(QString(pMainWindow->project()->options().encoding)));
         }
     }
     ui->treeProject->expandAll();
@@ -47,7 +47,7 @@ void ProjectFilesWidget::doLoad()
 
 void ProjectFilesWidget::doSave()
 {
-    for (int i=0;i<mUnits.count();i++) {
+    for (int i = 0; i < mUnits.count(); i++) {
         PProjectUnit unitCopy = mUnits[i];
         PProjectUnit unit = pMainWindow->project()->findUnit(unitCopy->fileName());
         unit->setPriority(unitCopy->priority());
@@ -79,7 +79,7 @@ PProjectUnit ProjectFilesWidget::currentUnit()
         return PProjectUnit();
     if (!node->isUnit)
         return PProjectUnit();
-    PProjectUnit unit=node->pUnit.lock();
+    PProjectUnit unit = node->pUnit.lock();
     if (unit) {
         foreach (PProjectUnit tmpUnit, mUnits) {
             if (tmpUnit->fileName() == unit->fileName())
@@ -122,10 +122,9 @@ void ProjectFilesWidget::disableFileOptions()
 
 void ProjectFilesWidget::loadUnitEncoding(PProjectUnit unit)
 {
-    if (unit->encoding() == ENCODING_PROJECT
-            || unit->encoding() == ENCODING_SYSTEM_DEFAULT
-            || unit->encoding() == ENCODING_UTF8) {
-        int index =ui->cbEncoding->findData(unit->encoding());
+    if (unit->encoding() == ENCODING_PROJECT || unit->encoding() == ENCODING_SYSTEM_DEFAULT ||
+        unit->encoding() == ENCODING_UTF8) {
+        int index = ui->cbEncoding->findData(unit->encoding());
         ui->cbEncoding->setCurrentIndex(index);
         ui->cbEncodingDetail->clear();
         ui->cbEncodingDetail->setVisible(false);
@@ -143,11 +142,11 @@ void ProjectFilesWidget::loadUnitEncoding(PProjectUnit unit)
     }
 }
 
-void ProjectFilesWidget::on_treeProject_doubleClicked(const QModelIndex &index)
+void ProjectFilesWidget::on_treeProject_doubleClicked(const QModelIndex& index)
 {
     if (!index.isValid()) {
         disableFileOptions();
-        return ;
+        return;
     }
     ProjectModelNode* node = static_cast<ProjectModelNode*>(index.internalPointer());
     if (!node) {
@@ -173,70 +172,62 @@ void ProjectFilesWidget::on_treeProject_doubleClicked(const QModelIndex &index)
     }
 }
 
-
 void ProjectFilesWidget::on_spinPriority_valueChanged(int)
 {
     PProjectUnit unit = currentUnit();
-    if(!unit)
+    if (!unit)
         return;
     unit->setPriority(ui->spinPriority->value());
 }
 
-
 void ProjectFilesWidget::on_chkCompile_stateChanged(int)
 {
     PProjectUnit unit = currentUnit();
-    if(!unit)
+    if (!unit)
         return;
     unit->setCompile(ui->chkCompile->isChecked());
 }
 
-
 void ProjectFilesWidget::on_chkLink_stateChanged(int)
 {
     PProjectUnit unit = currentUnit();
-    if(!unit)
+    if (!unit)
         return;
     unit->setLink(ui->chkLink->isChecked());
 }
 
-
-void ProjectFilesWidget::on_chkCompileAsCPP_stateChanged(int )
+void ProjectFilesWidget::on_chkCompileAsCPP_stateChanged(int)
 {
     PProjectUnit unit = currentUnit();
-    if(!unit)
+    if (!unit)
         return;
     unit->setCompileCpp(ui->chkCompileAsCPP->isChecked());
 }
 
-
-void ProjectFilesWidget::on_chkOverrideBuildCommand_stateChanged(int )
+void ProjectFilesWidget::on_chkOverrideBuildCommand_stateChanged(int)
 {
     PProjectUnit unit = currentUnit();
-    if(!unit)
+    if (!unit)
         return;
     unit->setOverrideBuildCmd(ui->chkOverrideBuildCommand->isChecked());
     ui->txtBuildCommand->setEnabled(ui->chkOverrideBuildCommand->isChecked());
 }
 
-
 void ProjectFilesWidget::on_txtBuildCommand_textChanged()
 {
     PProjectUnit unit = currentUnit();
-    if(!unit)
+    if (!unit)
         return;
     unit->setBuildCmd(ui->txtBuildCommand->toPlainText());
 }
 
-
-void ProjectFilesWidget::on_cbEncoding_currentTextChanged(const QString &)
+void ProjectFilesWidget::on_cbEncoding_currentTextChanged(const QString&)
 {
     QString userData = ui->cbEncoding->currentData().toString();
-    if (userData == ENCODING_PROJECT
-            || userData == ENCODING_SYSTEM_DEFAULT
-            || userData == ENCODING_UTF8) {
+    if (userData == ENCODING_PROJECT || userData == ENCODING_SYSTEM_DEFAULT ||
+        userData == ENCODING_UTF8) {
         PProjectUnit unit = currentUnit();
-        if(!unit)
+        if (!unit)
             return;
         unit->setEncoding(userData.toUtf8());
         ui->cbEncodingDetail->setVisible(false);
@@ -251,8 +242,7 @@ void ProjectFilesWidget::on_cbEncoding_currentTextChanged(const QString &)
     }
 }
 
-
-void ProjectFilesWidget::on_treeProject_clicked(const QModelIndex &index)
+void ProjectFilesWidget::on_treeProject_clicked(const QModelIndex& index)
 {
     on_treeProject_doubleClicked(index);
 }
@@ -264,30 +254,32 @@ void ProjectFilesWidget::init()
     ui->spinPriority->setMaximum(9999);
     ui->cbEncodingDetail->setVisible(false);
     ui->cbEncoding->clear();
-    if (project->options().encoding==ENCODING_SYSTEM_DEFAULT) {
-        ui->cbEncoding->addItem(tr("Project(%1)").arg(tr("ANSI"),ENCODING_PROJECT));
+    if (project->options().encoding == ENCODING_SYSTEM_DEFAULT) {
+        ui->cbEncoding->addItem(tr("Project(%1)").arg(tr("ANSI"), ENCODING_PROJECT));
     } else {
-        ui->cbEncoding->addItem(tr("Project(%1)").arg(QString(project->options().encoding)),ENCODING_PROJECT);
+        ui->cbEncoding->addItem(tr("Project(%1)").arg(QString(project->options().encoding)),
+                                ENCODING_PROJECT);
     }
-    ui->cbEncoding->addItem(tr("System Default(%1)").arg(QString(pCharsetInfoManager->getDefaultSystemEncoding())),ENCODING_SYSTEM_DEFAULT);
-    ui->cbEncoding->addItem(tr("UTF-8"),ENCODING_UTF8);
+    ui->cbEncoding->addItem(
+        tr("System Default(%1)").arg(QString(pCharsetInfoManager->getDefaultSystemEncoding())),
+        ENCODING_SYSTEM_DEFAULT);
+    ui->cbEncoding->addItem(tr("UTF-8"), ENCODING_UTF8);
     foreach (const QString& langName, pCharsetInfoManager->languageNames()) {
-        ui->cbEncoding->addItem(langName,langName);
+        ui->cbEncoding->addItem(langName, langName);
     }
     copyUnits();
-    QItemSelectionModel *m=ui->treeProject->selectionModel();
+    QItemSelectionModel* m = ui->treeProject->selectionModel();
     ui->treeProject->setModel(project->model());
     delete m;
     SettingsWidget::init();
 }
 
-void ProjectFilesWidget::on_cbEncodingDetail_currentTextChanged(const QString &)
+void ProjectFilesWidget::on_cbEncodingDetail_currentTextChanged(const QString&)
 {
     PProjectUnit unit = currentUnit();
-    if(!unit)
+    if (!unit)
         return;
     if (ui->cbEncodingDetail->currentText().isEmpty())
         return;
     unit->setEncoding(ui->cbEncodingDetail->currentText().toUtf8());
 }
-

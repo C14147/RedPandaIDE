@@ -18,7 +18,6 @@
 
 ProblemCaseValidator::ProblemCaseValidator()
 {
-
 }
 
 bool ProblemCaseValidator::validate(POJProblemCase problemCase, ProblemCaseValidateType type)
@@ -33,68 +32,68 @@ bool ProblemCaseValidator::validate(POJProblemCase problemCase, ProblemCaseValid
         expected = textToLines(problemCase->expected);
     problemCase->outputLineCounts = output.count();
     problemCase->expectedLineCounts = expected.count();
-    if (problemCase->expectedLineCounts>5000) {
-        if (output.count()<expected.count()) {
-            problemCase->firstDiffLine=output.count();
+    if (problemCase->expectedLineCounts > 5000) {
+        if (output.count() < expected.count()) {
+            problemCase->firstDiffLine = output.count();
             return false;
-        }  else if (output.count()>expected.count()) {
-            problemCase->firstDiffLine=expected.count();
+        } else if (output.count() > expected.count()) {
+            problemCase->firstDiffLine = expected.count();
             return false;
         }
     }
-    int count=std::min(output.count(), expected.count());
-    switch(type) {
+    int count = std::min(output.count(), expected.count());
+    switch (type) {
     case ProblemCaseValidateType::Exact:
-        for (int i=0;i<count;i++) {
-            if (output[i]!=expected[i]) {
+        for (int i = 0; i < count; i++) {
+            if (output[i] != expected[i]) {
                 problemCase->firstDiffLine = i;
                 return false;
             }
         }
         break;
     case ProblemCaseValidateType::IgnoreLeadingTrailingSpaces:
-        for (int i=0;i<count;i++) {
-            if (output[i].trimmed()!=expected[i].trimmed()) {
+        for (int i = 0; i < count; i++) {
+            if (output[i].trimmed() != expected[i].trimmed()) {
                 problemCase->firstDiffLine = i;
                 return false;
             }
         }
         break;
     case ProblemCaseValidateType::IgnoreSpaces:
-        for (int i=0;i<count;i++) {
-            if (!equalIgnoringSpaces(output[i],expected[i])) {
+        for (int i = 0; i < count; i++) {
+            if (!equalIgnoringSpaces(output[i], expected[i])) {
                 problemCase->firstDiffLine = i;
                 return false;
             }
         }
         break;
     }
-    if (output.count()<expected.count()) {
-        problemCase->firstDiffLine=output.count();
+    if (output.count() < expected.count()) {
+        problemCase->firstDiffLine = output.count();
         return false;
-    }  else if (output.count()>expected.count()) {
-        problemCase->firstDiffLine=expected.count();
+    } else if (output.count() > expected.count()) {
+        problemCase->firstDiffLine = expected.count();
         return false;
     }
     return true;
 }
 
-bool ProblemCaseValidator::equalIgnoringSpaces(const QString &s1, const QString &s2)
+bool ProblemCaseValidator::equalIgnoringSpaces(const QString& s1, const QString& s2)
 {
-    QStringList strList1=split(s1);
-    QStringList strList2=split(s2);
-    return (strList1==strList2);
+    QStringList strList1 = split(s1);
+    QStringList strList2 = split(s2);
+    return (strList1 == strList2);
 }
 
-QStringList ProblemCaseValidator::split(const QString &s)
+QStringList ProblemCaseValidator::split(const QString& s)
 {
     QStringList result;
     const QChar* p = getNullTerminatedStringData(s);
     const QChar* start = p;
-    while (p->unicode()!=0) {
+    while (p->unicode() != 0) {
         if (p->isSpace()) {
             if (!start->isSpace()) {
-                result.append(QString(start,p-start));
+                result.append(QString(start, p - start));
             }
             start = p;
         } else if (start->isSpace()) {
@@ -103,7 +102,7 @@ QStringList ProblemCaseValidator::split(const QString &s)
         p++;
     }
     if (!start->isSpace()) {
-        result.append(QString(start,p-start));
+        result.append(QString(start, p - start));
     }
     return result;
 }

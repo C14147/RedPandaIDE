@@ -21,9 +21,8 @@
 
 #include <QStandardItemModel>
 
-EditorGeneralWidget::EditorGeneralWidget(const QString& name, const QString& group, QWidget *parent) :
-    SettingsWidget(name,group,parent),
-    ui(new Ui::editorgeneralwidget)
+EditorGeneralWidget::EditorGeneralWidget(const QString& name, const QString& group, QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::editorgeneralwidget)
 {
     ui->setupUi(this);
     QStringList caretTypes;
@@ -40,37 +39,39 @@ EditorGeneralWidget::~EditorGeneralWidget()
     delete ui;
 }
 
-static void setCaretTypeIndex(QComboBox* combo, QSynedit::EditCaretType caretType) {
+static void setCaretTypeIndex(QComboBox* combo, QSynedit::EditCaretType caretType)
+{
     int t = static_cast<int>(caretType);
     combo->setCurrentIndex(t);
 }
 
-static QSynedit::EditCaretType getCaretTypeIndex(QComboBox* combo) {
-    if (combo->currentIndex()<0)
+static QSynedit::EditCaretType getCaretTypeIndex(QComboBox* combo)
+{
+    if (combo->currentIndex() < 0)
         return QSynedit::EditCaretType::VerticalLine;
     return static_cast<QSynedit::EditCaretType>(combo->currentIndex());
 }
 void EditorGeneralWidget::doLoad()
 {
     pSettings->editor().load();
-    //indents
+    // indents
     ui->chkAutoIndent->setChecked(pSettings->editor().autoIndent());
     ui->chkTabToSpaces->setChecked(pSettings->editor().tabToSpaces());
     ui->spTabWidth->setValue(pSettings->editor().tabWidth());
     ui->chkShowIndentLines->setChecked(pSettings->editor().showIndentLines());
     ui->chkFillIndents->setChecked(pSettings->editor().fillIndents());
-    //carets
+    // carets
     ui->chkEnhanceHome->setChecked(pSettings->editor().enhanceHomeKey());
     ui->chkEnhanceEndKey->setChecked(pSettings->editor().enhanceEndKey());
     ui->chkKeepCaretX->setChecked(pSettings->editor().keepCaretX());
-    setCaretTypeIndex(ui->cbCaretForInsert,pSettings->editor().caretForInsert());
-    setCaretTypeIndex(ui->cbCaretForOverwrite,pSettings->editor().caretForOverwrite());
+    setCaretTypeIndex(ui->cbCaretForInsert, pSettings->editor().caretForInsert());
+    setCaretTypeIndex(ui->cbCaretForOverwrite, pSettings->editor().caretForOverwrite());
     ui->chkCaretUseTextColor->setChecked(pSettings->editor().caretUseTextColor());
     ui->colorCaret->setColor(pSettings->editor().caretColor());
-    //highlight
+    // highlight
     ui->chkHighlightCurrentWord->setChecked(pSettings->editor().highlightCurrentWord());
     ui->chkHighlightMatchingBraces->setChecked(pSettings->editor().highlightMathingBraces());
-    //scrolls;
+    // scrolls;
     ui->chkAutoHideScrollBars->setChecked(pSettings->editor().autoHideScrollbar());
     ui->chkScrollPastEOF->setChecked(pSettings->editor().scrollPastEof());
     ui->chkScrollPastEOL->setChecked(pSettings->editor().scrollPastEol());
@@ -78,7 +79,7 @@ void EditorGeneralWidget::doLoad()
     ui->spinMouseWheelScrollSpeed->setValue(pSettings->editor().mouseWheelScrollSpeed());
     ui->spinMouseSelectionScrollSpeed->setValue(pSettings->editor().mouseSelectionScrollSpeed());
 
-    //right margin line;
+    // right margin line;
     ui->grpRightEdge->setChecked(pSettings->editor().showRightEdgeLine());
     ui->spRightEdge->setValue(pSettings->editor().rightEdgeWidth());
     ui->colorRightEdgeLine->setColor(pSettings->editor().rightEdgeLineColor());
@@ -86,14 +87,14 @@ void EditorGeneralWidget::doLoad()
 
 void EditorGeneralWidget::doSave()
 {
-    //indents
+    // indents
     pSettings->editor().setAutoIndent(ui->chkAutoIndent->isChecked());
     pSettings->editor().setTabToSpaces(ui->chkTabToSpaces->isChecked());
     pSettings->editor().setTabWidth(ui->spTabWidth->value());
     pSettings->editor().setShowIndentLines(ui->chkShowIndentLines->isChecked());
     pSettings->editor().setFillIndents(ui->chkFillIndents->isChecked());
 
-    //carets
+    // carets
     pSettings->editor().setEnhanceHomeKey(ui->chkEnhanceHome->isChecked());
     pSettings->editor().setEnhanceEndKey(ui->chkEnhanceEndKey->isChecked());
     pSettings->editor().setKeepCaretX(ui->chkKeepCaretX->isChecked());
@@ -101,18 +102,18 @@ void EditorGeneralWidget::doSave()
     pSettings->editor().setCaretForOverwrite(getCaretTypeIndex(ui->cbCaretForOverwrite));
     pSettings->editor().setCaretUseTextColor(ui->chkCaretUseTextColor->isChecked());
     pSettings->editor().setCaretColor(ui->colorCaret->color());
-    //highlight
+    // highlight
     pSettings->editor().setHighlightCurrentWord(ui->chkHighlightCurrentWord->isChecked());
     pSettings->editor().setHighlightMathingBraces(ui->chkHighlightMatchingBraces->isChecked());
 
-    //scrolls;
+    // scrolls;
     pSettings->editor().setAutoHideScrollbar(ui->chkAutoHideScrollBars->isChecked());
     pSettings->editor().setScrollPastEof(ui->chkScrollPastEOF->isChecked());
     pSettings->editor().setScrollPastEol(ui->chkScrollPastEOL->isChecked());
     pSettings->editor().setHalfPageScroll(ui->chkScrollHalfPage->isChecked());
     pSettings->editor().setMouseWheelScrollSpeed(ui->spinMouseWheelScrollSpeed->value());
     pSettings->editor().setMouseSelectionScrollSpeed(ui->spinMouseSelectionScrollSpeed->value());
-    //right margin line;
+    // right margin line;
     pSettings->editor().setShowRightEdgeLine(ui->grpRightEdge->isChecked());
     pSettings->editor().setRightEdgeWidth(ui->spRightEdge->value());
     pSettings->editor().setRightEdgeLineColor(ui->colorRightEdgeLine->color());
@@ -120,7 +121,7 @@ void EditorGeneralWidget::doSave()
     pMainWindow->updateEditorSettings();
 }
 
-void EditorGeneralWidget::on_chkCaretUseTextColor_stateChanged(int )
+void EditorGeneralWidget::on_chkCaretUseTextColor_stateChanged(int)
 {
     ui->lbCaretColor->setVisible(!ui->chkCaretUseTextColor->isChecked());
     ui->colorCaret->setVisible(!ui->chkCaretUseTextColor->isChecked());

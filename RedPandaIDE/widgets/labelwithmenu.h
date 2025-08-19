@@ -27,16 +27,16 @@ public:
 
     // QWidget interface
 protected:
-    void mousePressEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent* event) override;
 
     // QWidget interface
 protected:
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    void enterEvent(QEnterEvent *event) override;
+    void enterEvent(QEnterEvent* event) override;
 #else
-    void enterEvent(QEvent *event) override;
+    void enterEvent(QEvent* event) override;
 #endif
-    void leaveEvent(QEvent *event) override;
+    void leaveEvent(QEvent* event) override;
 
 private:
     QCursor mCursor;

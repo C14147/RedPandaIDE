@@ -33,12 +33,11 @@
 #include "addon/luaruntime.h"
 #endif
 
-ThemeManager::ThemeManager(QObject *parent) : QObject(parent)
+ThemeManager::ThemeManager(QObject* parent) : QObject(parent)
 {
-
 }
 
-PAppTheme ThemeManager::theme(const QString &themeName)
+PAppTheme ThemeManager::theme(const QString& themeName)
 {
     QString customThemeDir = pSettings->dirs().config(Settings::Dirs::DataType::Theme);
     QString builtInThemeDir = pSettings->dirs().data(Settings::Dirs::DataType::Theme);
@@ -66,25 +65,26 @@ QList<PAppTheme> ThemeManager::getThemes()
     return result;
 }
 
-bool ThemeManager::ThemeCompare::operator()(const PAppTheme &lhs, const PAppTheme &rhs) const
+bool ThemeManager::ThemeCompare::operator()(const PAppTheme& lhs, const PAppTheme& rhs) const
 {
     return QFileInfo(lhs->filename()).baseName() < QFileInfo(rhs->filename()).baseName();
 }
 
-bool ThemeManager::tryLoadThemeFromDir(const QString &dir, AppTheme::ThemeCategory category, const QString &themeName, PAppTheme &theme)
+bool ThemeManager::tryLoadThemeFromDir(const QString& dir, AppTheme::ThemeCategory category,
+                                       const QString& themeName, PAppTheme& theme)
 {
-    for (const auto &[extension, type] : searchTypes) {
+    for (const auto& [extension, type] : searchTypes) {
         QString filename = QString("%2.%3").arg(themeName, extension);
         QString fullPath = QString("%1/%2").arg(dir, filename);
         if (QFile::exists(fullPath)) {
             try {
                 theme = std::make_shared<AppTheme>(fullPath, type, category);
                 return true;
-            } catch(FileError e) {
-                //just skip it
+            } catch (FileError e) {
+                // just skip it
             }
 #ifdef ENABLE_LUA_ADDON
-            catch(AddOn::LuaError e) {
+            catch (AddOn::LuaError e) {
                 qDebug() << e.reason();
             }
 #endif
@@ -93,22 +93,24 @@ bool ThemeManager::tryLoadThemeFromDir(const QString &dir, AppTheme::ThemeCatego
     return false;
 }
 
-void ThemeManager::loadThemesFromDir(const QString &dir, AppTheme::ThemeCategory category, std::set<PAppTheme, ThemeCompare> &themes)
+void ThemeManager::loadThemesFromDir(const QString& dir, AppTheme::ThemeCategory category,
+                                     std::set<PAppTheme, ThemeCompare>& themes)
 {
-    for (const auto &[extension, type] : searchTypes) {
+    for (const auto& [extension, type] : searchTypes) {
         QDirIterator it(dir);
         while (it.hasNext()) {
             it.next();
             QFileInfo fileInfo = it.fileInfo();
             if (fileInfo.suffix().compare(extension, PATH_SENSITIVITY) == 0) {
                 try {
-                    PAppTheme appTheme = std::make_shared<AppTheme>(fileInfo.absoluteFilePath(), type, category);
+                    PAppTheme appTheme =
+                        std::make_shared<AppTheme>(fileInfo.absoluteFilePath(), type, category);
                     themes.insert(appTheme);
-                } catch(FileError e) {
-                    //just skip it
+                } catch (FileError e) {
+                    // just skip it
                 }
 #ifdef ENABLE_LUA_ADDON
-                catch(AddOn::LuaError e) {
+                catch (AddOn::LuaError e) {
                     qDebug() << e.reason();
                 }
 #endif
@@ -119,7 +121,7 @@ void ThemeManager::loadThemesFromDir(const QString &dir, AppTheme::ThemeCategory
 
 QColor AppTheme::color(ColorRole role) const
 {
-    return mColors.value(role,QColor());
+    return mColors.value(role, QColor());
 }
 
 QPalette AppTheme::palette() const
@@ -132,55 +134,58 @@ QPalette AppTheme::palette() const
         QPalette::ColorGroup paletteColorGroup;
         bool setColorRoleAsBrush;
     } mapping[] = {
-        {ColorRole::PaletteWindow,                    QPalette::Window,           QPalette::All,      false},
-        {ColorRole::PaletteWindowDisabled,            QPalette::Window,           QPalette::Disabled, false},
-        {ColorRole::PaletteWindowText,                QPalette::WindowText,       QPalette::All,      true},
-        {ColorRole::PaletteWindowTextDisabled,        QPalette::WindowText,       QPalette::Disabled, true},
-        {ColorRole::PaletteBase,                      QPalette::Base,             QPalette::All,      false},
-        {ColorRole::PaletteBaseDisabled,              QPalette::Base,             QPalette::Disabled, false},
-        {ColorRole::PaletteAlternateBase,             QPalette::AlternateBase,    QPalette::All,      false},
-        {ColorRole::PaletteAlternateBaseDisabled,     QPalette::AlternateBase,    QPalette::Disabled, false},
-        {ColorRole::PaletteToolTipBase,               QPalette::ToolTipBase,      QPalette::All,      true},
-        {ColorRole::PaletteToolTipBaseDisabled,       QPalette::ToolTipBase,      QPalette::Disabled, true},
-        {ColorRole::PaletteToolTipText,               QPalette::ToolTipText,      QPalette::All,      false},
-        {ColorRole::PaletteToolTipTextDisabled,       QPalette::ToolTipText,      QPalette::Disabled, false},
-        {ColorRole::PaletteText,                      QPalette::Text,             QPalette::All,      true},
-        {ColorRole::PaletteTextDisabled,              QPalette::Text,             QPalette::Disabled, true},
-        {ColorRole::PaletteButton,                    QPalette::Button,           QPalette::All,      false},
-        {ColorRole::PaletteButtonDisabled,            QPalette::Button,           QPalette::Disabled, false},
-        {ColorRole::PaletteButtonText,                QPalette::ButtonText,       QPalette::All,      true},
-        {ColorRole::PaletteButtonTextDisabled,        QPalette::ButtonText,       QPalette::Disabled, true},
-        {ColorRole::PaletteBrightText,                QPalette::BrightText,       QPalette::All,      false},
-        {ColorRole::PaletteBrightTextDisabled,        QPalette::BrightText,       QPalette::Disabled, false},
-        {ColorRole::PaletteHighlight,                 QPalette::Highlight,        QPalette::All,      true},
-        {ColorRole::PaletteHighlightDisabled,         QPalette::Highlight,        QPalette::Disabled, true},
-        {ColorRole::PaletteHighlightedText,           QPalette::HighlightedText,  QPalette::All,      true},
-        {ColorRole::PaletteHighlightedTextDisabled,   QPalette::HighlightedText,  QPalette::Disabled, true},
-        {ColorRole::PaletteLink,                      QPalette::Link,             QPalette::All,      false},
-        {ColorRole::PaletteLinkDisabled,              QPalette::Link,             QPalette::Disabled, false},
-        {ColorRole::PaletteLinkVisited,               QPalette::LinkVisited,      QPalette::All,      false},
-        {ColorRole::PaletteLinkVisitedDisabled,       QPalette::LinkVisited,      QPalette::Disabled, false},
-        {ColorRole::PaletteLight,                     QPalette::Light,            QPalette::All,      false},
-        {ColorRole::PaletteLightDisabled,             QPalette::Light,            QPalette::Disabled, false},
-        {ColorRole::PaletteMidlight,                  QPalette::Midlight,         QPalette::All,      false},
-        {ColorRole::PaletteMidlightDisabled,          QPalette::Midlight,         QPalette::Disabled, false},
-        {ColorRole::PaletteDark,                      QPalette::Dark,             QPalette::All,      false},
-        {ColorRole::PaletteDarkDisabled,              QPalette::Dark,             QPalette::Disabled, false},
-        {ColorRole::PaletteMid,                       QPalette::Mid,              QPalette::All,      false},
-        {ColorRole::PaletteMidDisabled,               QPalette::Mid,              QPalette::Disabled, false},
-        {ColorRole::PaletteShadow,                    QPalette::Shadow,           QPalette::All,      false},
-        {ColorRole::PaletteShadowDisabled,            QPalette::Shadow,           QPalette::Disabled, false}
-    };
+        {ColorRole::PaletteWindow, QPalette::Window, QPalette::All, false},
+        {ColorRole::PaletteWindowDisabled, QPalette::Window, QPalette::Disabled, false},
+        {ColorRole::PaletteWindowText, QPalette::WindowText, QPalette::All, true},
+        {ColorRole::PaletteWindowTextDisabled, QPalette::WindowText, QPalette::Disabled, true},
+        {ColorRole::PaletteBase, QPalette::Base, QPalette::All, false},
+        {ColorRole::PaletteBaseDisabled, QPalette::Base, QPalette::Disabled, false},
+        {ColorRole::PaletteAlternateBase, QPalette::AlternateBase, QPalette::All, false},
+        {ColorRole::PaletteAlternateBaseDisabled, QPalette::AlternateBase, QPalette::Disabled,
+         false},
+        {ColorRole::PaletteToolTipBase, QPalette::ToolTipBase, QPalette::All, true},
+        {ColorRole::PaletteToolTipBaseDisabled, QPalette::ToolTipBase, QPalette::Disabled, true},
+        {ColorRole::PaletteToolTipText, QPalette::ToolTipText, QPalette::All, false},
+        {ColorRole::PaletteToolTipTextDisabled, QPalette::ToolTipText, QPalette::Disabled, false},
+        {ColorRole::PaletteText, QPalette::Text, QPalette::All, true},
+        {ColorRole::PaletteTextDisabled, QPalette::Text, QPalette::Disabled, true},
+        {ColorRole::PaletteButton, QPalette::Button, QPalette::All, false},
+        {ColorRole::PaletteButtonDisabled, QPalette::Button, QPalette::Disabled, false},
+        {ColorRole::PaletteButtonText, QPalette::ButtonText, QPalette::All, true},
+        {ColorRole::PaletteButtonTextDisabled, QPalette::ButtonText, QPalette::Disabled, true},
+        {ColorRole::PaletteBrightText, QPalette::BrightText, QPalette::All, false},
+        {ColorRole::PaletteBrightTextDisabled, QPalette::BrightText, QPalette::Disabled, false},
+        {ColorRole::PaletteHighlight, QPalette::Highlight, QPalette::All, true},
+        {ColorRole::PaletteHighlightDisabled, QPalette::Highlight, QPalette::Disabled, true},
+        {ColorRole::PaletteHighlightedText, QPalette::HighlightedText, QPalette::All, true},
+        {ColorRole::PaletteHighlightedTextDisabled, QPalette::HighlightedText, QPalette::Disabled,
+         true},
+        {ColorRole::PaletteLink, QPalette::Link, QPalette::All, false},
+        {ColorRole::PaletteLinkDisabled, QPalette::Link, QPalette::Disabled, false},
+        {ColorRole::PaletteLinkVisited, QPalette::LinkVisited, QPalette::All, false},
+        {ColorRole::PaletteLinkVisitedDisabled, QPalette::LinkVisited, QPalette::Disabled, false},
+        {ColorRole::PaletteLight, QPalette::Light, QPalette::All, false},
+        {ColorRole::PaletteLightDisabled, QPalette::Light, QPalette::Disabled, false},
+        {ColorRole::PaletteMidlight, QPalette::Midlight, QPalette::All, false},
+        {ColorRole::PaletteMidlightDisabled, QPalette::Midlight, QPalette::Disabled, false},
+        {ColorRole::PaletteDark, QPalette::Dark, QPalette::All, false},
+        {ColorRole::PaletteDarkDisabled, QPalette::Dark, QPalette::Disabled, false},
+        {ColorRole::PaletteMid, QPalette::Mid, QPalette::All, false},
+        {ColorRole::PaletteMidDisabled, QPalette::Mid, QPalette::Disabled, false},
+        {ColorRole::PaletteShadow, QPalette::Shadow, QPalette::All, false},
+        {ColorRole::PaletteShadowDisabled, QPalette::Shadow, QPalette::Disabled, false}};
 
-    for (auto entry: mapping) {
+    for (auto entry : mapping) {
         const QColor themeColor = color(entry.themeColor);
         // Use original color if color is not defined in theme.
         if (themeColor.isValid()) {
-//            if (entry.setColorRoleAsBrush)
-//                // TODO: Find out why sometimes setBrush is used
-//                pal.setBrush(entry.paletteColorGroup, entry.paletteColorRole, themeColor);
-//            else
-//                pal.setColor(entry.paletteColorGroup, entry.paletteColorRole, themeColor);
+            //            if (entry.setColorRoleAsBrush)
+            //                // TODO: Find out why sometimes setBrush is used
+            //                pal.setBrush(entry.paletteColorGroup, entry.paletteColorRole,
+            //                themeColor);
+            //            else
+            //                pal.setColor(entry.paletteColorGroup, entry.paletteColorRole,
+            //                themeColor);
             pal.setBrush(entry.paletteColorGroup, entry.paletteColorRole, themeColor);
             pal.setColor(entry.paletteColorGroup, entry.paletteColorRole, themeColor);
         }
@@ -189,15 +194,15 @@ QPalette AppTheme::palette() const
     return pal;
 }
 
-AppTheme::AppTheme(const QString &filename, ThemeType type, ThemeCategory category, QObject *parent):QObject(parent)
+AppTheme::AppTheme(const QString& filename, ThemeType type, ThemeCategory category, QObject* parent)
+    : QObject(parent)
 {
     mFilename = filename;
     mType = type;
     mCategory = category;
     QFile file(filename);
     if (!file.exists()) {
-        throw FileError(tr("Theme file '%1' doesn't exist!")
-                        .arg(filename));
+        throw FileError(tr("Theme file '%1' doesn't exist!").arg(filename));
     }
     if (file.open(QFile::ReadOnly)) {
         QByteArray content = file.readAll().trimmed();
@@ -211,7 +216,7 @@ AppTheme::AppTheme(const QString &filename, ThemeType type, ThemeCategory catego
         case ThemeType::JSON: {
             QJsonParseError error;
             QJsonDocument doc(QJsonDocument::fromJson(content, &error));
-            if (error.error  != QJsonParseError::NoError) {
+            if (error.error != QJsonParseError::NoError) {
                 throw FileError(tr("Error in json file '%1':%2 : %3")
                                     .arg(filename)
                                     .arg(error.offset)
@@ -219,8 +224,8 @@ AppTheme::AppTheme(const QString &filename, ThemeType type, ThemeCategory catego
             }
             obj = doc.object();
 
-            // In Lua-based theme, the "style" key has replaced "isDark" and "useQtFusionStyle" keys.
-            // The following part handles old "isDark" and "useQtFusionStyle" keys.
+            // In Lua-based theme, the "style" key has replaced "isDark" and "useQtFusionStyle"
+            // keys. The following part handles old "isDark" and "useQtFusionStyle" keys.
             if (!obj.contains("style")) {
                 bool useQtFusionStyle = obj["useQtFusionStyle"].toBool(true);
                 if (useQtFusionStyle) {
@@ -233,7 +238,7 @@ AppTheme::AppTheme(const QString &filename, ThemeType type, ThemeCategory catego
 
             // In Lua-based theme, the script handles name localization.
             // The following part handles old "name_xx_XX" keys.
-            QString localeName = obj["name_"+pSettings->environment().language()].toString();
+            QString localeName = obj["name_" + pSettings->environment().language()].toString();
             if (!localeName.isEmpty())
                 obj["name"] = localeName;
 
@@ -256,40 +261,40 @@ AppTheme::AppTheme(const QString &filename, ThemeType type, ThemeCategory catego
         mDefaultColorScheme = obj["default scheme"].toString();
         mDefaultIconSet = obj["default iconset"].toString();
         QJsonObject colors = obj["palette"].toObject();
-        const QMetaObject &m = *metaObject();
+        const QMetaObject& m = *metaObject();
         QMetaEnum e = m.enumerator(m.indexOfEnumerator("ColorRole"));
         for (int i = 0, total = e.keyCount(); i < total; ++i) {
             const QString key = QLatin1String(e.key(i));
             if (colors.contains(key)) {
-                QString val=colors[key].toString();
+                QString val = colors[key].toString();
                 mColors.insert(i, QColor(val));
             }
         }
 
     } else {
-        throw FileError(tr("Can't open the theme file '%1' for read.")
-                        .arg(filename));
+        throw FileError(tr("Can't open the theme file '%1' for read.").arg(filename));
     }
 }
 
-bool AppTheme::isSystemInDarkMode() {
+bool AppTheme::isSystemInDarkMode()
+{
     // https://www.qt.io/blog/dark-mode-on-windows-11-with-qt-6.5
-    // compare the window color with the text color to determine whether the palette is dark or light
-    return initialPalette().color(QPalette::WindowText).lightness() > initialPalette().color(QPalette::Window).lightness();
+    // compare the window color with the text color to determine whether the palette is dark or
+    // light
+    return initialPalette().color(QPalette::WindowText).lightness() >
+           initialPalette().color(QPalette::Window).lightness();
 }
 
 // If you copy QPalette, default values stay at default, even if that default is different
 // within the context of different widgets. Create deep copy.
-static QPalette copyPalette(const QPalette &p)
+static QPalette copyPalette(const QPalette& p)
 {
     QPalette res;
     for (int group = 0; group < QPalette::NColorGroups; ++group) {
         for (int role = 0; role < QPalette::NColorRoles; ++role) {
-            res.setBrush(QPalette::ColorGroup(group),
-                         QPalette::ColorRole(role),
+            res.setBrush(QPalette::ColorGroup(group), QPalette::ColorRole(role),
                          p.brush(QPalette::ColorGroup(group), QPalette::ColorRole(role)));
-            res.setColor(QPalette::ColorGroup(group),
-                         QPalette::ColorRole(role),
+            res.setColor(QPalette::ColorGroup(group), QPalette::ColorRole(role),
                          p.color(QPalette::ColorGroup(group), QPalette::ColorRole(role)));
         }
     }
@@ -313,7 +318,7 @@ QString AppTheme::initialStyle()
     return style;
 }
 
-const QString &AppTheme::filename() const
+const QString& AppTheme::filename() const
 {
     return mFilename;
 }
@@ -322,19 +327,19 @@ const QString AppTheme::categoryIcon() const
 {
     switch (mCategory) {
     case ThemeCategory::FailSafe:
-        return QString{"\U0000274C"}; //❌
+        return QString{"\U0000274C"}; // ❌
     case ThemeCategory::BuiltIn:
-        return QString{"\U0001F4E6"}; //📦
+        return QString{"\U0001F4E6"}; // 📦
     case ThemeCategory::Custom:
-        return  QString{"\U0001F4C4"}; //📄
+        return QString{"\U0001F4C4"}; // 📄
     case ThemeCategory::Shared:
-        return QString{"\U0001F310"}; //🌐
+        return QString{"\U0001F310"}; // 🌐
     default:
         return "";
     }
 }
 
-bool AppTheme::copyTo(const QString &targetFolder)
+bool AppTheme::copyTo(const QString& targetFolder)
 {
     QFileInfo fileInfo{mFilename};
     QFile originFile{fileInfo.absoluteFilePath()};
@@ -344,56 +349,52 @@ bool AppTheme::copyTo(const QString &targetFolder)
     if (!targetFile.open(QFile::WriteOnly))
         return false;
     QByteArray contents = originFile.readAll();
-    if (targetFile.write(contents)!=contents.length())
+    if (targetFile.write(contents) != contents.length())
         return false;
     targetFile.close();
     originFile.close();
     return true;
 }
 
-const QString &AppTheme::defaultIconSet() const
+const QString& AppTheme::defaultIconSet() const
 {
     return mDefaultIconSet;
 }
 
-void AppTheme::setDefaultIconSet(const QString &newDefaultIconSet)
+void AppTheme::setDefaultIconSet(const QString& newDefaultIconSet)
 {
     mDefaultIconSet = newDefaultIconSet;
 }
 
-const QString &AppTheme::name() const
+const QString& AppTheme::name() const
 {
     return mName;
 }
 
-const QString &AppTheme::displayName() const
+const QString& AppTheme::displayName() const
 {
     return mDisplayName;
 }
 
-const QString &AppTheme::defaultColorScheme() const
+const QString& AppTheme::defaultColorScheme() const
 {
     return mDefaultColorScheme;
 }
 
-void AppTheme::setDefaultColorScheme(const QString &newDefaultColorScheme)
+void AppTheme::setDefaultColorScheme(const QString& newDefaultColorScheme)
 {
     mDefaultColorScheme = newDefaultColorScheme;
 }
 
-const QString &AppTheme::style() const
+const QString& AppTheme::style() const
 {
     return mStyle;
 }
 
-AppTheme::AppTheme() :
-    mName("__failsafe__theme__"),
-    mDisplayName("Fusion"),
-    mStyle("fusion"),
-    mDefaultColorScheme("Adaptive"),
-    mDefaultIconSet("newlook"),
-    mType(ThemeType::HardCoded),
-    mCategory(ThemeCategory::FailSafe)
+AppTheme::AppTheme()
+    : mName("__failsafe__theme__"), mDisplayName("Fusion"), mStyle("fusion"),
+      mDefaultColorScheme("Adaptive"), mDefaultIconSet("newlook"), mType(ThemeType::HardCoded),
+      mCategory(ThemeCategory::FailSafe)
 {
 }
 

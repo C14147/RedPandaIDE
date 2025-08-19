@@ -25,9 +25,9 @@
 
 #include <QFileDialog>
 
-ProjectMakefileWidget::ProjectMakefileWidget(const QString &name, const QString &group, QWidget *parent) :
-    SettingsWidget(name,group,parent),
-    ui(new Ui::ProjectMakefileWidget)
+ProjectMakefileWidget::ProjectMakefileWidget(const QString& name, const QString& group,
+                                             QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::ProjectMakefileWidget)
 {
     ui->setupUi(this);
 
@@ -53,36 +53,29 @@ void ProjectMakefileWidget::doSave()
     pMainWindow->project()->options().customMakefile = ui->txtCustomMakefile->text();
     pMainWindow->project()->options().makeIncludes = mIncludesDirWidget->dirList();
     pMainWindow->project()->saveOptions();
-
 }
 
 void ProjectMakefileWidget::on_btnBrowse_clicked()
 {
-    QString currentFile=ui->txtCustomMakefile->text();
+    QString currentFile = ui->txtCustomMakefile->text();
     if (currentFile.isEmpty()) {
         currentFile = pMainWindow->project()->directory();
     }
-    QString fileName = QFileDialog::getOpenFileName(
-                this,
-                tr("Custom makefile"),
-                currentFile,
-                tr("All files (%1)").arg(ALL_FILE_WILDCARD));
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Custom makefile"), currentFile,
+                                                    tr("All files (%1)").arg(ALL_FILE_WILDCARD));
     if (!fileName.isEmpty() && fileExists(fileName)) {
         ui->txtCustomMakefile->setText(fileName);
     }
 }
 
-
-void ProjectMakefileWidget::updateIcons(const QSize &)
+void ProjectMakefileWidget::updateIcons(const QSize&)
 {
     pIconsManager->setIcon(ui->btnBrowse, IconsManager::ACTION_FILE_OPEN_FOLDER);
     pIconsManager->setIcon(ui->btnInfo, IconsManager::ACTION_MISC_HELP);
 }
-
 
 void ProjectMakefileWidget::on_btnInfo_clicked()
 {
     CustomMakefileInfoDialog dialog(this);
     dialog.exec();
 }
-

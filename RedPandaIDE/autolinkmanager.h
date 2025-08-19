@@ -37,16 +37,15 @@ public:
     PAutolink getLink(const QString& header) const;
     void load();
     void save();
-    void setLink(const QString& header,
-                 const QString& linkOption,
-                 bool execUseUTF8);
+    void setLink(const QString& header, const QString& linkOption, bool execUseUTF8);
     void removeLink(const QString& header);
-    const QMap<QString,PAutolink>& links() const;
+    const QMap<QString, PAutolink>& links() const;
     void clear();
     QJsonArray toJson();
     void fromJson(QJsonArray json);
+
 private:
-    QMap<QString,PAutolink> mLinks;
+    QMap<QString, PAutolink> mLinks;
 };
 
 extern AutolinkManager* pAutolinkManager;

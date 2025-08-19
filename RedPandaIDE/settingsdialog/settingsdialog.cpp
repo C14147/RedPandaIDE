@@ -67,32 +67,30 @@
 #include <QMessageBox>
 #include <QModelIndex>
 
-SettingsDialog::SettingsDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::SettingsDialog)
+SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent), ui(new Ui::SettingsDialog)
 {
-    setWindowFlag(Qt::WindowContextHelpButtonHint,false);
+    setWindowFlag(Qt::WindowContextHelpButtonHint, false);
     ui->setupUi(this);
 
-    QItemSelectionModel *m=ui->widgetsView->selectionModel();
+    QItemSelectionModel* m = ui->widgetsView->selectionModel();
     ui->widgetsView->setModel(&model);
     delete m;
 
-    connect(ui->widgetsView->selectionModel(), &QItemSelectionModel::currentChanged,
-            this, &SettingsDialog::onWidgetsViewCurrentChanged);
+    connect(ui->widgetsView->selectionModel(), &QItemSelectionModel::currentChanged, this,
+            &SettingsDialog::onWidgetsViewCurrentChanged);
 
     model.setHorizontalHeaderLabels(QStringList());
 
     ui->btnApply->setEnabled(false);
 
     mAppShouldQuit = false;
-    resize(pSettings->ui().settingsDialogWidth(),pSettings->ui().settingsDialogHeight());
+    resize(pSettings->ui().settingsDialogWidth(), pSettings->ui().settingsDialogHeight());
 
     QList<int> sizes = ui->splitter->sizes();
     int tabWidth = pSettings->ui().settingsDialogSplitterPos();
     int totalSize = sizes[0] + sizes[1];
     sizes[0] = tabWidth;
-    sizes[1] = std::max(1,totalSize - sizes[0]);
+    sizes[1] = std::max(1, totalSize - sizes[0]);
     ui->splitter->setSizes(sizes);
 }
 
@@ -105,12 +103,12 @@ SettingsDialog::~SettingsDialog()
     delete ui;
 }
 
-void SettingsDialog::addWidget(SettingsWidget *pWidget)
+void SettingsDialog::addWidget(SettingsWidget* pWidget)
 {
     pWidget->init();
     QList<QStandardItem*> items = model.findItems(pWidget->group());
     QStandardItem* pGroupItem;
-    if (items.count() == 0 ) {
+    if (items.count() == 0) {
         pGroupItem = new QStandardItem(pWidget->group());
         pGroupItem->setData(-1, GetWidgetIndexRole);
         model.appendRow(pGroupItem);
@@ -119,126 +117,122 @@ void SettingsDialog::addWidget(SettingsWidget *pWidget)
     }
     mSettingWidgets.append(pWidget);
     QStandardItem* pWidgetItem = new QStandardItem(pWidget->name());
-    pWidgetItem->setData(mSettingWidgets.count()-1, GetWidgetIndexRole);
+    pWidgetItem->setData(mSettingWidgets.count() - 1, GetWidgetIndexRole);
     pGroupItem->appendRow(pWidgetItem);
-    connect(pWidget, &SettingsWidget::settingsChanged,
-            this , &SettingsDialog::widget_settings_changed);
+    connect(pWidget, &SettingsWidget::settingsChanged, this,
+            &SettingsDialog::widget_settings_changed);
 }
 
 void SettingsDialog::selectFirstWidget()
 {
     ui->widgetsView->expandAll();
-    //select the first widget of the first group
-    auto groupIndex = ui->widgetsView->model()->index(0,0);
-    auto widgetIndex = ui->widgetsView->model()->index(0,0, groupIndex);
-    ui->widgetsView->selectionModel()->setCurrentIndex(
-                widgetIndex,
-                QItemSelectionModel::Select
-                );
+    // select the first widget of the first group
+    auto groupIndex = ui->widgetsView->model()->index(0, 0);
+    auto widgetIndex = ui->widgetsView->model()->index(0, 0, groupIndex);
+    ui->widgetsView->selectionModel()->setCurrentIndex(widgetIndex, QItemSelectionModel::Select);
     showWidget(widgetIndex);
 }
 
-PSettingsDialog SettingsDialog::optionDialog(QWidget *parent)
+PSettingsDialog SettingsDialog::optionDialog(QWidget* parent)
 {
     PSettingsDialog dialog = std::make_shared<SettingsDialog>(parent);
 
     dialog->setWindowTitle(tr("Options"));
 
     SettingsWidget* widget;
-    widget = new EnvironmentAppearanceWidget(tr("Appearance"),tr("Environment"));
+    widget = new EnvironmentAppearanceWidget(tr("Appearance"), tr("Environment"));
     dialog->addWidget(widget);
 
 #ifdef Q_OS_WIN
-    widget = new EnvironmentFileAssociationWidget(tr("File Association"),tr("Environment"));
+    widget = new EnvironmentFileAssociationWidget(tr("File Association"), tr("Environment"));
     dialog->addWidget(widget);
 #endif
 
-    widget = new EnvironmentShortcutWidget(tr("Shortcuts"),tr("Environment"));
+    widget = new EnvironmentShortcutWidget(tr("Shortcuts"), tr("Environment"));
     dialog->addWidget(widget);
 
-    widget = new EnvironmentProgramsWidget(tr("Terminal"),tr("Environment"));
+    widget = new EnvironmentProgramsWidget(tr("Terminal"), tr("Environment"));
     dialog->addWidget(widget);
 
-    widget = new EnvironmentPerformanceWidget(tr("Performance"),tr("Environment"));
+    widget = new EnvironmentPerformanceWidget(tr("Performance"), tr("Environment"));
     dialog->addWidget(widget);
 
-    widget = new EnvironmentFoldersWidget(tr("Folders / Restore Default Settings"),tr("Environment"));
-    connect((EnvironmentFoldersWidget*)widget,
-            &EnvironmentFoldersWidget::shouldQuitApp,
-            dialog.get(),
-            &SettingsDialog::closeAndQuit);
+    widget =
+        new EnvironmentFoldersWidget(tr("Folders / Restore Default Settings"), tr("Environment"));
+    connect((EnvironmentFoldersWidget*)widget, &EnvironmentFoldersWidget::shouldQuitApp,
+            dialog.get(), &SettingsDialog::closeAndQuit);
     dialog->addWidget(widget);
 
-    widget = new CompilerSetOptionWidget(tr("Compiler Set"),tr("Compiler"));
+    widget = new CompilerSetOptionWidget(tr("Compiler Set"), tr("Compiler"));
     dialog->addWidget(widget);
 
-    widget = new CompilerAutolinkWidget(tr("Auto Link"),tr("Compiler"));
+    widget = new CompilerAutolinkWidget(tr("Auto Link"), tr("Compiler"));
     dialog->addWidget(widget);
 
-    widget = new EditorGeneralWidget(tr("General"),tr("Editor"));
+    widget = new EditorGeneralWidget(tr("General"), tr("Editor"));
     dialog->addWidget(widget);
 
-    widget = new EditorFontWidget(tr("Font"),tr("Editor"));
+    widget = new EditorFontWidget(tr("Font"), tr("Editor"));
     dialog->addWidget(widget);
 
-    widget = new EditorClipboardWidget(tr("Copy & Export"),tr("Editor"));
+    widget = new EditorClipboardWidget(tr("Copy & Export"), tr("Editor"));
     dialog->addWidget(widget);
 
-    widget = new EditorColorSchemeWidget(tr("Color"),tr("Editor"));
+    widget = new EditorColorSchemeWidget(tr("Color"), tr("Editor"));
     dialog->addWidget(widget);
 
-    widget = new EditorCodeCompletionWidget(tr("Code Completion"),tr("Editor"));
+    widget = new EditorCodeCompletionWidget(tr("Code Completion"), tr("Editor"));
     dialog->addWidget(widget);
 
-    widget = new EditorSymbolCompletionWidget(tr("Symbol Completion"),tr("Editor"));
+    widget = new EditorSymbolCompletionWidget(tr("Symbol Completion"), tr("Editor"));
     dialog->addWidget(widget);
 
-    widget = new EditorSnippetWidget(tr("Snippet"),tr("Editor"));
+    widget = new EditorSnippetWidget(tr("Snippet"), tr("Editor"));
     dialog->addWidget(widget);
 
-    widget = new EditorSyntaxCheckWidget(tr("Auto Syntax Checking"),tr("Editor"));
+    widget = new EditorSyntaxCheckWidget(tr("Auto Syntax Checking"), tr("Editor"));
     dialog->addWidget(widget);
 
-    widget = new EditorTooltipsWidget(tr("Tooltips"),tr("Editor"));
+    widget = new EditorTooltipsWidget(tr("Tooltips"), tr("Editor"));
     dialog->addWidget(widget);
 
-    widget = new EditorAutoSaveWidget(tr("Auto save"),tr("Editor"));
+    widget = new EditorAutoSaveWidget(tr("Auto save"), tr("Editor"));
     dialog->addWidget(widget);
 
-    widget = new EditorMiscWidget(tr("Misc"),tr("Editor"));
+    widget = new EditorMiscWidget(tr("Misc"), tr("Editor"));
     dialog->addWidget(widget);
 
-    widget = new EditorCustomCTypeKeywordsWidget(tr("Custom C/C++ Keywords"),tr("Languages"));
+    widget = new EditorCustomCTypeKeywordsWidget(tr("Custom C/C++ Keywords"), tr("Languages"));
     dialog->addWidget(widget);
 
-//    widget = new LanguageCFormatWidget(tr("C/C++ Format"),tr("Languages"));
-//    dialog->addWidget(widget);
-    widget = new LanguageAsmGenerationWidget(tr("ASM Generation"),tr("Languages"));
+    //    widget = new LanguageCFormatWidget(tr("C/C++ Format"),tr("Languages"));
+    //    dialog->addWidget(widget);
+    widget = new LanguageAsmGenerationWidget(tr("ASM Generation"), tr("Languages"));
     dialog->addWidget(widget);
 
-    widget = new ExecutorGeneralWidget(tr("General"),tr("Program Runner"));
+    widget = new ExecutorGeneralWidget(tr("General"), tr("Program Runner"));
     dialog->addWidget(widget);
 
-    widget = new ExecutorProblemSetWidget(tr("Problem Set"),tr("Program Runner"));
+    widget = new ExecutorProblemSetWidget(tr("Problem Set"), tr("Program Runner"));
     dialog->addWidget(widget);
 
-    widget = new DebugGeneralWidget(tr("General"),tr("Debugger"));
+    widget = new DebugGeneralWidget(tr("General"), tr("Debugger"));
     dialog->addWidget(widget);
 
-    widget = new FormatterGeneralWidget(tr("General"),tr("Code Formatter"));
+    widget = new FormatterGeneralWidget(tr("General"), tr("Code Formatter"));
     dialog->addWidget(widget);
 
-    widget = new FormatterPathWidget(tr("Program"),tr("Code Formatter"));
+    widget = new FormatterPathWidget(tr("Program"), tr("Code Formatter"));
     dialog->addWidget(widget);
 
-    widget = new ToolsGeneralWidget(tr("General"),tr("Tools"));
+    widget = new ToolsGeneralWidget(tr("General"), tr("Tools"));
     dialog->addWidget(widget);
 
-    widget = new ExtensionsWidget(tr("Extension Manager"),tr("Tools"));
+    widget = new ExtensionsWidget(tr("Extension Manager"), tr("Tools"));
     dialog->addWidget(widget);
 
 #ifdef ENABLE_VCS
-    widget = new ToolsGitWidget(tr("Git"),tr("Tools"));
+    widget = new ToolsGitWidget(tr("Git"), tr("Tools"));
     dialog->addWidget(widget);
 #endif
 
@@ -247,7 +241,8 @@ PSettingsDialog SettingsDialog::optionDialog(QWidget *parent)
     // allow plugins to contribute settings pages
     if (pMainWindow && pMainWindow->pluginManager()) {
         for (IRedPandaPlugin* plugin : pMainWindow->pluginManager()->plugins()) {
-            if (!plugin) continue;
+            if (!plugin)
+                continue;
             QList<SettingsWidget*> widgets = plugin->settingsWidgets();
             for (SettingsWidget* w : widgets) {
                 if (w)
@@ -259,54 +254,53 @@ PSettingsDialog SettingsDialog::optionDialog(QWidget *parent)
     return dialog;
 }
 
-PSettingsDialog SettingsDialog::projectOptionDialog(QWidget *parent)
+PSettingsDialog SettingsDialog::projectOptionDialog(QWidget* parent)
 {
     PSettingsDialog dialog = std::make_shared<SettingsDialog>(parent);
 
-
-    bool isMicroControllerProject=false;
+    bool isMicroControllerProject = false;
     std::shared_ptr<Project> project = pMainWindow->project();
 #ifdef ENABLE_SDCC
     if (project)
-        isMicroControllerProject=(project->options().type==ProjectType::MicroController);
+        isMicroControllerProject = (project->options().type == ProjectType::MicroController);
 #endif
 
     dialog->setWindowTitle(tr("Project Options"));
 
-    SettingsWidget* widget = new ProjectGeneralWidget(tr("General"),tr("Project"));
+    SettingsWidget* widget = new ProjectGeneralWidget(tr("General"), tr("Project"));
     dialog->addWidget(widget);
 
-    widget = new ProjectFilesWidget(tr("Files"),tr("Project"));
+    widget = new ProjectFilesWidget(tr("Files"), tr("Project"));
     dialog->addWidget(widget);
 
-    widget = new ProjectCompilerWidget(tr("Compiler Set"),tr("Project"));
+    widget = new ProjectCompilerWidget(tr("Compiler Set"), tr("Project"));
     dialog->addWidget(widget);
 
-    widget = new ProjectCompileParamatersWidget(tr("Custom Compile options"),tr("Project"));
+    widget = new ProjectCompileParamatersWidget(tr("Custom Compile options"), tr("Project"));
     dialog->addWidget(widget);
 
-    widget = new ProjectDirectoriesWidget(tr("Directories"),tr("Project"));
+    widget = new ProjectDirectoriesWidget(tr("Directories"), tr("Project"));
     dialog->addWidget(widget);
 
     if (!isMicroControllerProject) {
-        widget = new ProjectPreCompileWidget(tr("Precompiled Header"),tr("Project"));
+        widget = new ProjectPreCompileWidget(tr("Precompiled Header"), tr("Project"));
         dialog->addWidget(widget);
     }
 
-    widget = new ProjectMakefileWidget(tr("Makefile"),tr("Project"));
+    widget = new ProjectMakefileWidget(tr("Makefile"), tr("Project"));
     dialog->addWidget(widget);
 
-    widget = new ProjectOutputWidget(tr("Output"),tr("Project"));
+    widget = new ProjectOutputWidget(tr("Output"), tr("Project"));
     dialog->addWidget(widget);
 
     if (!isMicroControllerProject) {
-        widget = new ProjectDLLHostWidget(tr("DLL host"),tr("Project"));
+        widget = new ProjectDLLHostWidget(tr("DLL host"), tr("Project"));
         dialog->addWidget(widget);
     }
 
 #ifdef Q_OS_WIN
     if (!isMicroControllerProject) {
-        widget = new ProjectVersionInfoWidget(tr("Version info"),tr("Project"));
+        widget = new ProjectVersionInfoWidget(tr("Version info"), tr("Project"));
         dialog->addWidget(widget);
     }
 #endif
@@ -316,13 +310,13 @@ PSettingsDialog SettingsDialog::projectOptionDialog(QWidget *parent)
     return dialog;
 }
 
-bool SettingsDialog::setCurrentWidget(const QString &widgetName, const QString &groupName)
+bool SettingsDialog::setCurrentWidget(const QString& widgetName, const QString& groupName)
 {
     QList<QStandardItem*> items = model.findItems(groupName);
     if (items.isEmpty())
         return false;
     QStandardItem* pGroupItem = items[0];
-    for (int i=0;i<pGroupItem->rowCount();i++) {
+    for (int i = 0; i < pGroupItem->rowCount(); i++) {
         QStandardItem* pWidgetItem = pGroupItem->child(i);
         if (pWidgetItem->text() == widgetName) {
             ui->widgetsView->setCurrentIndex(pWidgetItem->index());
@@ -338,7 +332,8 @@ void SettingsDialog::widget_settings_changed(bool value)
     ui->btnApply->setEnabled(value);
 }
 
-void SettingsDialog::onWidgetsViewCurrentChanged(const QModelIndex &index, const QModelIndex &/*previous*/)
+void SettingsDialog::onWidgetsViewCurrentChanged(const QModelIndex& index,
+                                                 const QModelIndex& /*previous*/)
 {
     showWidget(index);
 }
@@ -361,22 +356,23 @@ void SettingsDialog::on_btnOk_pressed()
 
 void SettingsDialog::saveCurrentPageSettings(bool confirm)
 {
-    if (ui->scrollArea->widget()==ui->scrollAreaWidgetContents)
+    if (ui->scrollArea->widget() == ui->scrollAreaWidgetContents)
         return;
-    SettingsWidget* pWidget = (SettingsWidget*) ui->scrollArea->widget();
+    SettingsWidget* pWidget = (SettingsWidget*)ui->scrollArea->widget();
     if (!pWidget->isSettingsChanged())
         return;
     if (confirm) {
-        if (QMessageBox::warning(this,tr("Save Changes"),
-               tr("There are changes in the settings, do you want to save them before swtich to other page?"),
-               QMessageBox::Yes, QMessageBox::No)!=QMessageBox::Yes) {
+        if (QMessageBox::warning(this, tr("Save Changes"),
+                                 tr("There are changes in the settings, do you want to save them "
+                                    "before swtich to other page?"),
+                                 QMessageBox::Yes, QMessageBox::No) != QMessageBox::Yes) {
             return;
         }
     }
     pWidget->save();
 }
 
-void SettingsDialog::closeEvent(QCloseEvent *event)
+void SettingsDialog::closeEvent(QCloseEvent* event)
 {
     pSettings->ui().setSettingsDialogWidth(width());
     pSettings->ui().setSettingsDialogHeight(height());
@@ -398,25 +394,26 @@ void SettingsDialog::closeAndQuit()
     close();
 }
 
-void SettingsDialog::showWidget(const QModelIndex &index)
+void SettingsDialog::showWidget(const QModelIndex& index)
 {
     if (!index.isValid())
         return;
     int i = index.data(GetWidgetIndexRole).toInt();
-    if (i>=0) {
+    if (i >= 0) {
         saveCurrentPageSettings(true);
         SettingsWidget* pWidget = mSettingWidgets[i];
-        if (ui->scrollArea->widget()!=nullptr) {
+        if (ui->scrollArea->widget() != nullptr) {
             QWidget* w = ui->scrollArea->takeWidget();
             w->setParent(nullptr);
         }
         ui->scrollArea->setWidget(pWidget);
-        ui->lblWidgetCaption->setText(QString("%1 > %2").arg(pWidget->group()).arg(pWidget->name()));
+        ui->lblWidgetCaption->setText(
+            QString("%1 > %2").arg(pWidget->group()).arg(pWidget->name()));
 
         ui->btnApply->setEnabled(false);
     } else if (model.hasChildren(index)) {
         ui->widgetsView->expand(index);
-        QModelIndex childIndex = this->model.index(0,0,index);
+        QModelIndex childIndex = this->model.index(0, 0, index);
         emit ui->widgetsView->clicked(childIndex);
     }
 }

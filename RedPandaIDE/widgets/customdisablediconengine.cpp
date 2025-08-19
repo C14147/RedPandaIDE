@@ -23,10 +23,10 @@
 
 CustomDisabledIconEngine::CustomDisabledIconEngine()
 {
-
 }
 
-void CustomDisabledIconEngine::paint(QPainter *painter, const QRect &rect, QIcon::Mode mode, QIcon::State /*state*/)
+void CustomDisabledIconEngine::paint(QPainter* painter, const QRect& rect, QIcon::Mode mode,
+                                     QIcon::State /*state*/)
 {
     painter->save();
     painter->setClipRect(rect);
@@ -37,18 +37,18 @@ void CustomDisabledIconEngine::paint(QPainter *painter, const QRect &rect, QIcon
     else
         pixmap = mPixmap;
     if (pixmap.size().width() < rect.width()) {
-        newRect.setLeft( rect.left()+(rect.width() - pixmap.size().width())/2);
+        newRect.setLeft(rect.left() + (rect.width() - pixmap.size().width()) / 2);
         newRect.setWidth(pixmap.size().width());
     }
     if (pixmap.size().height() < rect.height()) {
-        newRect.setTop( rect.top()+(rect.height() - pixmap.size().height())/2);
+        newRect.setTop(rect.top() + (rect.height() - pixmap.size().height()) / 2);
         newRect.setHeight(pixmap.size().height());
     }
-    painter->drawPixmap(newRect,pixmap);
+    painter->drawPixmap(newRect, pixmap);
     painter->restore();
 }
 
-QIconEngine *CustomDisabledIconEngine::clone() const
+QIconEngine* CustomDisabledIconEngine::clone() const
 {
     CustomDisabledIconEngine* eng = new CustomDisabledIconEngine();
     eng->mPixmap = mPixmap;
@@ -56,7 +56,8 @@ QIconEngine *CustomDisabledIconEngine::clone() const
     return eng;
 }
 
-QPixmap CustomDisabledIconEngine::pixmap(const QSize &/*size*/, QIcon::Mode mode, QIcon::State /*state*/)
+QPixmap CustomDisabledIconEngine::pixmap(const QSize& /*size*/, QIcon::Mode mode,
+                                         QIcon::State /*state*/)
 {
     if (mode == QIcon::Mode::Disabled)
         return mDisabledPixmap;
@@ -64,17 +65,19 @@ QPixmap CustomDisabledIconEngine::pixmap(const QSize &/*size*/, QIcon::Mode mode
         return mPixmap;
 }
 
-void CustomDisabledIconEngine::addPixmap(const QPixmap &pixmap, QIcon::Mode /*mode*/, QIcon::State /*state*/)
+void CustomDisabledIconEngine::addPixmap(const QPixmap& pixmap, QIcon::Mode /*mode*/,
+                                         QIcon::State /*state*/)
 {
     setPixmap(pixmap);
 }
 
-void CustomDisabledIconEngine::addFile(const QString &fileName, const QSize &/*size*/, QIcon::Mode /*mode*/, QIcon::State /*state*/)
+void CustomDisabledIconEngine::addFile(const QString& fileName, const QSize& /*size*/,
+                                       QIcon::Mode /*mode*/, QIcon::State /*state*/)
 {
     setPixmap(QPixmap(fileName));
 }
 
-void CustomDisabledIconEngine::setPixmap(const QPixmap &pixmap)
+void CustomDisabledIconEngine::setPixmap(const QPixmap& pixmap)
 {
     mPixmap = pixmap;
     if (pixmap.isNull())
@@ -82,13 +85,13 @@ void CustomDisabledIconEngine::setPixmap(const QPixmap &pixmap)
     else {
         QImage oldImage = mPixmap.toImage();
         QImage image(mPixmap.size(), QImage::Format_ARGB32);
-        for (int x=0;x<image.width();x++) {
-            for (int y=0;y<image.height();y++) {
-                QColor c = oldImage.pixelColor(x,y);
+        for (int x = 0; x < image.width(); x++) {
+            for (int y = 0; y < image.height(); y++) {
+                QColor c = oldImage.pixelColor(x, y);
                 int gray = 0.299 * c.red() + 0.587 * c.green() + 0.114 * c.blue();
-                QColor c2(gray,gray,gray,c.alpha());
+                QColor c2(gray, gray, gray, c.alpha());
                 c2 = c2.darker();
-                image.setPixelColor(x,y,c2);
+                image.setPixelColor(x, y, c2);
             }
         }
         mDisabledPixmap = QPixmap::fromImage(image);

@@ -21,70 +21,63 @@
 #include "../settings.h"
 #include <QDebug>
 
-AboutDialog::AboutDialog(QWidget *parent) :
-    QDialog{parent},
-    ui{new Ui::AboutDialog}
+AboutDialog::AboutDialog(QWidget* parent) : QDialog{parent}, ui{new Ui::AboutDialog}
 {
-    setWindowFlag(Qt::WindowContextHelpButtonHint,false);
+    setWindowFlag(Qt::WindowContextHelpButtonHint, false);
     ui->setupUi(this);
     ui->lblTitle->setText(ui->lblTitle->text() + tr("Version: ") + REDPANDA_CPP_VERSION);
 
     QString buildArch = appArch();
 #if defined(__x86_64__) && defined(ENABLE_GLIBC_HWCAPS)
-# if defined(__AVX512__)
+#if defined(__AVX512__)
     buildArch += tr(", μarch level v4");
-# elif defined(__AVX2__)
+#elif defined(__AVX2__)
     buildArch += tr(", μarch level v3");
-# elif defined(__SSE4_2__)
+#elif defined(__SSE4_2__)
     buildArch += tr(", μarch level v2");
-# else
+#else
     buildArch += tr(", baseline");
-# endif
+#endif
 #endif
 
 #if defined(__clang__) // Clang always pretends to be GCC/MSVC. Check it first.
-# if defined(_MSC_VER)
+#if defined(_MSC_VER)
     QString templ = "Clang %1.%2.%3 %4 MSVC ABI";
-# elif defined(__apple_build_version__)
+#elif defined(__apple_build_version__)
     QString templ = "Apple Clang %1.%2.%3 %4";
-# else
+#else
     QString templ = "Clang %1.%2.%3 %4";
-# endif
+#endif
     ui->lblQt->setText(ui->lblQt->text()
-                       .arg(qVersion())
-                       .arg(templ
-                            .arg(__clang_major__)
-                            .arg(__clang_minor__)
-                            .arg(__clang_patchlevel__)
-                            .arg(buildArch))
-                       .arg(osArch()));
+                           .arg(qVersion())
+                           .arg(templ.arg(__clang_major__)
+                                    .arg(__clang_minor__)
+                                    .arg(__clang_patchlevel__)
+                                    .arg(buildArch))
+                           .arg(osArch()));
 #elif defined(__GNUC__)
     ui->lblQt->setText(ui->lblQt->text()
-            .arg(qVersion())
-            .arg(QString("GCC %1.%2.%3 %4")
-                 .arg(__GNUC__)
-                 .arg(__GNUC_MINOR__)
-                 .arg(__GNUC_PATCHLEVEL__)
-                 .arg(buildArch))
-            .arg(osArch()));
+                           .arg(qVersion())
+                           .arg(QString("GCC %1.%2.%3 %4")
+                                    .arg(__GNUC__)
+                                    .arg(__GNUC_MINOR__)
+                                    .arg(__GNUC_PATCHLEVEL__)
+                                    .arg(buildArch))
+                           .arg(osArch()));
 #elif defined(_MSC_VER)
     ui->lblQt->setText(ui->lblQt->text()
-            .arg(qVersion())
-            .arg(QStringLiteral("MSVC %1.%2 %3")
-                .arg(_MSC_VER / 100)
-                .arg(_MSC_VER % 100)
-                .arg(buildArch))
-            .arg(osArch()));
+                           .arg(qVersion())
+                           .arg(QStringLiteral("MSVC %1.%2 %3")
+                                    .arg(_MSC_VER / 100)
+                                    .arg(_MSC_VER % 100)
+                                    .arg(buildArch))
+                           .arg(osArch()));
 #else
-    ui->lblQt->setText(ui->lblQt->text()
-            .arg(qVersion())
-            .arg(tr("unknown compiler"))
-            .arg(osArch()));
+    ui->lblQt->setText(ui->lblQt->text().arg(qVersion()).arg(tr("unknown compiler")).arg(osArch()));
 #endif
-    ui->lblCompileTime->setText(ui->lblCompileTime->text()
-                                .arg(__DATE__, __TIME__));
+    ui->lblCompileTime->setText(ui->lblCompileTime->text().arg(__DATE__, __TIME__));
 
-    QString website="https://redpandaide.wordpress.com/";
+    QString website = "https://redpandaide.wordpress.com/";
     ui->lblHomepage->setText(tr("Website: <a href=\"%1\">%1</a>").arg(website));
 }
 

@@ -30,14 +30,15 @@ class EditorClipboardWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit EditorClipboardWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit EditorClipboardWidget(const QString& name, const QString& group,
+                                   QWidget* parent = nullptr);
     ~EditorClipboardWidget();
 
 public slots:
     void onUseSchemeChanged();
 
 private:
-    Ui::EditorClipboardWidget *ui;
+    Ui::EditorClipboardWidget* ui;
 
     // SettingsWidget interface
 protected:

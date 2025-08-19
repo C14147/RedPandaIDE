@@ -13,7 +13,7 @@ class GitBranchDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit GitBranchDialog(const QString& folder, QWidget *parent = nullptr);
+    explicit GitBranchDialog(const QString& folder, QWidget* parent = nullptr);
     ~GitBranchDialog();
 
 private slots:
@@ -26,13 +26,13 @@ private slots:
     void on_chkCreate_stateChanged(int arg1);
 
 private:
-    Ui::GitBranchDialog *ui;
-    GitManager *mManager;
+    Ui::GitBranchDialog* ui;
+    GitManager* mManager;
     QString mFolder;
 
     // QWidget interface
 protected:
-    void closeEvent(QCloseEvent *event) override;
+    void closeEvent(QCloseEvent* event) override;
 };
 
 #endif // GITBRANCHDIALOG_H

@@ -23,9 +23,10 @@ class Runner : public QThread
 {
     Q_OBJECT
 public:
-    explicit Runner(const QString& filename, const QStringList& arguments, const QString& workDir, QObject *parent = nullptr);
-    Runner(const Runner&)=delete;
-    Runner operator=(const Runner&)=delete;
+    explicit Runner(const QString& filename, const QStringList& arguments, const QString& workDir,
+                    QObject* parent = nullptr);
+    Runner(const Runner&) = delete;
+    Runner operator=(const Runner&) = delete;
 
     bool pausing() const;
 
@@ -40,9 +41,11 @@ signals:
 
 public slots:
     void stop();
+
 protected:
     virtual void doStop();
     void setPausing(bool newCanFinish);
+
 protected:
     bool mPausing;
     bool mStop;

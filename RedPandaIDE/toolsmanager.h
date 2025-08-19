@@ -20,11 +20,7 @@
 #include <QObject>
 #include <memory>
 
-enum class ToolItemInputOrigin {
-    None,
-    CurrentSelection,
-    WholeDocument
-};
+enum class ToolItemInputOrigin { None, CurrentSelection, WholeDocument };
 
 enum class ToolItemOutputTarget {
     RedirectToNull,
@@ -50,12 +46,13 @@ class ToolsManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit ToolsManager(QObject *parent = nullptr);
+    explicit ToolsManager(QObject* parent = nullptr);
     void load();
     void save();
-    const QList<PToolItem> &tools() const;
+    const QList<PToolItem>& tools() const;
     PToolItem findTool(const QString& title);
-    void setTools(const QList<PToolItem> &newTools);
+    void setTools(const QList<PToolItem>& newTools);
+
 private:
     QList<PToolItem> mTools;
 };

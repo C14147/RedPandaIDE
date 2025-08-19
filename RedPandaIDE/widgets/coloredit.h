@@ -28,6 +28,7 @@ public:
     void setColor(const QColor& value);
 signals:
     void colorChanged(const QColor& value);
+
 private:
     QColor mColor;
 
@@ -35,14 +36,14 @@ private:
 
 public:
     QSize sizeHint() const override;
-    void paintEvent(QPaintEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
+    void paintEvent(QPaintEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
 #if QT_VERSION_MAJOR >= 6
-    void enterEvent(QEnterEvent *event) override;
+    void enterEvent(QEnterEvent* event) override;
 #else
-    void enterEvent(QEvent *event) override;
+    void enterEvent(QEvent* event) override;
 #endif
-    void leaveEvent(QEvent *event) override;
+    void leaveEvent(QEvent* event) override;
     QSize minimumSizeHint() const override;
 };
 

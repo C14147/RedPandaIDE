@@ -24,7 +24,7 @@ ProjectVersionInfo::ProjectVersionInfo()
     release = 0;
     build = 0;
     languageID = 0x0409; // US English
-    charsetID = 0x04E4; // Windows multilingual
+    charsetID = 0x04E4;  // Windows multilingual
     companyName = "";
     fileVersion = "";
     fileDescription = "Developed using the RedPandaIDE";
@@ -55,6 +55,6 @@ ProjectOptions::ProjectOptions()
     modelType = ProjectModelType::FileSystem;
     classBrowserType = ProjectClassBrowserType::CurrentFile;
     execEncoding = ENCODING_SYSTEM_DEFAULT;
-    allowParallelBuilding=false;
-    parellelBuildingJobs=0;
+    allowParallelBuilding = false;
+    parellelBuildingJobs = 0;
 }

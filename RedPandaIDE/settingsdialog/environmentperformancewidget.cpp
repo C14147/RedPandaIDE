@@ -18,12 +18,12 @@
 #include "ui_environmentperformancewidget.h"
 #include "../settings.h"
 
-EnvironmentPerformanceWidget::EnvironmentPerformanceWidget(const QString& name, const QString& group, QWidget *parent) :
-    SettingsWidget(name,group,parent),
-    ui(new Ui::EnvironmentPerformanceWidget)
+EnvironmentPerformanceWidget::EnvironmentPerformanceWidget(const QString& name,
+                                                           const QString& group, QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::EnvironmentPerformanceWidget)
 {
     ui->setupUi(this);
-    //ui->chkClearWhenEditorHidden->setVisible(false);
+    // ui->chkClearWhenEditorHidden->setVisible(false);
 }
 
 EnvironmentPerformanceWidget::~EnvironmentPerformanceWidget()
@@ -52,4 +52,3 @@ void EnvironmentPerformanceWidget::on_chkEditorsShareParser_stateChanged(int arg
     Q_UNUSED(arg1)
     ui->chkClearWhenEditorHidden->setVisible(ui->chkEditorsShareParser->isChecked());
 }
-

@@ -24,13 +24,14 @@ class CustomFileSystemModel : public QFileSystemModel
 {
     Q_OBJECT
 public:
-    explicit CustomFileSystemModel(QObject *parent = nullptr);
+    explicit CustomFileSystemModel(QObject* parent = nullptr);
 
 public slots:
     void delaySort();
 
 protected slots:
     void performDelayedSort();
+
 private:
     QTimer mDelayedSortTimer;
 };

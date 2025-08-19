@@ -13,7 +13,7 @@ struct VisitRecord {
 
 using PVisitRecord = std::shared_ptr<VisitRecord>;
 
-struct VisitHistory{
+struct VisitHistory {
     qint64 timestamp;
     QList<PVisitRecord> files;
     QList<PVisitRecord> projects;
@@ -26,8 +26,8 @@ class VisitHistoryManager
 public:
     VisitHistoryManager(const QString& filename);
 
-    const QList<PVisitRecord> &files() const;
-    const QList<PVisitRecord> &projects() const;
+    const QList<PVisitRecord>& files() const;
+    const QList<PVisitRecord>& projects() const;
     void clearFiles();
     void clearProjects();
     bool addFile(const QString& filename);
@@ -36,13 +36,15 @@ public:
     void removeProject(const QString& filename);
     void save();
     void load();
+
 private:
     PVisitHistory doLoad(const QString& filename, qint64 criteriaTime);
-    QList<PVisitRecord> fromJson(const QJsonArray &array, qint64 criteriaTime);
+    QList<PVisitRecord> fromJson(const QJsonArray& array, qint64 criteriaTime);
     void mergeRead(QList<PVisitRecord>& target, const QList<PVisitRecord>& readed);
     QJsonArray toJson(const QList<PVisitRecord>& list);
-    bool doAdd(QList<PVisitRecord> &list, const QString& filename, int maxCount);
-    void doRemove(QList<PVisitRecord> &list, const QString& filename);
+    bool doAdd(QList<PVisitRecord>& list, const QString& filename, int maxCount);
+    void doRemove(QList<PVisitRecord>& list, const QString& filename);
+
 private:
     QList<PVisitRecord> mFiles;
     QList<PVisitRecord> mProjects;

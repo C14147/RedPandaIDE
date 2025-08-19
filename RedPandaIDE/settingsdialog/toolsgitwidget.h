@@ -13,17 +13,17 @@ class ToolsGitWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit ToolsGitWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit ToolsGitWidget(const QString& name, const QString& group, QWidget* parent = nullptr);
     ~ToolsGitWidget();
 
 private:
-    Ui::ToolsGitWidget *ui;
+    Ui::ToolsGitWidget* ui;
 
     // SettingsWidget interface
 protected:
     void doLoad() override;
     void doSave() override;
-    void updateIcons(const QSize &size) override;
+    void updateIcons(const QSize& size) override;
 private slots:
     void on_btnBrowseGit_clicked();
     void on_btnTestGit_clicked();

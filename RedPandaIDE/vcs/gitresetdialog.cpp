@@ -3,10 +3,8 @@
 #include "gitmanager.h"
 #include "../widgets/infomessagebox.h"
 
-GitResetDialog::GitResetDialog(const QString& folder, QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::GitResetDialog),
-    mFolder(folder)
+GitResetDialog::GitResetDialog(const QString& folder, QWidget* parent)
+    : QDialog(parent), ui(new Ui::GitResetDialog), mFolder(folder)
 {
     ui->setupUi(this);
 }
@@ -16,11 +14,11 @@ GitResetDialog::~GitResetDialog()
     delete ui;
 }
 
-int GitResetDialog::resetToCommit(const QString &commit)
+int GitResetDialog::resetToCommit(const QString& commit)
 {
     GitManager manager;
     QString branch;
-    if (!manager.hasRepository(mFolder,branch))
+    if (!manager.hasRepository(mFolder, branch))
         return QDialog::Rejected;
     ui->rbBranch->setEnabled(false);
     ui->cbBranches->setEnabled(false);
@@ -51,7 +49,7 @@ void GitResetDialog::on_btnOk_clicked()
     if (commit.isEmpty())
         reject();
     QString output;
-    bool result = manager.reset(mFolder,commit,strategy,output);
+    bool result = manager.reset(mFolder, commit, strategy, output);
     if (!output.trimmed().isEmpty()) {
         InfoMessageBox infoBox;
         infoBox.showMessage(output);
@@ -62,9 +60,7 @@ void GitResetDialog::on_btnOk_clicked()
         reject();
 }
 
-
 void GitResetDialog::on_btnCancel_clicked()
 {
     reject();
 }
-

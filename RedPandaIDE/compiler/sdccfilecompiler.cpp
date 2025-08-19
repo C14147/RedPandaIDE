@@ -23,20 +23,16 @@
 #include <QFileInfo>
 #include <QMessageBox>
 
-
-SDCCFileCompiler::SDCCFileCompiler(const QString &filename, const QByteArray &encoding,
-                           CppCompileType compileType, bool onlyCheckSyntax):
-    Compiler(filename, onlyCheckSyntax),
-    mEncoding(encoding),
-    mCompileType(compileType),
-    mNoStartup(false)
+SDCCFileCompiler::SDCCFileCompiler(const QString& filename, const QByteArray& encoding,
+                                   CppCompileType compileType, bool onlyCheckSyntax)
+    : Compiler(filename, onlyCheckSyntax), mEncoding(encoding), mCompileType(compileType),
+      mNoStartup(false)
 {
-
 }
 
 bool SDCCFileCompiler::prepareForCompile()
 {
-    //compilerSet()->setCompilationStage(Settings::CompilerSet::CompilationStage::GenerateExecutable);
+    // compilerSet()->setCompilationStage(Settings::CompilerSet::CompilationStage::GenerateExecutable);
 
     if (mOnlyCheckSyntax) {
         mCompiler = compilerSet()->CCompiler();
@@ -60,19 +56,17 @@ bool SDCCFileCompiler::prepareForCompile()
     mArguments += getProjectIncludeArguments();
 
     if (!fileExists(mCompiler)) {
-        throw CompileError(
-                    tr("The Compiler '%1' doesn't exists!").arg(mCompiler)
-                    +"<br />"
-                    +tr("Please check the \"program\" page of compiler settings."));
+        throw CompileError(tr("The Compiler '%1' doesn't exists!").arg(mCompiler) + "<br />" +
+                           tr("Please check the \"program\" page of compiler settings."));
     }
 
-    mOutputFile=changeFileExt(mFilename, compilerSet()->executableSuffix());
-    mIhxFilename = changeFileExt(mFilename,SDCC_IHX_SUFFIX);
+    mOutputFile = changeFileExt(mFilename, compilerSet()->executableSuffix());
+    mIhxFilename = changeFileExt(mFilename, SDCC_IHX_SUFFIX);
 
     QString val = compilerSet()->compileOptions().value(SDCC_OPT_NOSTARTUP);
-    mNoStartup = (val==COMPILER_OPTION_ON);
+    mNoStartup = (val == COMPILER_OPTION_ON);
     if (mNoStartup) {
-        mRelFilename = changeFileExt(mFilename,SDCC_REL_SUFFIX);
+        mRelFilename = changeFileExt(mFilename, SDCC_REL_SUFFIX);
         mArguments += {"-c", mFilename};
         mExtraCompilersList << mCompiler;
         QStringList args = getLibraryArguments(FileType::CSource);
@@ -119,17 +113,17 @@ bool SDCCFileCompiler::prepareForCompile()
 bool SDCCFileCompiler::beforeRunExtraCommand(int idx)
 {
     if (mNoStartup) {
-        if (idx==0) {
+        if (idx == 0) {
             QFileInfo file(mRelFilename);
-            return file.exists() && (file.lastModified()>mStartCompileTime);
-        } else if (idx==1) {
+            return file.exists() && (file.lastModified() > mStartCompileTime);
+        } else if (idx == 1) {
             QFileInfo file(mIhxFilename);
-            return file.exists() && (file.lastModified()>mStartCompileTime);
+            return file.exists() && (file.lastModified() > mStartCompileTime);
         }
     } else {
-        if (idx==0) {
+        if (idx == 0) {
             QFileInfo file(mIhxFilename);
-            return file.exists() && (file.lastModified()>mStartCompileTime);
+            return file.exists() && (file.lastModified() > mStartCompileTime);
         }
     }
     return true;
@@ -137,13 +131,14 @@ bool SDCCFileCompiler::beforeRunExtraCommand(int idx)
 
 bool SDCCFileCompiler::prepareForRebuild()
 {
-    QString exeName=compilerSet()->getOutputFilename(mFilename);
+    QString exeName = compilerSet()->getOutputFilename(mFilename);
 
     QFile file(exeName);
 
     if (file.exists() && !file.remove()) {
         QFileInfo info(exeName);
-        throw CompileError(tr("Can't delete the old executable file \"%1\".\n").arg(info.absoluteFilePath()));
+        throw CompileError(
+            tr("Can't delete the old executable file \"%1\".\n").arg(info.absoluteFilePath()));
     }
     return true;
 }

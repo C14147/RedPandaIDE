@@ -32,8 +32,8 @@ enum class UnicodeSupportLevel {
 QString defaultUiFont();
 QString defaultMonoFont();
 QString defaultEmojiFont();
-bool isCjk(const QString &locale = QLocale::system().name());
-QStringList defaultCjkEditorFonts(const QString &locale);
+bool isCjk(const QString& locale = QLocale::system().name());
+QStringList defaultCjkEditorFonts(const QString& locale);
 QStringList defaultFallbackEditorFonts();
 QStringList defaultEditorFonts();
 

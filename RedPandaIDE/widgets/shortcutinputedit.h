@@ -28,12 +28,11 @@ signals:
     void inputFinished(QWidget* editor);
     // QWidget interface
 protected:
-    void keyPressEvent(QKeyEvent *event) override;
+    void keyPressEvent(QKeyEvent* event) override;
 
     // QObject interface
 public:
-    bool event(QEvent *event) override;
-
+    bool event(QEvent* event) override;
 };
 
 #endif // SHORTCUTINPUTEDIT_H

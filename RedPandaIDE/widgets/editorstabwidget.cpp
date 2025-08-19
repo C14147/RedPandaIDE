@@ -23,16 +23,16 @@
 #include "../editorlist.h"
 #include "../mainwindow.h"
 
-EditorsTabWidget::EditorsTabWidget(QWidget* parent):QTabWidget(parent)
+EditorsTabWidget::EditorsTabWidget(QWidget* parent) : QTabWidget(parent)
 {
     setAcceptDrops(true);
 }
 
-void EditorsTabWidget::dropEvent(QDropEvent *event)
+void EditorsTabWidget::dropEvent(QDropEvent* event)
 {
     if (event->mimeData()->hasUrls()) {
         QStringList files;
-        foreach(const QUrl& url, event->mimeData()->urls()){
+        foreach (const QUrl& url, event->mimeData()->urls()) {
             if (!url.isLocalFile())
                 continue;
             QString file = url.toLocalFile();
@@ -42,10 +42,10 @@ void EditorsTabWidget::dropEvent(QDropEvent *event)
     }
 }
 
-void EditorsTabWidget::dragEnterEvent(QDragEnterEvent *event)
+void EditorsTabWidget::dragEnterEvent(QDragEnterEvent* event)
 {
-    if (event->mimeData()->hasUrls()){
-        foreach(const QUrl& url, event->mimeData()->urls()){
+    if (event->mimeData()->hasUrls()) {
+        foreach (const QUrl& url, event->mimeData()->urls()) {
             if (!url.isLocalFile())
                 continue;
             QString file = url.toLocalFile();
@@ -58,11 +58,11 @@ void EditorsTabWidget::dragEnterEvent(QDragEnterEvent *event)
     }
 }
 
-void EditorsTabWidget::mousePressEvent(QMouseEvent *event)
+void EditorsTabWidget::mousePressEvent(QMouseEvent* event)
 {
     if (event->buttons() == Qt::MiddleButton) {
         int idx = this->tabBar()->tabAt(event->pos());
-        if (idx>=0)
+        if (idx >= 0)
             emit middleButtonClicked(idx);
     }
     QTabWidget::mousePressEvent(event);

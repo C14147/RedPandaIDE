@@ -19,30 +19,30 @@
 
 struct lua_State;
 
-extern "C" int luaApi_Debug_debug(lua_State *L) noexcept;
-extern "C" int luaApi_Debug_messageBox(lua_State *L) noexcept;
+extern "C" int luaApi_Debug_debug(lua_State* L) noexcept;
+extern "C" int luaApi_Debug_messageBox(lua_State* L) noexcept;
 
-extern "C" int luaApi_Desktop_desktopEnvironment(lua_State *L) noexcept;
-extern "C" int luaApi_Desktop_language(lua_State *L) noexcept;
-extern "C" int luaApi_Desktop_qtStyleList(lua_State *L) noexcept;
-extern "C" int luaApi_Desktop_systemAppMode(lua_State *L) noexcept;
-extern "C" int luaApi_Desktop_systemStyle(lua_State *L) noexcept;
+extern "C" int luaApi_Desktop_desktopEnvironment(lua_State* L) noexcept;
+extern "C" int luaApi_Desktop_language(lua_State* L) noexcept;
+extern "C" int luaApi_Desktop_qtStyleList(lua_State* L) noexcept;
+extern "C" int luaApi_Desktop_systemAppMode(lua_State* L) noexcept;
+extern "C" int luaApi_Desktop_systemStyle(lua_State* L) noexcept;
 
-extern "C" int luaApi_FileSystem_exists(lua_State *L) noexcept;
-extern "C" int luaApi_FileSystem_isExecutable(lua_State *L) noexcept;
-extern "C" int luaApi_FileSystem_matchFiles(lua_State *L) noexcept;
+extern "C" int luaApi_FileSystem_exists(lua_State* L) noexcept;
+extern "C" int luaApi_FileSystem_isExecutable(lua_State* L) noexcept;
+extern "C" int luaApi_FileSystem_matchFiles(lua_State* L) noexcept;
 
-extern "C" int luaApi_System_appArch(lua_State *L) noexcept;
-extern "C" int luaApi_System_appDir(lua_State *L) noexcept;
-extern "C" int luaApi_System_appLibexecDir(lua_State *L) noexcept;
-extern "C" int luaApi_System_appResourceDir(lua_State *L) noexcept;
-extern "C" int luaApi_System_osArch(lua_State *L) noexcept;
-extern "C" int luaApi_System_popen(lua_State *L) noexcept;
-extern "C" int luaApi_System_supportedAppArchList(lua_State *L) noexcept;
+extern "C" int luaApi_System_appArch(lua_State* L) noexcept;
+extern "C" int luaApi_System_appDir(lua_State* L) noexcept;
+extern "C" int luaApi_System_appLibexecDir(lua_State* L) noexcept;
+extern "C" int luaApi_System_appResourceDir(lua_State* L) noexcept;
+extern "C" int luaApi_System_osArch(lua_State* L) noexcept;
+extern "C" int luaApi_System_popen(lua_State* L) noexcept;
+extern "C" int luaApi_System_supportedAppArchList(lua_State* L) noexcept;
 #ifdef Q_OS_WINDOWS
-extern "C" int luaApi_System_readRegistry(lua_State *L) noexcept;
+extern "C" int luaApi_System_readRegistry(lua_State* L) noexcept;
 #endif
 
-extern "C" int luaApi_Util_format(lua_State *L) noexcept;
+extern "C" int luaApi_Util_format(lua_State* L) noexcept;
 
 #endif // ADDON_LUA_API_H

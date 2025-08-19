@@ -23,10 +23,8 @@
 
 #include <QFileDialog>
 
-
-ProjectOutputWidget::ProjectOutputWidget(const QString &name, const QString &group, QWidget *parent) :
-    SettingsWidget(name,group,parent),
-    ui(new Ui::ProjectOutputWidget)
+ProjectOutputWidget::ProjectOutputWidget(const QString& name, const QString& group, QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::ProjectOutputWidget)
 {
     ui->setupUi(this);
 }
@@ -62,51 +60,40 @@ void ProjectOutputWidget::on_btnOutputDir_clicked()
     QString currentName = ui->txtOutputDir->text();
     if (currentName.isEmpty())
         currentName = pMainWindow->project()->directory();
-    QString dirName = QFileDialog::getExistingDirectory(
-                this,
-                tr("Executable output directory"),
-                currentName);
+    QString dirName =
+        QFileDialog::getExistingDirectory(this, tr("Executable output directory"), currentName);
     if (!dirName.isEmpty())
         ui->txtOutputDir->setText(dirName);
 }
-
 
 void ProjectOutputWidget::on_btnObjOutputDir_clicked()
 {
     QString currentName = ui->txtObjOutputDir->text();
     if (currentName.isEmpty())
         currentName = pMainWindow->project()->directory();
-    QString dirName = QFileDialog::getExistingDirectory(
-                this,
-                tr("Object files output directory"),
-                currentName);
+    QString dirName =
+        QFileDialog::getExistingDirectory(this, tr("Object files output directory"), currentName);
     if (!dirName.isEmpty())
         ui->txtObjOutputDir->setText(dirName);
 }
 
-
 void ProjectOutputWidget::on_btnCompileLog_clicked()
 {
-    QString currentFile=ui->txtCompileLog->text();
+    QString currentFile = ui->txtCompileLog->text();
     if (currentFile.isEmpty()) {
         currentFile = pMainWindow->project()->directory();
     }
     QString fileName = QFileDialog::getSaveFileName(
-                this,
-                tr("Log file"),
-                currentFile,
-                tr("All files (%1)").arg(ALL_FILE_WILDCARD),
-                nullptr,
-                QFileDialog::Options() | QFileDialog::DontConfirmOverwrite);
-    if (!fileName.isEmpty() ) {
+        this, tr("Log file"), currentFile, tr("All files (%1)").arg(ALL_FILE_WILDCARD), nullptr,
+        QFileDialog::Options() | QFileDialog::DontConfirmOverwrite);
+    if (!fileName.isEmpty()) {
         ui->txtCompileLog->setText(fileName);
     }
 }
 
-void ProjectOutputWidget::updateIcons(const QSize &/*size*/)
+void ProjectOutputWidget::updateIcons(const QSize& /*size*/)
 {
     pIconsManager->setIcon(ui->btnCompileLog, IconsManager::ACTION_FILE_OPEN_FOLDER);
     pIconsManager->setIcon(ui->btnObjOutputDir, IconsManager::ACTION_FILE_OPEN_FOLDER);
     pIconsManager->setIcon(ui->btnOutputDir, IconsManager::ACTION_FILE_OPEN_FOLDER);
 }
-

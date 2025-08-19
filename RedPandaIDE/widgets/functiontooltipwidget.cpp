@@ -21,18 +21,18 @@
 #include <QDebug>
 #include <qt_utils/utils.h>
 
-FunctionTooltipWidget::FunctionTooltipWidget(QWidget *parent) :
-    QFrame{parent, Qt::ToolTip | Qt::WindowStaysOnTopHint | Qt::WindowDoesNotAcceptFocus},
-    mMinWidth{410}
+FunctionTooltipWidget::FunctionTooltipWidget(QWidget* parent)
+    : QFrame{parent, Qt::ToolTip | Qt::WindowStaysOnTopHint | Qt::WindowDoesNotAcceptFocus},
+      mMinWidth{410}
 {
     setFocusPolicy(Qt::NoFocus);
     mInfoLabel = new QLabel(this);
     mInfoLabel->setWordWrap(true);
-    mInfoLabel->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    mInfoLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mInfoLabel->setTextFormat(Qt::TextFormat::RichText);
     mTotalLabel = new QLabel(this);
     mTotalLabel->setWordWrap(false);
-    mTotalLabel->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Preferred);
+    mTotalLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
     mUpButton = new QToolButton(this);
     mUpButton->setArrowType(Qt::UpArrow);
     mUpButton->setFixedSize(16, 16);
@@ -41,26 +41,25 @@ FunctionTooltipWidget::FunctionTooltipWidget(QWidget *parent) :
     mDownButton->setArrowType(Qt::DownArrow);
     mDownButton->setFixedSize(16, 16);
     mDownButton->setAutoRaise(true);
-    mInfoIndex=0;
+    mInfoIndex = 0;
 
     this->setLayout(new QHBoxLayout());
-    layout()->setContentsMargins(0,0,0,0);
+    layout()->setContentsMargins(0, 0, 0, 0);
     layout()->setSpacing(0);
     layout()->addWidget(mUpButton);
     layout()->addWidget(mTotalLabel);
     layout()->addWidget(mDownButton);
     layout()->addWidget(mInfoLabel);
-    QSizePolicy policy=mInfoLabel->sizePolicy();
+    QSizePolicy policy = mInfoLabel->sizePolicy();
     policy.setHorizontalPolicy(QSizePolicy::Expanding);
     mInfoLabel->setSizePolicy(policy);
-    connect(mUpButton,&QPushButton::clicked,
-            this,&FunctionTooltipWidget::previousTip);
-    connect(mDownButton,&QPushButton::clicked,
-            this,&FunctionTooltipWidget::nextTip);
+    connect(mUpButton, &QPushButton::clicked, this, &FunctionTooltipWidget::previousTip);
+    connect(mDownButton, &QPushButton::clicked, this, &FunctionTooltipWidget::nextTip);
 }
 
-void FunctionTooltipWidget::addTip(const QString &name, const QString& fullname,
-                                   const QString &returnType, const QString &args, const QString &noNameArgs)
+void FunctionTooltipWidget::addTip(const QString& name, const QString& fullname,
+                                   const QString& returnType, const QString& args,
+                                   const QString& noNameArgs)
 {
     PFunctionInfo info = std::make_shared<FunctionInfo>();
     info->name = name;
@@ -73,7 +72,7 @@ void FunctionTooltipWidget::addTip(const QString &name, const QString& fullname,
 
 void FunctionTooltipWidget::clearTips()
 {
-    mInfoIndex=0;
+    mInfoIndex = 0;
     mInfos.clear();
     hide();
 }
@@ -95,63 +94,63 @@ void FunctionTooltipWidget::setParamPos(int newParamPos)
 
 void FunctionTooltipWidget::nextTip()
 {
-    if (mInfoIndex>=mInfos.length()-1) {
+    if (mInfoIndex >= mInfos.length() - 1) {
         hide();
         return;
     }
-    if (mInfos.length()>0)
-        mInfoIndex = std::min(mInfoIndex+1,mInfos.length()-1);
+    if (mInfos.length() > 0)
+        mInfoIndex = std::min(mInfoIndex + 1, mInfos.length() - 1);
     updateTip();
 }
 
 void FunctionTooltipWidget::previousTip()
 {
-    if (mInfoIndex==0) {
+    if (mInfoIndex == 0) {
         hide();
-        return ;
+        return;
     }
-    if (mInfos.length()>0)
-        mInfoIndex = std::max(mInfoIndex-1,0);
+    if (mInfos.length() > 0)
+        mInfoIndex = std::max(mInfoIndex - 1, 0);
     updateTip();
 }
 
 void FunctionTooltipWidget::updateTip()
 {
-    mTotalLabel->setVisible(mInfos.length()>1);
-    mUpButton->setVisible(mInfos.length()>1);
-    mDownButton->setVisible(mInfos.length()>1);
-    mUpButton->setEnabled(mInfoIndex!=0);
-    mDownButton->setEnabled(mInfoIndex!=mInfos.length()-1);
-    if (mInfos.length()<=0)
+    mTotalLabel->setVisible(mInfos.length() > 1);
+    mUpButton->setVisible(mInfos.length() > 1);
+    mDownButton->setVisible(mInfos.length() > 1);
+    mUpButton->setEnabled(mInfoIndex != 0);
+    mDownButton->setEnabled(mInfoIndex != mInfos.length() - 1);
+    if (mInfos.length() <= 0)
         return;
     PFunctionInfo info = mInfos[mInfoIndex];
-    QString text = info->returnType+ " " + info->name;
+    QString text = info->returnType + " " + info->name;
     QString originText = text;
-    if (info->params.length()==0) {
+    if (info->params.length() == 0) {
         text += "()";
         originText += "()";
     } else {
         QStringList displayList;
         QStringList originList;
-        for (int i=0;i<info->params.length();i++){
+        for (int i = 0; i < info->params.length(); i++) {
             QString param = info->params[i];
             originList.append(param);
 
-            param.replace("<","&lt;");
-            param.replace(">","&gt;");
+            param.replace("<", "&lt;");
+            param.replace(">", "&gt;");
             if (mParamIndex == i) {
                 displayList.append(QString("<b>%1</b>").arg(param));
             } else {
                 displayList.append(param);
             }
         }
-        text += "( "+displayList.join(", ") + ") ";
-        originText += "( "+originList.join(", ") + ") ";
+        text += "( " + displayList.join(", ") + ") ";
+        originText += "( " + originList.join(", ") + ") ";
     }
-    if (mInfos.length()>1) {
-        mTotalLabel->setText(QString("%1/%2").arg(mInfoIndex+1).arg(mInfos.length()));
+    if (mInfos.length() > 1) {
+        mTotalLabel->setText(QString("%1/%2").arg(mInfoIndex + 1).arg(mInfos.length()));
     }
-    int width = mInfoLabel->fontMetrics().horizontalAdvance(originText)+10;
+    int width = mInfoLabel->fontMetrics().horizontalAdvance(originText) + 10;
     if (width > mMinWidth) {
         mInfoLabel->setMinimumWidth(mMinWidth);
     } else {
@@ -162,11 +161,11 @@ void FunctionTooltipWidget::updateTip()
 
 void FunctionTooltipWidget::guessFunction(int commas)
 {
-    if (mInfoIndex>=0 && mInfoIndex<mInfos.count()
-            && mInfos[mInfoIndex]->params.count()>commas)
+    if (mInfoIndex >= 0 && mInfoIndex < mInfos.count() &&
+        mInfos[mInfoIndex]->params.count() > commas)
         return;
-    for (int i=0;i<mInfos.size();i++) {
-        if (mInfos[i]->params.count()>commas) {
+    for (int i = 0; i < mInfos.size(); i++) {
+        if (mInfos[i]->params.count() > commas) {
             mInfoIndex = i;
             return;
         }
@@ -190,17 +189,17 @@ QStringList FunctionTooltipWidget::splitArgs(QString argStr)
     while (i < argStr.length()) {
         if ((argStr[i] == ',')) {
             // We've found "int* a" for example
-            QString s = argStr.mid(paramStart,i-paramStart);
+            QString s = argStr.mid(paramStart, i - paramStart);
             result.append(s);
             paramStart = i + 1; // step over ,
         }
         i++;
     }
-    QString s = argStr.mid(paramStart,i-paramStart);
-    s=s.trimmed();
+    QString s = argStr.mid(paramStart, i - paramStart);
+    s = s.trimmed();
     if (!s.isEmpty()) {
         if (s.endsWith(')'))
-            s.truncate(s.length()-1);
+            s.truncate(s.length() - 1);
         result.append(s);
     }
     return result;
@@ -216,12 +215,12 @@ void FunctionTooltipWidget::setMinWidth(int newMinWidth)
     mMinWidth = newMinWidth;
 }
 
-const QString &FunctionTooltipWidget::functionFullName() const
+const QString& FunctionTooltipWidget::functionFullName() const
 {
     return mFunctioFullName;
 }
 
-void FunctionTooltipWidget::setFunctioFullName(const QString &newFunctioFullName)
+void FunctionTooltipWidget::setFunctioFullName(const QString& newFunctioFullName)
 {
     mFunctioFullName = newFunctioFullName;
 }
@@ -237,20 +236,19 @@ void FunctionTooltipWidget::setParamIndex(int newParamIndex)
     updateTip();
 }
 
-void FunctionTooltipWidget::closeEvent(QCloseEvent *)
+void FunctionTooltipWidget::closeEvent(QCloseEvent*)
 {
-
 }
 
-void FunctionTooltipWidget::showEvent(QShowEvent *)
+void FunctionTooltipWidget::showEvent(QShowEvent*)
 {
-    if (mInfoIndex<0 || mInfoIndex>= mInfos.count()) {
+    if (mInfoIndex < 0 || mInfoIndex >= mInfos.count()) {
         mInfoIndex = 0;
     }
     updateTip();
 }
 
-void FunctionTooltipWidget::hideEvent(QHideEvent *)
+void FunctionTooltipWidget::hideEvent(QHideEvent*)
 {
     mInfos.clear();
     mFunctioFullName = "";

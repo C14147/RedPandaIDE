@@ -21,12 +21,13 @@
 #include <memory>
 #include "../problems/ojproblemset.h"
 
-class OJProblemModel: public QAbstractTableModel {
+class OJProblemModel : public QAbstractTableModel
+{
     Q_OBJECT
 public:
-    explicit OJProblemModel(QObject *parent = nullptr);
-    const POJProblem &problem() const;
-    void setProblem(const POJProblem &newProblem);
+    explicit OJProblemModel(QObject* parent = nullptr);
+    const POJProblem& problem() const;
+    void setProblem(const POJProblem& newProblem);
     void addCase(POJProblemCase problemCase);
     void removeCase(int index);
     void removeCases();
@@ -45,29 +46,30 @@ private:
 
     // QAbstractItemModel interface
 public:
-    int rowCount(const QModelIndex &parent) const override;
-    QVariant data(const QModelIndex &index, int role) const override;
-    bool setData(const QModelIndex &index, const QVariant &value, int role) override;
+    int rowCount(const QModelIndex& parent) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
+    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
 
     // QAbstractItemModel interface
 public:
-    int columnCount(const QModelIndex &parent) const override;
+    int columnCount(const QModelIndex& parent) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
     // QAbstractItemModel interface
 public:
-    Qt::ItemFlags flags(const QModelIndex &index) const override;
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
     Qt::DropActions supportedDropActions() const override;
-    bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
-    bool insertRows(int row, int count, const QModelIndex &parent) override;
-    bool removeRows(int row, int count, const QModelIndex &parent) override;
+    bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
+                      const QModelIndex& parent) override;
+    bool insertRows(int row, int count, const QModelIndex& parent) override;
+    bool removeRows(int row, int count, const QModelIndex& parent) override;
 };
 
 class OJProblemSetModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    explicit OJProblemSetModel(QObject *parent = nullptr);
+    explicit OJProblemSetModel(QObject* parent = nullptr);
     void clear();
     int count();
     void create(const QString& name);
@@ -75,13 +77,13 @@ public:
     QString name() const;
     QString exportFilename() const;
     void addProblem(const POJProblem& problem);
-    void addProblems(const QList<POJProblem> &problems);
-    const QList<POJProblem> &problems() const;
+    void addProblems(const QList<POJProblem>& problems);
+    const QList<POJProblem>& problems() const;
     POJProblem problem(int index) const;
     void removeProblem(int index);
     bool problemNameUsed(const QString& name);
     void removeAllProblems();
-    void saveToFile(const QString& fileName, int currentIndex=-1);
+    void saveToFile(const QString& fileName, int currentIndex = -1);
     void loadFromFile(const QString& fileName, int& currentIndex);
     void load(int& currentIndex);
     void save(int currentIndex);
@@ -95,15 +97,16 @@ private:
 
     // QAbstractItemModel interface
 public:
-    int rowCount(const QModelIndex &parent) const override;
-    QVariant data(const QModelIndex &index, int role) const override;
-    bool setData(const QModelIndex &index, const QVariant &value, int role) override;
-    Qt::ItemFlags flags(const QModelIndex &index) const override;
+    int rowCount(const QModelIndex& parent) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
+    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
 
     // QAbstractItemModel interface
 public:
     Qt::DropActions supportedDropActions() const override;
-    bool moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild) override;
+    bool moveRows(const QModelIndex& sourceParent, int sourceRow, int count,
+                  const QModelIndex& destinationParent, int destinationChild) override;
 };
 
 #endif // OJPROBLEMSETMODEL_H

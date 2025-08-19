@@ -28,12 +28,12 @@
 #include <QFileDialog>
 #include <qsynedit/document.h>
 
-EditorColorSchemeWidget::EditorColorSchemeWidget(const QString& name, const QString& group, QWidget *parent) :
-    SettingsWidget(name,group,parent),
-    ui(new Ui::EditorColorSchemeWidget)
+EditorColorSchemeWidget::EditorColorSchemeWidget(const QString& name, const QString& group,
+                                                 QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::EditorColorSchemeWidget)
 {
     ui->setupUi(this);
-    mStatementColors = std::make_shared<QHash<StatementKind, std::shared_ptr<ColorSchemeItem> >>();
+    mStatementColors = std::make_shared<QHash<StatementKind, std::shared_ptr<ColorSchemeItem>>>();
 
     mItemDelegate = new ColorSchemeItemDelegate(this);
     ui->cbScheme->setItemDelegate(mItemDelegate);
@@ -43,87 +43,89 @@ EditorColorSchemeWidget::EditorColorSchemeWidget(const QString& name, const QStr
     mModifiedSchemeComboFont.setBold(true);
 
     pColorManager->reload();
-    int schemeCount=0;
-    foreach (const QString &schemeName, pColorManager->getSchemes()) {
+    int schemeCount = 0;
+    foreach (const QString& schemeName, pColorManager->getSchemes()) {
         PColorScheme scheme = pColorManager->get(schemeName);
         if (!scheme)
             return;
         ui->cbScheme->addItem(schemeName);
         if (scheme->customed())
-            ui->cbScheme->setItemData(schemeCount,mModifiedSchemeComboFont,Qt::FontRole);
+            ui->cbScheme->setItemData(schemeCount, mModifiedSchemeComboFont, Qt::FontRole);
         else
-            ui->cbScheme->setItemData(schemeCount,mDefaultSchemeComboFont,Qt::FontRole);
+            ui->cbScheme->setItemData(schemeCount, mDefaultSchemeComboFont, Qt::FontRole);
         schemeCount++;
     }
-    QItemSelectionModel *m = ui->treeItems->selectionModel();
+    QItemSelectionModel* m = ui->treeItems->selectionModel();
     ui->treeItems->setModel(&mDefinesModel);
     delete m;
-    mDefinesModel.setHorizontalHeaderLabels(QStringList());        
-    foreach (const QString &defineName, pColorManager->getDefines()) {
+    mDefinesModel.setHorizontalHeaderLabels(QStringList());
+    foreach (const QString& defineName, pColorManager->getDefines()) {
         addDefine(defineName, pColorManager->getDefine(defineName));
     }
     ui->treeItems->expandAll();
-    QModelIndex groupIndex = mDefinesModel.index(0,0);
-    QModelIndex index = mDefinesModel.index(0,0,groupIndex);
+    QModelIndex groupIndex = mDefinesModel.index(0, 0);
+    QModelIndex index = mDefinesModel.index(0, 0, groupIndex);
     ui->treeItems->setCurrentIndex(index);
-    connect(ui->treeItems->selectionModel(), &QItemSelectionModel::selectionChanged,
-            this, &EditorColorSchemeWidget::onItemSelectionChanged);
-    connect(ui->cbScheme, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &EditorColorSchemeWidget::changeSchemeComboFont);
-    connect(ui->cbScheme, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &EditorColorSchemeWidget::onItemSelectionChanged);
-    connect(this, &SettingsWidget::settingsChanged,this,
+    connect(ui->treeItems->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+            &EditorColorSchemeWidget::onItemSelectionChanged);
+    connect(ui->cbScheme, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+            &EditorColorSchemeWidget::changeSchemeComboFont);
+    connect(ui->cbScheme, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+            &EditorColorSchemeWidget::onItemSelectionChanged);
+    connect(this, &SettingsWidget::settingsChanged, this,
             &EditorColorSchemeWidget::onSettingChanged);
-    connect(ui->reloadButton, &QPushButton::clicked, this, [this](){
+    connect(ui->reloadButton, &QPushButton::clicked, this, [this]() {
         pColorManager->reload();
         ui->cbScheme->clear();
-        int schemeCount=0;
-        foreach (const QString &schemeName, pColorManager->getSchemes()) {
+        int schemeCount = 0;
+        foreach (const QString& schemeName, pColorManager->getSchemes()) {
             PColorScheme scheme = pColorManager->get(schemeName);
             if (!scheme)
                 return;
             ui->cbScheme->addItem(schemeName);
             if (scheme->customed())
-                ui->cbScheme->setItemData(schemeCount,mModifiedSchemeComboFont,Qt::FontRole);
+                ui->cbScheme->setItemData(schemeCount, mModifiedSchemeComboFont, Qt::FontRole);
             else
-                ui->cbScheme->setItemData(schemeCount,mDefaultSchemeComboFont,Qt::FontRole);
+                ui->cbScheme->setItemData(schemeCount, mDefaultSchemeComboFont, Qt::FontRole);
             schemeCount++;
         }
         this->doLoad();
     });
     ui->editDemo->setUseCodeFolding(true);
-    ui->editDemo->document()->setText(
-            "#include <iostream>\n"
-            "#include <conio.h>\n"
-            "\n"
-            "int x=10;\n"
-            "\n"
-            "int main(int argc, char **argv)\n"
-            "{\n"
-            "    int numbers[20]; // warning line\n"
-            "    float average, total; // bookmark\n"
-            "    for (int i = 0; i <= 19; i++) // active breakpoint\n"
-            "    { // breakpoint\n"
-            "        numbers[i] = i+x;\n"
-            "        Total += i; // error line\n"
-            "    }\n"
-            "    average = total / 20; // comment\n"
-            "    std::cout << \"total: \" << total <<\n"
-            "    \"\\nAverage: \" << average;\n"
-            "    getch();\n"
-            "}\n"
-                );
+    ui->editDemo->document()->setText("#include <iostream>\n"
+                                      "#include <conio.h>\n"
+                                      "\n"
+                                      "int x=10;\n"
+                                      "\n"
+                                      "int main(int argc, char **argv)\n"
+                                      "{\n"
+                                      "    int numbers[20]; // warning line\n"
+                                      "    float average, total; // bookmark\n"
+                                      "    for (int i = 0; i <= 19; i++) // active breakpoint\n"
+                                      "    { // breakpoint\n"
+                                      "        numbers[i] = i+x;\n"
+                                      "        Total += i; // error line\n"
+                                      "    }\n"
+                                      "    average = total / 20; // comment\n"
+                                      "    std::cout << \"total: \" << total <<\n"
+                                      "    \"\\nAverage: \" << average;\n"
+                                      "    getch();\n"
+                                      "}\n");
     ui->editDemo->setReadOnly(true);
     ui->editDemo->toggleBreakpoint(11);
     ui->editDemo->toggleBookmark(9);
-    ui->editDemo->addSyntaxIssues(13, 9, 14, CompileIssueType::Error, "[Error] 'Total' was not declared in this scope; did you mean 'total'?");
-    ui->editDemo->addSyntaxIssues(8, 9, 16, CompileIssueType::Warning, "[Warning] variable 'numbers' set but not used [-Wunused-but-set-variable]");
+    ui->editDemo->addSyntaxIssues(
+        13, 9, 14, CompileIssueType::Error,
+        "[Error] 'Total' was not declared in this scope; did you mean 'total'?");
+    ui->editDemo->addSyntaxIssues(
+        8, 9, 16, CompileIssueType::Warning,
+        "[Warning] variable 'numbers' set but not used [-Wunused-but-set-variable]");
     ui->editDemo->setCaretY(9);
-    ui->editDemo->setActiveBreakpointFocus(10,false);
-    ui->editDemo->setCaretXY(QSynedit::BufferCoord{1,1});
+    ui->editDemo->setActiveBreakpointFocus(10, false);
+    ui->editDemo->setCaretXY(QSynedit::BufferCoord{1, 1});
     ui->editDemo->setFileType(FileType::CppSource);
-    //ui->editDemo->reparseDocument();
-    //ui->editDemo->invalidate();
+    // ui->editDemo->reparseDocument();
+    // ui->editDemo->invalidate();
     onItemSelectionChanged();
 }
 
@@ -131,15 +133,15 @@ void EditorColorSchemeWidget::addDefine(const QString& name, PColorSchemeItemDef
 {
     QList<QStandardItem*> items = mDefinesModel.findItems(define->group());
     QStandardItem* pGroupItem;
-    if (items.count() == 0 ) {
-        //delete in the destructor
+    if (items.count() == 0) {
+        // delete in the destructor
         pGroupItem = new QStandardItem(define->group());
         pGroupItem->setData("", NameRole);
         mDefinesModel.appendRow(pGroupItem);
     } else {
         pGroupItem = items[0];
     }
-    //delete in the destructor
+    // delete in the destructor
     QStandardItem* pWidgetItem = new QStandardItem(define->displayName());
     pWidgetItem->setData(name, NameRole);
     pGroupItem->appendRow(pWidgetItem);
@@ -147,8 +149,8 @@ void EditorColorSchemeWidget::addDefine(const QString& name, PColorSchemeItemDef
 
 PColorSchemeItem EditorColorSchemeWidget::getCurrentItem()
 {
-    QItemSelectionModel * selectionModel = ui->treeItems->selectionModel();
-    QString name =mDefinesModel.data(selectionModel->currentIndex(),NameRole).toString();
+    QItemSelectionModel* selectionModel = ui->treeItems->selectionModel();
+    QString name = mDefinesModel.data(selectionModel->currentIndex(), NameRole).toString();
     if (name.isEmpty())
         return PColorSchemeItem();
     return pColorManager->getItem(ui->cbScheme->currentText(), name);
@@ -161,42 +163,42 @@ PColorScheme EditorColorSchemeWidget::getCurrentScheme()
 
 void EditorColorSchemeWidget::connectModificationSlots()
 {
-    connect(ui->cbBackground,&QCheckBox_stateChanged,
-            this, &EditorColorSchemeWidget::onBackgroundChanged);
-    connect(ui->colorBackground,&ColorEdit::colorChanged,
-            this, &EditorColorSchemeWidget::onBackgroundChanged);
-    connect(ui->cbForeground,&QCheckBox_stateChanged,
-            this, &EditorColorSchemeWidget::onForegroundChanged);
-    connect(ui->colorForeground,&ColorEdit::colorChanged,
-            this, &EditorColorSchemeWidget::onForegroundChanged);
-    connect(ui->cbBold,&QCheckBox_stateChanged,
-            this, &EditorColorSchemeWidget::onFontStyleChanged);
-    connect(ui->cbItalic,&QCheckBox_stateChanged,
-            this, &EditorColorSchemeWidget::onFontStyleChanged);
-    connect(ui->cbStrikeout,&QCheckBox_stateChanged,
-            this, &EditorColorSchemeWidget::onFontStyleChanged);
-    connect(ui->cbUnderlined,&QCheckBox_stateChanged,
-            this, &EditorColorSchemeWidget::onFontStyleChanged);
+    connect(ui->cbBackground, &QCheckBox_stateChanged, this,
+            &EditorColorSchemeWidget::onBackgroundChanged);
+    connect(ui->colorBackground, &ColorEdit::colorChanged, this,
+            &EditorColorSchemeWidget::onBackgroundChanged);
+    connect(ui->cbForeground, &QCheckBox_stateChanged, this,
+            &EditorColorSchemeWidget::onForegroundChanged);
+    connect(ui->colorForeground, &ColorEdit::colorChanged, this,
+            &EditorColorSchemeWidget::onForegroundChanged);
+    connect(ui->cbBold, &QCheckBox_stateChanged, this,
+            &EditorColorSchemeWidget::onFontStyleChanged);
+    connect(ui->cbItalic, &QCheckBox_stateChanged, this,
+            &EditorColorSchemeWidget::onFontStyleChanged);
+    connect(ui->cbStrikeout, &QCheckBox_stateChanged, this,
+            &EditorColorSchemeWidget::onFontStyleChanged);
+    connect(ui->cbUnderlined, &QCheckBox_stateChanged, this,
+            &EditorColorSchemeWidget::onFontStyleChanged);
 }
 
 void EditorColorSchemeWidget::disconnectModificationSlots()
 {
-    disconnect(ui->cbBackground,&QCheckBox_stateChanged,
-            this, &EditorColorSchemeWidget::onBackgroundChanged);
-    disconnect(ui->colorBackground,&ColorEdit::colorChanged,
-            this, &EditorColorSchemeWidget::onBackgroundChanged);
-    disconnect(ui->cbForeground,&QCheckBox_stateChanged,
-            this, &EditorColorSchemeWidget::onForegroundChanged);
-    disconnect(ui->colorForeground,&ColorEdit::colorChanged,
-            this, &EditorColorSchemeWidget::onForegroundChanged);
-    disconnect(ui->cbBold,&QCheckBox_stateChanged,
-            this, &EditorColorSchemeWidget::onFontStyleChanged);
-    disconnect(ui->cbItalic,&QCheckBox_stateChanged,
-            this, &EditorColorSchemeWidget::onFontStyleChanged);
-    disconnect(ui->cbStrikeout,&QCheckBox_stateChanged,
-            this, &EditorColorSchemeWidget::onFontStyleChanged);
-    disconnect(ui->cbUnderlined,&QCheckBox_stateChanged,
-            this, &EditorColorSchemeWidget::onFontStyleChanged);
+    disconnect(ui->cbBackground, &QCheckBox_stateChanged, this,
+               &EditorColorSchemeWidget::onBackgroundChanged);
+    disconnect(ui->colorBackground, &ColorEdit::colorChanged, this,
+               &EditorColorSchemeWidget::onBackgroundChanged);
+    disconnect(ui->cbForeground, &QCheckBox_stateChanged, this,
+               &EditorColorSchemeWidget::onForegroundChanged);
+    disconnect(ui->colorForeground, &ColorEdit::colorChanged, this,
+               &EditorColorSchemeWidget::onForegroundChanged);
+    disconnect(ui->cbBold, &QCheckBox_stateChanged, this,
+               &EditorColorSchemeWidget::onFontStyleChanged);
+    disconnect(ui->cbItalic, &QCheckBox_stateChanged, this,
+               &EditorColorSchemeWidget::onFontStyleChanged);
+    disconnect(ui->cbStrikeout, &QCheckBox_stateChanged, this,
+               &EditorColorSchemeWidget::onFontStyleChanged);
+    disconnect(ui->cbUnderlined, &QCheckBox_stateChanged, this,
+               &EditorColorSchemeWidget::onFontStyleChanged);
 }
 
 void EditorColorSchemeWidget::setCurrentSchemeModified()
@@ -205,24 +207,24 @@ void EditorColorSchemeWidget::setCurrentSchemeModified()
     if (scheme) {
         scheme->setCustomed(true);
     }
-//    if (mModifiedSchemes.contains(ui->cbScheme->currentText()))
-//        return;
+    //    if (mModifiedSchemes.contains(ui->cbScheme->currentText()))
+    //        return;
     mModifiedSchemes.insert(ui->cbScheme->currentText());
-    ui->cbScheme->setItemData(ui->cbScheme->currentIndex(),
-                              mModifiedSchemeComboFont,Qt::FontRole);
+    ui->cbScheme->setItemData(ui->cbScheme->currentIndex(), mModifiedSchemeComboFont, Qt::FontRole);
     ui->cbScheme->setFont(mModifiedSchemeComboFont);
-    //ui->cbScheme->view()->setFont(mDefaultSchemeComboFont);
-    //we must reset the editor here, because this slot is processed after the onSettingChanged
+    // ui->cbScheme->view()->setFont(mDefaultSchemeComboFont);
+    // we must reset the editor here, because this slot is processed after the onSettingChanged
     onSettingChanged();
 }
 
 EditorColorSchemeWidget::~EditorColorSchemeWidget()
 {
     delete ui;
-    //mDefinesModel.clear();
+    // mDefinesModel.clear();
 }
 
-static void setColorProp(ColorEdit* ce, QCheckBox* cb, const QColor& color) {
+static void setColorProp(ColorEdit* ce, QCheckBox* cb, const QColor& color)
+{
     if (color.isValid()) {
         cb->setChecked(true);
         ce->setColor(color);
@@ -236,8 +238,8 @@ static void setColorProp(ColorEdit* ce, QCheckBox* cb, const QColor& color) {
 void EditorColorSchemeWidget::onItemSelectionChanged()
 {
     disconnectModificationSlots();
-    QItemSelectionModel * selectionModel = ui->treeItems->selectionModel();
-    QString name =mDefinesModel.data(selectionModel->currentIndex(),NameRole).toString();
+    QItemSelectionModel* selectionModel = ui->treeItems->selectionModel();
+    QString name = mDefinesModel.data(selectionModel->currentIndex(), NameRole).toString();
     bool found = false;
     if (!name.isEmpty()) {
         PColorSchemeItemDefine define = pColorManager->getDefine(name);
@@ -256,14 +258,14 @@ void EditorColorSchemeWidget::onItemSelectionChanged()
                 }
             }
             if (define->hasBackground() && item) {
-                setColorProp(ui->colorBackground, ui->cbBackground,item->background());
+                setColorProp(ui->colorBackground, ui->cbBackground, item->background());
             } else {
-                setColorProp(ui->colorBackground, ui->cbBackground,QColor());
+                setColorProp(ui->colorBackground, ui->cbBackground, QColor());
             }
             if (define->hasForeground() && item) {
-                setColorProp(ui->colorForeground, ui->cbForeground,item->foreground());
+                setColorProp(ui->colorForeground, ui->cbForeground, item->foreground());
             } else {
-                setColorProp(ui->colorForeground, ui->cbForeground,QColor());
+                setColorProp(ui->colorForeground, ui->cbForeground, QColor());
             }
             if (define->hasFontStyle() && item) {
                 ui->cbBold->setChecked(item->bold());
@@ -285,7 +287,7 @@ void EditorColorSchemeWidget::onItemSelectionChanged()
 
 void EditorColorSchemeWidget::onSettingChanged()
 {
-    pColorManager->updateStatementColors(mStatementColors,ui->cbScheme->currentText());
+    pColorManager->updateStatementColors(mStatementColors, ui->cbScheme->currentText());
     ui->editDemo->applyColorScheme(ui->cbScheme->currentText());
     ui->editDemo->setStatementColors(mStatementColors);
 }
@@ -341,7 +343,7 @@ void EditorColorSchemeWidget::changeSchemeComboFont()
     } else {
         ui->cbScheme->setFont(mDefaultSchemeComboFont);
     }
-    //ui->cbScheme->view()->setFont(mDefaultSchemeComboFont);
+    // ui->cbScheme->view()->setFont(mDefaultSchemeComboFont);
 }
 
 void EditorColorSchemeWidget::doLoad()
@@ -356,7 +358,7 @@ void EditorColorSchemeWidget::doLoad()
 void EditorColorSchemeWidget::doSave()
 {
     try {
-        foreach (const QString &name, mModifiedSchemes) {
+        foreach (const QString& name, mModifiedSchemes) {
             pColorManager->saveScheme(name);
         }
         pSettings->editor().setColorScheme(ui->cbScheme->currentText());
@@ -366,7 +368,7 @@ void EditorColorSchemeWidget::doSave()
         pSettings->editor().save();
         pMainWindow->updateEditorColorSchemes();
     } catch (FileError e) {
-        QMessageBox::critical(this,tr("Error"),e.reason());
+        QMessageBox::critical(this, tr("Error"), e.reason());
     }
 }
 
@@ -393,7 +395,7 @@ void EditorColorSchemeWidget::on_btnSchemeMenu_pressed()
             menu.addAction(ui->actionDelete_Scheme);
         }
         QString name = ui->cbScheme->currentText();
-        if (!pColorManager->exists(name+ " Copy"))
+        if (!pColorManager->exists(name + " Copy"))
             menu.addAction(ui->actionCopy_Scheme);
         menu.addAction(ui->actionExport_Scheme);
         menu.addSeparator();
@@ -401,14 +403,14 @@ void EditorColorSchemeWidget::on_btnSchemeMenu_pressed()
     menu.addAction(ui->actionImport_Scheme);
     QPoint p;
     p.setX(0);
-    p.setY(ui->btnSchemeMenu->height()+2);
+    p.setY(ui->btnSchemeMenu->height() + 2);
     menu.exec(ui->btnSchemeMenu->mapToGlobal(p));
 }
 
 void EditorColorSchemeWidget::on_actionImport_Scheme_triggered()
 {
-    QString filename = QFileDialog::getOpenFileName(this,
-        tr("Open"), QString(), tr("Color Scheme Files (*.scheme)"));
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open"), QString(),
+                                                    tr("Color Scheme Files (*.scheme)"));
     if (filename.isEmpty())
         return;
     QFileInfo fileInfo(filename);
@@ -416,10 +418,11 @@ void EditorColorSchemeWidget::on_actionImport_Scheme_triggered()
     QString suffix = EXT_COLOR_SCHEME;
     if (!name.endsWith(suffix, PATH_SENSITIVITY))
         return;
-    name.remove(name.length()-suffix.length(),suffix.length());
-    name.replace('_',' ');
+    name.remove(name.length() - suffix.length(), suffix.length());
+    name.replace('_', ' ');
     if (!pColorManager->isValidName(name)) {
-        QMessageBox::critical(this,tr("Error"),tr("'%1' is not a valid name for color scheme file."));
+        QMessageBox::critical(this, tr("Error"),
+                              tr("'%1' is not a valid name for color scheme file."));
         return;
     }
     try {
@@ -428,7 +431,7 @@ void EditorColorSchemeWidget::on_actionImport_Scheme_triggered()
         ui->cbScheme->addItem(name);
         ui->cbScheme->setCurrentText(name);
     } catch (FileError e) {
-        QMessageBox::critical(this,tr("Error"),e.reason());
+        QMessageBox::critical(this, tr("Error"), e.reason());
         return;
     }
 }
@@ -437,24 +440,22 @@ void EditorColorSchemeWidget::on_actionRename_Scheme_triggered()
 {
     QString name = ui->cbScheme->currentText();
     bool isOk;
-    QString newName = QInputDialog::getText(this,tr("New scheme name"),tr("New scheme name"),
-                                            QLineEdit::Normal,name,&isOk);
+    QString newName = QInputDialog::getText(this, tr("New scheme name"), tr("New scheme name"),
+                                            QLineEdit::Normal, name, &isOk);
     if (isOk) {
         if (!pColorManager->isValidName(newName)) {
-            QMessageBox::critical(this,tr("Error"),tr("'%1' is not a valid scheme name!").arg(newName));
+            QMessageBox::critical(this, tr("Error"),
+                                  tr("'%1' is not a valid scheme name!").arg(newName));
             return;
         }
         try {
-            pColorManager->rename(name,newName);
-            ui->cbScheme->setItemText(
-                        ui->cbScheme->currentIndex(),
-                        newName
-                        );
+            pColorManager->rename(name, newName);
+            ui->cbScheme->setItemText(ui->cbScheme->currentIndex(), newName);
             if (mModifiedSchemes.contains(name))
                 mModifiedSchemes.remove(name);
             mModifiedSchemes.insert(newName);
-        } catch(FileError e) {
-            QMessageBox::critical(this,tr("Error"),e.reason());
+        } catch (FileError e) {
+            QMessageBox::critical(this, tr("Error"), e.reason());
         }
     }
 }
@@ -463,42 +464,38 @@ void EditorColorSchemeWidget::on_actionReset_Scheme_triggered()
 {
     try {
         if (pColorManager->restoreToDefault(ui->cbScheme->currentText())) {
-            ui->cbScheme->setItemData(
-                        ui->cbScheme->currentIndex(),
-                        mDefaultSchemeComboFont,
-                        Qt::FontRole);
+            ui->cbScheme->setItemData(ui->cbScheme->currentIndex(), mDefaultSchemeComboFont,
+                                      Qt::FontRole);
             ui->cbScheme->setFont(mDefaultSchemeComboFont);
-            //ui->cbScheme->view()->setFont(mDefaultSchemeComboFont);
+            // ui->cbScheme->view()->setFont(mDefaultSchemeComboFont);
         }
     } catch (FileError e) {
-        QMessageBox::critical(this,tr("Error"),e.reason());
+        QMessageBox::critical(this, tr("Error"), e.reason());
     }
-
 }
 
 void EditorColorSchemeWidget::on_actionExport_Scheme_triggered()
 {
-    QString filename = QFileDialog::getSaveFileName(this,
-        tr("Save"), QString(), tr("Color Scheme Files (*.scheme)"));
+    QString filename = QFileDialog::getSaveFileName(this, tr("Save"), QString(),
+                                                    tr("Color Scheme Files (*.scheme)"));
     if (filename.isEmpty())
         return;
     try {
         PColorScheme scheme = getCurrentScheme();
         scheme->save(filename);
     } catch (FileError e) {
-        QMessageBox::critical(this,tr("Error"),e.reason());
+        QMessageBox::critical(this, tr("Error"), e.reason());
         return;
     }
 }
 
 void EditorColorSchemeWidget::on_actionDelete_Scheme_triggered()
 {
-
     QString name = ui->cbScheme->currentText();
-    if (QMessageBox::warning(this,tr("Confirm Delete Scheme"),
-                   tr("Scheme '%1' will be deleted!<br />Do you really want to continue?")
-                   .arg(name),
-                   QMessageBox::Yes, QMessageBox::No)!=QMessageBox::Yes)
+    if (QMessageBox::warning(
+            this, tr("Confirm Delete Scheme"),
+            tr("Scheme '%1' will be deleted!<br />Do you really want to continue?").arg(name),
+            QMessageBox::Yes, QMessageBox::No) != QMessageBox::Yes)
         return;
     try {
         if (pColorManager->remove(name)) {
@@ -508,22 +505,19 @@ void EditorColorSchemeWidget::on_actionDelete_Scheme_triggered()
             if (name == pSettings->editor().colorScheme())
                 doSave();
         }
-    }  catch (FileError e) {
-        QMessageBox::critical(this,tr("Error"),e.reason());
+    } catch (FileError e) {
+        QMessageBox::critical(this, tr("Error"), e.reason());
     }
 }
 
-
-
-ColorSchemeItemDelegate::ColorSchemeItemDelegate(QObject *parent):
-    QStyledItemDelegate{parent}
+ColorSchemeItemDelegate::ColorSchemeItemDelegate(QObject* parent) : QStyledItemDelegate{parent}
 {
-
 }
 
-void ColorSchemeItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const
+void ColorSchemeItemDelegate::initStyleOption(QStyleOptionViewItem* option,
+                                              const QModelIndex& index) const
 {
-    QStyledItemDelegate::initStyleOption(option,index);
+    QStyledItemDelegate::initStyleOption(option, index);
     QVariant value = index.data(Qt::FontRole);
     if (value.isValid() && !value.isNull()) {
         option->font = qvariant_cast<QFont>(value);

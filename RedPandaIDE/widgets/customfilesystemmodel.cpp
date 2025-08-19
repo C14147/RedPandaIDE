@@ -16,14 +16,12 @@
  */
 #include "customfilesystemmodel.h"
 
-CustomFileSystemModel::CustomFileSystemModel(QObject *parent) : QFileSystemModel(parent)
+CustomFileSystemModel::CustomFileSystemModel(QObject* parent) : QFileSystemModel(parent)
 {
-    connect(this, &QFileSystemModel::fileRenamed,
-            this, &CustomFileSystemModel::delaySort);
-    connect(this, &CustomFileSystemModel::rowsInserted,
-            this, &CustomFileSystemModel::delaySort);
-    connect(&mDelayedSortTimer, &QTimer::timeout,
-            this, &CustomFileSystemModel::performDelayedSort, Qt::QueuedConnection);
+    connect(this, &QFileSystemModel::fileRenamed, this, &CustomFileSystemModel::delaySort);
+    connect(this, &CustomFileSystemModel::rowsInserted, this, &CustomFileSystemModel::delaySort);
+    connect(&mDelayedSortTimer, &QTimer::timeout, this, &CustomFileSystemModel::performDelayedSort,
+            Qt::QueuedConnection);
     mDelayedSortTimer.setSingleShot(true);
 }
 
@@ -38,5 +36,3 @@ void CustomFileSystemModel::performDelayedSort()
     sort(1);
     sort(0);
 }
-
-

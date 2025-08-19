@@ -29,14 +29,15 @@ class QItemSelection;
 class CompilerSetDirectoriesWidget : public QWidget
 {
     Q_OBJECT
-    class ListModel: public QStringListModel {
+    class ListModel : public QStringListModel
+    {
     public:
-       //~ListModel();
-       Qt::ItemFlags flags(const QModelIndex &index) const;
+        //~ListModel();
+        Qt::ItemFlags flags(const QModelIndex& index) const;
     };
 
 public:
-    explicit CompilerSetDirectoriesWidget(QWidget *parent = nullptr);
+    explicit CompilerSetDirectoriesWidget(QWidget* parent = nullptr);
     ~CompilerSetDirectoriesWidget();
 
     void setDirList(const QStringList& list);
@@ -47,14 +48,14 @@ private slots:
 
     void on_btnAdd_pressed();
 
-    void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+    void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
     void on_btnRemoveInvalid_pressed();
 
     void onUpdateIcons();
 
 private:
-    Ui::CompilerSetDirectoriesWidget *ui;
+    Ui::CompilerSetDirectoriesWidget* ui;
     ListModel mModel;
 };
 

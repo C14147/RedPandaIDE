@@ -37,34 +37,26 @@
 #include <QApplication>
 #include <QRegularExpression>
 
-Debugger::Debugger(QObject *parent) : QObject{parent},
-    mForceUTF8{false},
-    mDebugInfosUsingUTF8{false},
-    mUseDebugServer{false},
-    mDebuggerType{DebuggerType::GDB},
-    mLastLoadtime{0},
-    mProjectLastLoadtime{0},
-    mInferiorHasBreakpoints{false},
-    mClientMutex{}
+Debugger::Debugger(QObject* parent)
+    : QObject{parent}, mForceUTF8{false}, mDebugInfosUsingUTF8{false}, mUseDebugServer{false},
+      mDebuggerType{DebuggerType::GDB}, mLastLoadtime{0}, mProjectLastLoadtime{0},
+      mInferiorHasBreakpoints{false}, mClientMutex{}
 {
-    //models deleted in the destructor
-    mBreakpointModel= std::make_shared<BreakpointModel>(this);
+    // models deleted in the destructor
+    mBreakpointModel = std::make_shared<BreakpointModel>(this);
     mBacktraceModel = std::make_shared<BacktraceModel>(this);
     mWatchModel = std::make_shared<WatchModel>(this);
     mRegisterModel = std::make_shared<RegisterModel>(this);
-    mMemoryModel = std::make_shared<MemoryModel>(16,this);
+    mMemoryModel = std::make_shared<MemoryModel>(16, this);
 
-    connect(mMemoryModel.get(),&MemoryModel::setMemoryData,
-            this, &Debugger::setMemoryData);
-    connect(mWatchModel.get(), &WatchModel::setWatchVarValue,
-            this, &Debugger::setWatchVarValue);
+    connect(mMemoryModel.get(), &MemoryModel::setMemoryData, this, &Debugger::setMemoryData);
+    connect(mWatchModel.get(), &WatchModel::setWatchVarValue, this, &Debugger::setWatchVarValue);
 
     mClient = nullptr;
     mTarget = nullptr;
     mLeftPageIndexBackup = -1;
 
-    connect(mWatchModel.get(), &WatchModel::fetchChildren,
-            this, &Debugger::fetchVarChildren);
+    connect(mWatchModel.get(), &WatchModel::fetchChildren, this, &Debugger::fetchVarChildren);
 
     setIsForProject(false);
 }
@@ -77,15 +69,12 @@ Debugger::~Debugger()
     cleanUp();
 }
 
-bool Debugger::startClient(int compilerSetIndex,
-                           const QString& inferior,
-                           bool inferiorHasSymbols,
-                           bool inferiorHasBreakpoints,
-                           const QStringList& binDirs,
+bool Debugger::startClient(int compilerSetIndex, const QString& inferior, bool inferiorHasSymbols,
+                           bool inferiorHasBreakpoints, const QStringList& binDirs,
                            const QString& sourceFile)
 {
     QMutexLocker locker{&mClientMutex};
-    if (mClient!=nullptr)
+    if (mClient != nullptr)
         return false;
     mCurrentSourceFile = sourceFile;
     Settings::PCompilerSet compilerSet = pSettings->compilerSets().getSet(compilerSetIndex);
@@ -93,9 +82,8 @@ bool Debugger::startClient(int compilerSetIndex,
         compilerSet = pSettings->compilerSets().defaultSet();
     }
     if (!compilerSet) {
-        QMessageBox::critical(pMainWindow,
-                              tr("No compiler set"),
-                              tr("No compiler set is configured.")+tr("Can't start debugging."));
+        QMessageBox::critical(pMainWindow, tr("No compiler set"),
+                              tr("No compiler set is configured.") + tr("Can't start debugging."));
         return false;
     }
     setForceUTF8(compilerSet->forceUTF8());
@@ -104,45 +92,43 @@ bool Debugger::startClient(int compilerSetIndex,
         setDebuggerType(DebuggerType::LLDB_MI);
     else
         setDebuggerType(DebuggerType::GDB);
-    // force to lldb-server if using lldb-mi, which creates new console but does not bind inferior’s stdio to the new console on Windows.
-    setUseDebugServer(pSettings->debugger().useGDBServer() || mDebuggerType == DebuggerType::LLDB_MI);
+    // force to lldb-server if using lldb-mi, which creates new console but does not bind inferior’s
+    // stdio to the new console on Windows.
+    setUseDebugServer(pSettings->debugger().useGDBServer() ||
+                      mDebuggerType == DebuggerType::LLDB_MI);
     QString debuggerPath = compilerSet->debugger();
-    //QFile debuggerProgram(debuggerPath);
-//    if (!isTextAllAscii(debuggerPath)) {
-//        mExecuting = false;
-//        QMessageBox::critical(pMainWindow,
-//                              tr("Debugger path error"),
-//                              tr("Debugger's path \"%1\" contains non-ascii characters.")
-//                              .arg(debuggerPath)
-//                              + "<br />"
-//                              + tr("This prevents it from executing."));
-//        return false;
-//    }
+    // QFile debuggerProgram(debuggerPath);
+    //    if (!isTextAllAscii(debuggerPath)) {
+    //        mExecuting = false;
+    //        QMessageBox::critical(pMainWindow,
+    //                              tr("Debugger path error"),
+    //                              tr("Debugger's path \"%1\" contains non-ascii characters.")
+    //                              .arg(debuggerPath)
+    //                              + "<br />"
+    //                              + tr("This prevents it from executing."));
+    //        return false;
+    //    }
     if (!fileExists(debuggerPath)) {
-        QMessageBox::critical(pMainWindow,
-                              tr("Debugger not exists"),
-                              tr("Can''t find debugger (gdb) in : \"%1\"").arg(debuggerPath)
-                              +"<br />"
-                              +tr("Please check the \"program\" page of compiler settings."));
+        QMessageBox::critical(pMainWindow, tr("Debugger not exists"),
+                              tr("Can''t find debugger (gdb) in : \"%1\"").arg(debuggerPath) +
+                                  "<br />" +
+                                  tr("Please check the \"program\" page of compiler settings."));
         return false;
     }
     if (useDebugServer()) {
         if (!isTextAllAscii(compilerSet->debugServer())) {
-            QMessageBox::critical(pMainWindow,
-                                  tr("GDB Server path error"),
+            QMessageBox::critical(pMainWindow, tr("GDB Server path error"),
                                   tr("GDB Server's path \"%1\" contains non-ascii characters.")
-                                  .arg(compilerSet->debugServer())
-                                  + "<br />"
-                                  + tr("This prevents it from executing."));
+                                          .arg(compilerSet->debugServer()) +
+                                      "<br />" + tr("This prevents it from executing."));
             return false;
         }
         if (!fileExists(compilerSet->debugServer())) {
-            QMessageBox::critical(pMainWindow,
-                                  tr("GDB Server not exists"),
-                                  tr("Can''t find gdb server in : \"%1\"").arg(compilerSet->debugServer()));
+            QMessageBox::critical(
+                pMainWindow, tr("GDB Server not exists"),
+                tr("Can''t find gdb server in : \"%1\"").arg(compilerSet->debugServer()));
             return false;
         }
-
     }
     mMemoryModel->reset();
     mWatchModel->resetAllVarInfos();
@@ -150,7 +136,8 @@ bool Debugger::startClient(int compilerSetIndex,
         QStringList params;
         if (pSettings->executor().useParams())
             params = parseArgumentsWithoutVariables(pSettings->executor().params());
-        mTarget = new DebugTarget(inferior,compilerSet->debugServer(),pSettings->debugger().GDBServerPort(),params);
+        mTarget = new DebugTarget(inferior, compilerSet->debugServer(),
+                                  pSettings->debugger().GDBServerPort(), params);
         if (pSettings->executor().redirectInput())
             mTarget->setInputFile(pSettings->executor().inputFilename());
         mTarget->addBinDirs(binDirs);
@@ -158,67 +145,64 @@ bool Debugger::startClient(int compilerSetIndex,
         mTarget->start();
         mTarget->waitStart();
     }
-    //delete when thread finished
+    // delete when thread finished
     mClient = new GDBMIDebuggerClient(this, debuggerType());
     mClient->addBinDirs(binDirs);
     mClient->addBinDir(pSettings->dirs().appDir());
     mClient->setDebuggerPath(debuggerPath);
-    connect(mClient, &QThread::finished,this,&Debugger::cleanUp);
-    connect(mClient, &QThread::finished,mMemoryModel.get(),&MemoryModel::reset);
-    connect(mClient, &DebuggerClient::parseFinished,this,&Debugger::syncFinishedParsing,Qt::BlockingQueuedConnection);
-    connect(mClient, &DebuggerClient::changeDebugConsoleLastLine,this,&Debugger::onChangeDebugConsoleLastline);
-    connect(mClient, &DebuggerClient::cmdStarted,pMainWindow, &MainWindow::disableDebugActions);
-    connect(mClient, &DebuggerClient::cmdFinished,pMainWindow, &MainWindow::enableDebugActions);
-    connect(mClient, &DebuggerClient::inferiorStopped, pMainWindow, &MainWindow::enableDebugActions);
+    connect(mClient, &QThread::finished, this, &Debugger::cleanUp);
+    connect(mClient, &QThread::finished, mMemoryModel.get(), &MemoryModel::reset);
+    connect(mClient, &DebuggerClient::parseFinished, this, &Debugger::syncFinishedParsing,
+            Qt::BlockingQueuedConnection);
+    connect(mClient, &DebuggerClient::changeDebugConsoleLastLine, this,
+            &Debugger::onChangeDebugConsoleLastline);
+    connect(mClient, &DebuggerClient::cmdStarted, pMainWindow, &MainWindow::disableDebugActions);
+    connect(mClient, &DebuggerClient::cmdFinished, pMainWindow, &MainWindow::enableDebugActions);
+    connect(mClient, &DebuggerClient::inferiorStopped, pMainWindow,
+            &MainWindow::enableDebugActions);
 
     connect(mClient, &DebuggerClient::breakpointInfoGetted, mBreakpointModel.get(),
             &BreakpointModel::updateBreakpointNumber);
-    connect(mClient, &DebuggerClient::localsUpdated, pMainWindow,
-            &MainWindow::onLocalsReady);
-    connect(mClient, &DebuggerClient::memoryUpdated,this,
-            &Debugger::updateMemory);
-    connect(mClient, &DebuggerClient::evalUpdated,this,
-            &Debugger::updateEval);
-    connect(mClient, &DebuggerClient::disassemblyUpdate,this,
-            &Debugger::updateDisassembly);
-    connect(mClient, &DebuggerClient::registerNamesUpdated, this,
-            &Debugger::updateRegisterNames);
-    connect(mClient, &DebuggerClient::registerValuesUpdated, this,
-            &Debugger::updateRegisterValues);
-    connect(mClient, &DebuggerClient::varCreated,mWatchModel.get(),
-            &WatchModel::updateVarInfo);
-    connect(mClient, &DebuggerClient::prepareVarChildren,mWatchModel.get(),
+    connect(mClient, &DebuggerClient::localsUpdated, pMainWindow, &MainWindow::onLocalsReady);
+    connect(mClient, &DebuggerClient::memoryUpdated, this, &Debugger::updateMemory);
+    connect(mClient, &DebuggerClient::evalUpdated, this, &Debugger::updateEval);
+    connect(mClient, &DebuggerClient::disassemblyUpdate, this, &Debugger::updateDisassembly);
+    connect(mClient, &DebuggerClient::registerNamesUpdated, this, &Debugger::updateRegisterNames);
+    connect(mClient, &DebuggerClient::registerValuesUpdated, this, &Debugger::updateRegisterValues);
+    connect(mClient, &DebuggerClient::varCreated, mWatchModel.get(), &WatchModel::updateVarInfo);
+    connect(mClient, &DebuggerClient::prepareVarChildren, mWatchModel.get(),
             &WatchModel::prepareVarChildren);
-    connect(mClient, &DebuggerClient::addVarChild,mWatchModel.get(),
-            &WatchModel::addVarChild);
-    connect(mClient, &DebuggerClient::varValueUpdated,mWatchModel.get(),
+    connect(mClient, &DebuggerClient::addVarChild, mWatchModel.get(), &WatchModel::addVarChild);
+    connect(mClient, &DebuggerClient::varValueUpdated, mWatchModel.get(),
             &WatchModel::updateVarValue);
-    connect(mClient, &DebuggerClient::varsValueUpdated,mWatchModel.get(),
+    connect(mClient, &DebuggerClient::varsValueUpdated, mWatchModel.get(),
             &WatchModel::updateAllHasMoreVars);
-    connect(mClient, &DebuggerClient::inferiorContinued,pMainWindow,
+    connect(mClient, &DebuggerClient::inferiorContinued, pMainWindow,
             &MainWindow::removeActiveBreakpoints);
-    connect(mClient, &DebuggerClient::inferiorStopped,pMainWindow,
+    connect(mClient, &DebuggerClient::inferiorStopped, pMainWindow,
             &MainWindow::setActiveBreakpoint);
-    connect(mClient, &DebuggerClient::watchpointHitted,pMainWindow,
+    connect(mClient, &DebuggerClient::watchpointHitted, pMainWindow,
             &MainWindow::onWatchpointHitted);
-    connect(mClient, &DebuggerClient::errorNoSymbolTable,pMainWindow,
+    connect(mClient, &DebuggerClient::errorNoSymbolTable, pMainWindow,
             &MainWindow::stopDebugForNoSymbolTable);
-    connect(mClient, &DebuggerClient::inferiorStopped,this,
-            &Debugger::refreshAll);
+    connect(mClient, &DebuggerClient::inferiorStopped, this, &Debugger::refreshAll);
 
     mClient->start();
     mClient->waitStart();
 
     mClient->initialize(inferior, inferiorHasSymbols);
-    includeOrSkipDirsInSymbolSearch(compilerSet->libDirs(), pSettings->debugger().skipCustomLibraries());
-    includeOrSkipDirsInSymbolSearch(compilerSet->CIncludeDirs(), pSettings->debugger().skipCustomLibraries());
-    includeOrSkipDirsInSymbolSearch(compilerSet->CppIncludeDirs(), pSettings->debugger().skipCustomLibraries());
+    includeOrSkipDirsInSymbolSearch(compilerSet->libDirs(),
+                                    pSettings->debugger().skipCustomLibraries());
+    includeOrSkipDirsInSymbolSearch(compilerSet->CIncludeDirs(),
+                                    pSettings->debugger().skipCustomLibraries());
+    includeOrSkipDirsInSymbolSearch(compilerSet->CppIncludeDirs(),
+                                    pSettings->debugger().skipCustomLibraries());
 
-    //gcc system libraries is auto loaded by gdb
+    // gcc system libraries is auto loaded by gdb
     if (pSettings->debugger().skipSystemLibraries()) {
-        includeOrSkipDirsInSymbolSearch(compilerSet->defaultCIncludeDirs(),true);
-        includeOrSkipDirsInSymbolSearch(compilerSet->defaultCIncludeDirs(),true);
-        includeOrSkipDirsInSymbolSearch(compilerSet->defaultCppIncludeDirs(),true);
+        includeOrSkipDirsInSymbolSearch(compilerSet->defaultCIncludeDirs(), true);
+        includeOrSkipDirsInSymbolSearch(compilerSet->defaultCIncludeDirs(), true);
+        includeOrSkipDirsInSymbolSearch(compilerSet->defaultCppIncludeDirs(), true);
     }
 
     sendAllBreakpointsToDebugger();
@@ -234,7 +218,8 @@ void Debugger::runInferior()
         mClient->runInferior(mInferiorHasBreakpoints);
 }
 
-void Debugger::stop() {
+void Debugger::stop()
+{
     QMutexLocker locker{&mClientMutex};
     if (mTarget)
         mTarget->stopDebug();
@@ -247,19 +232,19 @@ void Debugger::cleanUp()
 {
     QMutexLocker locker{&mClientMutex};
     if (mClient) {
-        //stop gdb server (if runs)
+        // stop gdb server (if runs)
         if (mTarget) {
             mTarget->stopDebug();
             mTarget->deleteLater();
             mTarget = nullptr;
         }
 
-        //stop debugger
+        // stop debugger
         mClient->stopDebug();
         mClient->deleteLater();
         mClient = nullptr;
 
-        mCurrentSourceFile="";
+        mCurrentSourceFile = "";
 
         mBacktraceModel->clear();
 
@@ -270,12 +255,12 @@ void Debugger::cleanUp()
     emit debugFinished();
 }
 
-void Debugger::updateRegisterNames(const QStringList &registerNames)
+void Debugger::updateRegisterNames(const QStringList& registerNames)
 {
     mRegisterModel->updateNames(registerNames);
 }
 
-void Debugger::updateRegisterValues(const QHash<int, QString> &values)
+void Debugger::updateRegisterValues(const QHash<int, QString>& values)
 {
     mRegisterModel->updateValues(values);
 }
@@ -286,13 +271,10 @@ void Debugger::refreshAll()
     refreshWatchVars();
     if (mClient)
         mClient->refreshStackVariables();
-    if (memoryModel()->startAddress()>0
-            && mClient)
-        mClient->readMemory(
-                    QString("%1").arg(memoryModel()->startAddress()),
-                    pSettings->debugger().memoryViewRows(),
-                    pSettings->debugger().memoryViewColumns()
-                    );
+    if (memoryModel()->startAddress() > 0 && mClient)
+        mClient->readMemory(QString("%1").arg(memoryModel()->startAddress()),
+                            pSettings->debugger().memoryViewRows(),
+                            pSettings->debugger().memoryViewColumns());
 }
 
 std::shared_ptr<RegisterModel> Debugger::registerModel() const
@@ -351,7 +333,7 @@ void Debugger::stepOut()
         mClient->stepOut();
 }
 
-void Debugger::runTo(const QString &filename, int line)
+void Debugger::runTo(const QString& filename, int line)
 {
     QMutexLocker locker{&mClientMutex};
     if (mClient)
@@ -379,13 +361,14 @@ void Debugger::stepIntoInstruction()
         mClient->stepIntoInstruction();
 }
 
-void Debugger::runClientCommand(const QString &command, const QString &params, DebugCommandSource source)
+void Debugger::runClientCommand(const QString& command, const QString& params,
+                                DebugCommandSource source)
 {
     QMutexLocker locker{&mClientMutex};
     if (!mClient)
         return;
-    if (mClient->clientType()!=DebuggerType::GDB
-            && mClient->clientType()!=DebuggerType::LLDB_MI)
+    if (mClient->clientType() != DebuggerType::GDB &&
+        mClient->clientType() != DebuggerType::LLDB_MI)
         return;
     GDBMIDebuggerClient* gdbmiClient = dynamic_cast<GDBMIDebuggerClient*>(mClient);
     gdbmiClient->postCommand(command, params, source);
@@ -413,13 +396,13 @@ void Debugger::clearForProject()
 
 void Debugger::addBreakpoint(int line, const Editor* editor)
 {
-    addBreakpoint(line,editor->filename(), editor->inProject());
+    addBreakpoint(line, editor->filename(), editor->inProject());
 }
 
-void Debugger::addBreakpoint(int line, const QString &filename, bool forProject)
+void Debugger::addBreakpoint(int line, const QString& filename, bool forProject)
 {
     QMutexLocker locker{&mClientMutex};
-    PBreakpoint bp=std::make_shared<Breakpoint>();
+    PBreakpoint bp = std::make_shared<Breakpoint>();
     bp->number = -1;
     bp->line = line;
     bp->filename = filename;
@@ -427,7 +410,7 @@ void Debugger::addBreakpoint(int line, const QString &filename, bool forProject)
     bp->enabled = true;
     bp->breakpointType = BreakpointType::Breakpoint;
     bp->timestamp = QDateTime::currentMSecsSinceEpoch();
-    mBreakpointModel->addBreakpoint(bp,forProject);
+    mBreakpointModel->addBreakpoint(bp, forProject);
     if (!mClient) {
         if (forProject && mBreakpointModel->isForProject()) {
             sendBreakpointCommand(bp);
@@ -437,48 +420,48 @@ void Debugger::addBreakpoint(int line, const QString &filename, bool forProject)
     }
 }
 
-void Debugger::deleteBreakpoints(const QString &filename, bool forProject)
+void Debugger::deleteBreakpoints(const QString& filename, bool forProject)
 {
-    const QList<PBreakpoint>& list=mBreakpointModel->breakpoints(forProject);
-    for (int i=list.size()-1;i>=0;i--) {
+    const QList<PBreakpoint>& list = mBreakpointModel->breakpoints(forProject);
+    for (int i = list.size() - 1; i >= 0; i--) {
         PBreakpoint bp = list[i];
         if (bp->filename == filename) {
-            mBreakpointModel->removeBreakpoint(i,forProject);
+            mBreakpointModel->removeBreakpoint(i, forProject);
         }
     }
 }
 
-void Debugger::deleteBreakpoints(const Editor *editor)
+void Debugger::deleteBreakpoints(const Editor* editor)
 {
-    deleteBreakpoints(editor->filename(),editor->inProject());
+    deleteBreakpoints(editor->filename(), editor->inProject());
 }
 
 void Debugger::deleteBreakpoints(bool forProject)
 {
     mBreakpointModel->clear(forProject);
-//    for (int i=mBreakpointModel->breakpoints().size()-1;i>=0;i--) {
-//        removeBreakpoint(i);
+    //    for (int i=mBreakpointModel->breakpoints().size()-1;i>=0;i--) {
+    //        removeBreakpoint(i);
     //    }
 }
 
 void Debugger::deleteInvalidProjectBreakpoints(const QSet<QString> unitFiles)
 {
-    for(int i=mBreakpointModel->breakpoints(true).count()-1;i>=0;i--) {
-        const PBreakpoint& bp=mBreakpointModel->breakpoint(i,true);
+    for (int i = mBreakpointModel->breakpoints(true).count() - 1; i >= 0; i--) {
+        const PBreakpoint& bp = mBreakpointModel->breakpoint(i, true);
         if (!unitFiles.contains(bp->filename))
             mBreakpointModel->removeBreakpoint(i, true);
     }
 }
 
-void Debugger::removeBreakpoint(int line, const Editor *editor)
+void Debugger::removeBreakpoint(int line, const Editor* editor)
 {
-    removeBreakpoint(line,editor->filename(),editor->inProject());
+    removeBreakpoint(line, editor->filename(), editor->inProject());
 }
 
-void Debugger::removeBreakpoint(int line, const QString &filename, bool forProject)
+void Debugger::removeBreakpoint(int line, const QString& filename, bool forProject)
 {
-    const QList<PBreakpoint>& breakpoints=mBreakpointModel->breakpoints(forProject);
-    for (int i=breakpoints.size()-1;i>=0;i--) {
+    const QList<PBreakpoint>& breakpoints = mBreakpointModel->breakpoints(forProject);
+    for (int i = breakpoints.size() - 1; i >= 0; i--) {
         PBreakpoint bp = breakpoints[i];
         if (bp->filename == filename && bp->line == line) {
             removeBreakpoint(i, forProject);
@@ -492,35 +475,35 @@ void Debugger::removeBreakpoint(int index, bool forProject)
     mBreakpointModel->removeBreakpoint(index, forProject);
 }
 
-PBreakpoint Debugger::breakpointAt(int line, const QString& filename, int *index , bool forProject)
+PBreakpoint Debugger::breakpointAt(int line, const QString& filename, int* index, bool forProject)
 {
-    const QList<PBreakpoint>& breakpoints=mBreakpointModel->breakpoints(forProject);
-    for (*index=0;*index<breakpoints.count();(*index)++){
+    const QList<PBreakpoint>& breakpoints = mBreakpointModel->breakpoints(forProject);
+    for (*index = 0; *index < breakpoints.count(); (*index)++) {
         PBreakpoint breakpoint = breakpoints[*index];
-        if (breakpoint->line == line
-                && breakpoint->filename == filename)
+        if (breakpoint->line == line && breakpoint->filename == filename)
             return breakpoint;
     }
-    *index=-1;
+    *index = -1;
     return PBreakpoint();
 }
 
-PBreakpoint Debugger::breakpointAt(int line, const Editor *editor, int *index)
+PBreakpoint Debugger::breakpointAt(int line, const Editor* editor, int* index)
 {
-    return breakpointAt(line,editor->filename(),index, editor->inProject());
+    return breakpointAt(line, editor->filename(), index, editor->inProject());
 }
 
-void Debugger::setBreakPointCondition(int index, const QString &condition, bool forProject)
+void Debugger::setBreakPointCondition(int index, const QString& condition, bool forProject)
 {
     QMutexLocker locker{&mClientMutex};
-    PBreakpoint breakpoint=mBreakpointModel->setBreakPointCondition(index,condition, forProject);
+    PBreakpoint breakpoint = mBreakpointModel->setBreakPointCondition(index, condition, forProject);
     if (mClient)
         mClient->setBreakpointCondition(breakpoint);
 }
 
 void Debugger::sendAllBreakpointsToDebugger()
 {
-    for (const PBreakpoint &breakpoint:mBreakpointModel->breakpoints(mBreakpointModel->isForProject())) {
+    for (const PBreakpoint& breakpoint :
+         mBreakpointModel->breakpoints(mBreakpointModel->isForProject())) {
         if (mBreakpointModel->isForProject()) {
             sendBreakpointCommand(breakpoint);
         } else if (breakpoint->filename == mCurrentSourceFile) {
@@ -529,42 +512,42 @@ void Debugger::sendAllBreakpointsToDebugger()
     }
 }
 
-void Debugger::saveForNonproject(const QString &filename)
+void Debugger::saveForNonproject(const QString& filename)
 {
-    save(filename,QString());
+    save(filename, QString());
 }
 
-void Debugger::saveForProject(const QString &filename, const QString &projectFolder)
+void Debugger::saveForProject(const QString& filename, const QString& projectFolder)
 {
-    save(filename,projectFolder);
+    save(filename, projectFolder);
 }
 
-void Debugger::loadForNonproject(const QString &filename)
+void Debugger::loadForNonproject(const QString& filename)
 {
     bool forProject = false;
     mLastLoadtime = 0;
     PDebugConfig pConfig = load(filename, forProject);
-    if (pConfig->timestamp>0) {
-        mBreakpointModel->setBreakpoints(pConfig->breakpoints,forProject);
-        mWatchModel->setWatchVars(pConfig->watchVars,forProject);
+    if (pConfig->timestamp > 0) {
+        mBreakpointModel->setBreakpoints(pConfig->breakpoints, forProject);
+        mWatchModel->setWatchVars(pConfig->watchVars, forProject);
     }
 }
 
-void Debugger::loadForProject(const QString &filename, const QString &projectFolder)
+void Debugger::loadForProject(const QString& filename, const QString& projectFolder)
 {
     bool forProject = true;
     mProjectLastLoadtime = 0;
     PDebugConfig pConfig = load(filename, forProject);
-    if (pConfig->timestamp>0) {
+    if (pConfig->timestamp > 0) {
         foreach (const PBreakpoint& breakpoint, pConfig->breakpoints) {
-            breakpoint->filename = generateAbsolutePath(projectFolder,breakpoint->filename);
+            breakpoint->filename = generateAbsolutePath(projectFolder, breakpoint->filename);
         }
-        mBreakpointModel->setBreakpoints(pConfig->breakpoints,forProject);
-        mWatchModel->setWatchVars(pConfig->watchVars,forProject);
+        mBreakpointModel->setBreakpoints(pConfig->breakpoints, forProject);
+        mWatchModel->setWatchVars(pConfig->watchVars, forProject);
     }
 }
 
-void Debugger::addWatchpoint(const QString &expression)
+void Debugger::addWatchpoint(const QString& expression)
 {
     QMutexLocker locker{&mClientMutex};
     if (mClient) {
@@ -572,7 +555,7 @@ void Debugger::addWatchpoint(const QString &expression)
     }
 }
 
-void Debugger::addWatchVar(const QString &expression)
+void Debugger::addWatchVar(const QString& expression)
 {
     // Don't allow duplicates...
     PWatchVar oldVar = mWatchModel->findWatchVar(expression);
@@ -580,17 +563,17 @@ void Debugger::addWatchVar(const QString &expression)
         return;
 
     PWatchVar var = std::make_shared<WatchVar>();
-    var->parent= PWatchVar();
+    var->parent = PWatchVar();
     var->expression = expression;
     var->value = tr("Execute to evaluate");
     var->numChild = 0;
     var->hasMore = false;
     var->timestamp = QDateTime::currentMSecsSinceEpoch();
 
-    addWatchVar(var,isForProject());
+    addWatchVar(var, isForProject());
 }
 
-void Debugger::modifyWatchVarExpression(const QString &oldExpr, const QString &newExpr)
+void Debugger::modifyWatchVarExpression(const QString& oldExpr, const QString& newExpr)
 {
     // check if name already exists;
     PWatchVar var = mWatchModel->findWatchVar(newExpr);
@@ -605,7 +588,7 @@ void Debugger::modifyWatchVarExpression(const QString &oldExpr, const QString &n
         var->type.clear();
         var->value.clear();
         var->hasMore = false;
-        var->numChild=0;
+        var->numChild = 0;
         var->name.clear();
         var->children.clear();
 
@@ -618,8 +601,8 @@ void Debugger::refreshWatchVars()
     QMutexLocker locker{&mClientMutex};
     if (mClient) {
         sendAllWatchVarsToDebugger();
-        if (mDebuggerType==DebuggerType::LLDB_MI) {
-            for (const PWatchVar &var:mWatchModel->watchVars()) {
+        if (mDebuggerType == DebuggerType::LLDB_MI) {
+            for (const PWatchVar& var : mWatchModel->watchVars()) {
                 if (!var->name.isEmpty())
                     mClient->refreshWatch(var);
             }
@@ -629,7 +612,7 @@ void Debugger::refreshWatchVars()
     }
 }
 
-void Debugger::fetchVarChildren(const QString &varName)
+void Debugger::fetchVarChildren(const QString& varName)
 {
     QMutexLocker locker{&mClientMutex};
     if (mClient) {
@@ -692,14 +675,14 @@ void Debugger::removeWatchVars(bool deleteparent)
     if (deleteparent) {
         mWatchModel->clear();
     } else {
-        for(const PWatchVar& var:mWatchModel->watchVars()) {
+        for (const PWatchVar& var : mWatchModel->watchVars()) {
             sendRemoveWatchCommand(var);
         }
         mWatchModel->clearAllVarInfos();
     }
 }
 
-void Debugger::removeWatchVar(const QModelIndex &index)
+void Debugger::removeWatchVar(const QModelIndex& index)
 {
     PWatchVar var = mWatchModel->findWatchVar(index);
     if (!var)
@@ -710,30 +693,30 @@ void Debugger::removeWatchVar(const QModelIndex &index)
 
 void Debugger::sendAllWatchVarsToDebugger()
 {
-    for (const PWatchVar &var:mWatchModel->watchVars()) {
+    for (const PWatchVar& var : mWatchModel->watchVars()) {
         if (var->name.isEmpty())
             sendWatchCommand(var);
     }
 }
 
-PWatchVar Debugger::findWatchVar(const QString &expression)
+PWatchVar Debugger::findWatchVar(const QString& expression)
 {
     return mWatchModel->findWatchVar(expression);
 }
 
-PWatchVar Debugger::watchVarAt(const QModelIndex &index)
+PWatchVar Debugger::watchVarAt(const QModelIndex& index)
 {
     return mWatchModel->findWatchVar(index);
 }
 
-void Debugger::readMemory(const QString &startAddress, int rows, int cols)
+void Debugger::readMemory(const QString& startAddress, int rows, int cols)
 {
     QMutexLocker locker{&mClientMutex};
     if (mClient)
         mClient->readMemory(startAddress, rows, cols);
 }
 
-void Debugger::evalExpression(const QString &expression)
+void Debugger::evalExpression(const QString& expression)
 {
     QMutexLocker locker{&mClientMutex};
     if (mClient)
@@ -783,10 +766,10 @@ void Debugger::setDisassemblyLanguage(bool isIntel)
         mClient->setDisassemblyLanguage(isIntel);
 }
 
-//void Debugger::notifyWatchVarUpdated(PWatchVar var)
+// void Debugger::notifyWatchVarUpdated(PWatchVar var)
 //{
-//    mWatchModel->notifyUpdated(var);
-//}
+//     mWatchModel->notifyUpdated(var);
+// }
 std::shared_ptr<BacktraceModel> Debugger::backtraceModel()
 {
     return mBacktraceModel;
@@ -837,20 +820,20 @@ QJsonArray BreakpointModel::toJson(const QString& projectFolder)
     foreach (const PBreakpoint& breakpoint, breakpoints(forProject)) {
         QJsonObject obj;
         if (forProject)
-            obj["filename"]=extractRelativePath(projectFolder, breakpoint->filename);
+            obj["filename"] = extractRelativePath(projectFolder, breakpoint->filename);
         else
-            obj["filename"]=breakpoint->filename;
-        obj["line"]=breakpoint->line;
-        obj["condition"]=breakpoint->condition;
-        obj["enabled"]=breakpoint->enabled;
+            obj["filename"] = breakpoint->filename;
+        obj["line"] = breakpoint->line;
+        obj["condition"] = breakpoint->condition;
+        obj["enabled"] = breakpoint->enabled;
         obj["breakpoint_type"] = static_cast<int>(breakpoint->breakpointType);
-        obj["timestamp"]=QString("%1").arg(breakpoint->timestamp);
+        obj["timestamp"] = QString("%1").arg(breakpoint->timestamp);
         array.append(obj);
     }
     return array;
 }
 
-void BreakpointModel::setBreakpoints(const QList<PBreakpoint> &list, bool forProject)
+void BreakpointModel::setBreakpoints(const QList<PBreakpoint>& list, bool forProject)
 {
     if (mIsForProject == forProject)
         beginResetModel();
@@ -863,14 +846,14 @@ void BreakpointModel::setBreakpoints(const QList<PBreakpoint> &list, bool forPro
         endResetModel();
 }
 
-void Debugger::save(const QString &filename, const QString& projectFolder)
+void Debugger::save(const QString& filename, const QString& projectFolder)
 {
-    bool forProject=!projectFolder.isEmpty();
-    QList<PWatchVar> watchVars=mWatchModel->watchVars(forProject);
+    bool forProject = !projectFolder.isEmpty();
+    QList<PWatchVar> watchVars = mWatchModel->watchVars(forProject);
     QSet<QString> breakpointCompareSet;
     QSet<QString> watchVarCompareSet;
     if (forProject) {
-        //convert project file's absolute path to relative path
+        // convert project file's absolute path to relative path
         foreach (const PBreakpoint& breakpoint, mBreakpointModel->breakpoints(forProject)) {
             QString filename = extractRelativePath(projectFolder, breakpoint->filename);
             QString key = QString("%1-%2").arg(filename).arg(breakpoint->line);
@@ -889,7 +872,6 @@ void Debugger::save(const QString &filename, const QString& projectFolder)
     try {
         pConfig = load(filename, forProject);
     } catch (FileError& e) {
-
     }
 
     QFile file(filename);
@@ -899,18 +881,20 @@ void Debugger::save(const QString &filename, const QString& projectFolder)
             if (!breakpointCompareSet.contains(key)) {
                 breakpointCompareSet.insert(key);
                 if (forProject)
-                    breakpoint->filename=generateAbsolutePath(projectFolder,breakpoint->filename);
-                mBreakpointModel->addBreakpoint(breakpoint,forProject);
+                    breakpoint->filename =
+                        generateAbsolutePath(projectFolder, breakpoint->filename);
+                mBreakpointModel->addBreakpoint(breakpoint, forProject);
             }
         }
         foreach (const PWatchVar& watchVar, pConfig->watchVars) {
             QString key = watchVar->expression;
             if (!watchVarCompareSet.contains(key)) {
                 watchVarCompareSet.insert(key);
-                addWatchVar(watchVar,forProject);
+                addWatchVar(watchVar, forProject);
             }
         }
-        qint64 saveTimestamp = QDateTime::currentMSecsSinceEpoch();;
+        qint64 saveTimestamp = QDateTime::currentMSecsSinceEpoch();
+        ;
         if (forProject) {
             mProjectLastLoadtime = saveTimestamp;
         } else {
@@ -925,17 +909,15 @@ void Debugger::save(const QString &filename, const QString& projectFolder)
         rootObj["watchvars"] = mWatchModel->toJson(forProject);
         QJsonDocument doc;
         doc.setObject(rootObj);
-        if (file.write(doc.toJson())<0) {
-            throw FileError(tr("Save file '%1' failed.")
-                            .arg(filename));
+        if (file.write(doc.toJson()) < 0) {
+            throw FileError(tr("Save file '%1' failed.").arg(filename));
         }
     } else {
-        throw FileError(tr("Can't open file '%1' for write.")
-                        .arg(filename));
+        throw FileError(tr("Can't open file '%1' for write.").arg(filename));
     }
 }
 
-PDebugConfig Debugger::load(const QString &filename, bool forProject)
+PDebugConfig Debugger::load(const QString& filename, bool forProject)
 {
     qint64 criteriaTimestamp;
     if (forProject) {
@@ -943,8 +925,8 @@ PDebugConfig Debugger::load(const QString &filename, bool forProject)
     } else {
         criteriaTimestamp = mLastLoadtime;
     }
-    std::shared_ptr<DebugConfig> pConfig=std::make_shared<DebugConfig>();
-    pConfig->timestamp=0;
+    std::shared_ptr<DebugConfig> pConfig = std::make_shared<DebugConfig>();
+    pConfig->timestamp = 0;
     QFile file(filename);
     if (!file.exists())
         return pConfig;
@@ -952,13 +934,13 @@ PDebugConfig Debugger::load(const QString &filename, bool forProject)
         QByteArray content = file.readAll().trimmed();
         if (content.isEmpty())
             return pConfig;
-        QJsonParseError error;        
-        QJsonDocument doc(QJsonDocument::fromJson(content,&error));
-        if (error.error  != QJsonParseError::NoError) {
+        QJsonParseError error;
+        QJsonDocument doc(QJsonDocument::fromJson(content, &error));
+        if (error.error != QJsonParseError::NoError) {
             throw FileError(tr("Error in json file '%1':%2 : %3")
-                            .arg(filename)
-                            .arg(error.offset)
-                            .arg(error.errorString()));
+                                .arg(filename)
+                                .arg(error.offset)
+                                .arg(error.errorString()));
         }
         QJsonObject rootObject = doc.object();
         qint64 timestamp = rootObject["timestamp"].toString().toLongLong();
@@ -966,28 +948,29 @@ PDebugConfig Debugger::load(const QString &filename, bool forProject)
             return pConfig;
         pConfig->timestamp = timestamp;
 
-        pConfig->breakpoints = mBreakpointModel->loadJson(rootObject["breakpoints"].toArray(),criteriaTimestamp);
-        pConfig->watchVars = mWatchModel->loadJson(rootObject["watchvars"].toArray(), criteriaTimestamp);
+        pConfig->breakpoints =
+            mBreakpointModel->loadJson(rootObject["breakpoints"].toArray(), criteriaTimestamp);
+        pConfig->watchVars =
+            mWatchModel->loadJson(rootObject["watchvars"].toArray(), criteriaTimestamp);
         if (forProject) {
             mProjectLastLoadtime = QDateTime::currentMSecsSinceEpoch();
         } else {
             mLastLoadtime = QDateTime::currentMSecsSinceEpoch();
         }
     } else {
-        throw FileError(tr("Can't open file '%1' for read.")
-                        .arg(filename));
+        throw FileError(tr("Can't open file '%1' for read.").arg(filename));
     }
     return pConfig;
 }
 
-void Debugger::addWatchVar(const PWatchVar &watchVar, bool forProject)
+void Debugger::addWatchVar(const PWatchVar& watchVar, bool forProject)
 {
-    mWatchModel->addWatchVar(watchVar,forProject);
+    mWatchModel->addWatchVar(watchVar, forProject);
     if (forProject == isForProject())
         sendWatchCommand(watchVar);
 }
 
-void Debugger::includeOrSkipDirsInSymbolSearch(const QStringList &dirs, bool skip)
+void Debugger::includeOrSkipDirsInSymbolSearch(const QStringList& dirs, bool skip)
 {
     if (skip) {
         mClient->skipDirectoriesInSymbolSearch(dirs);
@@ -1000,14 +983,14 @@ void Debugger::syncFinishedParsing()
 {
     bool spawnedcpuform = false;
 
-    // GDB determined that the source code is more recent than the executable. Ask the user if he wants to rebuild.
+    // GDB determined that the source code is more recent than the executable. Ask the user if he
+    // wants to rebuild.
     if (mClient->receivedSFWarning()) {
-        if (QMessageBox::question(pMainWindow,
-                                  tr("Compile"),
-                                  tr("Source file is more recent than executable.")+"<BR /><BR />" + tr("Recompile?"),
+        if (QMessageBox::question(pMainWindow, tr("Compile"),
+                                  tr("Source file is more recent than executable.") +
+                                      "<BR /><BR />" + tr("Recompile?"),
                                   QMessageBox::Yes | QMessageBox::No,
-                                  QMessageBox::Yes
-                                  ) == QMessageBox::Yes) {
+                                  QMessageBox::Yes) == QMessageBox::Yes) {
             stop();
             pMainWindow->compile();
             return;
@@ -1015,14 +998,14 @@ void Debugger::syncFinishedParsing()
     }
 
     // show command output
-    if (pSettings->debugger().enableDebugConsole() ) {
+    if (pSettings->debugger().enableDebugConsole()) {
         if (pSettings->debugger().showDetailLog()) {
-            for (const QString& line:mClient->fullOutput()) {
+            for (const QString& line : mClient->fullOutput()) {
                 pMainWindow->addDebugOutput(line);
             }
         } else {
             if (!mClient->consoleOutput().isEmpty()) {
-                for (const QString& line:mClient->consoleOutput()) {
+                for (const QString& line : mClient->consoleOutput()) {
                     pMainWindow->addDebugOutput(line);
                 }
                 pMainWindow->addDebugOutput("(gdb)");
@@ -1036,15 +1019,12 @@ void Debugger::syncFinishedParsing()
         return;
     }
 
-    if (mClient->signalReceived()
-            && mClient->signalName()!="SIGINT"
-            && mClient->signalName()!="SIGTRAP") {
+    if (mClient->signalReceived() && mClient->signalName() != "SIGINT" &&
+        mClient->signalName() != "SIGTRAP") {
         SignalMessageDialog dialog(pMainWindow);
         dialog.setOpenCPUInfo(pSettings->debugger().openCPUInfoWhenSignaled());
-        dialog.setMessage(
-                    tr("Signal \"%1\" Received: ").arg(mClient->signalName())
-                    + "<br />"
-                    + mClient->signalMeaning());
+        dialog.setMessage(tr("Signal \"%1\" Received: ").arg(mClient->signalName()) + "<br />" +
+                          mClient->signalMeaning());
         int result = dialog.exec();
         if (result == QDialog::Accepted && dialog.openCPUInfo()) {
             pMainWindow->showCPUInfoDialog();
@@ -1052,7 +1032,7 @@ void Debugger::syncFinishedParsing()
     }
 
     // CPU form updates itself when spawned, don't update twice!
-    if ((mClient->updateCPUInfo() && !spawnedcpuform) && (pMainWindow->cpuDialog()!=nullptr)) {
+    if ((mClient->updateCPUInfo() && !spawnedcpuform) && (pMainWindow->cpuDialog() != nullptr)) {
         pMainWindow->cpuDialog()->updateInfo();
     }
 }
@@ -1065,7 +1045,7 @@ void Debugger::setMemoryData(qulonglong address, unsigned char data)
     refreshAll();
 }
 
-void Debugger::setWatchVarValue(const QString &name, const QString &value)
+void Debugger::setWatchVarValue(const QString& name, const QString& value)
 {
     QMutexLocker locker{&mClientMutex};
     if (mClient)
@@ -1073,27 +1053,27 @@ void Debugger::setWatchVarValue(const QString &name, const QString &value)
     refreshAll();
 }
 
-void Debugger::updateMemory(const QStringList &value)
+void Debugger::updateMemory(const QStringList& value)
 {
     mMemoryModel->updateMemory(value);
     emit memoryExamineReady(value);
 }
 
-void Debugger::updateEval(const QString &value)
+void Debugger::updateEval(const QString& value)
 {
     emit evalValueReady(value);
 }
 
-void Debugger::updateDisassembly(const QString& file, const QString& func, const QStringList &value)
+void Debugger::updateDisassembly(const QString& file, const QString& func, const QStringList& value)
 {
     if (pMainWindow->cpuDialog()) {
-        pMainWindow->cpuDialog()->setDisassembly(file,func,value,mBacktraceModel->backtraces());
+        pMainWindow->cpuDialog()->setDisassembly(file, func, value, mBacktraceModel->backtraces());
     }
 }
 
 void Debugger::onChangeDebugConsoleLastline(const QString& text)
 {
-    //pMainWindow->changeDebugOutputLastline(text);
+    // pMainWindow->changeDebugOutputLastline(text);
     pMainWindow->addDebugOutput(text);
 }
 
@@ -1110,38 +1090,37 @@ void Debugger::setLeftPageIndexBackup(int leftPageIndexBackup)
 bool Debugger::executing()
 {
     QMutexLocker locker{&mClientMutex};
-    return (mClient!=nullptr);
+    return (mClient != nullptr);
 }
 
-DebuggerClient::DebuggerClient(Debugger* debugger, QObject *parent) : QThread(parent),
-    mCmdQueueMutex(),
-    mStartSemaphore(0)
+DebuggerClient::DebuggerClient(Debugger* debugger, QObject* parent)
+    : QThread(parent), mCmdQueueMutex(), mStartSemaphore(0)
 {
     mDebugger = debugger;
     mCmdRunning = false;
 }
 
-const QStringList &DebuggerClient::binDirs() const
+const QStringList& DebuggerClient::binDirs() const
 {
     return mBinDirs;
 }
 
-void DebuggerClient::addBinDirs(const QStringList &binDirs)
+void DebuggerClient::addBinDirs(const QStringList& binDirs)
 {
     mBinDirs.append(binDirs);
 }
 
-void DebuggerClient::addBinDir(const QString &binDir)
+void DebuggerClient::addBinDir(const QString& binDir)
 {
     mBinDirs.append(binDir);
 }
 
-const QString &DebuggerClient::signalMeaning() const
+const QString& DebuggerClient::signalMeaning() const
 {
     return mSignalMeaning;
 }
 
-const QString &DebuggerClient::signalName() const
+const QString& DebuggerClient::signalName() const
 {
     return mSignalName;
 }
@@ -1151,7 +1130,7 @@ bool DebuggerClient::inferiorRunning() const
     return mInferiorRunning;
 }
 
-const QStringList &DebuggerClient::fullOutput() const
+const QStringList& DebuggerClient::fullOutput() const
 {
     return mFullOutput;
 }
@@ -1166,7 +1145,7 @@ bool DebuggerClient::updateCPUInfo() const
     return mUpdateCPUInfo;
 }
 
-const QStringList &DebuggerClient::consoleOutput() const
+const QStringList& DebuggerClient::consoleOutput() const
 {
     return mConsoleOutput;
 }
@@ -1186,7 +1165,7 @@ QString DebuggerClient::debuggerPath() const
     return mDebuggerPath;
 }
 
-void DebuggerClient::setDebuggerPath(const QString &debuggerPath)
+void DebuggerClient::setDebuggerPath(const QString& debuggerPath)
 {
     mDebuggerPath = debuggerPath;
 }
@@ -1196,29 +1175,27 @@ void DebuggerClient::waitStart()
     mStartSemaphore.acquire(1);
 }
 
-
-BreakpointModel::BreakpointModel(QObject *parent):QAbstractTableModel(parent),
-    mIsForProject(false)
+BreakpointModel::BreakpointModel(QObject* parent)
+    : QAbstractTableModel(parent), mIsForProject(false)
 {
-
 }
 
-int BreakpointModel::rowCount(const QModelIndex &) const
+int BreakpointModel::rowCount(const QModelIndex&) const
 {
     return breakpoints(mIsForProject).size();
 }
 
-int BreakpointModel::columnCount(const QModelIndex &) const
+int BreakpointModel::columnCount(const QModelIndex&) const
 {
     return 3;
 }
 
-QVariant BreakpointModel::data(const QModelIndex &index, int role) const
+QVariant BreakpointModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid())
         return QVariant();
-    const QList<PBreakpoint> &list=breakpoints(mIsForProject);
-    if (index.row()<0 || index.row() >= static_cast<int>(list.size()))
+    const QList<PBreakpoint>& list = breakpoints(mIsForProject);
+    if (index.row() < 0 || index.row() >= static_cast<int>(list.size()))
         return QVariant();
 
     PBreakpoint breakpoint = list[index.row()];
@@ -1231,7 +1208,7 @@ QVariant BreakpointModel::data(const QModelIndex &index, int role) const
             return extractFileName(breakpoint->filename);
         }
         case 1:
-            if (breakpoint->line>0)
+            if (breakpoint->line > 0)
                 return breakpoint->line;
             else
                 return "";
@@ -1245,7 +1222,7 @@ QVariant BreakpointModel::data(const QModelIndex &index, int role) const
         case 0:
             return breakpoint->filename;
         case 1:
-            if (breakpoint->line>0)
+            if (breakpoint->line > 0)
                 return breakpoint->line;
             else
                 return "";
@@ -1261,8 +1238,8 @@ QVariant BreakpointModel::data(const QModelIndex &index, int role) const
 
 QVariant BreakpointModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (orientation == Qt::Horizontal && role ==  Qt::DisplayRole) {
-        switch(section) {
+    if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
+        switch (section) {
         case 0:
             return tr("Filename");
         case 1:
@@ -1276,17 +1253,17 @@ QVariant BreakpointModel::headerData(int section, Qt::Orientation orientation, i
 
 void BreakpointModel::addBreakpoint(PBreakpoint p, bool forProject)
 {
-
     if (forProject) {
-        if (forProject==mIsForProject)
-            beginInsertRows(QModelIndex(),mProjectBreakpoints.count(),mProjectBreakpoints.count());
+        if (forProject == mIsForProject)
+            beginInsertRows(QModelIndex(), mProjectBreakpoints.count(),
+                            mProjectBreakpoints.count());
         mProjectBreakpoints.push_back(p);
     } else {
-        if (forProject==mIsForProject)
-            beginInsertRows(QModelIndex(),mBreakpoints.count(),mBreakpoints.count());
+        if (forProject == mIsForProject)
+            beginInsertRows(QModelIndex(), mBreakpoints.count(), mBreakpoints.count());
         mBreakpoints.push_back(p);
     }
-    if (forProject==mIsForProject)
+    if (forProject == mIsForProject)
         endInsertRows();
 }
 
@@ -1304,34 +1281,35 @@ void BreakpointModel::clear(bool forProject)
 
 void BreakpointModel::removeBreakpoint(int row, bool forProject)
 {
-    if (forProject==mIsForProject)
-        beginRemoveRows(QModelIndex(),row,row);
+    if (forProject == mIsForProject)
+        beginRemoveRows(QModelIndex(), row, row);
     if (forProject)
         mProjectBreakpoints.removeAt(row);
     else
         mBreakpoints.removeAt(row);
-    if (forProject==mIsForProject)
+    if (forProject == mIsForProject)
         endRemoveRows();
 }
 
-void BreakpointModel::removeBreakpointsInFile(const QString &fileName, bool forProject)
+void BreakpointModel::removeBreakpointsInFile(const QString& fileName, bool forProject)
 {
-    QList<PBreakpoint> & lst=forProject?mProjectBreakpoints:mBreakpoints;
-    for (int i=lst.count()-1;i>=0;i--) {
-        if (lst[i]->filename==fileName)
-            removeBreakpoint(i,forProject);
+    QList<PBreakpoint>& lst = forProject ? mProjectBreakpoints : mBreakpoints;
+    for (int i = lst.count() - 1; i >= 0; i--) {
+        if (lst[i]->filename == fileName)
+            removeBreakpoint(i, forProject);
     }
 }
 
-void BreakpointModel::renameBreakpointFilenames(const QString &oldFileName, const QString &newFileName, bool forProject)
+void BreakpointModel::renameBreakpointFilenames(const QString& oldFileName,
+                                                const QString& newFileName, bool forProject)
 {
-    QList<PBreakpoint> & lst=forProject?mProjectBreakpoints:mBreakpoints;
-    for (int i=lst.count()-1;i>=0;i--) {
-        if (lst[i]->filename==oldFileName) {
-            lst[i]->filename=newFileName;
+    QList<PBreakpoint>& lst = forProject ? mProjectBreakpoints : mBreakpoints;
+    for (int i = lst.count() - 1; i >= 0; i--) {
+        if (lst[i]->filename == oldFileName) {
+            lst[i]->filename = newFileName;
             if (forProject == mIsForProject) {
-                QModelIndex index=createIndex(i,0);
-                emit dataChanged(index,index);
+                QModelIndex index = createIndex(i, 0);
+                emit dataChanged(index, index);
             }
         }
     }
@@ -1339,32 +1317,32 @@ void BreakpointModel::renameBreakpointFilenames(const QString &oldFileName, cons
 
 void BreakpointModel::invalidateAllBreakpointNumbers()
 {
-    foreach (PBreakpoint bp,mBreakpoints) {
+    foreach (PBreakpoint bp, mBreakpoints) {
         bp->number = -1;
     }
-    foreach (PBreakpoint bp,mProjectBreakpoints) {
+    foreach (PBreakpoint bp, mProjectBreakpoints) {
         bp->number = -1;
     }
-    //emit dateChanged(createIndex(0,0),)
+    // emit dateChanged(createIndex(0,0),)
 }
 
-PBreakpoint BreakpointModel::setBreakPointCondition(int index, const QString &condition,bool forProject)
+PBreakpoint BreakpointModel::setBreakPointCondition(int index, const QString& condition,
+                                                    bool forProject)
 {
     PBreakpoint breakpoint = breakpoints(forProject)[index];
     breakpoint->condition = condition;
-    if (forProject==mIsForProject)
-        emit dataChanged(createIndex(index,0),createIndex(index,2));
+    if (forProject == mIsForProject)
+        emit dataChanged(createIndex(index, 0), createIndex(index, 2));
     return breakpoint;
 }
 
 PBreakpoint BreakpointModel::breakpoint(int index, bool forProject) const
 {
-    const QList<PBreakpoint> list=breakpoints(forProject);
-    if (index<0 && index>=list.count())
+    const QList<PBreakpoint> list = breakpoints(forProject);
+    if (index < 0 && index >= list.count())
         return PBreakpoint();
     return list[index];
 }
-
 
 void BreakpointModel::updateBreakpointNumber(const QString& filename, int line, int number)
 {
@@ -1376,34 +1354,34 @@ void BreakpointModel::updateBreakpointNumber(const QString& filename, int line, 
     }
 }
 
-void BreakpointModel::onFileDeleteLines(const QString& filename, int startLine, int count, bool forProject)
+void BreakpointModel::onFileDeleteLines(const QString& filename, int startLine, int count,
+                                        bool forProject)
 {
-    const QList<PBreakpoint> &list=breakpoints(forProject);
-    for (int i = list.count()-1;i>=0;i--){
+    const QList<PBreakpoint>& list = breakpoints(forProject);
+    for (int i = list.count() - 1; i >= 0; i--) {
         PBreakpoint breakpoint = list[i];
-        if  (breakpoint->filename == filename
-             && breakpoint->line>=startLine) {
-            if (breakpoint->line >= startLine+count) {
+        if (breakpoint->filename == filename && breakpoint->line >= startLine) {
+            if (breakpoint->line >= startLine + count) {
                 breakpoint->line -= count;
-                if (forProject==mIsForProject)
-                    emit dataChanged(createIndex(i,0),createIndex(i,2));
+                if (forProject == mIsForProject)
+                    emit dataChanged(createIndex(i, 0), createIndex(i, 2));
             } else {
-                removeBreakpoint(i,forProject);
+                removeBreakpoint(i, forProject);
             }
         }
     }
 }
 
-void BreakpointModel::onFileInsertLines(const QString& filename, int startLine, int count, bool forProject)
+void BreakpointModel::onFileInsertLines(const QString& filename, int startLine, int count,
+                                        bool forProject)
 {
-    const QList<PBreakpoint> &list=breakpoints(forProject);
-    for (int i = list.count()-1;i>=0;i--){
+    const QList<PBreakpoint>& list = breakpoints(forProject);
+    for (int i = list.count() - 1; i >= 0; i--) {
         PBreakpoint breakpoint = list[i];
-        if  (breakpoint->filename == filename
-             && breakpoint->line>=startLine) {
-            breakpoint->line+=count;
+        if (breakpoint->filename == filename && breakpoint->line >= startLine) {
+            breakpoint->line += count;
             if (forProject == mIsForProject)
-                emit dataChanged(createIndex(i,0),createIndex(i,2));
+                emit dataChanged(createIndex(i, 0), createIndex(i, 2));
         }
     }
 }
@@ -1415,7 +1393,7 @@ bool BreakpointModel::isForProject() const
 
 void BreakpointModel::setIsForProject(bool newIsForProject)
 {
-    if (mIsForProject!=newIsForProject) {
+    if (mIsForProject != newIsForProject) {
         beginResetModel();
         mIsForProject = newIsForProject;
         endResetModel();
@@ -1426,9 +1404,9 @@ QList<PBreakpoint> BreakpointModel::loadJson(const QJsonArray& jsonArray, qint64
 {
     QList<PBreakpoint> result;
 
-    for  (int i=0;i<jsonArray.count();i++) {
+    for (int i = 0; i < jsonArray.count(); i++) {
         QJsonValue value = jsonArray[i];
-        QJsonObject obj=value.toObject();
+        QJsonObject obj = value.toObject();
         bool ok;
         qint64 timestamp = obj["timestamp"].toString().toLongLong(&ok);
 
@@ -1438,7 +1416,8 @@ QList<PBreakpoint> BreakpointModel::loadJson(const QJsonArray& jsonArray, qint64
             breakpoint->line = obj["line"].toInt();
             breakpoint->condition = obj["condition"].toString();
             breakpoint->enabled = obj["enabled"].toBool();
-            breakpoint->breakpointType = static_cast<BreakpointType>(obj["breakpoint_type"].toInt());
+            breakpoint->breakpointType =
+                static_cast<BreakpointType>(obj["breakpoint_type"].toInt());
             breakpoint->timestamp = timestamp;
             result.append(breakpoint);
         }
@@ -1447,26 +1426,25 @@ QList<PBreakpoint> BreakpointModel::loadJson(const QJsonArray& jsonArray, qint64
     return result;
 }
 
-BacktraceModel::BacktraceModel(QObject *parent):QAbstractTableModel(parent)
+BacktraceModel::BacktraceModel(QObject* parent) : QAbstractTableModel(parent)
 {
-
 }
 
-int BacktraceModel::rowCount(const QModelIndex &) const
+int BacktraceModel::rowCount(const QModelIndex&) const
 {
     return mList.size();
 }
 
-int BacktraceModel::columnCount(const QModelIndex &) const
+int BacktraceModel::columnCount(const QModelIndex&) const
 {
     return 3;
 }
 
-QVariant BacktraceModel::data(const QModelIndex &index, int role) const
+QVariant BacktraceModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid())
         return QVariant();
-    if (index.row()<0 || index.row() >= static_cast<int>(mList.size()))
+    if (index.row() < 0 || index.row() >= static_cast<int>(mList.size()))
         return QVariant();
     PTrace trace = mList[index.row()];
     if (!trace)
@@ -1480,7 +1458,7 @@ QVariant BacktraceModel::data(const QModelIndex &index, int role) const
         case 1:
             return trace->filename;
         case 2:
-            if (trace->line>0)
+            if (trace->line > 0)
                 return trace->line;
             else
                 return "";
@@ -1494,8 +1472,8 @@ QVariant BacktraceModel::data(const QModelIndex &index, int role) const
 
 QVariant BacktraceModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (orientation == Qt::Horizontal && role ==  Qt::DisplayRole) {
-        switch(section) {
+    if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
+        switch (section) {
         case 0:
             return tr("Function");
         case 1:
@@ -1509,7 +1487,7 @@ QVariant BacktraceModel::headerData(int section, Qt::Orientation orientation, in
 
 void BacktraceModel::addTrace(PTrace p)
 {
-    beginInsertRows(QModelIndex(),mList.size(),mList.size());
+    beginInsertRows(QModelIndex(), mList.size(), mList.size());
     mList.push_back(p);
     endInsertRows();
 }
@@ -1523,31 +1501,31 @@ void BacktraceModel::clear()
 
 void BacktraceModel::removeTrace(int row)
 {
-    beginRemoveRows(QModelIndex(),row,row);
+    beginRemoveRows(QModelIndex(), row, row);
     mList.removeAt(row);
     endRemoveRows();
 }
 
-const QList<PTrace> &BacktraceModel::backtraces() const
+const QList<PTrace>& BacktraceModel::backtraces() const
 {
     return mList;
 }
 
 PTrace BacktraceModel::backtrace(int index) const
 {
-    if (index>=0 && index < mList.count()){
+    if (index >= 0 && index < mList.count()) {
         return mList[index];
     }
     return PTrace();
 }
 
-WatchModel::WatchModel(QObject *parent):QAbstractItemModel(parent)
+WatchModel::WatchModel(QObject* parent) : QAbstractItemModel(parent)
 {
     mUpdateCount = 0;
     mIsForProject = false;
 }
 
-QVariant WatchModel::data(const QModelIndex &index, int role) const
+QVariant WatchModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid()) {
         return QVariant();
@@ -1555,7 +1533,7 @@ QVariant WatchModel::data(const QModelIndex &index, int role) const
     WatchVar* item = static_cast<WatchVar*>(index.internalPointer());
     switch (role) {
     case Qt::DisplayRole:
-        switch(index.column()) {
+        switch (index.column()) {
         case 0:
             return item->expression;
         case 1:
@@ -1567,9 +1545,9 @@ QVariant WatchModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-QModelIndex WatchModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex WatchModel::index(int row, int column, const QModelIndex& parent) const
 {
-    if (!hasIndex(row,column,parent))
+    if (!hasIndex(row, column, parent))
         return QModelIndex();
     WatchVar* parentItem;
     PWatchVar pChild;
@@ -1581,13 +1559,14 @@ QModelIndex WatchModel::index(int row, int column, const QModelIndex &parent) co
         pChild = parentItem->children[row];
     }
     if (pChild) {
-        return createIndex(row,column,pChild.get());
+        return createIndex(row, column, pChild.get());
     }
     return QModelIndex();
 }
 
-static int getWatchIndex(WatchVar* var, const QList<PWatchVar> &list) {
-    for (int i=0;i<list.size();i++) {
+static int getWatchIndex(WatchVar* var, const QList<PWatchVar>& list)
+{
+    for (int i = 0; i < list.size(); i++) {
         PWatchVar v = list[i];
         if (v.get() == var) {
             return i;
@@ -1596,14 +1575,14 @@ static int getWatchIndex(WatchVar* var, const QList<PWatchVar> &list) {
     return -1;
 }
 
-QModelIndex WatchModel::parent(const QModelIndex &index) const
+QModelIndex WatchModel::parent(const QModelIndex& index) const
 {
     if (!index.isValid()) {
         return QModelIndex();
     }
     WatchVar* childItem = static_cast<WatchVar*>(index.internalPointer());
     PWatchVar parentItem = childItem->parent.lock();
-    //parent is root
+    // parent is root
     if (parentItem == nullptr) {
         return QModelIndex();
     }
@@ -1614,10 +1593,10 @@ QModelIndex WatchModel::parent(const QModelIndex &index) const
     } else {
         row = getWatchIndex(parentItem.get(), grandItem->children);
     }
-    return createIndex(row,0,parentItem.get());
+    return createIndex(row, 0, parentItem.get());
 }
 
-int WatchModel::rowCount(const QModelIndex &parent) const
+int WatchModel::rowCount(const QModelIndex& parent) const
 {
     if (!parent.isValid()) {
         return watchVars(mIsForProject).count();
@@ -1634,16 +1613,16 @@ int WatchModel::columnCount(const QModelIndex&) const
 
 void WatchModel::addWatchVar(PWatchVar watchVar, bool forProject)
 {
-    QList<PWatchVar> &vars=(forProject?mProjectWatchVars:mWatchVars);
-    for (const PWatchVar &var:vars) {
+    QList<PWatchVar>& vars = (forProject ? mProjectWatchVars : mWatchVars);
+    for (const PWatchVar& var : vars) {
         if (watchVar->expression == var->expression) {
             return;
         }
     }
-    if (forProject==mIsForProject)
-        beginInsertRows(QModelIndex(),vars.count(),vars.count());
+    if (forProject == mIsForProject)
+        beginInsertRows(QModelIndex(), vars.count(), vars.count());
     vars.append(watchVar);
-    if (forProject==mIsForProject)
+    if (forProject == mIsForProject)
         endInsertRows();
 }
 
@@ -1660,14 +1639,14 @@ void WatchModel::setWatchVars(const QList<PWatchVar> list, bool forProject)
         endResetModel();
 }
 
-void WatchModel::removeWatchVar(const QString &express)
+void WatchModel::removeWatchVar(const QString& express)
 {
-    QList<PWatchVar> &vars=(mIsForProject?mProjectWatchVars:mWatchVars);
-    for (int i=vars.size()-1;i>=0;i--) {
+    QList<PWatchVar>& vars = (mIsForProject ? mProjectWatchVars : mWatchVars);
+    for (int i = vars.size() - 1; i >= 0; i--) {
         PWatchVar var = vars[i];
         if (express == var->expression) {
-            QModelIndex  parentIndex = index(var->parent.lock());
-            beginRemoveRows(parentIndex,i,i);
+            QModelIndex parentIndex = index(var->parent.lock());
+            beginRemoveRows(parentIndex, i, i);
             if (mVarIndex.contains(var->name))
                 mVarIndex.remove(var->name);
             vars.removeAt(i);
@@ -1676,11 +1655,11 @@ void WatchModel::removeWatchVar(const QString &express)
     }
 }
 
-void WatchModel::removeWatchVar(const QModelIndex &index)
+void WatchModel::removeWatchVar(const QModelIndex& index)
 {
-    int r=index.row();
-    beginRemoveRows(QModelIndex(),r,r);
-    QList<PWatchVar> &vars=(mIsForProject?mProjectWatchVars:mWatchVars);
+    int r = index.row();
+    beginRemoveRows(QModelIndex(), r, r);
+    QList<PWatchVar>& vars = (mIsForProject ? mProjectWatchVars : mWatchVars);
     PWatchVar var = vars[r];
     if (mVarIndex.contains(var->name))
         mVarIndex.remove(var->name);
@@ -1691,7 +1670,7 @@ void WatchModel::removeWatchVar(const QModelIndex &index)
 void WatchModel::clear()
 {
     beginResetModel();
-    QList<PWatchVar> &vars=(mIsForProject?mProjectWatchVars:mWatchVars);
+    QList<PWatchVar>& vars = (mIsForProject ? mProjectWatchVars : mWatchVars);
     vars.clear();
     endResetModel();
 }
@@ -1700,28 +1679,28 @@ void WatchModel::clear(bool forProject)
 {
     if (mIsForProject == forProject)
         beginResetModel();
-    QList<PWatchVar> &vars=(forProject?mProjectWatchVars:mWatchVars);
+    QList<PWatchVar>& vars = (forProject ? mProjectWatchVars : mWatchVars);
     vars.clear();
     if (mIsForProject == forProject)
         endResetModel();
 }
 
-const QList<PWatchVar> &WatchModel::watchVars() const
+const QList<PWatchVar>& WatchModel::watchVars() const
 {
     return watchVars(mIsForProject);
 }
 
-PWatchVar WatchModel::findWatchVar(const QModelIndex &index)
+PWatchVar WatchModel::findWatchVar(const QModelIndex& index)
 {
     if (!index.isValid())
         return PWatchVar();
-    int r=index.row();
+    int r = index.row();
     return watchVars(mIsForProject)[r];
 }
 
-PWatchVar WatchModel::findWatchVar(const QString &expr)
+PWatchVar WatchModel::findWatchVar(const QString& expr)
 {
-    foreach (const PWatchVar &var, watchVars(mIsForProject)) {
+    foreach (const PWatchVar& var, watchVars(mIsForProject)) {
         if (expr == QString("\"%1\"").arg(var->expression)) {
             return var;
         }
@@ -1744,7 +1723,8 @@ void WatchModel::resetAllVarInfos()
     endResetModel();
 }
 
-void WatchModel::updateVarInfo(const QString &expression, const QString &name, int numChild, const QString &value, const QString &type, bool hasMore)
+void WatchModel::updateVarInfo(const QString& expression, const QString& name, int numChild,
+                               const QString& value, const QString& type, bool hasMore)
 {
     PWatchVar var = findWatchVar(expression);
     if (!var)
@@ -1754,35 +1734,34 @@ void WatchModel::updateVarInfo(const QString &expression, const QString &name, i
     var->numChild = numChild;
     var->hasMore = hasMore;
     var->type = type;
-    mVarIndex.insert(name,var);
+    mVarIndex.insert(name, var);
     QModelIndex idx = index(var);
     if (!idx.isValid())
         return;
-    emit dataChanged(idx,createIndex(idx.row(),2,var.get()));
+    emit dataChanged(idx, createIndex(idx.row(), 2, var.get()));
 }
 
-void WatchModel::prepareVarChildren(const QString &parentName, int numChild, bool hasMore)
+void WatchModel::prepareVarChildren(const QString& parentName, int numChild, bool hasMore)
 {
-    PWatchVar var = mVarIndex.value(parentName,PWatchVar());
+    PWatchVar var = mVarIndex.value(parentName, PWatchVar());
     if (var) {
         var->numChild = numChild;
         var->hasMore = hasMore;
-        if (var->children.count()>0) {
-            beginRemoveRows(index(var),0,var->children.count()-1);
+        if (var->children.count() > 0) {
+            beginRemoveRows(index(var), 0, var->children.count() - 1);
             var->children.clear();
             endRemoveRows();
         }
     }
 }
 
-void WatchModel::addVarChild(const QString &parentName, const QString &name,
-                             const QString &exp, int numChild, const QString &value,
-                             const QString &type, bool hasMore)
+void WatchModel::addVarChild(const QString& parentName, const QString& name, const QString& exp,
+                             int numChild, const QString& value, const QString& type, bool hasMore)
 {
-    PWatchVar var = mVarIndex.value(parentName,PWatchVar());
+    PWatchVar var = mVarIndex.value(parentName, PWatchVar());
     if (!var)
         return;
-    beginInsertRows(index(var),var->children.count(),var->children.count());
+    beginInsertRows(index(var), var->children.count(), var->children.count());
     PWatchVar child = std::make_shared<WatchVar>();
     child->name = name;
     child->expression = exp;
@@ -1794,17 +1773,19 @@ void WatchModel::addVarChild(const QString &parentName, const QString &name,
     child->timestamp = QDateTime::currentMSecsSinceEpoch();
     var->children.append(child);
     endInsertRows();
-    mVarIndex.insert(name,child);
+    mVarIndex.insert(name, child);
 }
 
-void WatchModel::updateVarValue(const QString &name, const QString &val, const QString &inScope, bool typeChanged, const QString &newType, int newNumChildren, bool hasMore)
+void WatchModel::updateVarValue(const QString& name, const QString& val, const QString& inScope,
+                                bool typeChanged, const QString& newType, int newNumChildren,
+                                bool hasMore)
 {
-    PWatchVar var = mVarIndex.value(name,PWatchVar());
+    PWatchVar var = mVarIndex.value(name, PWatchVar());
     if (!var)
         return;
     if (inScope == "true") {
         var->value = val;
-    } else{
+    } else {
         var->value = tr("Not Valid");
     }
     if (typeChanged) {
@@ -1813,14 +1794,13 @@ void WatchModel::updateVarValue(const QString &name, const QString &val, const Q
     QModelIndex idx = index(var);
     bool oldHasMore = var->hasMore;
     var->hasMore = hasMore;
-    if (newNumChildren>=0
-            && var->numChild!=newNumChildren) {
+    if (newNumChildren >= 0 && var->numChild != newNumChildren) {
         var->numChild = newNumChildren;
         fetchMore(idx);
-    } else  if (!oldHasMore && hasMore) {
+    } else if (!oldHasMore && hasMore) {
         fetchMore(idx);
     }
-    emit dataChanged(idx,createIndex(idx.row(),2,var.get()));
+    emit dataChanged(idx, createIndex(idx.row(), 2, var.get()));
 }
 
 void WatchModel::updateAllHasMoreVars()
@@ -1840,17 +1820,17 @@ bool WatchModel::isForProject() const
 
 void WatchModel::setIsForProject(bool newIsForProject)
 {
-    if (newIsForProject!=mIsForProject) {
+    if (newIsForProject != mIsForProject) {
         beginResetModel();
         mVarIndex.clear();
-        mIsForProject=newIsForProject;
+        mIsForProject = newIsForProject;
         endResetModel();
     }
 }
 
-const QList<PWatchVar> &WatchModel::watchVars(bool forProject) const
+const QList<PWatchVar>& WatchModel::watchVars(bool forProject) const
 {
-    return forProject?mProjectWatchVars:mWatchVars;
+    return forProject ? mProjectWatchVars : mWatchVars;
 }
 
 void WatchModel::clearAllVarInfos()
@@ -1890,15 +1870,15 @@ void WatchModel::notifyUpdated(PWatchVar var)
         return;
     int row;
     PWatchVar parent = var->parent.lock();
-    if (parent==nullptr) {
+    if (parent == nullptr) {
         row = watchVars(mIsForProject).indexOf(var);
     } else {
         row = parent->children.indexOf(var);
     }
-    if (row<0)
+    if (row < 0)
         return;
-    //qDebug()<<"dataChanged"<<row<<":"<<var->text;
-    emit dataChanged(createIndex(row,0,var.get()),createIndex(row,0,var.get()));
+    // qDebug()<<"dataChanged"<<row<<":"<<var->text;
+    emit dataChanged(createIndex(row, 0, var.get()), createIndex(row, 0, var.get()));
 }
 
 QJsonArray WatchModel::toJson(bool forProject)
@@ -1906,8 +1886,8 @@ QJsonArray WatchModel::toJson(bool forProject)
     QJsonArray array;
     foreach (const PWatchVar& watchVar, watchVars(forProject)) {
         QJsonObject obj;
-        obj["expression"]=watchVar->expression;
-        obj["timestamp"]=QString("%1").arg(watchVar->timestamp);
+        obj["expression"] = watchVar->expression;
+        obj["timestamp"] = QString("%1").arg(watchVar->timestamp);
         array.append(obj);
     }
     return array;
@@ -1920,53 +1900,53 @@ QModelIndex WatchModel::index(PWatchVar var) const
     return index(var.get());
 }
 
-QModelIndex WatchModel::index(WatchVar* pVar) const {
-    if (pVar==nullptr)
+QModelIndex WatchModel::index(WatchVar* pVar) const
+{
+    if (pVar == nullptr)
         return QModelIndex();
-    PWatchVar parent=pVar->parent.lock();
+    PWatchVar parent = pVar->parent.lock();
     if (parent) {
-        int row=-1;
-        for (int i=0;i<parent->children.count();i++) {
+        int row = -1;
+        for (int i = 0; i < parent->children.count(); i++) {
             if (parent->children[i].get() == pVar) {
                 row = i;
                 break;
             }
         }
-        if (row<0)
+        if (row < 0)
             return QModelIndex();
-        return createIndex(row,0,pVar);
+        return createIndex(row, 0, pVar);
     } else {
-        const QList<PWatchVar> &vars=watchVars(mIsForProject);
-        int row=-1;
-        for (int i=0;i<vars.count();i++) {
+        const QList<PWatchVar>& vars = watchVars(mIsForProject);
+        int row = -1;
+        for (int i = 0; i < vars.count(); i++) {
             if (vars[i].get() == pVar) {
                 row = i;
                 break;
             }
         }
-        if (row<0)
+        if (row < 0)
             return QModelIndex();
-        return createIndex(row,0,pVar);
+        return createIndex(row, 0, pVar);
     }
 }
 
-QList<PWatchVar> WatchModel::loadJson(const QJsonArray &jsonArray, qint64 criteriaTimestamp)
+QList<PWatchVar> WatchModel::loadJson(const QJsonArray& jsonArray, qint64 criteriaTimestamp)
 {
-
     QList<PWatchVar> result;
     QJsonArray array = jsonArray;
-    for  (int i=0;i<jsonArray.count();i++) {
+    for (int i = 0; i < jsonArray.count(); i++) {
         QJsonValue value = array[i];
-        QJsonObject obj=value.toObject();
+        QJsonObject obj = value.toObject();
         bool ok;
         qint64 timestamp = obj["timestamp"].toString().toLongLong(&ok);
-        if (ok && timestamp>criteriaTimestamp) {
+        if (ok && timestamp > criteriaTimestamp) {
             PWatchVar var = std::make_shared<WatchVar>();
-            var->parent= PWatchVar();
+            var->parent = PWatchVar();
             var->expression = obj["expression"].toString();
             var->value = tr("Execute to evaluate");
             var->numChild = 0;
-            var->hasMore=false;
+            var->hasMore = false;
             var->timestamp = timestamp;
             result.append(var);
         }
@@ -1974,20 +1954,19 @@ QList<PWatchVar> WatchModel::loadJson(const QJsonArray &jsonArray, qint64 criter
     return result;
 }
 
-bool WatchModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool WatchModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
     if (!index.isValid()) {
         return false;
     }
-    if (index.column()==2 && role == Qt::EditRole) {
+    if (index.column() == 2 && role == Qt::EditRole) {
         WatchVar* item = static_cast<WatchVar*>(index.internalPointer());
-        emit setWatchVarValue(item->name,value.toString());
+        emit setWatchVarValue(item->name, value.toString());
     }
     return false;
-
 }
 
-Qt::ItemFlags WatchModel::flags(const QModelIndex &index) const
+Qt::ItemFlags WatchModel::flags(const QModelIndex& index) const
 {
     Qt::ItemFlags flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
     if (!index.isValid()) {
@@ -1995,17 +1974,16 @@ Qt::ItemFlags WatchModel::flags(const QModelIndex &index) const
     }
     if (index.column() == 2) {
         WatchVar* item = static_cast<WatchVar*>(index.internalPointer());
-        if (item->numChild==0 && !item->type.isEmpty())
+        if (item->numChild == 0 && !item->type.isEmpty())
             flags |= Qt::ItemIsEditable;
     }
     return flags;
 }
 
-
 QVariant WatchModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (orientation == Qt::Horizontal && role ==  Qt::DisplayRole) {
-        switch(section) {
+    if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
+        switch (section) {
         case 0:
             return tr("Expression");
         case 1:
@@ -2017,7 +1995,7 @@ QVariant WatchModel::headerData(int section, Qt::Orientation orientation, int ro
     return QVariant();
 }
 
-void WatchModel::fetchMore(const QModelIndex &parent)
+void WatchModel::fetchMore(const QModelIndex& parent)
 {
     if (!parent.isValid()) {
         return;
@@ -2028,193 +2006,215 @@ void WatchModel::fetchMore(const QModelIndex &parent)
     emit fetchChildren(item->name);
 }
 
-bool WatchModel::canFetchMore(const QModelIndex &parent) const
+bool WatchModel::canFetchMore(const QModelIndex& parent) const
 {
     if (!parent.isValid()) {
         return false;
     }
     WatchVar* item = static_cast<WatchVar*>(parent.internalPointer());
-    return item->numChild>item->children.count() || item->hasMore;
+    return item->numChild > item->children.count() || item->hasMore;
 }
 
-bool WatchModel::hasChildren(const QModelIndex &parent) const
+bool WatchModel::hasChildren(const QModelIndex& parent) const
 {
     if (!parent.isValid()) {
         return true;
     }
     WatchVar* item = static_cast<WatchVar*>(parent.internalPointer());
-    return item->numChild>0 || item->hasMore;
+    return item->numChild > 0 || item->hasMore;
 }
 
-RegisterModel::RegisterModel(QObject *parent):QAbstractTableModel(parent)
+RegisterModel::RegisterModel(QObject* parent) : QAbstractTableModel(parent)
 {
 #if defined(ARCH_X86_64) || defined(ARCH_X86)
-    //https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html
-        mRegisterDescriptions.insert("rax",tr("64-bit")+" "+tr("Accumulator for operands and results data"));
-        mRegisterDescriptions.insert("rbx",tr("64-bit")+" "+tr("Pointer to data in the DS segment"));
-        mRegisterDescriptions.insert("rcx",tr("64-bit")+" "+tr("Counter for string and loop operations"));
-        mRegisterDescriptions.insert("rdx",tr("64-bit")+" "+tr("I/O pointer"));
-        mRegisterDescriptions.insert("rsi",tr("64-bit")+" "+tr("Source index for string operations; Pointer to data in the segment pointed to by the DS register"));
-        mRegisterDescriptions.insert("rdi",tr("64-bit")+" "+tr("Destination index for string operations; Pointer to data (or destination) in the segment pointed to by the ES register"));
-        mRegisterDescriptions.insert("rsp",tr("64-bit")+" "+tr("Stack pointer (in the SS segment)"));
-        mRegisterDescriptions.insert("rbp",tr("64-bit")+" "+tr("Pointer to data on the stack (in the SS segment)"));
-        mRegisterDescriptions.insert("r8",tr("64-bit")+" "+tr("General purpose"));
-        mRegisterDescriptions.insert("r9",tr("64-bit")+" "+tr("General purpose"));
-        mRegisterDescriptions.insert("r10",tr("64-bit")+" "+tr("General purpose"));
-        mRegisterDescriptions.insert("r11",tr("64-bit")+" "+tr("General purpose"));
-        mRegisterDescriptions.insert("r12",tr("64-bit")+" "+tr("General purpose"));
-        mRegisterDescriptions.insert("r13",tr("64-bit")+" "+tr("General purpose"));
-        mRegisterDescriptions.insert("r14",tr("64-bit")+" "+tr("General purpose"));
-        mRegisterDescriptions.insert("r15",tr("64-bit")+" "+tr("General purpose"));
-        mRegisterDescriptions.insert("rip",tr("64-bit")+" "+tr("Instruction pointer"));
-        mRegisterDescriptions.insert("rflags",tr("Flags"));
-        mRegisterDescriptions.insert("eflags",tr("Flags"));
+    // https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html
+    mRegisterDescriptions.insert("rax", tr("64-bit") + " " +
+                                            tr("Accumulator for operands and results data"));
+    mRegisterDescriptions.insert("rbx",
+                                 tr("64-bit") + " " + tr("Pointer to data in the DS segment"));
+    mRegisterDescriptions.insert("rcx",
+                                 tr("64-bit") + " " + tr("Counter for string and loop operations"));
+    mRegisterDescriptions.insert("rdx", tr("64-bit") + " " + tr("I/O pointer"));
+    mRegisterDescriptions.insert("rsi",
+                                 tr("64-bit") + " " +
+                                     tr("Source index for string operations; Pointer to data in "
+                                        "the segment pointed to by the DS register"));
+    mRegisterDescriptions.insert(
+        "rdi", tr("64-bit") + " " +
+                   tr("Destination index for string operations; Pointer to data (or destination) "
+                      "in the segment pointed to by the ES register"));
+    mRegisterDescriptions.insert("rsp",
+                                 tr("64-bit") + " " + tr("Stack pointer (in the SS segment)"));
+    mRegisterDescriptions.insert("rbp", tr("64-bit") + " " +
+                                            tr("Pointer to data on the stack (in the SS segment)"));
+    mRegisterDescriptions.insert("r8", tr("64-bit") + " " + tr("General purpose"));
+    mRegisterDescriptions.insert("r9", tr("64-bit") + " " + tr("General purpose"));
+    mRegisterDescriptions.insert("r10", tr("64-bit") + " " + tr("General purpose"));
+    mRegisterDescriptions.insert("r11", tr("64-bit") + " " + tr("General purpose"));
+    mRegisterDescriptions.insert("r12", tr("64-bit") + " " + tr("General purpose"));
+    mRegisterDescriptions.insert("r13", tr("64-bit") + " " + tr("General purpose"));
+    mRegisterDescriptions.insert("r14", tr("64-bit") + " " + tr("General purpose"));
+    mRegisterDescriptions.insert("r15", tr("64-bit") + " " + tr("General purpose"));
+    mRegisterDescriptions.insert("rip", tr("64-bit") + " " + tr("Instruction pointer"));
+    mRegisterDescriptions.insert("rflags", tr("Flags"));
+    mRegisterDescriptions.insert("eflags", tr("Flags"));
 
-        mRegisterDescriptions.insert("eax",tr("32-bit")+" "+tr("Accumulator for operands and results data"));
-        mRegisterDescriptions.insert("ebx",tr("32-bit")+" "+tr("Pointer to data in the DS segment"));
-        mRegisterDescriptions.insert("ecx",tr("32-bit")+" "+tr("Counter for string and loop operations"));
-        mRegisterDescriptions.insert("edx",tr("32-bit")+" "+tr("I/O pointer"));
-        mRegisterDescriptions.insert("esi",tr("32-bit")+" "+tr("Source index for string operations; Pointer to data in the segment pointed to by the DS register"));
-        mRegisterDescriptions.insert("edi",tr("32-bit")+" "+tr("Destination index for string operations; Pointer to data (or destination) in the segment pointed to by the ES register"));
-        mRegisterDescriptions.insert("esp",tr("32-bit")+" "+tr("Stack pointer (in the SS segment)"));
-        mRegisterDescriptions.insert("ebp",tr("32-bit")+" "+tr("Pointer to data on the stack (in the SS segment)"));
-        mRegisterDescriptions.insert("r8d",tr("32-bit")+" "+tr("General purpose"));
-        mRegisterDescriptions.insert("r9d",tr("32-bit")+" "+tr("General purpose"));
-        mRegisterDescriptions.insert("r10d",tr("32-bit")+" "+tr("General purpose"));
-        mRegisterDescriptions.insert("r11d",tr("32-bit")+" "+tr("General purpose"));
-        mRegisterDescriptions.insert("r12d",tr("32-bit")+" "+tr("General purpose"));
-        mRegisterDescriptions.insert("r13d",tr("32-bit")+" "+tr("General purpose"));
-        mRegisterDescriptions.insert("r14d",tr("32-bit")+" "+tr("General purpose"));
-        mRegisterDescriptions.insert("r15d",tr("32-bit")+" "+tr("General purpose"));
-        mRegisterDescriptions.insert("eip",tr("32-bit")+" "+tr("Instruction pointer"));
+    mRegisterDescriptions.insert("eax", tr("32-bit") + " " +
+                                            tr("Accumulator for operands and results data"));
+    mRegisterDescriptions.insert("ebx",
+                                 tr("32-bit") + " " + tr("Pointer to data in the DS segment"));
+    mRegisterDescriptions.insert("ecx",
+                                 tr("32-bit") + " " + tr("Counter for string and loop operations"));
+    mRegisterDescriptions.insert("edx", tr("32-bit") + " " + tr("I/O pointer"));
+    mRegisterDescriptions.insert("esi",
+                                 tr("32-bit") + " " +
+                                     tr("Source index for string operations; Pointer to data in "
+                                        "the segment pointed to by the DS register"));
+    mRegisterDescriptions.insert(
+        "edi", tr("32-bit") + " " +
+                   tr("Destination index for string operations; Pointer to data (or destination) "
+                      "in the segment pointed to by the ES register"));
+    mRegisterDescriptions.insert("esp",
+                                 tr("32-bit") + " " + tr("Stack pointer (in the SS segment)"));
+    mRegisterDescriptions.insert("ebp", tr("32-bit") + " " +
+                                            tr("Pointer to data on the stack (in the SS segment)"));
+    mRegisterDescriptions.insert("r8d", tr("32-bit") + " " + tr("General purpose"));
+    mRegisterDescriptions.insert("r9d", tr("32-bit") + " " + tr("General purpose"));
+    mRegisterDescriptions.insert("r10d", tr("32-bit") + " " + tr("General purpose"));
+    mRegisterDescriptions.insert("r11d", tr("32-bit") + " " + tr("General purpose"));
+    mRegisterDescriptions.insert("r12d", tr("32-bit") + " " + tr("General purpose"));
+    mRegisterDescriptions.insert("r13d", tr("32-bit") + " " + tr("General purpose"));
+    mRegisterDescriptions.insert("r14d", tr("32-bit") + " " + tr("General purpose"));
+    mRegisterDescriptions.insert("r15d", tr("32-bit") + " " + tr("General purpose"));
+    mRegisterDescriptions.insert("eip", tr("32-bit") + " " + tr("Instruction pointer"));
 
-        mRegisterDescriptions.insert("ax",tr("lower 16 bits of %1").arg("rax/eax"));
-        mRegisterDescriptions.insert("bx",tr("lower 16 bits of %1").arg("rbx/rbx"));
-        mRegisterDescriptions.insert("cx",tr("lower 16 bits of %1").arg("rcx/ecx"));
-        mRegisterDescriptions.insert("dx",tr("lower 16 bits of %1").arg("rdx/edx"));
-        mRegisterDescriptions.insert("si",tr("lower 16 bits of %1").arg("rsi/esi"));
-        mRegisterDescriptions.insert("di",tr("lower 16 bits of %1").arg("rdi/edi"));
-        mRegisterDescriptions.insert("sp",tr("lower 16 bits of %1").arg("rsp/esp"));
-        mRegisterDescriptions.insert("bp",tr("lower 16 bits of %1").arg("rbp/esp"));
-        mRegisterDescriptions.insert("r8w",tr("lower 16 bits of %1").arg("r8"));
-        mRegisterDescriptions.insert("r9w",tr("lower 16 bits of %1").arg("r9"));
-        mRegisterDescriptions.insert("r10w",tr("lower 16 bits of %1").arg("r10"));
-        mRegisterDescriptions.insert("r11w",tr("lower 16 bits of %1").arg("r11"));
-        mRegisterDescriptions.insert("r12w",tr("lower 16 bits of %1").arg("r12"));
-        mRegisterDescriptions.insert("r13w",tr("lower 16 bits of %1").arg("r13"));
-        mRegisterDescriptions.insert("r14w",tr("lower 16 bits of %1").arg("r14"));
-        mRegisterDescriptions.insert("r15w",tr("lower 16 bits of %1").arg("r15"));
-        mRegisterDescriptions.insert("ip",tr("lower 16 bits of %1").arg("rip/eip"));
+    mRegisterDescriptions.insert("ax", tr("lower 16 bits of %1").arg("rax/eax"));
+    mRegisterDescriptions.insert("bx", tr("lower 16 bits of %1").arg("rbx/rbx"));
+    mRegisterDescriptions.insert("cx", tr("lower 16 bits of %1").arg("rcx/ecx"));
+    mRegisterDescriptions.insert("dx", tr("lower 16 bits of %1").arg("rdx/edx"));
+    mRegisterDescriptions.insert("si", tr("lower 16 bits of %1").arg("rsi/esi"));
+    mRegisterDescriptions.insert("di", tr("lower 16 bits of %1").arg("rdi/edi"));
+    mRegisterDescriptions.insert("sp", tr("lower 16 bits of %1").arg("rsp/esp"));
+    mRegisterDescriptions.insert("bp", tr("lower 16 bits of %1").arg("rbp/esp"));
+    mRegisterDescriptions.insert("r8w", tr("lower 16 bits of %1").arg("r8"));
+    mRegisterDescriptions.insert("r9w", tr("lower 16 bits of %1").arg("r9"));
+    mRegisterDescriptions.insert("r10w", tr("lower 16 bits of %1").arg("r10"));
+    mRegisterDescriptions.insert("r11w", tr("lower 16 bits of %1").arg("r11"));
+    mRegisterDescriptions.insert("r12w", tr("lower 16 bits of %1").arg("r12"));
+    mRegisterDescriptions.insert("r13w", tr("lower 16 bits of %1").arg("r13"));
+    mRegisterDescriptions.insert("r14w", tr("lower 16 bits of %1").arg("r14"));
+    mRegisterDescriptions.insert("r15w", tr("lower 16 bits of %1").arg("r15"));
+    mRegisterDescriptions.insert("ip", tr("lower 16 bits of %1").arg("rip/eip"));
 
-        mRegisterDescriptions.insert("al",tr("lower 8 bits of %1").arg("rax/eax"));
-        mRegisterDescriptions.insert("bl",tr("lower 8 bits of %1").arg("rbx/rbx"));
-        mRegisterDescriptions.insert("cl",tr("lower 8 bits of %1").arg("rcx/ecx"));
-        mRegisterDescriptions.insert("dl",tr("lower 8 bits of %1").arg("rdx/edx"));
-        mRegisterDescriptions.insert("sil",tr("lower 8 bits of %1").arg("rsi/esi"));
-        mRegisterDescriptions.insert("dil",tr("lower 8 bits of %1").arg("rdi/edi"));
-        mRegisterDescriptions.insert("spl",tr("lower 8 bits of %1").arg("rsp/esp"));
-        mRegisterDescriptions.insert("bpl",tr("lower 8 bits of %1").arg("rbp/esp"));
-        mRegisterDescriptions.insert("r8b",tr("lower 8 bits of %1").arg("r8"));
-        mRegisterDescriptions.insert("r9b",tr("lower 8 bits of %1").arg("r9"));
-        mRegisterDescriptions.insert("r10b",tr("lower 8 bits of %1").arg("r10"));
-        mRegisterDescriptions.insert("r11b",tr("lower 8 bits of %1").arg("r11"));
-        mRegisterDescriptions.insert("r12b",tr("lower 8 bits of %1").arg("r12"));
-        mRegisterDescriptions.insert("r13b",tr("lower 8 bits of %1").arg("r13"));
-        mRegisterDescriptions.insert("r14b",tr("lower 8 bits of %1").arg("r14"));
-        mRegisterDescriptions.insert("r15b",tr("lower 8 bits of %1").arg("r15"));
+    mRegisterDescriptions.insert("al", tr("lower 8 bits of %1").arg("rax/eax"));
+    mRegisterDescriptions.insert("bl", tr("lower 8 bits of %1").arg("rbx/rbx"));
+    mRegisterDescriptions.insert("cl", tr("lower 8 bits of %1").arg("rcx/ecx"));
+    mRegisterDescriptions.insert("dl", tr("lower 8 bits of %1").arg("rdx/edx"));
+    mRegisterDescriptions.insert("sil", tr("lower 8 bits of %1").arg("rsi/esi"));
+    mRegisterDescriptions.insert("dil", tr("lower 8 bits of %1").arg("rdi/edi"));
+    mRegisterDescriptions.insert("spl", tr("lower 8 bits of %1").arg("rsp/esp"));
+    mRegisterDescriptions.insert("bpl", tr("lower 8 bits of %1").arg("rbp/esp"));
+    mRegisterDescriptions.insert("r8b", tr("lower 8 bits of %1").arg("r8"));
+    mRegisterDescriptions.insert("r9b", tr("lower 8 bits of %1").arg("r9"));
+    mRegisterDescriptions.insert("r10b", tr("lower 8 bits of %1").arg("r10"));
+    mRegisterDescriptions.insert("r11b", tr("lower 8 bits of %1").arg("r11"));
+    mRegisterDescriptions.insert("r12b", tr("lower 8 bits of %1").arg("r12"));
+    mRegisterDescriptions.insert("r13b", tr("lower 8 bits of %1").arg("r13"));
+    mRegisterDescriptions.insert("r14b", tr("lower 8 bits of %1").arg("r14"));
+    mRegisterDescriptions.insert("r15b", tr("lower 8 bits of %1").arg("r15"));
 
-        mRegisterDescriptions.insert("ah",tr("8 high bits of lower 16 bits of %1").arg("rax/eax"));
-        mRegisterDescriptions.insert("bh",tr("8 high bits of lower 16 bits of %1").arg("rbx/rbx"));
-        mRegisterDescriptions.insert("ch",tr("8 high bits of lower 16 bits of %1").arg("rcx/ecx"));
-        mRegisterDescriptions.insert("dh",tr("8 high bits of lower 16 bits of %1").arg("rdx/edx"));
+    mRegisterDescriptions.insert("ah", tr("8 high bits of lower 16 bits of %1").arg("rax/eax"));
+    mRegisterDescriptions.insert("bh", tr("8 high bits of lower 16 bits of %1").arg("rbx/rbx"));
+    mRegisterDescriptions.insert("ch", tr("8 high bits of lower 16 bits of %1").arg("rcx/ecx"));
+    mRegisterDescriptions.insert("dh", tr("8 high bits of lower 16 bits of %1").arg("rdx/edx"));
 
-        mRegisterDescriptions.insert("cs",tr("16-bit")+" "+tr("Code segment selector"));
-        mRegisterDescriptions.insert("ds",tr("16-bit")+" "+tr("Data segment selector"));
-        mRegisterDescriptions.insert("es",tr("16-bit")+" "+tr("Extra data segment selector"));
-        mRegisterDescriptions.insert("fs",tr("16-bit")+" "+tr("Extra data segment selector"));
-        mRegisterDescriptions.insert("gs",tr("16-bit")+" "+tr("Extra data segment selector"));
-        mRegisterDescriptions.insert("ss",tr("16-bit")+" "+tr("Stack segment selector"));
+    mRegisterDescriptions.insert("cs", tr("16-bit") + " " + tr("Code segment selector"));
+    mRegisterDescriptions.insert("ds", tr("16-bit") + " " + tr("Data segment selector"));
+    mRegisterDescriptions.insert("es", tr("16-bit") + " " + tr("Extra data segment selector"));
+    mRegisterDescriptions.insert("fs", tr("16-bit") + " " + tr("Extra data segment selector"));
+    mRegisterDescriptions.insert("gs", tr("16-bit") + " " + tr("Extra data segment selector"));
+    mRegisterDescriptions.insert("ss", tr("16-bit") + " " + tr("Stack segment selector"));
 
-//x87 fpu
-        mRegisterDescriptions.insert("st0",tr("Floating-point data"));
-        mRegisterDescriptions.insert("st1",tr("Floating-point data"));
-        mRegisterDescriptions.insert("st2",tr("Floating-point data"));
-        mRegisterDescriptions.insert("st3",tr("Floating-point data"));
-        mRegisterDescriptions.insert("st4",tr("Floating-point data"));
-        mRegisterDescriptions.insert("st5",tr("Floating-point data"));
-        mRegisterDescriptions.insert("st6",tr("Floating-point data"));
-        mRegisterDescriptions.insert("st7",tr("Floating-point data"));
+    // x87 fpu
+    mRegisterDescriptions.insert("st0", tr("Floating-point data"));
+    mRegisterDescriptions.insert("st1", tr("Floating-point data"));
+    mRegisterDescriptions.insert("st2", tr("Floating-point data"));
+    mRegisterDescriptions.insert("st3", tr("Floating-point data"));
+    mRegisterDescriptions.insert("st4", tr("Floating-point data"));
+    mRegisterDescriptions.insert("st5", tr("Floating-point data"));
+    mRegisterDescriptions.insert("st6", tr("Floating-point data"));
+    mRegisterDescriptions.insert("st7", tr("Floating-point data"));
 
-        mRegisterDescriptions.insert("fctrl",tr("Floating-point control"));
-        mRegisterDescriptions.insert("fstat",tr("Floating-point status"));
-        mRegisterDescriptions.insert("ftag",tr("Floating-point tag word"));
-        mRegisterDescriptions.insert("fop",tr("Floating-point operation"));
-        mRegisterDescriptions.insert("fiseg",tr("Floating-point last instruction segment"));
-        mRegisterDescriptions.insert("fioff",tr("Floating-point last instruction offset"));
-        mRegisterDescriptions.insert("foseg",tr("Floating-point last operand segment"));
-        mRegisterDescriptions.insert("fooff",tr("Floating-point last operand offset"));
+    mRegisterDescriptions.insert("fctrl", tr("Floating-point control"));
+    mRegisterDescriptions.insert("fstat", tr("Floating-point status"));
+    mRegisterDescriptions.insert("ftag", tr("Floating-point tag word"));
+    mRegisterDescriptions.insert("fop", tr("Floating-point operation"));
+    mRegisterDescriptions.insert("fiseg", tr("Floating-point last instruction segment"));
+    mRegisterDescriptions.insert("fioff", tr("Floating-point last instruction offset"));
+    mRegisterDescriptions.insert("foseg", tr("Floating-point last operand segment"));
+    mRegisterDescriptions.insert("fooff", tr("Floating-point last operand offset"));
 
-        mRegisterDescriptions.insert("mm0",tr("64-bit")+" "+"MMX");
-        mRegisterDescriptions.insert("mm1",tr("64-bit")+" "+"MMX");
-        mRegisterDescriptions.insert("mm2",tr("64-bit")+" "+"MMX");
-        mRegisterDescriptions.insert("mm3",tr("64-bit")+" "+"MMX");
-        mRegisterDescriptions.insert("mm4",tr("64-bit")+" "+"MMX");
-        mRegisterDescriptions.insert("mm5",tr("64-bit")+" "+"MMX");
-        mRegisterDescriptions.insert("mm6",tr("64-bit")+" "+"MMX");
-        mRegisterDescriptions.insert("mm7",tr("64-bit")+" "+"MMX");
+    mRegisterDescriptions.insert("mm0", tr("64-bit") + " " + "MMX");
+    mRegisterDescriptions.insert("mm1", tr("64-bit") + " " + "MMX");
+    mRegisterDescriptions.insert("mm2", tr("64-bit") + " " + "MMX");
+    mRegisterDescriptions.insert("mm3", tr("64-bit") + " " + "MMX");
+    mRegisterDescriptions.insert("mm4", tr("64-bit") + " " + "MMX");
+    mRegisterDescriptions.insert("mm5", tr("64-bit") + " " + "MMX");
+    mRegisterDescriptions.insert("mm6", tr("64-bit") + " " + "MMX");
+    mRegisterDescriptions.insert("mm7", tr("64-bit") + " " + "MMX");
 
-        mRegisterDescriptions.insert("xmm0",tr("128-bit")+" "+"XMM");
-        mRegisterDescriptions.insert("xmm1",tr("128-bit")+" "+"XMM");
-        mRegisterDescriptions.insert("xmm2",tr("128-bit")+" "+"XMM");
-        mRegisterDescriptions.insert("xmm3",tr("128-bit")+" "+"XMM");
-        mRegisterDescriptions.insert("xmm4",tr("128-bit")+" "+"XMM");
-        mRegisterDescriptions.insert("xmm5",tr("128-bit")+" "+"XMM");
-        mRegisterDescriptions.insert("xmm6",tr("128-bit")+" "+"XMM");
-        mRegisterDescriptions.insert("xmm7",tr("128-bit")+" "+"XMM");
-        mRegisterDescriptions.insert("xmm8",tr("128-bit")+" "+"XMM");
-        mRegisterDescriptions.insert("xmm9",tr("128-bit")+" "+"XMM");
-        mRegisterDescriptions.insert("xmm11",tr("128-bit")+" "+"XMM");
-        mRegisterDescriptions.insert("xmm12",tr("128-bit")+" "+"XMM");
-        mRegisterDescriptions.insert("xmm13",tr("128-bit")+" "+"XMM");
-        mRegisterDescriptions.insert("xmm14",tr("128-bit")+" "+"XMM");
-        mRegisterDescriptions.insert("xmm15",tr("128-bit")+" "+"XMM");
+    mRegisterDescriptions.insert("xmm0", tr("128-bit") + " " + "XMM");
+    mRegisterDescriptions.insert("xmm1", tr("128-bit") + " " + "XMM");
+    mRegisterDescriptions.insert("xmm2", tr("128-bit") + " " + "XMM");
+    mRegisterDescriptions.insert("xmm3", tr("128-bit") + " " + "XMM");
+    mRegisterDescriptions.insert("xmm4", tr("128-bit") + " " + "XMM");
+    mRegisterDescriptions.insert("xmm5", tr("128-bit") + " " + "XMM");
+    mRegisterDescriptions.insert("xmm6", tr("128-bit") + " " + "XMM");
+    mRegisterDescriptions.insert("xmm7", tr("128-bit") + " " + "XMM");
+    mRegisterDescriptions.insert("xmm8", tr("128-bit") + " " + "XMM");
+    mRegisterDescriptions.insert("xmm9", tr("128-bit") + " " + "XMM");
+    mRegisterDescriptions.insert("xmm11", tr("128-bit") + " " + "XMM");
+    mRegisterDescriptions.insert("xmm12", tr("128-bit") + " " + "XMM");
+    mRegisterDescriptions.insert("xmm13", tr("128-bit") + " " + "XMM");
+    mRegisterDescriptions.insert("xmm14", tr("128-bit") + " " + "XMM");
+    mRegisterDescriptions.insert("xmm15", tr("128-bit") + " " + "XMM");
 
-        mRegisterDescriptions.insert("ymm0",tr("256-bit")+" "+"YMM");
-        mRegisterDescriptions.insert("ymm1",tr("256-bit")+" "+"YMM");
-        mRegisterDescriptions.insert("ymm2",tr("256-bit")+" "+"YMM");
-        mRegisterDescriptions.insert("ymm3",tr("256-bit")+" "+"YMM");
-        mRegisterDescriptions.insert("ymm4",tr("256-bit")+" "+"YMM");
-        mRegisterDescriptions.insert("ymm5",tr("256-bit")+" "+"YMM");
-        mRegisterDescriptions.insert("ymm6",tr("256-bit")+" "+"YMM");
-        mRegisterDescriptions.insert("ymm7",tr("256-bit")+" "+"YMM");
-        mRegisterDescriptions.insert("ymm8",tr("256-bit")+" "+"YMM");
-        mRegisterDescriptions.insert("ymm9",tr("256-bit")+" "+"YMM");
-        mRegisterDescriptions.insert("ymm11",tr("256-bit")+" "+"YMM");
-        mRegisterDescriptions.insert("ymm12",tr("256-bit")+" "+"YMM");
-        mRegisterDescriptions.insert("ymm13",tr("256-bit")+" "+"YMM");
-        mRegisterDescriptions.insert("ymm14",tr("256-bit")+" "+"YMM");
-        mRegisterDescriptions.insert("ymm15",tr("256-bit")+" "+"YMM");
+    mRegisterDescriptions.insert("ymm0", tr("256-bit") + " " + "YMM");
+    mRegisterDescriptions.insert("ymm1", tr("256-bit") + " " + "YMM");
+    mRegisterDescriptions.insert("ymm2", tr("256-bit") + " " + "YMM");
+    mRegisterDescriptions.insert("ymm3", tr("256-bit") + " " + "YMM");
+    mRegisterDescriptions.insert("ymm4", tr("256-bit") + " " + "YMM");
+    mRegisterDescriptions.insert("ymm5", tr("256-bit") + " " + "YMM");
+    mRegisterDescriptions.insert("ymm6", tr("256-bit") + " " + "YMM");
+    mRegisterDescriptions.insert("ymm7", tr("256-bit") + " " + "YMM");
+    mRegisterDescriptions.insert("ymm8", tr("256-bit") + " " + "YMM");
+    mRegisterDescriptions.insert("ymm9", tr("256-bit") + " " + "YMM");
+    mRegisterDescriptions.insert("ymm11", tr("256-bit") + " " + "YMM");
+    mRegisterDescriptions.insert("ymm12", tr("256-bit") + " " + "YMM");
+    mRegisterDescriptions.insert("ymm13", tr("256-bit") + " " + "YMM");
+    mRegisterDescriptions.insert("ymm14", tr("256-bit") + " " + "YMM");
+    mRegisterDescriptions.insert("ymm15", tr("256-bit") + " " + "YMM");
 
-        mRegisterDescriptions.insert("mxscr",tr("SSE status and control"));
+    mRegisterDescriptions.insert("mxscr", tr("SSE status and control"));
 
 #endif
 }
 
-int RegisterModel::rowCount(const QModelIndex &) const
+int RegisterModel::rowCount(const QModelIndex&) const
 {
     return mRegisterNames.count();
 }
 
-int RegisterModel::columnCount(const QModelIndex &) const
+int RegisterModel::columnCount(const QModelIndex&) const
 {
     return 2;
 }
 
-QVariant RegisterModel::data(const QModelIndex &index, int role) const
+QVariant RegisterModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid())
         return QVariant();
-    if (index.row()<0 || index.row() >= static_cast<int>(mRegisterNames.size()))
+    if (index.row() < 0 || index.row() >= static_cast<int>(mRegisterNames.size()))
         return QVariant();
     switch (role) {
     case Qt::DisplayRole:
@@ -2222,21 +2222,17 @@ QVariant RegisterModel::data(const QModelIndex &index, int role) const
         case 0:
             return mRegisterNames[index.row()];
         case 1:
-            return mRegisterValues.value(
-                        mRegisterNameIndex.value(index.row(),-1)
-                        ,"");
+            return mRegisterValues.value(mRegisterNameIndex.value(index.row(), -1), "");
         }
         break;
     case Qt::FontRole:
-        return QFont{pSettings->debugger().fontName(),pSettings->debugger().fontSize()};
+        return QFont{pSettings->debugger().fontName(), pSettings->debugger().fontSize()};
     case Qt::ToolTipRole:
         switch (index.column()) {
         case 0:
-            return mRegisterDescriptions.value(mRegisterNames[index.row()],"");
+            return mRegisterDescriptions.value(mRegisterNames[index.row()], "");
         case 1:
-            return mRegisterValues.value(
-                        mRegisterNameIndex.value(index.row(),-1)
-                        ,"");
+            return mRegisterValues.value(mRegisterNameIndex.value(index.row(), -1), "");
         }
         break;
     default:
@@ -2247,8 +2243,8 @@ QVariant RegisterModel::data(const QModelIndex &index, int role) const
 
 QVariant RegisterModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (orientation == Qt::Horizontal && role ==  Qt::DisplayRole) {
-        switch(section) {
+    if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
+        switch (section) {
         case 0:
             return tr("Register");
         case 1:
@@ -2258,16 +2254,16 @@ QVariant RegisterModel::headerData(int section, Qt::Orientation orientation, int
     return QVariant();
 }
 
-void RegisterModel::updateNames(const QStringList &regNames)
+void RegisterModel::updateNames(const QStringList& regNames)
 {
     beginResetModel();
     mRegisterNameIndex.clear();
     mRegisterNames.clear();
-    for (int i=0;i<regNames.length();i++) {
+    for (int i = 0; i < regNames.length(); i++) {
         QString regName = regNames[i].trimmed();
         if (!regName.isEmpty()) {
             mRegisterNames.append(regNames[i]);
-            mRegisterNameIndex.insert(mRegisterNames.count()-1,i);
+            mRegisterNameIndex.insert(mRegisterNames.count() - 1, i);
         }
     }
     endResetModel();
@@ -2275,14 +2271,12 @@ void RegisterModel::updateNames(const QStringList &regNames)
 
 void RegisterModel::updateValues(const QHash<int, QString> registerValues)
 {
-    for(auto it = registerValues.begin();it!=registerValues.end();++it) {
+    for (auto it = registerValues.begin(); it != registerValues.end(); ++it) {
         int row = it.key();
         mRegisterValues[row] = it.value();
     }
-    emit dataChanged(createIndex(0,1),
-                     createIndex(mRegisterNames.count()-1,1));
+    emit dataChanged(createIndex(0, 1), createIndex(mRegisterNames.count() - 1, 1));
 }
-
 
 void RegisterModel::clear()
 {
@@ -2292,24 +2286,14 @@ void RegisterModel::clear()
     endResetModel();
 }
 
-DebugTarget::DebugTarget(
-        const QString &inferior,
-        const QString &GDBServer,
-        int port,
-        const QStringList& arguments,
-        QObject *parent):
-    QThread(parent),
-    mInferior(inferior),
-    mArguments(arguments),
-    mGDBServer(GDBServer),
-    mPort(port),
-    mStop(false),
-    mStartSemaphore(0),
-    mErrorOccured(false)
+DebugTarget::DebugTarget(const QString& inferior, const QString& GDBServer, int port,
+                         const QStringList& arguments, QObject* parent)
+    : QThread(parent), mInferior(inferior), mArguments(arguments), mGDBServer(GDBServer),
+      mPort(port), mStop(false), mStartSemaphore(0), mErrorOccured(false)
 {
 }
 
-void DebugTarget::setInputFile(const QString &inputFile)
+void DebugTarget::setInputFile(const QString& inputFile)
 {
     mInputFile = inputFile;
 }
@@ -2324,17 +2308,17 @@ void DebugTarget::waitStart()
     mStartSemaphore.acquire(1);
 }
 
-const QStringList &DebugTarget::binDirs() const
+const QStringList& DebugTarget::binDirs() const
 {
     return mBinDirs;
 }
 
-void DebugTarget::addBinDirs(const QStringList &binDirs)
+void DebugTarget::addBinDirs(const QStringList& binDirs)
 {
     mBinDirs.append(binDirs);
 }
 
-void DebugTarget::addBinDir(const QString &binDir)
+void DebugTarget::addBinDir(const QString& binDir)
 {
     mBinDirs.append(binDir);
 }
@@ -2344,21 +2328,23 @@ void DebugTarget::run()
     mStop = false;
     mErrorOccured = false;
 
-    //find first available port
+    // find first available port
     QStringList execArgs;
     if (mGDBServer.endsWith(LLDB_SERVER_PROGRAM))
-        execArgs = QStringList{
-            mGDBServer,
-            "gdbserver",
-            QString("localhost:%1").arg(mPort),
-            //mInferior,
-        } + mArguments;
+        execArgs =
+            QStringList{
+                mGDBServer, "gdbserver", QString("localhost:%1").arg(mPort),
+                // mInferior,
+            } +
+            mArguments;
     else
-        execArgs = QStringList{
-            mGDBServer,
-            QString("localhost:%1").arg(mPort),
-            mInferior,
-        } + mArguments;
+        execArgs =
+            QStringList{
+                mGDBServer,
+                QString("localhost:%1").arg(mPort),
+                mInferior,
+            } +
+            mArguments;
     QString cmd;
     QStringList arguments;
     PNonExclusiveTemporaryFileOwner fileOwner;
@@ -2366,9 +2352,7 @@ void DebugTarget::run()
     if (pSettings->environment().useCustomTerminal()) {
         std::tie(cmd, arguments, fileOwner) = wrapCommandForTerminalEmulator(
             pSettings->environment().terminalPath(),
-            pSettings->environment().terminalArgumentsPattern(),
-            execArgs
-        );
+            pSettings->environment().terminalArgumentsPattern(), execArgs);
     } else {
         cmd = execArgs[0];
         arguments = execArgs.mid(1);
@@ -2376,9 +2360,7 @@ void DebugTarget::run()
 #else
     std::tie(cmd, arguments, fileOwner) = wrapCommandForTerminalEmulator(
         pSettings->environment().terminalPath(),
-        pSettings->environment().terminalArgumentsPattern(),
-        execArgs
-    );
+        pSettings->environment().terminalArgumentsPattern(), execArgs);
 #endif
     QString workingDir = QFileInfo(mInferior).path();
 
@@ -2398,45 +2380,41 @@ void DebugTarget::run()
     if (!cmdDir.isEmpty()) {
         path = cmdDir + PATH_SEPARATOR + path;
     }
-    env.insert("PATH",path);
+    env.insert("PATH", path);
     process.setProcessEnvironment(env);
     process.setWorkingDirectory(workingDir);
 
 #ifdef Q_OS_WIN
-    process.setCreateProcessArgumentsModifier([this](QProcess::CreateProcessArguments * args){
+    process.setCreateProcessArgumentsModifier([this](QProcess::CreateProcessArguments* args) {
         if (!programIsWin32GuiApp(mInferior)) {
-            args->flags |=  CREATE_NEW_CONSOLE;
+            args->flags |= CREATE_NEW_CONSOLE;
             args->flags &= ~CREATE_NO_WINDOW;
         }
         if (mInputFile.isEmpty()) {
-            args->startupInfo -> dwFlags &= ~STARTF_USESTDHANDLES;
+            args->startupInfo->dwFlags &= ~STARTF_USESTDHANDLES;
         } else {
             args->startupInfo->hStdOutput = NULL;
             args->startupInfo->hStdError = NULL;
         }
-
     });
 #endif
 
-    connect(&process, &QProcess::errorOccurred,
-                    [&](){
-                        mErrorOccured= true;
-                    });
+    connect(&process, &QProcess::errorOccurred, [&]() { mErrorOccured = true; });
     process.start();
     process.waitForStarted(5000);
     mStartSemaphore.release(1);
-    if (process.state()==QProcess::Running && !mInputFile.isEmpty()) {
+    if (process.state() == QProcess::Running && !mInputFile.isEmpty()) {
         process.write(readFileToByteArray(mInputFile));
         process.waitForFinished(0);
     }
     bool writeChannelClosed = false;
     while (true) {
-        if (process.bytesToWrite()==0 && !writeChannelClosed) {
+        if (process.bytesToWrite() == 0 && !writeChannelClosed) {
             writeChannelClosed = true;
             process.closeWriteChannel();
         }
         process.waitForFinished(1);
-        if (process.state()!=QProcess::Running) {
+        if (process.state() != QProcess::Running) {
             break;
         }
         if (mStop) {
@@ -2453,128 +2431,117 @@ void DebugTarget::run()
     }
 }
 
-MemoryModel::MemoryModel(int dataPerLine, QObject *parent):
-    QAbstractTableModel(parent),
-    mDataPerLine(dataPerLine),
-    mStartAddress(0)
+MemoryModel::MemoryModel(int dataPerLine, QObject* parent)
+    : QAbstractTableModel(parent), mDataPerLine(dataPerLine), mStartAddress(0)
 {
 }
 
-void MemoryModel::updateMemory(const QStringList &value)
+void MemoryModel::updateMemory(const QStringList& value)
 {
-    int maxDataPerLine=-1;
+    int maxDataPerLine = -1;
     QRegularExpression delimiter("(\\s+)");
     QList<PMemoryLine> newModel;
-    for (int i=0;i<value.length();i++) {
+    for (int i = 0; i < value.length(); i++) {
         QString line = value[i].trimmed();
-        QStringList dataLst = line.split(delimiter,Qt::SkipEmptyParts);
+        QStringList dataLst = line.split(delimiter, Qt::SkipEmptyParts);
         PMemoryLine memoryLine = std::make_shared<MemoryLine>();
         memoryLine->startAddress = -1;
-        if (dataLst.length()>0) {
+        if (dataLst.length() > 0) {
             bool isOk;
-            memoryLine->startAddress = stringToHex(dataLst[0],isOk);
-            if (isOk)  {
-                if (dataLst.length()-1>maxDataPerLine)
-                     maxDataPerLine = dataLst.length()-1;
-                for (int j=1;j<dataLst.length();j++) {
-                    qulonglong data = stringToHex(dataLst[j],isOk);
+            memoryLine->startAddress = stringToHex(dataLst[0], isOk);
+            if (isOk) {
+                if (dataLst.length() - 1 > maxDataPerLine)
+                    maxDataPerLine = dataLst.length() - 1;
+                for (int j = 1; j < dataLst.length(); j++) {
+                    qulonglong data = stringToHex(dataLst[j], isOk);
                     if (isOk)
                         memoryLine->datas.append((unsigned char)data);
                     else
                         memoryLine->datas.append(0);
                 }
             } else {
-                memoryLine->startAddress=0;
+                memoryLine->startAddress = 0;
             }
-
         }
         newModel.append(memoryLine);
     }
-    if (newModel.count()>0 && newModel.count()== mLines.count() &&
-            newModel[0]->startAddress == mLines[0]->startAddress &&
-            maxDataPerLine==mDataPerLine) {
-        for (int i=0;i<newModel.count();i++) {
+    if (newModel.count() > 0 && newModel.count() == mLines.count() &&
+        newModel[0]->startAddress == mLines[0]->startAddress && maxDataPerLine == mDataPerLine) {
+        for (int i = 0; i < newModel.count(); i++) {
             PMemoryLine newLine = newModel[i];
             PMemoryLine oldLine = mLines[i];
-            for (int j=0;j<newLine->datas.count();j++) {
-                if (j>=oldLine->datas.count())
+            for (int j = 0; j < newLine->datas.count(); j++) {
+                if (j >= oldLine->datas.count())
                     break;
-                if (newLine->datas[j]!=oldLine->datas[j])
+                if (newLine->datas[j] != oldLine->datas[j])
                     newLine->changedDatas.insert(j);
             }
         }
         mLines = newModel;
-        emit dataChanged(createIndex(0,0),
-                         createIndex(mLines.count()-1,mDataPerLine-1));
+        emit dataChanged(createIndex(0, 0), createIndex(mLines.count() - 1, mDataPerLine - 1));
     } else {
         beginResetModel();
-        if (maxDataPerLine>0)
-            mDataPerLine=maxDataPerLine;
+        if (maxDataPerLine > 0)
+            mDataPerLine = maxDataPerLine;
         mLines = newModel;
         endResetModel();
     }
-    if (mLines.count()>0) {
+    if (mLines.count() > 0) {
         mStartAddress = mLines[0]->startAddress;
     } else {
         mStartAddress = 0;
     }
- }
+}
 
-int MemoryModel::rowCount(const QModelIndex &/*parent*/) const
+int MemoryModel::rowCount(const QModelIndex& /*parent*/) const
 {
     return mLines.count();
 }
 
-int MemoryModel::columnCount(const QModelIndex &/*parent*/) const
+int MemoryModel::columnCount(const QModelIndex& /*parent*/) const
 {
-    return mDataPerLine+1;
+    return mDataPerLine + 1;
 }
 
-QVariant MemoryModel::data(const QModelIndex &index, int role) const
+QVariant MemoryModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid())
         return QVariant();
-    if (index.row()<0 || index.row()>=mLines.count())
+    if (index.row() < 0 || index.row() >= mLines.count())
         return QVariant();
     PMemoryLine line = mLines[index.row()];
     int col = index.column();
-    if (col<0  || col>line->datas.count())
+    if (col < 0 || col > line->datas.count())
         return QVariant();
     if (role == Qt::DisplayRole) {
-        if (col==line->datas.count()) {
+        if (col == line->datas.count()) {
             QString s;
-            foreach (unsigned char ch , line->datas) {
+            foreach (unsigned char ch, line->datas) {
                 s += isAsciiPrint(ch) ? QChar(ch) : QChar('.');
             }
             return s;
         } else
-            return QString("%1").arg(line->datas[col],2,16,QChar('0'));
+            return QString("%1").arg(line->datas[col], 2, 16, QChar('0'));
     } else if (role == Qt::ToolTipRole) {
-        if (col<line->datas.count()) {
-            QString s =
-                    tr("addr: %1").arg(line->startAddress+col,0,16)
-                    +"<br/>"
-                    +tr("dec: %1").arg(line->datas[col])
-                    +"<br/>"
-                    +tr("oct: %1").arg(line->datas[col],0,8)
-                    +"<br/>"
-                    +tr("bin: %1").arg(line->datas[col],8,2,QChar('0'))
-                    +"<br/>";
+        if (col < line->datas.count()) {
+            QString s = tr("addr: %1").arg(line->startAddress + col, 0, 16) + "<br/>" +
+                        tr("dec: %1").arg(line->datas[col]) + "<br/>" +
+                        tr("oct: %1").arg(line->datas[col], 0, 8) + "<br/>" +
+                        tr("bin: %1").arg(line->datas[col], 8, 2, QChar('0')) + "<br/>";
             QString chVal;
-            if (line->datas[col]==0) {
-                chVal="\\0";
-            } else if (line->datas[col]=='\n') {
-                chVal="\\n";
-            } else if (line->datas[col]=='\t') {
-                chVal="\\t";
-            } else if (line->datas[col]=='\r') {
-                chVal="\\r";
-            } else if (line->datas[col]>=' ' && line->datas[col]<127) {
-                chVal=QChar(line->datas[col]);
+            if (line->datas[col] == 0) {
+                chVal = "\\0";
+            } else if (line->datas[col] == '\n') {
+                chVal = "\\n";
+            } else if (line->datas[col] == '\t') {
+                chVal = "\\t";
+            } else if (line->datas[col] == '\r') {
+                chVal = "\\r";
+            } else if (line->datas[col] >= ' ' && line->datas[col] < 127) {
+                chVal = QChar(line->datas[col]);
             }
             if (!chVal.isEmpty()) {
-                s+=tr("ascii: \'%1\'").arg(chVal)
-                        +"<br/>";
+                s += tr("ascii: \'%1\'").arg(chVal) + "<br/>";
             }
             return s;
         }
@@ -2584,40 +2551,40 @@ QVariant MemoryModel::data(const QModelIndex &index, int role) const
 
 QVariant MemoryModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (orientation == Qt::Vertical && role ==  Qt::DisplayRole) {
-        if (section<0 || section>=mLines.count())
+    if (orientation == Qt::Vertical && role == Qt::DisplayRole) {
+        if (section < 0 || section >= mLines.count())
             return QVariant();
         PMemoryLine line = mLines[section];
-        return QString("0x%1").arg(line->startAddress,0,16,QChar('0'));
+        return QString("0x%1").arg(line->startAddress, 0, 16, QChar('0'));
     }
     return QVariant();
 }
 
-bool MemoryModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool MemoryModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
     if (!index.isValid())
         return false;
-    if (index.row()<0 || index.row()>=mLines.count())
+    if (index.row() < 0 || index.row() >= mLines.count())
         return false;
     PMemoryLine line = mLines[index.row()];
     int col = index.column();
-    if (col<0  || col>=line->datas.count())
+    if (col < 0 || col >= line->datas.count())
         return false;
-    if (role == Qt::EditRole && mStartAddress>0) {
+    if (role == Qt::EditRole && mStartAddress > 0) {
         bool ok;
-        unsigned char val = ("0x"+value.toString()).toUInt(&ok,16);
+        unsigned char val = ("0x" + value.toString()).toUInt(&ok, 16);
         if (!ok)
             return false;
-        emit setMemoryData(mStartAddress+mDataPerLine*index.row()+col,val);
+        emit setMemoryData(mStartAddress + mDataPerLine * index.row() + col, val);
         return true;
     }
     return false;
 }
 
-Qt::ItemFlags MemoryModel::flags(const QModelIndex &/*index*/) const
+Qt::ItemFlags MemoryModel::flags(const QModelIndex& /*index*/) const
 {
     Qt::ItemFlags flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-    if (mStartAddress!=0)
+    if (mStartAddress != 0)
         flags |= Qt::ItemIsEditable;
     return flags;
 }
@@ -2629,6 +2596,6 @@ qulonglong MemoryModel::startAddress() const
 
 void MemoryModel::reset()
 {
-    mStartAddress=0;
+    mStartAddress = 0;
     mLines.clear();
 }

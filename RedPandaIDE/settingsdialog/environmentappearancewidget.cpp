@@ -25,9 +25,9 @@
 #include "../thememanager.h"
 #include "../iconsmanager.h"
 
-EnvironmentAppearanceWidget::EnvironmentAppearanceWidget(const QString& name, const QString& group, QWidget *parent) :
-    SettingsWidget(name,group,parent),
-    ui(new Ui::EnvironmentAppearanceWidget)
+EnvironmentAppearanceWidget::EnvironmentAppearanceWidget(const QString& name, const QString& group,
+                                                         QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::EnvironmentAppearanceWidget)
 {
     ui->setupUi(this);
 }
@@ -39,7 +39,7 @@ EnvironmentAppearanceWidget::~EnvironmentAppearanceWidget()
 
 void EnvironmentAppearanceWidget::doLoad()
 {
-    for (int i=0; i<ui->cbTheme->count();i++) {
+    for (int i = 0; i < ui->cbTheme->count(); i++) {
         if (ui->cbTheme->itemData(i) == pSettings->environment().theme()) {
             ui->cbTheme->setCurrentIndex(i);
             break;
@@ -47,7 +47,7 @@ void EnvironmentAppearanceWidget::doLoad()
     }
     ui->cbFont->setCurrentFont(QFont(pSettings->environment().interfaceFont()));
     ui->spinFontSize->setValue(pSettings->environment().interfaceFontSize());
-    for (int i=0; i<ui->cbIconSet->count();i++) {
+    for (int i = 0; i < ui->cbIconSet->count(); i++) {
         if (ui->cbIconSet->itemData(i) == pSettings->environment().iconSet()) {
             ui->cbIconSet->setCurrentIndex(i);
             break;
@@ -56,7 +56,7 @@ void EnvironmentAppearanceWidget::doLoad()
     ui->spinZoomFactor->setValue(pSettings->environment().iconZoomFactor());
     ui->chkUseCustomIconSet->setChecked(pSettings->environment().useCustomIconSet());
 
-    for (int i=0;i<ui->cbLanguage->count();i++) {
+    for (int i = 0; i < ui->cbLanguage->count(); i++) {
         if (ui->cbLanguage->itemData(i) == pSettings->environment().language()) {
             ui->cbLanguage->setCurrentIndex(i);
             break;
@@ -67,13 +67,12 @@ void EnvironmentAppearanceWidget::doLoad()
 
 void EnvironmentAppearanceWidget::doSave()
 {
-    if (pSettings->environment().theme()!=ui->cbTheme->currentData().toString()) {
+    if (pSettings->environment().theme() != ui->cbTheme->currentData().toString()) {
         ThemeManager themeManager;
         PAppTheme appTheme = themeManager.theme(ui->cbTheme->currentData().toString());
         if (appTheme && !appTheme->defaultColorScheme().isEmpty()) {
             pSettings->editor().setColorScheme(appTheme->defaultColorScheme());
             pSettings->editor().save();
-
         }
     }
     pMainWindow->updateEditorColorSchemes();
@@ -92,7 +91,7 @@ void EnvironmentAppearanceWidget::doSave()
     pMainWindow->applyUISettings();
 }
 
-void EnvironmentAppearanceWidget::updateIcons(const QSize & size)
+void EnvironmentAppearanceWidget::updateIcons(const QSize& size)
 {
     Q_UNUSED(size);
     pIconsManager->setIcon(ui->btnCustomize, IconsManager::ACTION_EDIT_COPY);
@@ -104,17 +103,18 @@ void EnvironmentAppearanceWidget::init()
 {
     ThemeManager themeManager;
     QList<PAppTheme> appThemes = themeManager.getThemes();
-    foreach(const PAppTheme& appTheme, appThemes) {
-        ui->cbTheme->addItem(appTheme->categoryIcon() + " " + appTheme->displayName(), appTheme->name());
+    foreach (const PAppTheme& appTheme, appThemes) {
+        ui->cbTheme->addItem(appTheme->categoryIcon() + " " + appTheme->displayName(),
+                             appTheme->name());
     }
-    ui->cbLanguage->addItem(tr("English"),"en");
-    ui->cbLanguage->addItem(tr("Portuguese"),"pt_BR");
-    ui->cbLanguage->addItem(tr("Simplified Chinese"),"zh_CN");
-    ui->cbLanguage->addItem(tr("Traditional Chinese"),"zh_TW");
-    ui->cbLanguage->addItem(tr("Russian"),"ru_RU");
+    ui->cbLanguage->addItem(tr("English"), "en");
+    ui->cbLanguage->addItem(tr("Portuguese"), "pt_BR");
+    ui->cbLanguage->addItem(tr("Simplified Chinese"), "zh_CN");
+    ui->cbLanguage->addItem(tr("Traditional Chinese"), "zh_TW");
+    ui->cbLanguage->addItem(tr("Russian"), "ru_RU");
     QList<PIconSet> iconSets = pIconsManager->listIconSets();
-    foreach(const PIconSet& iconSet, iconSets) {
-        ui->cbIconSet->addItem(iconSet->displayName,iconSet->name);
+    foreach (const PIconSet& iconSet, iconSets) {
+        ui->cbIconSet->addItem(iconSet->displayName, iconSet->name);
     }
     SettingsWidget::init();
 }
@@ -124,10 +124,11 @@ void EnvironmentAppearanceWidget::on_cbTheme_currentIndexChanged(int /* index */
     ThemeManager themeManager;
     PAppTheme appTheme = themeManager.theme(ui->cbTheme->currentData().toString());
     ui->btnCustomize->setVisible(appTheme->category() == AppTheme::ThemeCategory::BuiltIn);
-    ui->btnOpenCustomThemeFolder->setVisible(appTheme->category() == AppTheme::ThemeCategory::Custom);
+    ui->btnOpenCustomThemeFolder->setVisible(appTheme->category() ==
+                                             AppTheme::ThemeCategory::Custom);
     ui->btnRemoveCustomTheme->setVisible(appTheme->category() == AppTheme::ThemeCategory::Custom);
-    if(!appTheme->defaultIconSet().isEmpty()) {
-        for (int i=0; i<ui->cbIconSet->count();i++) {
+    if (!appTheme->defaultIconSet().isEmpty()) {
+        for (int i = 0; i < ui->cbIconSet->count(); i++) {
             if (ui->cbIconSet->itemData(i) == appTheme->defaultIconSet()) {
                 ui->cbIconSet->setCurrentIndex(i);
                 break;
@@ -135,7 +136,6 @@ void EnvironmentAppearanceWidget::on_cbTheme_currentIndexChanged(int /* index */
         }
     }
 }
-
 
 void EnvironmentAppearanceWidget::on_btnCustomize_clicked()
 {
@@ -150,26 +150,25 @@ void EnvironmentAppearanceWidget::on_btnCustomize_clicked()
     refreshThemeList(appTheme->name());
 }
 
-
 void EnvironmentAppearanceWidget::on_btnOpenCustomThemeFolder_clicked()
 {
     QString customThemeFolder = pSettings->dirs().config(Settings::Dirs::DataType::Theme);
     openFileFolderInExplorer(customThemeFolder);
 }
 
-void EnvironmentAppearanceWidget::refreshThemeList(const QString &currentThemeName)
+void EnvironmentAppearanceWidget::refreshThemeList(const QString& currentThemeName)
 {
     ThemeManager themeManager;
     ui->cbTheme->clear();
     QList<PAppTheme> appThemes = themeManager.getThemes();
-    for (int i=0; i<appThemes.count();i++) {
-        const PAppTheme& appTheme =appThemes[i];
-        ui->cbTheme->addItem(appTheme->categoryIcon() + " " + appTheme->displayName(), appTheme->name());
+    for (int i = 0; i < appThemes.count(); i++) {
+        const PAppTheme& appTheme = appThemes[i];
+        ui->cbTheme->addItem(appTheme->categoryIcon() + " " + appTheme->displayName(),
+                             appTheme->name());
         if (appTheme->name() == currentThemeName)
             ui->cbTheme->setCurrentIndex(i);
     }
 }
-
 
 void EnvironmentAppearanceWidget::on_btnRemoveCustomTheme_clicked()
 {
@@ -180,4 +179,3 @@ void EnvironmentAppearanceWidget::on_btnRemoveCustomTheme_clicked()
     QFile::remove(appTheme->filename());
     refreshThemeList(appTheme->name());
 }
-

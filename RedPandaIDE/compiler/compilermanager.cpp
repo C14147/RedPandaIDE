@@ -36,10 +36,8 @@
 #include <sys/posix_shm.h>
 #endif
 
-CompilerManager::CompilerManager(QObject *parent) : QObject(parent),
-    mCompileMutex(),
-    mBackgroundSyntaxCheckMutex(),
-    mRunnerMutex()
+CompilerManager::CompilerManager(QObject* parent)
+    : QObject(parent), mCompileMutex(), mBackgroundSyntaxCheckMutex(), mRunnerMutex()
 {
     mCompiler = nullptr;
     mBackgroundSyntaxChecker = nullptr;
@@ -62,43 +60,43 @@ CompilerManager::~CompilerManager()
 bool CompilerManager::compiling()
 {
     QMutexLocker locker(&mCompileMutex);
-    return mCompiler!=nullptr;
+    return mCompiler != nullptr;
 }
 
 bool CompilerManager::backgroundSyntaxChecking()
 {
     QMutexLocker locker(&mBackgroundSyntaxCheckMutex);
-    return mBackgroundSyntaxChecker!=nullptr;
+    return mBackgroundSyntaxChecker != nullptr;
 }
 
 bool CompilerManager::running()
 {
     QMutexLocker locker(&mRunnerMutex);
-    return (mRunner!=nullptr && !mRunner->pausing());
+    return (mRunner != nullptr && !mRunner->pausing());
 }
 
-void CompilerManager::compile(const QString& filename, const QByteArray& encoding, bool rebuild, CppCompileType compileType)
+void CompilerManager::compile(const QString& filename, const QByteArray& encoding, bool rebuild,
+                              CppCompileType compileType)
 {
     if (!pSettings->compilerSets().defaultSet()) {
-        QMessageBox::critical(pMainWindow,
-                              tr("No compiler set"),
-                              tr("No compiler set is configured.")+tr("Can't start debugging."));
+        QMessageBox::critical(pMainWindow, tr("No compiler set"),
+                              tr("No compiler set is configured.") + tr("Can't start debugging."));
         return;
     }
     {
         QMutexLocker locker(&mCompileMutex);
-        if (mCompiler!=nullptr) {
+        if (mCompiler != nullptr) {
             return;
         }
         mCompileErrorCount = 0;
         mCompileIssueCount = 0;
-        //deleted when thread finished
+        // deleted when thread finished
 #ifdef ENABLE_SDCC
-        if (pSettings->compilerSets().defaultSet()->compilerType()==CompilerType::SDCC) {
-            mCompiler = new SDCCFileCompiler(filename,encoding,compileType,false);
+        if (pSettings->compilerSets().defaultSet()->compilerType() == CompilerType::SDCC) {
+            mCompiler = new SDCCFileCompiler(filename, encoding, compileType, false);
         } else
 #endif
-            mCompiler = new FileCompiler(filename,encoding,compileType,false);
+            mCompiler = new FileCompiler(filename, encoding, compileType, false);
         mCompiler->setRebuild(rebuild);
         connect(mCompiler, &Compiler::finished, mCompiler, &QObject::deleteLater);
         connect(mCompiler, &Compiler::compileFinished, this, &CompilerManager::onCompileFinished);
@@ -108,7 +106,8 @@ void CompilerManager::compile(const QString& filename, const QByteArray& encodin
 
         connect(mCompiler, &Compiler::compileOutput, pMainWindow, &MainWindow::logToolsOutput);
         connect(mCompiler, &Compiler::compileIssue, pMainWindow, &MainWindow::onCompileIssue);
-        connect(mCompiler, &Compiler::compileErrorOccured, pMainWindow, &MainWindow::onCompileErrorOccured);
+        connect(mCompiler, &Compiler::compileErrorOccured, pMainWindow,
+                &MainWindow::onCompileErrorOccured);
         mCompiler->start();
     }
 }
@@ -116,31 +115,32 @@ void CompilerManager::compile(const QString& filename, const QByteArray& encodin
 void CompilerManager::compileProject(std::shared_ptr<Project> project, bool rebuild)
 {
     if (!pSettings->compilerSets().defaultSet()) {
-        QMessageBox::critical(pMainWindow,
-                              tr("No compiler set"),
-                              tr("No compiler set is configured.")+tr("Can't start debugging."));
+        QMessageBox::critical(pMainWindow, tr("No compiler set"),
+                              tr("No compiler set is configured.") + tr("Can't start debugging."));
         return;
     }
     {
         QMutexLocker locker(&mCompileMutex);
-        if (mCompiler!=nullptr) {
+        if (mCompiler != nullptr) {
             return;
         }
         mCompileErrorCount = 0;
         mCompileIssueCount = 0;
-        //deleted when thread finished
+        // deleted when thread finished
         mCompiler = createProjectCompiler(project);
         mCompiler->setRebuild(rebuild);
         connect(mCompiler, &Compiler::finished, mCompiler, &QObject::deleteLater);
         connect(mCompiler, &Compiler::compileFinished, this, &CompilerManager::onCompileFinished);
 
         connect(mCompiler, &Compiler::compileIssue, this, &CompilerManager::onCompileIssue);
-        connect(mCompiler, &Compiler::compileStarted, pMainWindow, &MainWindow::onProjectCompileStarted);
+        connect(mCompiler, &Compiler::compileStarted, pMainWindow,
+                &MainWindow::onProjectCompileStarted);
         connect(mCompiler, &Compiler::compileStarted, pMainWindow, &MainWindow::clearToolsOutput);
 
         connect(mCompiler, &Compiler::compileOutput, pMainWindow, &MainWindow::logToolsOutput);
         connect(mCompiler, &Compiler::compileIssue, pMainWindow, &MainWindow::onCompileIssue);
-        connect(mCompiler, &Compiler::compileErrorOccured, pMainWindow, &MainWindow::onCompileErrorOccured);
+        connect(mCompiler, &Compiler::compileErrorOccured, pMainWindow,
+                &MainWindow::onCompileErrorOccured);
         mCompiler->start();
     }
 }
@@ -148,19 +148,18 @@ void CompilerManager::compileProject(std::shared_ptr<Project> project, bool rebu
 void CompilerManager::cleanProject(std::shared_ptr<Project> project)
 {
     if (!pSettings->compilerSets().defaultSet()) {
-        QMessageBox::critical(pMainWindow,
-                              tr("No compiler set"),
-                              tr("No compiler set is configured.")+tr("Can't start debugging."));
+        QMessageBox::critical(pMainWindow, tr("No compiler set"),
+                              tr("No compiler set is configured.") + tr("Can't start debugging."));
         return;
     }
     {
         QMutexLocker locker(&mCompileMutex);
-        if (mCompiler!=nullptr) {
+        if (mCompiler != nullptr) {
             return;
         }
         mCompileErrorCount = 0;
         mCompileIssueCount = 0;
-        //deleted when thread finished
+        // deleted when thread finished
         ProjectCompiler* compiler = createProjectCompiler(project);
         compiler->setOnlyClean(true);
         mCompiler = compiler;
@@ -169,12 +168,14 @@ void CompilerManager::cleanProject(std::shared_ptr<Project> project)
         connect(mCompiler, &Compiler::compileFinished, this, &CompilerManager::onCompileFinished);
 
         connect(mCompiler, &Compiler::compileIssue, this, &CompilerManager::onCompileIssue);
-        connect(mCompiler, &Compiler::compileStarted, pMainWindow, &MainWindow::onProjectCompileStarted);
+        connect(mCompiler, &Compiler::compileStarted, pMainWindow,
+                &MainWindow::onProjectCompileStarted);
         connect(mCompiler, &Compiler::compileStarted, pMainWindow, &MainWindow::clearToolsOutput);
 
         connect(mCompiler, &Compiler::compileOutput, pMainWindow, &MainWindow::logToolsOutput);
         connect(mCompiler, &Compiler::compileIssue, pMainWindow, &MainWindow::onCompileIssue);
-        connect(mCompiler, &Compiler::compileErrorOccured, pMainWindow, &MainWindow::onCompileErrorOccured);
+        connect(mCompiler, &Compiler::compileErrorOccured, pMainWindow,
+                &MainWindow::onCompileErrorOccured);
         mCompiler->start();
     }
 }
@@ -182,72 +183,74 @@ void CompilerManager::cleanProject(std::shared_ptr<Project> project)
 void CompilerManager::buildProjectMakefile(std::shared_ptr<Project> project)
 {
     if (!pSettings->compilerSets().defaultSet()) {
-        QMessageBox::critical(pMainWindow,
-                              tr("No compiler set"),
-                              tr("No compiler set is configured.")+tr("Can't start debugging."));
+        QMessageBox::critical(pMainWindow, tr("No compiler set"),
+                              tr("No compiler set is configured.") + tr("Can't start debugging."));
         return;
     }
     {
         QMutexLocker locker(&mCompileMutex);
-        if (mCompiler!=nullptr) {
+        if (mCompiler != nullptr) {
             return;
         }
-        ProjectCompiler* pCompiler=createProjectCompiler(project);
+        ProjectCompiler* pCompiler = createProjectCompiler(project);
         pCompiler->buildMakeFile();
         delete pCompiler;
     }
 }
 
-void CompilerManager::checkSyntax(const QString &filename, const QByteArray& encoding, const QString &content, std::shared_ptr<Project> project)
+void CompilerManager::checkSyntax(const QString& filename, const QByteArray& encoding,
+                                  const QString& content, std::shared_ptr<Project> project)
 {
     if (!pSettings->compilerSets().defaultSet()) {
-        QMessageBox::critical(pMainWindow,
-                              tr("No compiler set"),
-                              tr("No compiler set is configured.")+tr("Can't start debugging."));
+        QMessageBox::critical(pMainWindow, tr("No compiler set"),
+                              tr("No compiler set is configured.") + tr("Can't start debugging."));
         return;
     }
     {
         QMutexLocker locker(&mBackgroundSyntaxCheckMutex);
-        if (mBackgroundSyntaxChecker!=nullptr) {
+        if (mBackgroundSyntaxChecker != nullptr) {
             return;
         }
 
         mSyntaxCheckErrorCount = 0;
         mSyntaxCheckIssueCount = 0;
 
-        //deleted when thread finished
-        mBackgroundSyntaxChecker = new StdinCompiler(filename,encoding, content,true);
+        // deleted when thread finished
+        mBackgroundSyntaxChecker = new StdinCompiler(filename, encoding, content, true);
         mBackgroundSyntaxChecker->setProject(project);
-        connect(mBackgroundSyntaxChecker, &Compiler::finished, mBackgroundSyntaxChecker, &QThread::deleteLater);
-        connect(mBackgroundSyntaxChecker, &Compiler::compileIssue, this, &CompilerManager::onSyntaxCheckIssue);
-        connect(mBackgroundSyntaxChecker, &Compiler::compileStarted, pMainWindow, &MainWindow::onSyntaxCheckStarted);
-        connect(mBackgroundSyntaxChecker, &Compiler::compileFinished, this, &CompilerManager::onSyntaxCheckFinished);
-        //connect(mBackgroundSyntaxChecker, &Compiler::compileOutput, pMainWindow, &MainWindow::logToolsOutput);
-        connect(mBackgroundSyntaxChecker, &Compiler::compileIssue, pMainWindow, &MainWindow::onCompileIssue);
-        connect(mBackgroundSyntaxChecker, &Compiler::compileErrorOccured, pMainWindow, &MainWindow::onCompileErrorOccured);
+        connect(mBackgroundSyntaxChecker, &Compiler::finished, mBackgroundSyntaxChecker,
+                &QThread::deleteLater);
+        connect(mBackgroundSyntaxChecker, &Compiler::compileIssue, this,
+                &CompilerManager::onSyntaxCheckIssue);
+        connect(mBackgroundSyntaxChecker, &Compiler::compileStarted, pMainWindow,
+                &MainWindow::onSyntaxCheckStarted);
+        connect(mBackgroundSyntaxChecker, &Compiler::compileFinished, this,
+                &CompilerManager::onSyntaxCheckFinished);
+        // connect(mBackgroundSyntaxChecker, &Compiler::compileOutput, pMainWindow,
+        // &MainWindow::logToolsOutput);
+        connect(mBackgroundSyntaxChecker, &Compiler::compileIssue, pMainWindow,
+                &MainWindow::onCompileIssue);
+        connect(mBackgroundSyntaxChecker, &Compiler::compileErrorOccured, pMainWindow,
+                &MainWindow::onCompileErrorOccured);
         mBackgroundSyntaxChecker->start();
     }
 }
 
-void CompilerManager::run(
-        const QString &filename,
-        const QString &arguments,
-        const QString &workDir,
-        const QStringList& binDirs)
+void CompilerManager::run(const QString& filename, const QString& arguments, const QString& workDir,
+                          const QStringList& binDirs)
 {
     QMutexLocker locker(&mRunnerMutex);
-    if (mRunner!=nullptr && !mRunner->pausing()) {
+    if (mRunner != nullptr && !mRunner->pausing()) {
         return;
     }
     QString redirectInputFilename;
-    bool redirectInput=false;
-    if (pSettings->executor().redirectInput()
-            && !pSettings->executor().inputFilename().isEmpty()) {
-        redirectInput =true;
+    bool redirectInput = false;
+    if (pSettings->executor().redirectInput() && !pSettings->executor().inputFilename().isEmpty()) {
+        redirectInput = true;
         redirectInputFilename = pSettings->executor().inputFilename();
     }
     bool useCustomTerminal = pSettings->environment().useCustomTerminal();
-    ExecutableRunner * execRunner;
+    ExecutableRunner* execRunner;
     if (!programIsWin32GuiApp(filename)) {
         QString consolePauserPath = getFilePath(pSettings->dirs().appLibexecDir(), CONSOLE_PAUSER);
         QStringList execArgs = {consolePauserPath};
@@ -255,7 +258,8 @@ void CompilerManager::run(
             if (useCustomTerminal)
                 execArgs << "--redirect-input" << redirectInputFilename;
             else
-                execArgs << "--redirect-input" << "-";
+                execArgs << "--redirect-input"
+                         << "-";
         }
         if (pSettings->executor().pauseConsole())
             execArgs << "--pause-console";
@@ -275,20 +279,24 @@ void CompilerManager::run(
         bool requireConsolePauser = execArgs.length() > 1;
         if (requireConsolePauser) {
             if (!fileExists(consolePauserPath)) {
-                QMessageBox::critical(pMainWindow,
-                                         tr("Can't find Console Pauser"),
-                                         tr("Console Pauser \"%1\" doesn't exists!")
-                                         .arg(consolePauserPath));
+                QMessageBox::critical(
+                    pMainWindow, tr("Can't find Console Pauser"),
+                    tr("Console Pauser \"%1\" doesn't exists!").arg(consolePauserPath));
                 return;
             }
             execArgs << "--shared-memory" << sharedMemoryId;
 
             // translation items: please keep sync with `tools/consolepauser/argparser.hpp`
-            execArgs << "--add-translation" << "EXIT=" + tr("Press ANY key to exit...");
-            execArgs << "--add-translation" << "USAGE_HEADER=" + tr("Process exited after");
-            execArgs << "--add-translation" << "USAGE_RETURN_VALUE=" + tr("Return value");
-            execArgs << "--add-translation" << "USAGE_CPU_TIME=" + tr("CPU time");
-            execArgs << "--add-translation" << "USAGE_MEMORY=" + tr("Memory");
+            execArgs << "--add-translation"
+                     << "EXIT=" + tr("Press ANY key to exit...");
+            execArgs << "--add-translation"
+                     << "USAGE_HEADER=" + tr("Process exited after");
+            execArgs << "--add-translation"
+                     << "USAGE_RETURN_VALUE=" + tr("Return value");
+            execArgs << "--add-translation"
+                     << "USAGE_CPU_TIME=" + tr("CPU time");
+            execArgs << "--add-translation"
+                     << "USAGE_MEMORY=" + tr("Memory");
 
             // end of console pauser args
             execArgs << "--";
@@ -300,22 +308,21 @@ void CompilerManager::run(
         if (useCustomTerminal) {
             auto [filename, args, fileOwner] = wrapCommandForTerminalEmulator(
                 pSettings->environment().terminalPath(),
-                pSettings->environment().terminalArgumentsPattern(),
-                execArgs
-            );
-            //delete when thread finished
+                pSettings->environment().terminalArgumentsPattern(), execArgs);
+            // delete when thread finished
             execRunner = new ExecutableRunner(filename, args, workDir);
             mTempFileOwner = std::move(fileOwner);
         } else {
-            //delete when thread finished
+            // delete when thread finished
             execRunner = new ExecutableRunner(execArgs[0], execArgs.mid(1), workDir);
         }
         execRunner->setStartConsole(true);
         if (requireConsolePauser)
             execRunner->setShareMemoryId(sharedMemoryId);
     } else {
-        //delete when thread finished
-        execRunner = new ExecutableRunner(filename, parseArgumentsWithoutVariables(arguments), workDir);
+        // delete when thread finished
+        execRunner =
+            new ExecutableRunner(filename, parseArgumentsWithoutVariables(arguments), workDir);
     }
     if (redirectInput && !useCustomTerminal) {
         execRunner->setRedirectInput(true);
@@ -327,60 +334,68 @@ void CompilerManager::run(
 
     mRunner = execRunner;
 
-    connect(mRunner, &Runner::finished, this ,&CompilerManager::onRunnerTerminated);
-    connect(mRunner, &Runner::finished, mRunner ,&Runner::deleteLater);
-    connect(mRunner, &Runner::finished, pMainWindow ,&MainWindow::onRunFinished);
-    connect(mRunner, &Runner::pausingForFinish, pMainWindow ,&MainWindow::onRunPausingForFinish);
-    connect(mRunner, &Runner::pausingForFinish, this ,&CompilerManager::onRunnerPausing);
-    connect(mRunner, &Runner::runErrorOccurred, pMainWindow ,&MainWindow::onRunErrorOccured);
+    connect(mRunner, &Runner::finished, this, &CompilerManager::onRunnerTerminated);
+    connect(mRunner, &Runner::finished, mRunner, &Runner::deleteLater);
+    connect(mRunner, &Runner::finished, pMainWindow, &MainWindow::onRunFinished);
+    connect(mRunner, &Runner::pausingForFinish, pMainWindow, &MainWindow::onRunPausingForFinish);
+    connect(mRunner, &Runner::pausingForFinish, this, &CompilerManager::onRunnerPausing);
+    connect(mRunner, &Runner::runErrorOccurred, pMainWindow, &MainWindow::onRunErrorOccured);
     mRunner->start();
 }
 
-
-void CompilerManager::runProblem(const QString &filename, const QString &arguments, const QString &workDir, POJProblemCase problemCase,
-                                 const POJProblem& problem
-                                 )
+void CompilerManager::runProblem(const QString& filename, const QString& arguments,
+                                 const QString& workDir, POJProblemCase problemCase,
+                                 const POJProblem& problem)
 {
     QMutexLocker locker(&mRunnerMutex);
-    doRunProblem(filename, arguments, workDir, QVector<POJProblemCase> {problemCase}, problem);
-
+    doRunProblem(filename, arguments, workDir, QVector<POJProblemCase>{problemCase}, problem);
 }
 
-void CompilerManager::runProblem(const QString &filename, const QString &arguments, const QString &workDir, const QVector<POJProblemCase>& problemCases,
-                                 const POJProblem& problem
-                                 )
+void CompilerManager::runProblem(const QString& filename, const QString& arguments,
+                                 const QString& workDir,
+                                 const QVector<POJProblemCase>& problemCases,
+                                 const POJProblem& problem)
 {
     QMutexLocker locker(&mRunnerMutex);
     doRunProblem(filename, arguments, workDir, problemCases, problem);
 }
-void CompilerManager::doRunProblem(const QString &filename, const QString &arguments, const QString &workDir, const QVector<POJProblemCase>& problemCases,
+void CompilerManager::doRunProblem(const QString& filename, const QString& arguments,
+                                   const QString& workDir,
+                                   const QVector<POJProblemCase>& problemCases,
                                    const POJProblem& problem)
 {
-    if (mRunner!=nullptr) {
+    if (mRunner != nullptr) {
         return;
     }
-    OJProblemCasesRunner * execRunner = new OJProblemCasesRunner(filename, parseArgumentsWithoutVariables(arguments), workDir, problemCases);
+    OJProblemCasesRunner* execRunner = new OJProblemCasesRunner(
+        filename, parseArgumentsWithoutVariables(arguments), workDir, problemCases);
     mRunner = execRunner;
     if (pSettings->executor().enableCaseLimit()) {
         execRunner->setExecTimeout(pSettings->executor().caseTimeout());
-        execRunner->setMemoryLimit(pSettings->executor().caseMemoryLimit()*1024); //convert kb to bytes
+        execRunner->setMemoryLimit(pSettings->executor().caseMemoryLimit() *
+                                   1024); // convert kb to bytes
     }
     size_t timeLimit = problem->getTimeLimit();
     size_t memoryLimit = problem->getMemoryLimit();
-    if (timeLimit>0)
+    if (timeLimit > 0)
         execRunner->setExecTimeout(timeLimit);
     if (memoryLimit)
         execRunner->setMemoryLimit(memoryLimit);
-    connect(mRunner, &Runner::finished, this ,&CompilerManager::onRunnerTerminated);
-    connect(mRunner, &Runner::finished, mRunner ,&Runner::deleteLater);
-    connect(mRunner, &Runner::finished, pMainWindow ,&MainWindow::onRunProblemFinished);
-    connect(mRunner, &Runner::runErrorOccurred, pMainWindow ,&MainWindow::onRunErrorOccured);
-    connect(execRunner, &OJProblemCasesRunner::caseStarted, pMainWindow, &MainWindow::onOJProblemCaseStarted);
-    connect(execRunner, &OJProblemCasesRunner::caseFinished, pMainWindow, &MainWindow::onOJProblemCaseFinished);
-    connect(execRunner, &OJProblemCasesRunner::newOutputGetted, pMainWindow, &MainWindow::onOJProblemCaseNewOutputGetted);
-    connect(execRunner, &OJProblemCasesRunner::resetOutput, pMainWindow, &MainWindow::onOJProblemCaseResetOutput);
+    connect(mRunner, &Runner::finished, this, &CompilerManager::onRunnerTerminated);
+    connect(mRunner, &Runner::finished, mRunner, &Runner::deleteLater);
+    connect(mRunner, &Runner::finished, pMainWindow, &MainWindow::onRunProblemFinished);
+    connect(mRunner, &Runner::runErrorOccurred, pMainWindow, &MainWindow::onRunErrorOccured);
+    connect(execRunner, &OJProblemCasesRunner::caseStarted, pMainWindow,
+            &MainWindow::onOJProblemCaseStarted);
+    connect(execRunner, &OJProblemCasesRunner::caseFinished, pMainWindow,
+            &MainWindow::onOJProblemCaseFinished);
+    connect(execRunner, &OJProblemCasesRunner::newOutputGetted, pMainWindow,
+            &MainWindow::onOJProblemCaseNewOutputGetted);
+    connect(execRunner, &OJProblemCasesRunner::resetOutput, pMainWindow,
+            &MainWindow::onOJProblemCaseResetOutput);
     if (pSettings->executor().redirectStderrToToolLog()) {
-        connect(execRunner, &OJProblemCasesRunner::logStderrOutput, pMainWindow, &MainWindow::logToolsOutput);
+        connect(execRunner, &OJProblemCasesRunner::logStderrOutput, pMainWindow,
+                &MainWindow::logToolsOutput);
     }
     mRunner->start();
 }
@@ -388,11 +403,11 @@ void CompilerManager::doRunProblem(const QString &filename, const QString &argum
 void CompilerManager::stopRun()
 {
     QMutexLocker locker(&mRunnerMutex);
-    if (mRunner!=nullptr) {
+    if (mRunner != nullptr) {
         mRunner->stop();
-        disconnect(mRunner, &Runner::finished, this ,&CompilerManager::onRunnerTerminated);
-        mRunner=nullptr;
-        mTempFileOwner=nullptr;
+        disconnect(mRunner, &Runner::finished, this, &CompilerManager::onRunnerTerminated);
+        mRunner = nullptr;
+        mTempFileOwner = nullptr;
     }
 }
 
@@ -404,29 +419,29 @@ void CompilerManager::stopAllRunners()
 void CompilerManager::stopPausing()
 {
     QMutexLocker locker(&mRunnerMutex);
-    if (mRunner!=nullptr && mRunner->pausing()) {
-        disconnect(mRunner, &Runner::finished, this ,&CompilerManager::onRunnerTerminated);
+    if (mRunner != nullptr && mRunner->pausing()) {
+        disconnect(mRunner, &Runner::finished, this, &CompilerManager::onRunnerTerminated);
         mRunner->stop();
-        mRunner=nullptr;
-        mTempFileOwner=nullptr;
+        mRunner = nullptr;
+        mTempFileOwner = nullptr;
     }
 }
 
 void CompilerManager::stopCompile()
 {
     QMutexLocker locker(&mCompileMutex);
-    if (mCompiler!=nullptr)
+    if (mCompiler != nullptr)
         mCompiler->stopCompile();
 }
 
 void CompilerManager::stopCheckSyntax()
 {
     QMutexLocker locker(&mBackgroundSyntaxCheckMutex);
-    if (mBackgroundSyntaxChecker!=nullptr)
+    if (mBackgroundSyntaxChecker != nullptr)
         mBackgroundSyntaxChecker->stopCompile();
 }
 
-bool CompilerManager::canCompile(const QString &)
+bool CompilerManager::canCompile(const QString&)
 {
     return !compiling();
 }
@@ -434,27 +449,27 @@ bool CompilerManager::canCompile(const QString &)
 void CompilerManager::onCompileFinished(const QString& filename)
 {
     QMutexLocker locker(&mCompileMutex);
-    mCompiler=nullptr;
+    mCompiler = nullptr;
     emit compileFinished(filename, false);
-    //pMainWindow->onCompileFinished(filename,false);
+    // pMainWindow->onCompileFinished(filename,false);
 }
 
 void CompilerManager::onRunnerTerminated()
 {
     QMutexLocker locker(&mRunnerMutex);
-    mRunner=nullptr;
-    mTempFileOwner=nullptr;
+    mRunner = nullptr;
+    mTempFileOwner = nullptr;
 }
 
 void CompilerManager::onRunnerPausing()
 {
     QMutexLocker locker(&mRunnerMutex);
-    disconnect(mRunner, &Runner::finished, this ,&CompilerManager::onRunnerTerminated);
-    disconnect(mRunner, &Runner::finished, pMainWindow ,&MainWindow::onRunFinished);
-    disconnect(mRunner, &Runner::runErrorOccurred, pMainWindow ,&MainWindow::onRunErrorOccured);
+    disconnect(mRunner, &Runner::finished, this, &CompilerManager::onRunnerTerminated);
+    disconnect(mRunner, &Runner::finished, pMainWindow, &MainWindow::onRunFinished);
+    disconnect(mRunner, &Runner::runErrorOccurred, pMainWindow, &MainWindow::onRunErrorOccured);
     connect(this, &CompilerManager::signalStopAllRunners, mRunner, &Runner::stop);
-    mRunner=nullptr;
-    mTempFileOwner=nullptr;
+    mRunner = nullptr;
+    mTempFileOwner = nullptr;
 }
 
 void CompilerManager::onCompileIssue(PCompileIssue issue)
@@ -467,7 +482,7 @@ void CompilerManager::onCompileIssue(PCompileIssue issue)
 void CompilerManager::onSyntaxCheckFinished(const QString& filename)
 {
     QMutexLocker locker(&mBackgroundSyntaxCheckMutex);
-    mBackgroundSyntaxChecker=nullptr;
+    mBackgroundSyntaxChecker = nullptr;
     emit compileFinished(filename, true);
 }
 
@@ -475,15 +490,14 @@ void CompilerManager::onSyntaxCheckIssue(PCompileIssue issue)
 {
     if (issue->type == CompileIssueType::Error)
         mSyntaxCheckErrorCount++;
-    if (issue->type == CompileIssueType::Error ||
-            issue->type == CompileIssueType::Warning)
+    if (issue->type == CompileIssueType::Error || issue->type == CompileIssueType::Warning)
         mSyntaxCheckIssueCount++;
 }
 
-ProjectCompiler *CompilerManager::createProjectCompiler(std::shared_ptr<Project> project)
+ProjectCompiler* CompilerManager::createProjectCompiler(std::shared_ptr<Project> project)
 {
 #ifdef ENABLE_SDCC
-    if (project->options().type==ProjectType::MicroController)
+    if (project->options().type == ProjectType::MicroController)
         return new SDCCProjectCompiler(project);
     else
 #endif
@@ -510,8 +524,6 @@ int CompilerManager::compileErrorCount() const
     return mCompileErrorCount;
 }
 
-CompileError::CompileError(const QString &reason):BaseError(reason)
+CompileError::CompileError(const QString& reason) : BaseError(reason)
 {
-
 }
-

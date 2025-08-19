@@ -29,7 +29,8 @@ class EnvironmentPerformanceWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit EnvironmentPerformanceWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit EnvironmentPerformanceWidget(const QString& name, const QString& group,
+                                          QWidget* parent = nullptr);
     ~EnvironmentPerformanceWidget();
 
     void doLoad() override;
@@ -39,7 +40,7 @@ private slots:
     void on_chkEditorsShareParser_stateChanged(int arg1);
 
 private:
-    Ui::EnvironmentPerformanceWidget *ui;
+    Ui::EnvironmentPerformanceWidget* ui;
 };
 
 #endif // ENVIRONMENTPERFORMANCEWIDGET_H

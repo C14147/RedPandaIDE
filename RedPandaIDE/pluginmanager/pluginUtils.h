@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-/* 
+/*
  * RedPandaIDE Plugin System - Utility functions for plugins
  * @file pluginUtils.h
  * @brief Utility functions for plugin to call software functions.
@@ -25,9 +25,9 @@
 #define PLUGINUTILS_H
 
 namespace {
-    #include "../utils.h"
-    #include "pluginmanager.h"
-    #include "../mainwindow.h"
+#include "../utils.h"
+#include "pluginmanager.h"
+#include "../mainwindow.h"
 }
 
 namespace RedPandaIDE {
@@ -36,20 +36,17 @@ QPixmap HDPixmap(QPixmap pix, int w, int h)
 {
 #if QT_VERSION_MAJOR == 6
     QPixmap orgin = pix;
-    QScreen *screen = QGuiApplication::primaryScreen();
+    QScreen* screen = QGuiApplication::primaryScreen();
 
     orgin.setDevicePixelRatio(screen->devicePixelRatio());
-    pix = orgin.scaled(
-        w,h,
-        Qt::KeepAspectRatio,
-        Qt::SmoothTransformation);
+    pix = orgin.scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 #endif
-    return pix.scaled(w,h);
+    return pix.scaled(w, h);
 }
 
 QPixmap HDPixmap(QPixmap pix)
 {
-    return HDPixmap(pix,pix.width(),pix.height());
+    return HDPixmap(pix, pix.width(), pix.height());
 }
 
 QPixmap HDPixmap(QString picPath)
@@ -60,30 +57,31 @@ QPixmap HDPixmap(QString picPath)
 QPixmap HDPixmap(QString picPath, int w, int h)
 {
     QPixmap pix(picPath);
-    return HDPixmap(pix,w,h);
+    return HDPixmap(pix, w, h);
 }
 
-IRedPandaPlugin* getPluginByName(const QString &name){
-    PluginManager *pm = MainWindow::instance()->pluginManager();
-    if (!pm) return nullptr;
-    for (IRedPandaPlugin *plugin : pm->plugins()) {
+IRedPandaPlugin* getPluginByName(const QString& name)
+{
+    PluginManager* pm = MainWindow::instance()->pluginManager();
+    if (!pm)
+        return nullptr;
+    for (IRedPandaPlugin* plugin : pm->plugins()) {
         if (plugin && plugin->metaObject()->className() == name) {
             return plugin;
         }
-    return nullptr;
-}
+        return nullptr;
+    }
 
-int showPluginNotFound(const QString &name){
-    if( QMessageBox::warning(
-            MainWindow::instance(),
-            QObject::tr("Plugin Not Found"),
-            QObject::tr("Plugin %1 not found. Do you want to install it?").arg(name),
-            QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
-        return 1; // todo
-    else return 0;
+    int showPluginNotFound(const QString& name)
+    {
+        if (QMessageBox::warning(
+                MainWindow::instance(), QObject::tr("Plugin Not Found"),
+                QObject::tr("Plugin %1 not found. Do you want to install it?").arg(name),
+                QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+            return 1; // todo
+        else
+            return 0;
+    }
 }
-
-}
-
 
 #endif // PLUGINUTILS_H

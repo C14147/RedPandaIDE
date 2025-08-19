@@ -30,12 +30,14 @@ class EditorSnippetWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit EditorSnippetWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit EditorSnippetWidget(const QString& name, const QString& group,
+                                 QWidget* parent = nullptr);
     ~EditorSnippetWidget();
 
 private:
-    Ui::EditorSnippetWidget *ui;
+    Ui::EditorSnippetWidget* ui;
     CodeSnippetsModel mModel;
+
 private:
     bool mUpdatingCode;
     // SettingsWidget interface
@@ -48,7 +50,7 @@ private slots:
 
     // SettingsWidget interface
 protected:
-    void updateIcons(const QSize &size) override;
+    void updateIcons(const QSize& size) override;
 };
 
 #endif // EDITORSNIPPETWIDGET_H

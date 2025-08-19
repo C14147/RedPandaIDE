@@ -29,10 +29,7 @@ using PSearchResultTreeItem = std::shared_ptr<SearchResultTreeItem>;
 using SearchResultTreeItemList = QList<PSearchResultTreeItem>;
 using PSearchResultTreeItemList = std::shared_ptr<SearchResultTreeItemList>;
 
-enum class SearchType {
-    Search,
-    FindOccurences
-};
+enum class SearchType { Search, FindOccurences };
 
 struct SearchResultTreeItem {
     QString filename;
@@ -45,7 +42,7 @@ struct SearchResultTreeItem {
     bool selected;
 };
 
-struct SearchResults{
+struct SearchResults {
     QSynedit::SearchOptions options;
     QString keyword;
     QString statementFullname;
@@ -60,16 +57,17 @@ struct SearchResults{
 
 using PSearchResults = std::shared_ptr<SearchResults>;
 
-class SearchResultModel : public QObject {
+class SearchResultModel : public QObject
+{
     Q_OBJECT
 public:
-    explicit SearchResultModel(QObject* parent=nullptr);
-    PSearchResults addSearchResults(const QString& keyword,QSynedit::SearchOptions options,
-                                    SearchFileScope scope, const QString& folder=QString(), const QString& filters=QString(), bool searchSubfolders=true);
-    PSearchResults addSearchResults(
-            const QString& keyword,
-            const QString& symbolFullname,
-            SearchFileScope scope);
+    explicit SearchResultModel(QObject* parent = nullptr);
+    PSearchResults addSearchResults(const QString& keyword, QSynedit::SearchOptions options,
+                                    SearchFileScope scope, const QString& folder = QString(),
+                                    const QString& filters = QString(),
+                                    bool searchSubfolders = true);
+    PSearchResults addSearchResults(const QString& keyword, const QString& symbolFullname,
+                                    SearchFileScope scope);
     PSearchResults results(int index);
     void notifySearchResultsUpdated();
     int currentIndex() const;
@@ -81,70 +79,73 @@ public:
 signals:
     void modelChanged();
     void currentChanged(int index);
+
 private:
     QList<PSearchResults> mSearchResults;
     int mCurrentIndex;
-
 };
 
-class SearchResultListModel: public QAbstractListModel {
-Q_OBJECT
+class SearchResultListModel : public QAbstractListModel
+{
+    Q_OBJECT
     // QAbstractItemModel interface
 public:
-    explicit SearchResultListModel(SearchResultModel* model,QObject* parent=nullptr);
-    int rowCount(const QModelIndex &parent) const override;
-    QVariant data(const QModelIndex &index, int role) const override;
+    explicit SearchResultListModel(SearchResultModel* model, QObject* parent = nullptr);
+    int rowCount(const QModelIndex& parent) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
 public slots:
     void onResultModelChanged();
+
 private:
-    SearchResultModel *mSearchResultModel;
+    SearchResultModel* mSearchResultModel;
 };
 
-class SearchResultTreeModel : public QAbstractItemModel {
-Q_OBJECT
+class SearchResultTreeModel : public QAbstractItemModel
+{
+    Q_OBJECT
     // QAbstractItemModel interface
 public:
-    explicit SearchResultTreeModel(SearchResultModel* model,QObject* parent=nullptr);
-    QModelIndex index(int row, int column, const QModelIndex &parent) const override;
-    QModelIndex parent(const QModelIndex &child) const override;
-    int rowCount(const QModelIndex &parent) const override;
-    int columnCount(const QModelIndex &parent) const override;
-    QVariant data(const QModelIndex &index, int role) const override;
-    SearchResultModel *searchResultModel() const;
-    bool getItemFileAndLineChar(
-            const QModelIndex&index,
-            QString& filename,
-            int& line,
-            int& startChar);
+    explicit SearchResultTreeModel(SearchResultModel* model, QObject* parent = nullptr);
+    QModelIndex index(int row, int column, const QModelIndex& parent) const override;
+    QModelIndex parent(const QModelIndex& child) const override;
+    int rowCount(const QModelIndex& parent) const override;
+    int columnCount(const QModelIndex& parent) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
+    SearchResultModel* searchResultModel() const;
+    bool getItemFileAndLineChar(const QModelIndex& index, QString& filename, int& line,
+                                int& startChar);
     bool selectable() const;
     void setSelectable(bool newSelectable);
 
 public slots:
     void onResultModelChanged();
+
 private:
-    SearchResultModel *mSearchResultModel;
+    SearchResultModel* mSearchResultModel;
     bool mSelectable;
 
     // QAbstractItemModel interface
 public:
-    Qt::ItemFlags flags(const QModelIndex &index) const override;
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
 
     // QAbstractItemModel interface
 public:
-    bool setData(const QModelIndex &index, const QVariant &value, int role) override;
+    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
 };
 
 using PSearchResultTreeModel = std::shared_ptr<SearchResultTreeModel>;
 
-class SearchResultTreeViewDelegate: public QStyledItemDelegate{
-Q_OBJECT
+class SearchResultTreeViewDelegate : public QStyledItemDelegate
+{
+    Q_OBJECT
     // QAbstractItemDelegate interface
 public:
-    explicit SearchResultTreeViewDelegate(SearchResultTreeModel *model,
-                                          QObject* parent=nullptr);
-    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    explicit SearchResultTreeViewDelegate(SearchResultTreeModel* model, QObject* parent = nullptr);
+    void paint(QPainter* painter, const QStyleOptionViewItem& option,
+               const QModelIndex& index) const override;
+
 private:
-    SearchResultTreeModel *mModel;
+    SearchResultTreeModel* mModel;
 };
 
 using PSearchResultTreeViewDelegate = std::shared_ptr<SearchResultTreeViewDelegate>;

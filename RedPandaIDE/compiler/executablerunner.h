@@ -28,11 +28,11 @@ class ExecutableRunner : public Runner
 public:
     ExecutableRunner(const QString& filename, const QStringList& arguments, const QString& workDir,
                      QObject* parent = nullptr);
-    ExecutableRunner(const ExecutableRunner&)=delete;
-    ExecutableRunner& operator=(const ExecutableRunner&)=delete;
+    ExecutableRunner(const ExecutableRunner&) = delete;
+    ExecutableRunner& operator=(const ExecutableRunner&) = delete;
 
-    const QString &redirectInputFilename() const;
-    void setRedirectInputFilename(const QString &newDataFile);
+    const QString& redirectInputFilename() const;
+    void setRedirectInputFilename(const QString& newDataFile);
 
     bool redirectInput() const;
     void setRedirectInput(bool isRedirect);
@@ -40,13 +40,13 @@ public:
     bool startConsole() const;
     void setStartConsole(bool newStartConsole);
 
-    const QString &shareMemoryId() const;
+    const QString& shareMemoryId() const;
 
-    void setShareMemoryId(const QString &newShareMemoryId);
+    void setShareMemoryId(const QString& newShareMemoryId);
 
-    const QStringList &binDirs() const;
-    void addBinDirs(const QStringList &binDirs);
-    void addBinDir(const QString &binDir);
+    const QStringList& binDirs() const;
+    void addBinDirs(const QStringList& binDirs);
+    void addBinDir(const QString& binDir);
 
 private:
     QString mRedirectInputFilename;

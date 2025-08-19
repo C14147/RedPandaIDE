@@ -3,15 +3,13 @@
 #include "gitmanager.h"
 #include "../widgets/infomessagebox.h"
 
-GitBranchDialog::GitBranchDialog(const QString& folder, QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::GitBranchDialog),
-    mFolder(folder)
+GitBranchDialog::GitBranchDialog(const QString& folder, QWidget* parent)
+    : QDialog(parent), ui(new Ui::GitBranchDialog), mFolder(folder)
 {
     ui->setupUi(this);
     mManager = new GitManager();
-    int current=-1;
-    QStringList branches =mManager->listBranches(mFolder,current);
+    int current = -1;
+    QStringList branches = mManager->listBranches(mFolder, current);
     ui->lstBranches->addItems(branches);
     ui->lstBranches->setCurrentIndex(current);
     ui->rbBranch->setChecked(true);
@@ -19,7 +17,7 @@ GitBranchDialog::GitBranchDialog(const QString& folder, QWidget *parent) :
     ui->txtNewBranch->setEnabled(false);
     if (branches.isEmpty()) {
         QString currentBranch;
-        if (mManager->hasRepository(mFolder,currentBranch)) {
+        if (mManager->hasRepository(mFolder, currentBranch)) {
             ui->lstBranches->addItem(currentBranch);
             ui->btnOk->setEnabled(false);
         }
@@ -38,7 +36,6 @@ void GitBranchDialog::on_btnCancel_clicked()
     reject();
 }
 
-
 void GitBranchDialog::on_btnOk_clicked()
 {
     QString branch;
@@ -50,15 +47,9 @@ void GitBranchDialog::on_btnOk_clicked()
     QString output;
     if (!branch.isEmpty()) {
         result = mManager->switchToBranch(
-                    mFolder,
-                    branch,
-                    ui->chkCreate->isChecked(),
-                    ui->chkForce->isChecked(),
-                    ui->chkMerge->isChecked(),
-                    ui->rbForceTrack->isChecked(),
-                    ui->rbForceNoTrack->isChecked(),
-                    ui->chkForceCreation->isChecked(),
-                    output);
+            mFolder, branch, ui->chkCreate->isChecked(), ui->chkForce->isChecked(),
+            ui->chkMerge->isChecked(), ui->rbForceTrack->isChecked(),
+            ui->rbForceNoTrack->isChecked(), ui->chkForceCreation->isChecked(), output);
     }
     if (result) {
         accept();
@@ -70,20 +61,17 @@ void GitBranchDialog::on_btnOk_clicked()
     }
 }
 
-
 void GitBranchDialog::on_lstBranches_currentIndexChanged(int /*index*/)
 {
-    ui->txtNewBranch->setText("branch_"+ui->lstBranches->currentText());
+    ui->txtNewBranch->setText("branch_" + ui->lstBranches->currentText());
 }
-
 
 void GitBranchDialog::on_chkCreate_stateChanged(int /*arg1*/)
 {
     ui->txtNewBranch->setEnabled(ui->chkCreate->isChecked());
 }
 
-void GitBranchDialog::closeEvent(QCloseEvent */* event */)
+void GitBranchDialog::closeEvent(QCloseEvent* /* event */)
 {
     reject();
 }
-

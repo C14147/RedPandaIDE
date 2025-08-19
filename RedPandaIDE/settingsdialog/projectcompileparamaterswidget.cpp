@@ -28,9 +28,10 @@
 
 #include <QFileDialog>
 
-ProjectCompileParamatersWidget::ProjectCompileParamatersWidget(const QString &name, const QString &group, QWidget *parent) :
-    SettingsWidget(name,group,parent),
-    ui(new Ui::ProjectCompileParamatersWidget)
+ProjectCompileParamatersWidget::ProjectCompileParamatersWidget(const QString& name,
+                                                               const QString& group,
+                                                               QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::ProjectCompileParamatersWidget)
 {
     ui->setupUi(this);
 #ifdef Q_OS_WIN
@@ -54,7 +55,8 @@ void ProjectCompileParamatersWidget::doLoad()
     ui->txtCPPCompiler->setPlainText(pMainWindow->project()->options().cppCompilerCmd);
     ui->txtLinker->setPlainText(pMainWindow->project()->options().linkerCmd);
     ui->txtResource->setPlainText(pMainWindow->project()->options().resourceCmd);
-    ui->grpAllowParallelBuilding->setChecked(pMainWindow->project()->options().allowParallelBuilding);
+    ui->grpAllowParallelBuilding->setChecked(
+        pMainWindow->project()->options().allowParallelBuilding);
     ui->spinParallelJobs->setValue(pMainWindow->project()->options().parellelBuildingJobs);
 }
 
@@ -64,7 +66,8 @@ void ProjectCompileParamatersWidget::doSave()
     pMainWindow->project()->options().cppCompilerCmd = ui->txtCPPCompiler->toPlainText();
     pMainWindow->project()->options().linkerCmd = ui->txtLinker->toPlainText();
     pMainWindow->project()->options().resourceCmd = ui->txtResource->toPlainText();
-    pMainWindow->project()->options().allowParallelBuilding = ui->grpAllowParallelBuilding->isChecked();
+    pMainWindow->project()->options().allowParallelBuilding =
+        ui->grpAllowParallelBuilding->isChecked();
     pMainWindow->project()->options().parellelBuildingJobs = ui->spinParallelJobs->value();
     pMainWindow->project()->saveOptions();
 }
@@ -72,27 +75,22 @@ void ProjectCompileParamatersWidget::doSave()
 void ProjectCompileParamatersWidget::on_btnChooseLib_clicked()
 {
 #ifdef Q_OS_WIN
-    QString filter = tr("Library Files")+" (*.a *.lib *.o)";
+    QString filter = tr("Library Files") + " (*.a *.lib *.o)";
 #else
-    QString filter = tr("Library Files")+" (*.a *.o)";
+    QString filter = tr("Library Files") + " (*.a *.o)";
 #endif
 
-    QStringList files = QFileDialog::getOpenFileNames(
-                this,
-                tr("Add Library Files"),
-                QDir::currentPath(),
-                filter
-                );
+    QStringList files =
+        QFileDialog::getOpenFileNames(this, tr("Add Library Files"), QDir::currentPath(), filter);
     if (!files.isEmpty()) {
-        foreach (const QString& file,files) {
-            ui->txtLinker->appendPlainText(" " + escapeArgument(file, false, EscapeArgumentRule::BourneAgainShellPretty));
+        foreach (const QString& file, files) {
+            ui->txtLinker->appendPlainText(
+                " " + escapeArgument(file, false, EscapeArgumentRule::BourneAgainShellPretty));
         }
     }
 }
 
-void ProjectCompileParamatersWidget::updateIcons(const QSize &/*size*/)
+void ProjectCompileParamatersWidget::updateIcons(const QSize& /*size*/)
 {
     pIconsManager->setIcon(ui->btnChooseLib, IconsManager::ACTION_MISC_FOLDER);
 }
-
-

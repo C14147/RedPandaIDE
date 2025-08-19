@@ -26,9 +26,8 @@
 #include "../settings.h"
 #include "../mainwindow.h"
 
-CompetitiveCompanionHandler::CompetitiveCompanionHandler(QObject *parent):
-    QObject(parent),
-    mThread(nullptr)
+CompetitiveCompanionHandler::CompetitiveCompanionHandler(QObject* parent)
+    : QObject(parent), mThread(nullptr)
 {
 }
 
@@ -39,12 +38,11 @@ void CompetitiveCompanionHandler::start()
     if (!pSettings->executor().enableCompetitiveCompanion())
         return;
     mThread = new CompetitiveCompanionThread(this);
-    connect(mThread,
-                &CompetitiveCompanionThread::newProblemReceived,
-                this, &CompetitiveCompanionHandler::onNewProblemReceived);
+    connect(mThread, &CompetitiveCompanionThread::newProblemReceived, this,
+            &CompetitiveCompanionHandler::onNewProblemReceived);
     mThread->start();
     if (!mThread->waitStart()) {
-        qDebug()<<"Failed to listen!";
+        qDebug() << "Failed to listen!";
         delete mThread;
         mThread = nullptr;
     }
@@ -54,10 +52,9 @@ void CompetitiveCompanionHandler::stop()
 {
     if (!mThread)
         return;
-    connect(mThread, &QThread::finished,
-            mThread, &QObject::deleteLater);
+    connect(mThread, &QThread::finished, mThread, &QObject::deleteLater);
     mThread->waitStop();
-    mThread=nullptr;
+    mThread = nullptr;
 }
 
 void CompetitiveCompanionHandler::onNewProblemReceived(int num, int total, POJProblem newProblem)
@@ -73,8 +70,8 @@ void CompetitiveCompanionThread::onNewProblemConnection(QTcpSocket* clientConnec
         clientConnection->waitForReadyRead(100);
         QByteArray readed = clientConnection->readAll();
         if (readed.isEmpty()) {
-            unreadCount ++;
-            if (!content.isEmpty() || unreadCount>30)
+            unreadCount++;
+            if (!content.isEmpty() || unreadCount > 30)
                 break;
         } else {
             unreadCount = 0;
@@ -85,30 +82,30 @@ void CompetitiveCompanionThread::onNewProblemConnection(QTcpSocket* clientConnec
     clientConnection->write("HTTP/1.1 200 OK\n");
     clientConnection->write("Connection: close\n");
     clientConnection->disconnectFromHost();
-//    qDebug()<<"---------";
-//    qDebug()<<content;
+    //    qDebug()<<"---------";
+    //    qDebug()<<content;
     content = getHTTPBody(content);
-//    qDebug()<<"*********";
-//    qDebug()<<content;
+    //    qDebug()<<"*********";
+    //    qDebug()<<content;
     if (content.isEmpty()) {
         return;
     }
     QJsonParseError error;
-    QJsonDocument doc = QJsonDocument::fromJson(content,&error);
-    if (error.error!=QJsonParseError::NoError) {
-        qDebug()<<"Read http content failed!";
-        qDebug()<<error.errorString();
+    QJsonDocument doc = QJsonDocument::fromJson(content, &error);
+    if (error.error != QJsonParseError::NoError) {
+        qDebug() << "Read http content failed!";
+        qDebug() << error.errorString();
         return;
     }
-    QJsonObject obj=doc.object();
-    //qDebug()<<obj;
+    QJsonObject obj = doc.object();
+    // qDebug()<<obj;
     QJsonObject batchObj = obj["batch"].toObject();
     QString batchId = batchObj["id"].toString();
-    if (mBatchId!=batchId) {
+    if (mBatchId != batchId) {
         mBatchId = batchId;
         mBatchCount = batchObj["size"].toInt();
         mBatchProblemsRecieved = 0;
-        //emit newBatchReceived(mBatchCount);
+        // emit newBatchReceived(mBatchCount);
     }
 
     QString name = obj["name"].toString();
@@ -129,7 +126,7 @@ void CompetitiveCompanionThread::onNewProblemConnection(QTcpSocket* clientConnec
         QJsonObject caseObj = val.toObject();
         POJProblemCase problemCase = std::make_shared<OJProblemCase>();
         problemCase->testState = ProblemCaseTestState::NotTested;
-        problemCase->name = tr("Problem Case %1").arg(problem->cases.count()+1);
+        problemCase->name = tr("Problem Case %1").arg(problem->cases.count() + 1);
         if (pSettings->executor().convertHTMLToTextForInput()) {
             QTextDocument doc;
             doc.setHtml(caseObj["input"].toString());
@@ -151,13 +148,9 @@ void CompetitiveCompanionThread::onNewProblemConnection(QTcpSocket* clientConnec
     // }
 }
 
-CompetitiveCompanionThread::CompetitiveCompanionThread(QObject *parent):
-    QThread{parent},
-    mStop{false},
-    mBatchProblemsRecieved{0},
-    mStartSemaphore{0},
-    mStopSemaphore{0},
-    mStartOk{false}
+CompetitiveCompanionThread::CompetitiveCompanionThread(QObject* parent)
+    : QThread{parent}, mStop{false}, mBatchProblemsRecieved{0}, mStartSemaphore{0},
+      mStopSemaphore{0}, mStartOk{false}
 {
 }
 
@@ -181,12 +174,13 @@ void CompetitiveCompanionThread::waitStop()
 void CompetitiveCompanionThread::run()
 {
     QTcpServer tcpServer;
-    mStartOk = tcpServer.listen(QHostAddress::LocalHost,pSettings->executor().competivieCompanionPort());
+    mStartOk =
+        tcpServer.listen(QHostAddress::LocalHost, pSettings->executor().competivieCompanionPort());
     if (!mStartOk) {
-        mStop=true;
+        mStop = true;
     }
     mStartSemaphore.release(1);
-    while(!mStop) {
+    while (!mStop) {
         tcpServer.waitForNewConnection(1000);
         while (tcpServer.hasPendingConnections()) {
             QTcpSocket* clientConnection = tcpServer.nextPendingConnection();

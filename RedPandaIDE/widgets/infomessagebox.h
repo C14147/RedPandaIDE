@@ -28,7 +28,7 @@ class InfoMessageBox : public QDialog
     Q_OBJECT
 
 public:
-    explicit InfoMessageBox(QWidget *parent = nullptr);
+    explicit InfoMessageBox(QWidget* parent = nullptr);
     void setMessage(const QString message);
     ~InfoMessageBox();
     void showMessage(const QString message);
@@ -37,7 +37,7 @@ private slots:
     void on_btnOk_clicked();
 
 private:
-    Ui::InfoMessageBox *ui;
+    Ui::InfoMessageBox* ui;
 };
 
 #endif // INFOMESSAGEBOX_H

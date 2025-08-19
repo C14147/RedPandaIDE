@@ -1,9 +1,8 @@
 #include "projectalreadyopendialog.h"
 #include "ui_projectalreadyopendialog.h"
 
-ProjectAlreadyOpenDialog::ProjectAlreadyOpenDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::ProjectAlreadyOpenDialog)
+ProjectAlreadyOpenDialog::ProjectAlreadyOpenDialog(QWidget* parent)
+    : QDialog(parent), ui(new Ui::ProjectAlreadyOpenDialog)
 {
     ui->setupUi(this);
 }
@@ -28,11 +27,10 @@ void ProjectAlreadyOpenDialog::setOpenType(OpenType newOpenType)
     mOpenType = newOpenType;
 }
 
-void ProjectAlreadyOpenDialog::closeEvent(QCloseEvent */*event*/)
+void ProjectAlreadyOpenDialog::closeEvent(QCloseEvent* /*event*/)
 {
     reject();
 }
-
 
 void ProjectAlreadyOpenDialog::on_btnThisWindow_clicked()
 {
@@ -40,10 +38,8 @@ void ProjectAlreadyOpenDialog::on_btnThisWindow_clicked()
     accept();
 }
 
-
 void ProjectAlreadyOpenDialog::on_btnNewWindow_clicked()
 {
     mOpenType = OpenType::NewWindow;
     accept();
 }
-

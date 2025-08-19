@@ -30,15 +30,16 @@ class ProjectDirectoriesWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit ProjectDirectoriesWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit ProjectDirectoriesWidget(const QString& name, const QString& group,
+                                      QWidget* parent = nullptr);
     ~ProjectDirectoriesWidget();
 
 private:
-    Ui::ProjectDirectoriesWidget *ui;
-    CompilerSetDirectoriesWidget *mBinDirWidget;
-    CompilerSetDirectoriesWidget *mLibDirWidget;
-    CompilerSetDirectoriesWidget *mIncludeDirWidget;
-    CompilerSetDirectoriesWidget *mResourceDirWidget;
+    Ui::ProjectDirectoriesWidget* ui;
+    CompilerSetDirectoriesWidget* mBinDirWidget;
+    CompilerSetDirectoriesWidget* mLibDirWidget;
+    CompilerSetDirectoriesWidget* mIncludeDirWidget;
+    CompilerSetDirectoriesWidget* mResourceDirWidget;
 
     // SettingsWidget interface
 protected:

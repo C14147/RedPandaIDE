@@ -28,25 +28,18 @@ class EditorList : public QObject
 {
     Q_OBJECT
 public:
-    enum class LayoutShowType{
-        lstLeft,
-        lstRight,
-        lstBoth
-    };
+    enum class LayoutShowType { lstLeft, lstRight, lstBoth };
 
-    explicit EditorList(QTabWidget* leftPageWidget,
-                        QTabWidget* rightPageWidget,
-                        QSplitter* splitter,
-                        QWidget* panel, QObject* parent = nullptr);
+    explicit EditorList(QTabWidget* leftPageWidget, QTabWidget* rightPageWidget,
+                        QSplitter* splitter, QWidget* panel, QObject* parent = nullptr);
 
-    Editor* newEditor(const QString& filename, const QByteArray& encoding,
-                      FileType fileType, const QString& contextFile,
-                     Project *pProject, bool newFile,
-                     QTabWidget* page=nullptr);
+    Editor* newEditor(const QString& filename, const QByteArray& encoding, FileType fileType,
+                      const QString& contextFile, Project* pProject, bool newFile,
+                      QTabWidget* page = nullptr);
 
-    Editor* getEditor(int index=-1, QTabWidget* tabsWidget=nullptr) const;
+    Editor* getEditor(int index = -1, QTabWidget* tabsWidget = nullptr) const;
 
-    bool closeEditor(Editor* editor, bool transferFocus=true, bool force=false);
+    bool closeEditor(Editor* editor, bool transferFocus = true, bool force = false);
 
     bool swapEditor(Editor* editor);
 
@@ -80,9 +73,9 @@ public:
 
     Editor* operator[](int index);
 
-    QTabWidget *leftPageWidget() const;
+    QTabWidget* leftPageWidget() const;
 
-    QTabWidget *rightPageWidget() const;
+    QTabWidget* rightPageWidget() const;
 
 signals:
     void editorClosed();
@@ -96,12 +89,13 @@ private:
     void doRemoveEditor(Editor* e);
 private slots:
     void onEditorRenamed(const QString& oldFilename, const QString& newFilename, bool firstSave);
+
 private:
     LayoutShowType mLayout;
-    QTabWidget *mLeftPageWidget;
-    QTabWidget *mRightPageWidget;
-    QSplitter *mSplitter;
-    QWidget *mPanel;
+    QTabWidget* mLeftPageWidget;
+    QTabWidget* mRightPageWidget;
+    QSplitter* mSplitter;
+    QWidget* mPanel;
     int mUpdateCount;
 };
 

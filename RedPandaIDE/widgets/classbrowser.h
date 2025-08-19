@@ -24,40 +24,42 @@
 struct ClassBrowserNode {
     ClassBrowserNode* parent;
     PStatement statement;
-    QVector<ClassBrowserNode *> children;
-//    bool childrenFetched;
+    QVector<ClassBrowserNode*> children;
+    //    bool childrenFetched;
 };
 
 using PClassBrowserNode = std::shared_ptr<ClassBrowserNode>;
 
 class ColorSchemeItem;
 
-class ClassBrowserModel : public QAbstractItemModel{
+class ClassBrowserModel : public QAbstractItemModel
+{
     Q_OBJECT
-        // QAbstractItemModel interface
+    // QAbstractItemModel interface
 public:
-    explicit ClassBrowserModel(QObject* parent=nullptr);
+    explicit ClassBrowserModel(QObject* parent = nullptr);
     ~ClassBrowserModel();
     ClassBrowserModel& operator=(const ClassBrowserModel& model) = delete;
 
-    QModelIndex index(int row, int column, const QModelIndex &parent) const override;
-    QModelIndex parent(const QModelIndex &child) const override;
-    bool hasChildren(const QModelIndex &parent) const override;
-    int rowCount(const QModelIndex &parent) const override;
-    int columnCount(const QModelIndex &parent) const override;
-//    void fetchMore(const QModelIndex &parent) override;
-//    bool canFetchMore(const QModelIndex &parent) const override;
-    QVariant data(const QModelIndex &index, int role) const override;
-    const PCppParser &parser() const;
-    void setParser(const PCppParser &newCppParser);
+    QModelIndex index(int row, int column, const QModelIndex& parent) const override;
+    QModelIndex parent(const QModelIndex& child) const override;
+    bool hasChildren(const QModelIndex& parent) const override;
+    int rowCount(const QModelIndex& parent) const override;
+    int columnCount(const QModelIndex& parent) const override;
+    //    void fetchMore(const QModelIndex &parent) override;
+    //    bool canFetchMore(const QModelIndex &parent) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
+    const PCppParser& parser() const;
+    void setParser(const PCppParser& newCppParser);
     void clear();
-    const QString &currentFile() const;
-    void setCurrentFile(const QString &newCurrentFile);
+    const QString& currentFile() const;
+    void setCurrentFile(const QString& newCurrentFile);
     void beginUpdate();
     void endUpdate();
 
-    const std::shared_ptr<QHash<StatementKind, std::shared_ptr<ColorSchemeItem> > > &colors() const;
-    void setColors(const std::shared_ptr<QHash<StatementKind, std::shared_ptr<ColorSchemeItem> > > &newColors);
+    const std::shared_ptr<QHash<StatementKind, std::shared_ptr<ColorSchemeItem>>>& colors() const;
+    void setColors(
+        const std::shared_ptr<QHash<StatementKind, std::shared_ptr<ColorSchemeItem>>>& newColors);
 
     ProjectClassBrowserType classBrowserType() const;
     void setClassBrowserType(ProjectClassBrowserType newClassBrowserType);
@@ -68,19 +70,21 @@ signals:
     void refreshEnd();
 public slots:
     void fillStatements();
+
 private:
     PClassBrowserNode addChild(ClassBrowserNode* node, const PStatement& statement);
     void addMembers();
-    void sortNode(ClassBrowserNode * node);
-    void filterChildren(ClassBrowserNode * node, const StatementMap& statements);
+    void sortNode(ClassBrowserNode* node);
+    void filterChildren(ClassBrowserNode* node, const StatementMap& statements);
     PStatement createDummy(const PStatement& statement);
-    ClassBrowserNode* getParentNode(const PStatement &parentStatement, int depth);
+    ClassBrowserNode* getParentNode(const PStatement& parentStatement, int depth);
     bool isScopeStatement(const PStatement& statement);
+
 private:
-    ClassBrowserNode * mRoot;
-    QHash<QString,PStatement> mDummyStatements;
-    QHash<QString,PClassBrowserNode> mScopeNodes;
-    QHash<QString,PClassBrowserNode> mNodeIndex;
+    ClassBrowserNode* mRoot;
+    QHash<QString, PStatement> mDummyStatements;
+    QHash<QString, PClassBrowserNode> mScopeNodes;
+    QHash<QString, PClassBrowserNode> mNodeIndex;
     QSet<Statement*> mProcessedStatements;
     QVector<PClassBrowserNode> mNodes;
     PCppParser mParser;
@@ -88,9 +92,8 @@ private:
     int mUpdateCount;
     mutable QRecursiveMutex mMutex;
     QString mCurrentFile;
-    std::shared_ptr<QHash<StatementKind, std::shared_ptr<ColorSchemeItem> > > mColors;
+    std::shared_ptr<QHash<StatementKind, std::shared_ptr<ColorSchemeItem>>> mColors;
     ProjectClassBrowserType mClassBrowserType;
-
 };
 
 #endif // CLASSBROWSER_H

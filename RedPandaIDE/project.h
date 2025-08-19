@@ -54,7 +54,7 @@ struct ProjectModelNode {
     bool isUnit;
     std::weak_ptr<ProjectUnit> pUnit;
     int priority;
-    QList<PProjectModelNode>  children;
+    QList<PProjectModelNode> children;
     ProjectModelNodeType folderNodeType;
     int level;
 };
@@ -72,40 +72,40 @@ struct ProjectEditorLayout {
 
 using PProjectEditorLayout = std::shared_ptr<ProjectEditorLayout>;
 
-class ProjectUnit {
-
+class ProjectUnit
+{
 public:
     explicit ProjectUnit(Project* parent);
     Project* parent() const;
-    const QString &fileName() const;
+    const QString& fileName() const;
     void setFileName(QString newFileName);
-    const QString &folder() const;
-    void setFolder(const QString &newFolder);
+    const QString& folder() const;
+    void setFolder(const QString& newFolder);
     bool compile() const;
     void setCompile(bool newCompile);
     bool compileCpp() const;
     void setCompileCpp(bool newCompileCpp);
     bool overrideBuildCmd() const;
     void setOverrideBuildCmd(bool newOverrideBuildCmd);
-    const QString &buildCmd() const;
-    void setBuildCmd(const QString &newBuildCmd);
+    const QString& buildCmd() const;
+    void setBuildCmd(const QString& newBuildCmd);
     bool link() const;
     void setLink(bool newLink);
     int priority() const;
     void setPriority(int newPriority);
-    const QByteArray &encoding() const;
-    void setEncoding(const QByteArray &newEncoding);
+    const QByteArray& encoding() const;
+    void setEncoding(const QByteArray& newEncoding);
 
-    PProjectModelNode &node();
-    void setNode(const PProjectModelNode &newNode);
+    PProjectModelNode& node();
+    void setNode(const PProjectModelNode& newNode);
 
-//    bool FileMissing() const;
-//    void setFileMissing(bool newDontSave);
+    //    bool FileMissing() const;
+    //    void setFileMissing(bool newDontSave);
 
     void setNew(bool newNew);
 
-    const QByteArray &realEncoding() const;
-    void setRealEncoding(const QByteArray &newRealEncoding);
+    const QByteArray& realEncoding() const;
+    void setRealEncoding(const QByteArray& newRealEncoding);
 
 private:
     Project* mParent;
@@ -121,60 +121,62 @@ private:
     QByteArray mEncoding;
     QByteArray mRealEncoding;
     PProjectModelNode mNode;
-//    bool mFileMissing;
+    //    bool mFileMissing;
 };
 
 using PProjectUnit = std::shared_ptr<ProjectUnit>;
 
 class GitRepository;
 class CustomFileIconProvider;
-class ProjectModel : public QAbstractItemModel {
+class ProjectModel : public QAbstractItemModel
+{
     Q_OBJECT
 public:
-    explicit ProjectModel(Project* project, QObject* parent=nullptr);
+    explicit ProjectModel(Project* project, QObject* parent = nullptr);
     ~ProjectModel();
     void beginUpdate();
     void endUpdate();
+
 private:
     Project* mProject;
     int mUpdateCount;
     CustomFileIconProvider* mIconProvider;
 
-
     // QAbstractItemModel interface
 public:
-    QModelIndex index(int row, int column, const QModelIndex &parent) const override;
-    QModelIndex parent(const QModelIndex &child) const override;
-    int rowCount(const QModelIndex &parent) const override;
-    int columnCount(const QModelIndex &parent) const override;
-    QVariant data(const QModelIndex &index, int role) const override;
-    Qt::ItemFlags flags(const QModelIndex &index) const override;
-    bool setData(const QModelIndex &index, const QVariant &value, int role) override;
-    void refreshIcon(const QModelIndex& index, bool update=true);
+    QModelIndex index(int row, int column, const QModelIndex& parent) const override;
+    QModelIndex parent(const QModelIndex& child) const override;
+    int rowCount(const QModelIndex& parent) const override;
+    int columnCount(const QModelIndex& parent) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
+    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
+    void refreshIcon(const QModelIndex& index, bool update = true);
     void refreshIcon(const QString& filename);
     void refreshIcons();
     void refreshNodeIconRecursive(PProjectModelNode node);
 
-    QModelIndex getNodeIndex(ProjectModelNode *node) const;
-    QModelIndex getParentIndex(ProjectModelNode * node) const;
+    QModelIndex getNodeIndex(ProjectModelNode* node) const;
+    QModelIndex getParentIndex(ProjectModelNode* node) const;
 
     QModelIndex rootIndex() const;
 
 private:
-
     // QAbstractItemModel interface
 public:
-    bool canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const override;
+    bool canDropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
+                         const QModelIndex& parent) const override;
     Qt::DropActions supportedDropActions() const override;
-    bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
-    QMimeData *mimeData(const QModelIndexList &indexes) const override;
-    Project *project() const;
-    CustomFileIconProvider *iconProvider() const;
+    bool dropMimeData(const QMimeData* data, Qt::DropAction action, int row, int column,
+                      const QModelIndex& parent) override;
+    QMimeData* mimeData(const QModelIndexList& indexes) const override;
+    Project* project() const;
+    CustomFileIconProvider* iconProvider() const;
 
     // QAbstractItemModel interface
 public:
-    bool insertRows(int row, int count, const QModelIndex &parent) override;
-    bool removeRows(int row, int count, const QModelIndex &parent) override;
+    bool insertRows(int row, int count, const QModelIndex& parent) override;
+    bool removeRows(int row, int count, const QModelIndex& parent) override;
 };
 
 class ProjectModelSortFilterProxy : public QSortFilterProxyModel
@@ -182,10 +184,10 @@ class ProjectModelSortFilterProxy : public QSortFilterProxyModel
     Q_OBJECT
 
 public:
-    explicit ProjectModelSortFilterProxy(QObject *parent = nullptr);
+    explicit ProjectModelSortFilterProxy(QObject* parent = nullptr);
     // QSortFilterProxyModel interface
 protected:
-    bool lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const override;
+    bool lessThan(const QModelIndex& source_left, const QModelIndex& source_right) const override;
 };
 
 class ProjectTemplate;
@@ -193,22 +195,17 @@ class Project : public QObject
 {
     Q_OBJECT
 public:
-    explicit Project(const QString& filename, const QString& name,
-                     EditorList* editorList,
-                     QFileSystemWatcher* fileSystemWatcher,
-                     QObject *parent = nullptr);
+    explicit Project(const QString& filename, const QString& name, EditorList* editorList,
+                     QFileSystemWatcher* fileSystemWatcher, QObject* parent = nullptr);
 
-    static std::shared_ptr<Project> load(const QString& filename,
-                                    EditorList* editorList,
-                                    QFileSystemWatcher* fileSystemWatcher,
-                                    QObject *parent = nullptr);
-    static std::shared_ptr<Project> create(const QString& filename,
-                                           const QString& name,
+    static std::shared_ptr<Project> load(const QString& filename, EditorList* editorList,
+                                         QFileSystemWatcher* fileSystemWatcher,
+                                         QObject* parent = nullptr);
+    static std::shared_ptr<Project> create(const QString& filename, const QString& name,
                                            EditorList* editorList,
                                            QFileSystemWatcher* fileSystemWatcher,
                                            const std::shared_ptr<ProjectTemplate> pTemplate,
-                                           bool useCpp,
-                                           QObject *parent = nullptr);
+                                           bool useCpp, QObject* parent = nullptr);
 
     ~Project();
     QString directory() const;
@@ -218,14 +215,12 @@ public:
     bool unitsModifiedSince(const QDateTime& time);
     bool modified() const;
     bool modifiedSince(const QDateTime& time);
-//    void setFileName(QString value);
+    //    void setFileName(QString value);
     void setModified(bool value);
 
     PProjectModelNode addFolder(PProjectModelNode parentFolder, const QString& s);
-    PProjectUnit  newUnit(PProjectModelNode parentNode,
-                 const QString& customFileName="");
-    PProjectUnit addUnit(const QString& inFileName,
-                PProjectModelNode parentNode);
+    PProjectUnit newUnit(PProjectModelNode parentNode, const QString& customFileName = "");
+    PProjectUnit addUnit(const QString& inFileName, PProjectModelNode parentNode);
     QString folder();
     void buildPrivateResource();
     void closeUnit(PProjectUnit& unit);
@@ -235,7 +230,7 @@ public:
     QString getNodePath(PProjectModelNode node);
     void incrementBuildNumber();
 
-    Editor* openUnit(PProjectUnit& unit, bool forceOpen=true);
+    Editor* openUnit(PProjectUnit& unit, bool forceOpen = true);
     Editor* openUnit(PProjectUnit& unit, const PProjectEditorLayout& layout);
     Editor* unitEditor(const PProjectUnit& unit) const;
     Editor* unitEditor(const ProjectUnit* unit) const;
@@ -243,12 +238,13 @@ public:
     QList<PProjectUnit> unitList();
     QStringList unitFiles();
 
-    PProjectModelNode pointerToNode(ProjectModelNode * p, PProjectModelNode parent=PProjectModelNode());
+    PProjectModelNode pointerToNode(ProjectModelNode* p,
+                                    PProjectModelNode parent = PProjectModelNode());
     void rebuildNodes();
     bool removeUnit(PProjectUnit& unit, bool doClose, bool removeFile = false);
     bool removeFolder(PProjectModelNode node);
     void resetParserProjectFiles();
-    void saveAll(); // save [Project] and  all [UnitX]
+    void saveAll();    // save [Project] and  all [UnitX]
     void saveLayout(); // save all [UnitX]
     void saveOptions();
     void renameUnit(PProjectUnit& unit, const QString& sFileName);
@@ -259,44 +255,42 @@ public:
 
     void associateEditor(Editor* editor);
     void associateEditorToUnit(Editor* editor, PProjectUnit unit);
-    bool setCompileOption(const QString &key, const QString &value);
-    QString getCompileOption(const QString &key) const;
+    bool setCompileOption(const QString& key, const QString& value);
+    QString getCompileOption(const QString& key) const;
 
     void updateFolders();
     void setCompilerSet(int compilerSetIndex);
 
-    bool saveAsTemplate(const QString& templateFolder,
-                        const QString& name,
-                        const QString& description,
-                        const QString& category);
+    bool saveAsTemplate(const QString& templateFolder, const QString& name,
+                        const QString& description, const QString& category);
 
     void setEncoding(const QByteArray& encoding);
 
     std::shared_ptr<CppParser> cppParser();
-    const QString &filename() const;
+    const QString& filename() const;
 
-    const QString &name() const;
-    void setName(const QString &newName);
+    const QString& name() const;
+    void setName(const QString& newName);
 
-    const PProjectModelNode &rootNode() const;
+    const PProjectModelNode& rootNode() const;
 
-    ProjectOptions &options();
+    ProjectOptions& options();
 
-    ProjectModel* model() ;
+    ProjectModel* model();
 
     ProjectModelType modelType() const;
     void setModelType(ProjectModelType type);
 
-    EditorList *editorList() const;
+    EditorList* editorList() const;
 
-    QFileSystemWatcher *fileSystemWatcher() const;
+    QFileSystemWatcher* fileSystemWatcher() const;
 
     QString fileSystemNodeFolderPath(const PProjectModelNode& node);
 
     QStringList binDirs();
 
     void renameFolderNode(PProjectModelNode node, const QString newName);
-    void loadUnitLayout(Editor *e);
+    void loadUnitLayout(Editor* e);
 signals:
     void unitRemoved(const QString& fileName);
     void unitAdded(const QString& fileName);
@@ -311,31 +305,29 @@ private:
     QStringList absolutePaths(const QStringList& files);
 
     bool internalRemoveUnit(PProjectUnit& unit, bool doClose, bool removeFile);
-    PProjectUnit internalAddUnit(const QString& inFileName,
-                PProjectModelNode parentNode);
+    PProjectUnit internalAddUnit(const QString& inFileName, PProjectModelNode parentNode);
 
     bool assignTemplate(const std::shared_ptr<ProjectTemplate> aTemplate, bool useCpp);
     void checkProjectFileForUpdate(SimpleIni& ini);
     void createFolderNodes();
     void createFileSystemFolderNodes();
-    void createFileSystemFolderNode(ProjectModelNodeType folderType, const QString& folderName, PProjectModelNode parent, const QSet<QString>& validFolders);
+    void createFileSystemFolderNode(ProjectModelNodeType folderType, const QString& folderName,
+                                    PProjectModelNode parent, const QSet<QString>& validFolders);
     PProjectModelNode getParentFileSystemFolderNode(const QString& filename);
-    PProjectModelNode findFileSystemFolderNode(const QString& folderPath, ProjectModelNodeType nodeType);
+    PProjectModelNode findFileSystemFolderNode(const QString& folderPath,
+                                               ProjectModelNodeType nodeType);
     PProjectModelNode getCustomeFolderNodeFromName(const QString& name);
     void loadOptions(SimpleIni& ini);
-    //PProjectUnit
+    // PProjectUnit
     QHash<QString, PProjectEditorLayout> loadLayout();
 
-    PProjectModelNode makeNewFolderNode(
-            const QString& folderName,
-            PProjectModelNode newParent,
-            ProjectModelNodeType nodeType=ProjectModelNodeType::Folder,
-            int priority=0);
+    PProjectModelNode
+    makeNewFolderNode(const QString& folderName, PProjectModelNode newParent,
+                      ProjectModelNodeType nodeType = ProjectModelNodeType::Folder,
+                      int priority = 0);
     PProjectModelNode makeNewFileNode(
-            //const QString& fileName,
-            PProjectUnit unit,
-            int priority,
-            PProjectModelNode newParent);
+        // const QString& fileName,
+        PProjectUnit unit, int priority, PProjectModelNode newParent);
     PProjectModelNode makeProjectNode();
     void open();
     void removeFolderRecurse(PProjectModelNode node);
@@ -343,7 +335,7 @@ private:
     void updateCompilerSetting();
 
 private:
-    QHash<QString,PProjectUnit> mUnits;
+    QHash<QString, PProjectUnit> mUnits;
     ProjectOptions mOptions;
     QString mFilename;
     QString mName;
@@ -357,7 +349,7 @@ private:
 
     QList<PProjectModelNode> mCustomFolderNodes;
     ProjectModel mModel;
-    EditorList *mEditorList;
+    EditorList* mEditorList;
     QFileSystemWatcher* mFileSystemWatcher;
 };
 

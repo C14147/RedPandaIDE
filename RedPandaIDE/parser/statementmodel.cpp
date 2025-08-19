@@ -19,7 +19,7 @@
 #include <QFile>
 #include <QTextStream>
 
-StatementModel::StatementModel(QObject *parent) : QObject(parent)
+StatementModel::StatementModel(QObject* parent) : QObject(parent)
 {
     mCount = 0;
 }
@@ -27,13 +27,13 @@ StatementModel::StatementModel(QObject *parent) : QObject(parent)
 void StatementModel::add(const PStatement& statement)
 {
     if (!statement) {
-        return ;
+        return;
     }
     PStatement parent = statement->parentScope.lock();
     if (parent) {
-        addMember(parent->children,statement);
+        addMember(parent->children, statement);
     } else {
-        addMember(mGlobalStatements,statement);
+        addMember(mGlobalStatements, statement);
     }
     mCount++;
 #ifdef QT_DEBUG
@@ -44,94 +44,95 @@ void StatementModel::add(const PStatement& statement)
 void StatementModel::deleteStatement(const PStatement& statement)
 {
     if (!statement) {
-        return ;
+        return;
     }
     PStatement parent = statement->parentScope.lock();
     int count = 0;
     if (parent) {
-        count = deleteMember(parent->children,statement);
+        count = deleteMember(parent->children, statement);
     } else {
-        count = deleteMember(mGlobalStatements,statement);
+        count = deleteMember(mGlobalStatements, statement);
     }
     mCount -= count;
 #ifdef QT_DEBUG
     mAllStatements.removeOne(statement);
 #endif
-
 }
 
 #ifdef QT_DEBUG
-void StatementModel::dump(const QString &logFile)
+void StatementModel::dump(const QString& logFile)
 {
     QFile file(logFile);
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out(&file);
-        dumpStatementMap(mGlobalStatements,out,0);
+        dumpStatementMap(mGlobalStatements, out, 0);
     }
 }
 
-void StatementModel::dumpAll(const QString &logFile)
+void StatementModel::dumpAll(const QString& logFile)
 {
     QFile file(logFile);
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out(&file);
-        for (PStatement statement:mAllStatements) {
-            out<<QString("%1, %2, %3, %4, %5, %6, %7, %8, %9, %10, %11, %12")
-             .arg(statement->command).arg(int(statement->kind))
-             .arg(statement->type).arg(statement->fullName)
-             .arg((size_t)(statement->parentScope.lock().get()))
-             .arg((int)statement->accessibility)
-             .arg(statement->fileName)
-             .arg(statement->line)
-             .arg(statement->definitionFileName)
-             .arg(statement->definitionLine)<<Qt::endl;
+        for (PStatement statement : mAllStatements) {
+            out << QString("%1, %2, %3, %4, %5, %6, %7, %8, %9, %10, %11, %12")
+                       .arg(statement->command)
+                       .arg(int(statement->kind))
+                       .arg(statement->type)
+                       .arg(statement->fullName)
+                       .arg((size_t)(statement->parentScope.lock().get()))
+                       .arg((int)statement->accessibility)
+                       .arg(statement->fileName)
+                       .arg(statement->line)
+                       .arg(statement->definitionFileName)
+                       .arg(statement->definitionLine)
+                << Qt::endl;
         }
     }
 }
 #endif
 
-void StatementModel::addMember(StatementMap &map, const PStatement& statement)
+void StatementModel::addMember(StatementMap& map, const PStatement& statement)
 {
     if (!statement)
-        return ;
-    map.insert(statement->command,statement);
-//    QList<PStatement> lst = map.values(statement->command);
-//    if (!lst) {
-//        lst=std::make_shared<StatementList>();
-//        map.insert(,lst);
-//    }
-//    lst->append(statement);
+        return;
+    map.insert(statement->command, statement);
+    //    QList<PStatement> lst = map.values(statement->command);
+    //    if (!lst) {
+    //        lst=std::make_shared<StatementList>();
+    //        map.insert(,lst);
+    //    }
+    //    lst->append(statement);
 }
 
-int StatementModel::deleteMember(StatementMap &map, const PStatement& statement)
+int StatementModel::deleteMember(StatementMap& map, const PStatement& statement)
 {
     if (!statement)
         return 0;
-    return map.remove(statement->command,statement);
+    return map.remove(statement->command, statement);
 }
 
-void StatementModel::dumpStatementMap(StatementMap &map, QTextStream &out, int level)
+void StatementModel::dumpStatementMap(StatementMap& map, QTextStream& out, int level)
 {
-    QString indent(level,'\t');
-    foreach (const PStatement& statement,map) {
-        out<<indent<<QString("%1, %2, %3, %4, %5, %6, %7, %8, %9, %10, %11, %12")
-         .arg(statement->command).arg(int(statement->kind))
-         .arg(statement->type,
-              statement->fullName,
-              statement->noNameArgs,
-              statement->args)
-         .arg((size_t)(statement->parentScope.lock().get()))
-         .arg((int)statement->accessibility)
-         .arg(statement->fileName)
-         .arg(statement->line)
-         .arg(statement->definitionFileName)
-         .arg(statement->definitionLine);
-        out<<Qt::endl;
+    QString indent(level, '\t');
+    foreach (const PStatement& statement, map) {
+        out << indent
+            << QString("%1, %2, %3, %4, %5, %6, %7, %8, %9, %10, %11, %12")
+                   .arg(statement->command)
+                   .arg(int(statement->kind))
+                   .arg(statement->type, statement->fullName, statement->noNameArgs,
+                        statement->args)
+                   .arg((size_t)(statement->parentScope.lock().get()))
+                   .arg((int)statement->accessibility)
+                   .arg(statement->fileName)
+                   .arg(statement->line)
+                   .arg(statement->definitionFileName)
+                   .arg(statement->definitionLine);
+        out << Qt::endl;
         if (statement->children.isEmpty())
             continue;
-        out<<indent<<statement->command<<" {"<<Qt::endl;
-        dumpStatementMap(statement->children,out,level+1);
-        out<<indent<<"}"<<Qt::endl;
-
+        out << indent << statement->command << " {" << Qt::endl;
+        dumpStatementMap(statement->children, out, level + 1);
+        out << indent << "}" << Qt::endl;
     }
 }

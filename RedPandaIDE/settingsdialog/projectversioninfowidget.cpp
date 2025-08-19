@@ -24,15 +24,13 @@
 static QStringList languageNames;
 static QList<int> languageIDs;
 
-static BOOL CALLBACK localeEnumProc(
-  _In_ wchar_t *lpLocaleString
-        ) {
-
+static BOOL CALLBACK localeEnumProc(_In_ wchar_t* lpLocaleString)
+{
     QString s = QString::fromWCharArray(lpLocaleString);
     bool ok;
-    int aid = s.mid(4,4).toInt(&ok,16);
+    int aid = s.mid(4, 4).toInt(&ok, 16);
     if (ok) {
-        wchar_t buffer [1024];
+        wchar_t buffer[1024];
         GetLocaleInfoW(aid, LOCALE_SLANGUAGE, buffer, sizeof(buffer) / sizeof(wchar_t));
         languageNames.append(QString::fromWCharArray(buffer));
         languageIDs.append(aid);
@@ -40,9 +38,9 @@ static BOOL CALLBACK localeEnumProc(
     return TRUE;
 }
 
-ProjectVersionInfoWidget::ProjectVersionInfoWidget(const QString &name, const QString &group, QWidget *parent) :
-    SettingsWidget(name,group,parent),
-    ui(new Ui::ProjectVersionInfoWidget)
+ProjectVersionInfoWidget::ProjectVersionInfoWidget(const QString& name, const QString& group,
+                                                   QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::ProjectVersionInfoWidget)
 {
     ui->setupUi(this);
     if (languageNames.isEmpty()) {
@@ -66,7 +64,7 @@ void ProjectVersionInfoWidget::doLoad()
     ui->spinBuild->setValue(project->options().versionInfo.build);
     ui->chkAutoIncreaseBuildNumber->setChecked(project->options().versionInfo.autoIncBuildNr);
     ui->chkSyncProductWithFile->setChecked(project->options().versionInfo.syncProduct);
-    for (int i=0;i<languageIDs.count();i++) {
+    for (int i = 0; i < languageIDs.count(); i++) {
         if (languageIDs[i] == project->options().versionInfo.languageID) {
             ui->cbLanguage->setCurrentIndex(i);
             break;
@@ -93,7 +91,7 @@ void ProjectVersionInfoWidget::doSave()
     project->options().versionInfo.build = ui->spinBuild->value();
     project->options().versionInfo.autoIncBuildNr = ui->chkAutoIncreaseBuildNumber->isChecked();
     project->options().versionInfo.syncProduct = ui->chkSyncProductWithFile->isChecked();
-    if (ui->cbLanguage->currentIndex()>=0)
+    if (ui->cbLanguage->currentIndex() >= 0)
         project->options().versionInfo.languageID = languageIDs[ui->cbLanguage->currentIndex()];
 
     project->options().versionInfo.fileDescription = ui->txtFileDescription->text();

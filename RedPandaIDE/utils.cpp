@@ -28,13 +28,13 @@
 #endif
 
 #ifdef Q_OS_WIN
-using pIsWow64Process2_t = BOOL (WINAPI *)(
-    HANDLE hProcess, USHORT *pProcessMachine, USHORT *pNativeMachine
-);
+using pIsWow64Process2_t = BOOL(WINAPI*)(HANDLE hProcess, USHORT* pProcessMachine,
+                                         USHORT* pNativeMachine);
 #endif
 
-NonExclusiveTemporaryFileOwner::NonExclusiveTemporaryFileOwner(std::unique_ptr<QTemporaryFile> &tempFile) :
-    filename(tempFile ? tempFile->fileName() : QString())
+NonExclusiveTemporaryFileOwner::NonExclusiveTemporaryFileOwner(
+    std::unique_ptr<QTemporaryFile>& tempFile)
+    : filename(tempFile ? tempFile->fileName() : QString())
 {
     if (tempFile) {
         tempFile->flush();
@@ -49,23 +49,23 @@ NonExclusiveTemporaryFileOwner::~NonExclusiveTemporaryFileOwner()
         QFile::remove(filename);
 }
 
-FileType getFileType(const QString &filename)
+FileType getFileType(const QString& filename)
 {
     if (filename.isEmpty())
         return FileType::None;
     if (filename.startsWith("makefile", PATH_SENSITIVITY)) {
         return FileType::MakeFile;
     }
-    if (filename.endsWith(".s",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".s", PATH_SENSITIVITY)) {
         return FileType::ATTASM;
     }
-    if (filename.endsWith(".S",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".S", PATH_SENSITIVITY)) {
         return FileType::ATTASM;
     }
-    if (filename.endsWith(".asm",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".asm", PATH_SENSITIVITY)) {
         return FileType::INTELASM;
     }
-    if (filename.endsWith(".dev",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".dev", PATH_SENSITIVITY)) {
         return FileType::Project;
     }
     if (filename.endsWith(".C")) {
@@ -74,79 +74,79 @@ FileType getFileType(const QString &filename)
     if (filename.endsWith(".CPP")) {
         return FileType::CppSource;
     }
-    if (filename.endsWith(".c",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".c", PATH_SENSITIVITY)) {
         return FileType::CSource;
     }
-    if (filename.endsWith(".cpp",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".cpp", PATH_SENSITIVITY)) {
         return FileType::CppSource;
     }
-    if (filename.endsWith(".cc",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".cc", PATH_SENSITIVITY)) {
         return FileType::CppSource;
     }
-    if (filename.endsWith(".cxx",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".cxx", PATH_SENSITIVITY)) {
         return FileType::CppSource;
     }
-    if (filename.endsWith(".c++",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".c++", PATH_SENSITIVITY)) {
         return FileType::CppSource;
     }
     if (filename.endsWith(".H")) {
         return FileType::CCppHeader;
     }
-    if (filename.endsWith(".h",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".h", PATH_SENSITIVITY)) {
         return FileType::CCppHeader;
     }
-    if (filename.endsWith(".hpp",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".hpp", PATH_SENSITIVITY)) {
         return FileType::CCppHeader;
     }
-    if (filename.endsWith(".hh",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".hh", PATH_SENSITIVITY)) {
         return FileType::CCppHeader;
     }
-    if (filename.endsWith(".hxx",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".hxx", PATH_SENSITIVITY)) {
         return FileType::CCppHeader;
     }
-    if (filename.endsWith(".tcc",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".tcc", PATH_SENSITIVITY)) {
         return FileType::CCppHeader;
     }
-    if (filename.endsWith(".inl",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".inl", PATH_SENSITIVITY)) {
         return FileType::CCppHeader;
     }
-    if (filename.endsWith(".gimple",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".gimple", PATH_SENSITIVITY)) {
         return FileType::GIMPLE;
     }
-    if (filename.endsWith(".p",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".p", PATH_SENSITIVITY)) {
         return FileType::PreprocessedSource;
     }
-    if (filename.endsWith(".rc",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".rc", PATH_SENSITIVITY)) {
         return FileType::WindowsResourceSource;
     }
-    if (filename.endsWith(".in",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".in", PATH_SENSITIVITY)) {
         return FileType::Text;
     }
-    if (filename.endsWith(".out",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".out", PATH_SENSITIVITY)) {
         return FileType::Text;
     }
-    if (filename.endsWith(".txt",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".txt", PATH_SENSITIVITY)) {
         return FileType::Text;
     }
-    if (filename.endsWith(".md",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".md", PATH_SENSITIVITY)) {
         return FileType::Text;
     }
-    if (filename.endsWith(".info",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".info", PATH_SENSITIVITY)) {
         return FileType::Text;
     }
-    if (filename.endsWith(".dat",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".dat", PATH_SENSITIVITY)) {
         return FileType::Text;
     }
-    if (filename.endsWith(".lua",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".lua", PATH_SENSITIVITY)) {
         return FileType::LUA;
     }
-    if (filename.endsWith(".fs",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".fs", PATH_SENSITIVITY)) {
         return FileType::FragmentShader;
     }
-    if (filename.endsWith(".vs",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".vs", PATH_SENSITIVITY)) {
         return FileType::VerticeShader;
     }
-    if (filename.endsWith(".def",PATH_SENSITIVITY)) {
+    if (filename.endsWith(".def", PATH_SENSITIVITY)) {
         return FileType::ModuleDef;
     }
     QFileInfo info(filename);
@@ -156,11 +156,12 @@ FileType getFileType(const QString &filename)
     return FileType::Other;
 }
 
-bool programIsWin32GuiApp(const QString & filename)
+bool programIsWin32GuiApp(const QString& filename)
 {
 #ifdef Q_OS_WIN
     bool result = false;
-    HANDLE handle = CreateFileW(filename.toStdWString().c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+    HANDLE handle = CreateFileW(filename.toStdWString().c_str(), GENERIC_READ, FILE_SHARE_READ,
+                                NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
     if (handle != INVALID_HANDLE_VALUE) {
         result = [handle] {
             IMAGE_DOS_HEADER dos_header;
@@ -189,11 +190,12 @@ bool programIsWin32GuiApp(const QString & filename)
             ReadFile(handle, &opt_header, sizeof(opt_header), &bytesread, NULL);
             if (bytesread != sizeof(opt_header))
                 return false;
-            if (opt_header.Magic != IMAGE_NT_OPTIONAL_HDR32_MAGIC && opt_header.Magic != IMAGE_NT_OPTIONAL_HDR64_MAGIC)
+            if (opt_header.Magic != IMAGE_NT_OPTIONAL_HDR32_MAGIC &&
+                opt_header.Magic != IMAGE_NT_OPTIONAL_HDR64_MAGIC)
                 return false;
 
             return opt_header.Subsystem == IMAGE_SUBSYSTEM_WINDOWS_GUI;
-        } ();
+        }();
     }
     CloseHandle(handle);
     return result;
@@ -202,12 +204,12 @@ bool programIsWin32GuiApp(const QString & filename)
 #endif
 }
 
-QString parseMacros(const QString &s)
+QString parseMacros(const QString& s)
 {
     return parseMacros(s, devCppMacroVariables());
 }
 
-QString parseMacros(const QString &s, const QMap<QString, QString> &macros)
+QString parseMacros(const QString& s, const QMap<QString, QString>& macros)
 {
     QString result = s;
     for (auto it = macros.begin(); it != macros.end(); ++it) {
@@ -220,7 +222,7 @@ QString parseMacros(const QString &s, const QMap<QString, QString> &macros)
 
 QMap<QString, QString> devCppMacroVariables()
 {
-    Editor *e = pMainWindow->editorList()->getEditor();
+    Editor* e = pMainWindow->editorList()->getEditor();
 
     QMap<QString, QString> result = {
         {"DEFAULT", localizePath(QDir::currentPath())},
@@ -228,8 +230,7 @@ QMap<QString, QString> devCppMacroVariables()
         {"DEVCPPVERSION", REDPANDA_CPP_VERSION},
         {"EXECPATH", localizePath(pSettings->dirs().appDir())},
         {"DATE", QDate::currentDate().toString("yyyy-MM-dd")},
-        {"DATETIME", QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")}
-    };
+        {"DATETIME", QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")}};
 
     Settings::PCompilerSet compilerSet = pSettings->compilerSets().defaultSet();
     if (compilerSet) {
@@ -303,39 +304,40 @@ void resetCppParser(std::shared_ptr<CppParser> parser, int compilerSetIndex)
     parser->setParseLocalHeaders(true);
 
     // Set options depending on the current compiler set
-    if (compilerSetIndex<0) {
-        compilerSetIndex=pSettings->compilerSets().defaultIndex();
+    if (compilerSetIndex < 0) {
+        compilerSetIndex = pSettings->compilerSets().defaultIndex();
     }
     Settings::PCompilerSet compilerSet = pSettings->compilerSets().getSet(compilerSetIndex);
 #ifdef ENABLE_SDCC
-    if (compilerSet && compilerSet->compilerType()==CompilerType::SDCC)
+    if (compilerSet && compilerSet->compilerType() == CompilerType::SDCC)
         parser->setLanguage(ParserLanguage::SDCC);
 #endif
     parser->clearIncludePaths();
-    bool isCpp = parser->language()==ParserLanguage::CPlusPlus;
+    bool isCpp = parser->language() == ParserLanguage::CPlusPlus;
     if (compilerSet) {
         if (isCpp) {
-            foreach  (const QString& file,compilerSet->CppIncludeDirs()) {
+            foreach (const QString& file, compilerSet->CppIncludeDirs()) {
                 parser->addIncludePath(file);
             }
         }
-        foreach  (const QString& file,compilerSet->CIncludeDirs()) {
+        foreach (const QString& file, compilerSet->CIncludeDirs()) {
             parser->addIncludePath(file);
         }
         if (isCpp) {
-            foreach  (const QString& file,compilerSet->defaultCppIncludeDirs()) {
+            foreach (const QString& file, compilerSet->defaultCppIncludeDirs()) {
                 parser->addIncludePath(file);
             }
         }
-        foreach  (const QString& file,compilerSet->defaultCIncludeDirs()) {
+        foreach (const QString& file, compilerSet->defaultCIncludeDirs()) {
             parser->addIncludePath(file);
         }
         // Set defines
-        foreach (const QString &define, compilerSet->defines(parser->language()==ParserLanguage::CPlusPlus)) {
+        foreach (const QString& define,
+                 compilerSet->defines(parser->language() == ParserLanguage::CPlusPlus)) {
             parser->addHardDefineByLine(define);
         }
-//        // add a RedPandaIDE's own macro
-//        parser->addHardDefineByLine("#define EGE_FOR_AUTO_CODE_COMPLETETION_ONLY");
+        //        // add a RedPandaIDE's own macro
+        //        parser->addHardDefineByLine("#define EGE_FOR_AUTO_CODE_COMPLETETION_ONLY");
         // add C/C++ default macro
         parser->addHardDefineByLine("#define __FILE__  1");
         parser->addHardDefineByLine("#define __LINE__  1");
@@ -343,30 +345,18 @@ void resetCppParser(std::shared_ptr<CppParser> parser, int compilerSetIndex)
         parser->addHardDefineByLine("#define __TIME__  1");
     }
     parser->parseHardDefines();
-    pMainWindow->disconnect(parser.get(),
-                            &CppParser::onStartParsing,
-                            pMainWindow,
+    pMainWindow->disconnect(parser.get(), &CppParser::onStartParsing, pMainWindow,
                             &MainWindow::onStartParsing);
-    pMainWindow->disconnect(parser.get(),
-                            &CppParser::onProgress,
-                            pMainWindow,
+    pMainWindow->disconnect(parser.get(), &CppParser::onProgress, pMainWindow,
                             &MainWindow::onParserProgress);
-    pMainWindow->disconnect(parser.get(),
-                            &CppParser::onEndParsing,
-                            pMainWindow,
+    pMainWindow->disconnect(parser.get(), &CppParser::onEndParsing, pMainWindow,
                             &MainWindow::onEndParsing);
-    pMainWindow->connect(parser.get(),
-                            &CppParser::onStartParsing,
-                            pMainWindow,
-                            &MainWindow::onStartParsing);
-    pMainWindow->connect(parser.get(),
-                            &CppParser::onProgress,
-                            pMainWindow,
-                            &MainWindow::onParserProgress);
-    pMainWindow->connect(parser.get(),
-                            &CppParser::onEndParsing,
-                            pMainWindow,
-                            &MainWindow::onEndParsing);
+    pMainWindow->connect(parser.get(), &CppParser::onStartParsing, pMainWindow,
+                         &MainWindow::onStartParsing);
+    pMainWindow->connect(parser.get(), &CppParser::onProgress, pMainWindow,
+                         &MainWindow::onParserProgress);
+    pMainWindow->connect(parser.get(), &CppParser::onEndParsing, pMainWindow,
+                         &MainWindow::onEndParsing);
 }
 
 int getNewFileNumber()
@@ -403,18 +393,17 @@ bool isGreenEdition()
         systemInstallPath = localizePath(systemInstallPath);
         userInstallPath = localizePath(userInstallPath);
         gIsGreenEdition = appPath.compare(systemInstallPath, Qt::CaseInsensitive) != 0 &&
-                appPath.compare(userInstallPath, Qt::CaseInsensitive) != 0;
+                          appPath.compare(userInstallPath, Qt::CaseInsensitive) != 0;
         gIsGreenEditionInited = true;
     }
     return gIsGreenEdition;
 }
 #endif
 
-ProcessOutput runAndGetOutput(const QString &cmd, const QString& workingDir, const QStringList& arguments,
-                           const QByteArray &inputContent,
-                           bool separateStderr,
-                           bool inheritEnvironment,
-                           const QProcessEnvironment& env)
+ProcessOutput runAndGetOutput(const QString& cmd, const QString& workingDir,
+                              const QStringList& arguments, const QByteArray& inputContent,
+                              bool separateStderr, bool inheritEnvironment,
+                              const QProcessEnvironment& env)
 {
     QProcess process;
     QByteArray standardOutput;
@@ -436,27 +425,20 @@ ProcessOutput runAndGetOutput(const QString &cmd, const QString& workingDir, con
         process.setProcessChannelMode(QProcess::MergedChannels);
     process.setReadChannel(QProcess::StandardOutput);
     process.setWorkingDirectory(workingDir);
-    process.connect(&process,&QProcess::readyReadStandardOutput,
-                    [&](){
-        standardOutput.append(process.readAllStandardOutput());
-    });
+    process.connect(&process, &QProcess::readyReadStandardOutput,
+                    [&]() { standardOutput.append(process.readAllStandardOutput()); });
     if (separateStderr)
         process.connect(&process, &QProcess::readyReadStandardError,
-                        [&]() {
-                            standardError.append(process.readAllStandardError());
-                        });
-    process.connect(&process, &QProcess::errorOccurred,
-                    [&](){
-                        errorOccurred= true;
-                    });
-    process.start(cmd,arguments);
+                        [&]() { standardError.append(process.readAllStandardError()); });
+    process.connect(&process, &QProcess::errorOccurred, [&]() { errorOccurred = true; });
+    process.start(cmd, arguments);
     if (!inputContent.isEmpty()) {
         process.write(inputContent);
     }
     process.closeWriteChannel();
     process.waitForFinished();
     if (errorOccurred) {
-        switch(process.error()) {
+        switch (process.error()) {
         case QProcess::FailedToStart:
             errorMessage += "Failed to start process!";
             break;
@@ -481,29 +463,26 @@ ProcessOutput runAndGetOutput(const QString &cmd, const QString& workingDir, con
     return {standardOutput, standardError, errorMessage};
 }
 
-void executeFile(const QString &fileName, const QStringList &params, const QString &workingDir, const QString &tempFile)
+void executeFile(const QString& fileName, const QStringList& params, const QString& workingDir,
+                 const QString& tempFile)
 {
-    ExecutableRunner* runner=new ExecutableRunner(
-                fileName,
-                params,
-                workingDir);
-    runner->connect(runner, &QThread::finished,
-                    [runner,tempFile](){
+    ExecutableRunner* runner = new ExecutableRunner(fileName, params, workingDir);
+    runner->connect(runner, &QThread::finished, [runner, tempFile]() {
         if (!tempFile.isEmpty()) {
             QFile::remove(tempFile);
         }
         runner->deleteLater();
     });
-    runner->connect(runner, &Runner::runErrorOccurred,
-            [](const QString&){
-        //todo
+    runner->connect(runner, &Runner::runErrorOccurred, [](const QString&) {
+        // todo
     });
     runner->setStartConsole(true);
     runner->start();
 }
 
 #ifdef Q_OS_WIN
-bool readRegistry(HKEY key,const QString& subKey, const QString& name, QString& value) {
+bool readRegistry(HKEY key, const QString& subKey, const QString& name, QString& value)
+{
     LONG result;
     HKEY hkey;
     result = RegOpenKeyExW(key, subKey.toStdWString().c_str(), 0, KEY_READ, &hkey);
@@ -518,8 +497,9 @@ bool readRegistry(HKEY key,const QString& subKey, const QString& name, QString& 
         return false;
     }
 
-    wchar_t * buffer = new wchar_t[dataSize / sizeof(wchar_t) + 10];
-    result = RegQueryValueExW(hkey, name.toStdWString().c_str(), NULL, &dataType, (LPBYTE)buffer, &dataSize);
+    wchar_t* buffer = new wchar_t[dataSize / sizeof(wchar_t) + 10];
+    result = RegQueryValueExW(hkey, name.toStdWString().c_str(), NULL, &dataType, (LPBYTE)buffer,
+                              &dataSize);
     RegCloseKey(hkey);
     if (result != ERROR_SUCCESS) {
         delete[] buffer;
@@ -527,22 +507,23 @@ bool readRegistry(HKEY key,const QString& subKey, const QString& name, QString& 
     }
 
     value = QString::fromWCharArray(buffer);
-    delete [] buffer;
+    delete[] buffer;
     return true;
 }
 #endif
 
-qulonglong stringToHex(const QString &str, bool &isOk)
+qulonglong stringToHex(const QString& str, bool& isOk)
 {
-    qulonglong value = str.toULongLong(&isOk,16);
+    qulonglong value = str.toULongLong(&isOk, 16);
     return value;
 }
 
-bool findComplement(const QString &s, const QChar &fromToken, const QChar &toToken, int &curPos, int increment)
+bool findComplement(const QString& s, const QChar& fromToken, const QChar& toToken, int& curPos,
+                    int increment)
 {
     int curPosBackup = curPos;
     int level = 0;
-    //todo: skip comment, char and strings
+    // todo: skip comment, char and strings
     while ((curPos < s.length()) && (curPos >= 0)) {
         if (s[curPos] == fromToken) {
             level++;
@@ -557,16 +538,18 @@ bool findComplement(const QString &s, const QChar &fromToken, const QChar &toTok
     return false;
 }
 
-bool haveGoodContrast(const QColor& c1, const QColor &c2) {
+bool haveGoodContrast(const QColor& c1, const QColor& c2)
+{
     int lightness1 = qGray(c1.rgb());
     int lightness2 = qGray(c2.rgb());
-    return std::abs(lightness1 - lightness2)>=120;
+    return std::abs(lightness1 - lightness2) >= 120;
 }
 
-QByteArray getHTTPBody(const QByteArray& content) {
-    int i= content.indexOf("\r\n\r\n");
-    if (i>=0) {
-        return content.mid(i+4);
+QByteArray getHTTPBody(const QByteArray& content)
+{
+    int i = content.indexOf("\r\n\r\n");
+    if (i >= 0) {
+        return content.mid(i + 4);
     }
     return "";
 }
@@ -574,48 +557,45 @@ QByteArray getHTTPBody(const QByteArray& content) {
 QString getSizeString(int size)
 {
     if (size < 1024) {
-        return QString("%1 ").arg(size)+QObject::tr("bytes");
+        return QString("%1 ").arg(size) + QObject::tr("bytes");
     } else if (size < 1024 * 1024) {
-        return QString("%1 ").arg(size / 1024.0,0,'f',2)+QObject::tr("KB");
+        return QString("%1 ").arg(size / 1024.0, 0, 'f', 2) + QObject::tr("KB");
     } else if (size < 1024 * 1024 * 1024) {
-        return QString("%1 ").arg(size / 1024.0 / 1024.0)+QObject::tr("MB");
+        return QString("%1 ").arg(size / 1024.0 / 1024.0) + QObject::tr("MB");
     } else {
-        return QString("%1 ").arg(size / 1024.0 / 1024.0 / 1024.0)+QObject::tr("GB");
+        return QString("%1 ").arg(size / 1024.0 / 1024.0 / 1024.0) + QObject::tr("GB");
     }
 }
 
-void openFileFolderInExplorer(const QString &path)
+void openFileFolderInExplorer(const QString& path)
 {
     QFileInfo info(path);
-    if (info.isFile()){
+    if (info.isFile()) {
 #ifdef Q_OS_WIN
         QProcess process;
         QStringList args;
-        QString filepath=QDir::toNativeSeparators(info.absoluteFilePath());
+        QString filepath = QDir::toNativeSeparators(info.absoluteFilePath());
         args.append("/n,");
         args.append("/select,");
         args.append(QString("%1").arg(filepath));
-        process.startDetached("explorer.exe",args);
+        process.startDetached("explorer.exe", args);
 #else
         QDesktopServices::openUrl(
-                    QUrl("file:///"+
-                         includeTrailingPathDelimiter(info.path()),QUrl::TolerantMode));
+            QUrl("file:///" + includeTrailingPathDelimiter(info.path()), QUrl::TolerantMode));
 #endif
-    } else if (info.isDir()){
+    } else if (info.isDir()) {
         QDesktopServices::openUrl(
-                    QUrl("file:///"+
-                         includeTrailingPathDelimiter(path),QUrl::TolerantMode));
+            QUrl("file:///" + includeTrailingPathDelimiter(path), QUrl::TolerantMode));
     }
 }
 
-QColor alphaBlend(const QColor &lower, const QColor &upper) {
+QColor alphaBlend(const QColor& lower, const QColor& upper)
+{
     qreal wu = upper.alphaF(); // weight of upper color
     qreal wl = 1 - wu;         // weight of lower color
-    return QColor(
-        int(lower.red() * wl + upper.red() * wu),
-        int(lower.green() * wl + upper.green() * wu),
-        int(lower.blue() * wl + upper.blue() * wu)
-        );
+    return QColor(int(lower.red() * wl + upper.red() * wu),
+                  int(lower.green() * wl + upper.green() * wu),
+                  int(lower.blue() * wl + upper.blue() * wu));
 }
 
 QStringList getExecutableSearchPaths()
@@ -625,7 +605,9 @@ QStringList getExecutableSearchPaths()
     QStringList pathList = path.split(PATH_SEPARATOR);
 #ifdef Q_OS_WINDOWS
     /* follow Windows `CreateProcessW` search semantics.
-     * ref. https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessw .
+     * ref.
+     * https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessw
+     * .
      */
     QStringList searchList{};
     wchar_t buffer[MAX_PATH];
@@ -672,10 +654,11 @@ QString appArch()
 QString osArch()
 {
 #ifdef Q_OS_WINDOWS
-    pIsWow64Process2_t pIsWow64Process2 =
-        reinterpret_cast<pIsWow64Process2_t>(GetProcAddress(GetModuleHandleW(L"kernel32"), "IsWow64Process2"));
+    pIsWow64Process2_t pIsWow64Process2 = reinterpret_cast<pIsWow64Process2_t>(
+        GetProcAddress(GetModuleHandleW(L"kernel32"), "IsWow64Process2"));
     if (pIsWow64Process2) {
-        // IsWow64Process2 returns real native architecture under xtajit, while GetNativeSystemInfo does not.
+        // IsWow64Process2 returns real native architecture under xtajit, while GetNativeSystemInfo
+        // does not.
         USHORT processMachineResult, nativeMachineResult;
         if (pIsWow64Process2(GetCurrentProcess(), &processMachineResult, &nativeMachineResult))
             switch (nativeMachineResult) {
@@ -694,7 +677,7 @@ QString osArch()
 #endif
 }
 
-QString byteArrayToString(const QByteArray &content, bool isUTF8)
+QString byteArrayToString(const QByteArray& content, bool isUTF8)
 {
     if (isUTF8)
         return QString::fromUtf8(content);
@@ -702,7 +685,7 @@ QString byteArrayToString(const QByteArray &content, bool isUTF8)
         return QString::fromLocal8Bit(content);
 }
 
-QByteArray stringToByteArray(const QString &content, bool isUTF8)
+QByteArray stringToByteArray(const QString& content, bool isUTF8)
 {
     if (isUTF8)
         return content.toUtf8();
@@ -710,88 +693,106 @@ QByteArray stringToByteArray(const QString &content, bool isUTF8)
         return content.toLocal8Bit();
 }
 
-std::tuple<QString, QStringList, PNonExclusiveTemporaryFileOwner> wrapCommandForTerminalEmulator(const QString &terminal, const QStringList &argsPattern, const QStringList &payloadArgsWithArgv0)
+std::tuple<QString, QStringList, PNonExclusiveTemporaryFileOwner>
+wrapCommandForTerminalEmulator(const QString& terminal, const QStringList& argsPattern,
+                               const QStringList& payloadArgsWithArgv0)
 {
     QStringList wrappedArgs;
     std::unique_ptr<QTemporaryFile> temproryFile;
-    for (const QString &patternItem : argsPattern) {
+    for (const QString& patternItem : argsPattern) {
         if (patternItem == "$term")
             wrappedArgs.append(terminal);
         else if (patternItem == "$integrated_term")
-            wrappedArgs.append(includeTrailingPathDelimiter(pSettings->dirs().appDir())+terminal);
+            wrappedArgs.append(includeTrailingPathDelimiter(pSettings->dirs().appDir()) + terminal);
         else if (patternItem == "$argv")
             wrappedArgs.append(payloadArgsWithArgv0);
         else if (patternItem == "$command" || patternItem == "$unix_command") {
             // “$command” is for compatibility; previously used on multiple Unix terms
             QStringList escapedArgs;
             for (int i = 0; i < payloadArgsWithArgv0.length(); i++) {
-                auto &arg = payloadArgsWithArgv0[i];
-                auto escaped = escapeArgument(arg, i == 0, EscapeArgumentRule::BourneAgainShellPretty);
+                auto& arg = payloadArgsWithArgv0[i];
+                auto escaped =
+                    escapeArgument(arg, i == 0, EscapeArgumentRule::BourneAgainShellPretty);
                 escapedArgs.append(escaped);
             }
             wrappedArgs.push_back(escapedArgs.join(' '));
         } else if (patternItem == "$dos_command") {
             QStringList escapedArgs;
             for (int i = 0; i < payloadArgsWithArgv0.length(); i++) {
-                auto &arg = payloadArgsWithArgv0[i];
-                auto escaped = escapeArgument(arg, i == 0, EscapeArgumentRule::WindowsCommandPrompt);
+                auto& arg = payloadArgsWithArgv0[i];
+                auto escaped =
+                    escapeArgument(arg, i == 0, EscapeArgumentRule::WindowsCommandPrompt);
                 escapedArgs.append(escaped);
             }
             wrappedArgs.push_back(escapedArgs.join(' '));
         } else if (patternItem == "$lpCommandLine") {
             QStringList escapedArgs;
             for (int i = 0; i < payloadArgsWithArgv0.length(); i++) {
-                auto &arg = payloadArgsWithArgv0[i];
-                auto escaped = escapeArgument(arg, i == 0, EscapeArgumentRule::WindowsCreateProcess);
+                auto& arg = payloadArgsWithArgv0[i];
+                auto escaped =
+                    escapeArgument(arg, i == 0, EscapeArgumentRule::WindowsCreateProcess);
                 escapedArgs.append(escaped);
             }
             wrappedArgs.push_back(escapedArgs.join(' '));
         } else if (patternItem == "$tmpfile" || patternItem == "$tmpfile.command") {
             // “$tmpfile” is for compatibility; previously used on macOS Terminal.app
-            temproryFile = std::make_unique<QTemporaryFile>(QDir::tempPath() + "/redpanda_XXXXXX.command");
+            temproryFile =
+                std::make_unique<QTemporaryFile>(QDir::tempPath() + "/redpanda_XXXXXX.command");
             if (temproryFile->open()) {
                 QStringList escapedArgs;
                 for (int i = 0; i < payloadArgsWithArgv0.length(); i++) {
-                    auto &arg = payloadArgsWithArgv0[i];
-                    auto escaped = escapeArgument(arg, i == 0, EscapeArgumentRule::BourneAgainShellPretty);
+                    auto& arg = payloadArgsWithArgv0[i];
+                    auto escaped =
+                        escapeArgument(arg, i == 0, EscapeArgumentRule::BourneAgainShellPretty);
                     escapedArgs.append(escaped);
                 }
                 temproryFile->write(escapedArgs.join(' ').toUtf8());
                 temproryFile->write("\n");
-                QFile(temproryFile->fileName()).setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner);
+                QFile(temproryFile->fileName())
+                    .setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner |
+                                    QFileDevice::ExeOwner);
             }
             wrappedArgs.push_back(temproryFile->fileName());
         } else if (patternItem == "$tmpfile.sh") {
-            temproryFile = std::make_unique<QTemporaryFile>(QDir::tempPath() + "/redpanda_XXXXXX.command");
+            temproryFile =
+                std::make_unique<QTemporaryFile>(QDir::tempPath() + "/redpanda_XXXXXX.command");
             if (temproryFile->open()) {
                 QStringList escapedArgs = {"exec"};
                 for (int i = 0; i < payloadArgsWithArgv0.length(); i++) {
-                    auto &arg = payloadArgsWithArgv0[i];
-                    auto escaped = escapeArgument(arg, false, EscapeArgumentRule::BourneAgainShellPretty);
+                    auto& arg = payloadArgsWithArgv0[i];
+                    auto escaped =
+                        escapeArgument(arg, false, EscapeArgumentRule::BourneAgainShellPretty);
                     escapedArgs.append(escaped);
                 }
                 temproryFile->write("#!/bin/sh\n");
                 temproryFile->write(escapedArgs.join(' ').toUtf8());
                 temproryFile->write("\n");
-                QFile(temproryFile->fileName()).setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner);
+                QFile(temproryFile->fileName())
+                    .setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner |
+                                    QFileDevice::ExeOwner);
             }
             wrappedArgs.push_back(temproryFile->fileName());
         } else if (patternItem == "$tmpfile.bat") {
-            temproryFile = std::make_unique<QTemporaryFile>(QDir::tempPath() + "/redpanda_XXXXXX.bat");
+            temproryFile =
+                std::make_unique<QTemporaryFile>(QDir::tempPath() + "/redpanda_XXXXXX.bat");
             if (temproryFile->open()) {
                 QStringList escapedArgs;
                 for (int i = 0; i < payloadArgsWithArgv0.length(); i++) {
-                    auto &arg = payloadArgsWithArgv0[i];
-                    auto escaped = escapeArgument(arg, i == 0, EscapeArgumentRule::WindowsCommandPrompt);
+                    auto& arg = payloadArgsWithArgv0[i];
+                    auto escaped =
+                        escapeArgument(arg, i == 0, EscapeArgumentRule::WindowsCommandPrompt);
                     escapedArgs.append(escaped);
                 }
                 temproryFile->write(escapedArgs.join(' ').toLocal8Bit());
                 temproryFile->write("\r\n");
-                QFile(temproryFile->fileName()).setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner);
+                QFile(temproryFile->fileName())
+                    .setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner |
+                                    QFileDevice::ExeOwner);
             }
             wrappedArgs.push_back(temproryFile->fileName());
         } else if (patternItem == "$sequential_app_id") {
-            static QString prefix = QStringLiteral("io.redpanda.term_%1_").arg(QCoreApplication::applicationPid());
+            static QString prefix =
+                QStringLiteral("io.redpanda.term_%1_").arg(QCoreApplication::applicationPid());
             static std::atomic<int> appIdCounter = 0;
             QString appId = prefix + QString::number(++appIdCounter);
             wrappedArgs.push_back(appId);
@@ -799,41 +800,51 @@ std::tuple<QString, QStringList, PNonExclusiveTemporaryFileOwner> wrapCommandFor
             wrappedArgs.push_back(patternItem);
     }
     if (wrappedArgs.empty())
-        return {QString(""), QStringList{}, std::make_unique<NonExclusiveTemporaryFileOwner>(temproryFile)};
-    return {wrappedArgs[0], wrappedArgs.mid(1), std::make_unique<NonExclusiveTemporaryFileOwner>(temproryFile)};
+        return {QString(""), QStringList{},
+                std::make_unique<NonExclusiveTemporaryFileOwner>(temproryFile)};
+    return {wrappedArgs[0], wrappedArgs.mid(1),
+            std::make_unique<NonExclusiveTemporaryFileOwner>(temproryFile)};
 }
 
-std::tuple<QString, QStringList, PNonExclusiveTemporaryFileOwner> wrapCommandForTerminalEmulator(const QString &terminal, const QString &argsPattern, const QStringList &payloadArgsWithArgv0)
+std::tuple<QString, QStringList, PNonExclusiveTemporaryFileOwner>
+wrapCommandForTerminalEmulator(const QString& terminal, const QString& argsPattern,
+                               const QStringList& payloadArgsWithArgv0)
 {
-    return wrapCommandForTerminalEmulator(terminal, parseArguments(argsPattern, Settings::Environment::terminalArgsPatternMagicVariables(), false), payloadArgsWithArgv0);
+    return wrapCommandForTerminalEmulator(
+        terminal,
+        parseArguments(argsPattern, Settings::Environment::terminalArgsPatternMagicVariables(),
+                       false),
+        payloadArgsWithArgv0);
 }
 
-ExternalResource::ExternalResource() {
+ExternalResource::ExternalResource()
+{
     Q_INIT_RESOURCE(qsynedit_qmake_qmake_qm_files);
     Q_INIT_RESOURCE(redpanda_qt_utils_qmake_qmake_qm_files);
 }
 
-ExternalResource::~ExternalResource() {
+ExternalResource::~ExternalResource()
+{
     Q_CLEANUP_RESOURCE(qsynedit_qmake_qmake_qm_files);
     Q_CLEANUP_RESOURCE(redpanda_qt_utils_qmake_qmake_qm_files);
 }
 
 #ifdef Q_OS_WINDOWS
-bool applicationHasUtf8Manifest(const wchar_t *path)
+bool applicationHasUtf8Manifest(const wchar_t* path)
 {
-    auto module = resourcePointer(LoadLibraryExW(path, nullptr, LOAD_LIBRARY_AS_DATAFILE), &FreeLibrary);
+    auto module =
+        resourcePointer(LoadLibraryExW(path, nullptr, LOAD_LIBRARY_AS_DATAFILE), &FreeLibrary);
     if (!module)
         return false;
-    HRSRC resInfo = FindResourceW(
-        module.get(),
-        MAKEINTRESOURCEW(1) /* CREATEPROCESS_MANIFEST_RESOURCE_ID */,
-        MAKEINTRESOURCEW(24) /* RT_MANIFEST */);
+    HRSRC resInfo =
+        FindResourceW(module.get(), MAKEINTRESOURCEW(1) /* CREATEPROCESS_MANIFEST_RESOURCE_ID */,
+                      MAKEINTRESOURCEW(24) /* RT_MANIFEST */);
     if (!resInfo)
         return false;
     auto res = resourcePointer(LoadResource(module.get(), resInfo), &FreeResource);
     if (!res)
         return false;
-    char *data = (char *)LockResource(res.get());
+    char* data = (char*)LockResource(res.get());
     DWORD size = SizeofResource(module.get(), resInfo);
     QByteArray manifest(data, size);
     QDomDocument doc;
@@ -855,27 +866,27 @@ bool osSupportsUtf8Manifest()
     return QOperatingSystemVersion::current().microVersion() >= 18362;
 }
 
-bool applicationIsUtf8(const QString &path)
+bool applicationIsUtf8(const QString& path)
 {
     static bool systemIsUtf8 = GetACP() == CP_UTF8;
     if (systemIsUtf8)
         return true;
     if (!fileExists(path))
         return false;
-    return osSupportsUtf8Manifest() && applicationHasUtf8Manifest((wchar_t *)path.constData());
+    return osSupportsUtf8Manifest() && applicationHasUtf8Manifest((wchar_t*)path.constData());
 }
 #endif
 
-void updateComboHistory(QStringList &historyList, const QString &newKey)
+void updateComboHistory(QStringList& historyList, const QString& newKey)
 {
     int idx = historyList.indexOf(newKey);
-    if (idx!=-1)
+    if (idx != -1)
         historyList.removeAt(idx);
     if (!newKey.isEmpty())
-        historyList.insert(0,newKey);
+        historyList.insert(0, newKey);
 }
 
-void setComboTextAndHistory(QComboBox *cb, const QString &newText, QStringList &historyList)
+void setComboTextAndHistory(QComboBox* cb, const QString& newText, QStringList& historyList)
 {
     int idx;
     if (!newText.isEmpty()) {
@@ -892,34 +903,34 @@ void setComboTextAndHistory(QComboBox *cb, const QString &newText, QStringList &
     cb->setCurrentIndex(idx);
 }
 
-static const QMap<QString,FileType> FileTypeMapping{
+static const QMap<QString, FileType> FileTypeMapping{
     {"None", FileType::None},
     {"ATTASM", FileType::ATTASM},
     {"INTELASM", FileType::INTELASM},
     {"LUA", FileType::LUA},
-    {"CSource", FileType::CSource}, // c source file (.c)
-    {"CppSource", FileType::CppSource}, // c++ source file (.cpp)
-    {"CCppHeader", FileType::CCppHeader}, // c header (.h)
+    {"CSource", FileType::CSource},                             // c source file (.c)
+    {"CppSource", FileType::CppSource},                         // c++ source file (.cpp)
+    {"CCppHeader", FileType::CCppHeader},                       // c header (.h)
     {"WindowsResourceSource", FileType::WindowsResourceSource}, // resource source (.res)
-    {"Project", FileType::Project}, //RedPandaIDE Project (.dev)
-    {"Text", FileType::Text}, // text file
+    {"Project", FileType::Project},                             // RedPandaIDE Project (.dev)
+    {"Text", FileType::Text},                                   // text file
     {"FragmentShader", FileType::FragmentShader},
     {"VerticeShader", FileType::VerticeShader},
     {"ModuleDef", FileType::ModuleDef}, // Windows Module Definition
     {"MakeFile", FileType::MakeFile},
-    {"Other", FileType::Other},  // Any others
+    {"Other", FileType::Other}, // Any others
 };
 
 QString fileTypeToName(FileType fileType)
 {
-    for(auto i=FileTypeMapping.constBegin();i!=FileTypeMapping.constEnd();++i) {
-        if (i.value()==fileType)
+    for (auto i = FileTypeMapping.constBegin(); i != FileTypeMapping.constEnd(); ++i) {
+        if (i.value() == fileType)
             return i.key();
     }
     return "None";
 }
 
-FileType nameToFileType(const QString &name)
+FileType nameToFileType(const QString& name)
 {
     return FileTypeMapping.value(name, FileType::None);
 }
@@ -928,20 +939,17 @@ QPixmap HDPixmap(QPixmap pix, int w, int h)
 {
 #if QT_VERSION_MAJOR == 6
     QPixmap orgin = pix;
-    QScreen *screen = QGuiApplication::primaryScreen();
+    QScreen* screen = QGuiApplication::primaryScreen();
 
     orgin.setDevicePixelRatio(screen->devicePixelRatio());
-    pix = orgin.scaled(
-        w,h,
-        Qt::KeepAspectRatio,
-        Qt::SmoothTransformation);
+    pix = orgin.scaled(w, h, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 #endif
-    return pix.scaled(w,h);
+    return pix.scaled(w, h);
 }
 
 QPixmap HDPixmap(QPixmap pix)
 {
-    return HDPixmap(pix,pix.width(),pix.height());
+    return HDPixmap(pix, pix.width(), pix.height());
 }
 
 QPixmap HDPixmap(QString picPath)
@@ -952,21 +960,19 @@ QPixmap HDPixmap(QString picPath)
 QPixmap HDPixmap(QString picPath, int w, int h)
 {
     QPixmap pix(picPath);
-    return HDPixmap(pix,w,h);
+    return HDPixmap(pix, w, h);
 }
 
-WaitingWidget::WaitingWidget(QWidget *parent)
-    : QWidget(parent)
-    , verticalLayout(new QVBoxLayout(this))
-    , label(new QLabel(this))
-    , progressBar(new QProgressBar(this))
+WaitingWidget::WaitingWidget(QWidget* parent)
+    : QWidget(parent), verticalLayout(new QVBoxLayout(this)), label(new QLabel(this)),
+      progressBar(new QProgressBar(this))
 {
     setupUi();
 }
 
 WaitingWidget::~WaitingWidget() = default;
 
-void WaitingWidget::changeEvent(QEvent *event)
+void WaitingWidget::changeEvent(QEvent* event)
 {
     if (event->type() == QEvent::LanguageChange) {
         retranslateUi();

@@ -29,11 +29,12 @@ class EditorTooltipsWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit EditorTooltipsWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit EditorTooltipsWidget(const QString& name, const QString& group,
+                                  QWidget* parent = nullptr);
     ~EditorTooltipsWidget();
 
 private:
-    Ui::EditorTooltipsWidget *ui;
+    Ui::EditorTooltipsWidget* ui;
 
     // SettingsWidget interface
 protected:

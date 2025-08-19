@@ -24,10 +24,8 @@
 
 #include <QFileInfo>
 
-FilePropertiesDialog::FilePropertiesDialog(Editor* activeEditor,QWidget *parent) :
-    QDialog(parent),
-    mActiveEditor(activeEditor),
-    ui(new Ui::FilePropertiesDialog)
+FilePropertiesDialog::FilePropertiesDialog(Editor* activeEditor, QWidget* parent)
+    : QDialog(parent), mActiveEditor(activeEditor), ui(new Ui::FilePropertiesDialog)
 {
     ui->setupUi(this);
     ui->cbFiles->setModel(&mModel);
@@ -38,13 +36,9 @@ FilePropertiesDialog::~FilePropertiesDialog()
     delete ui;
 }
 
-void FilePropertiesDialog::calcFile(Editor *editor,
-                                    int &totalLines,
-                                    int &commentLines,
-                                    int &emptyLines,
-                                    int &codeLines,
-                                    int &includeLines,
-                                    int &charCounts)
+void FilePropertiesDialog::calcFile(Editor* editor, int& totalLines, int& commentLines,
+                                    int& emptyLines, int& codeLines, int& includeLines,
+                                    int& charCounts)
 {
     totalLines = editor->lineCount();
     codeLines = 0;
@@ -54,20 +48,19 @@ void FilePropertiesDialog::calcFile(Editor *editor,
     charCounts = 0;
     int lineBreakerLen = QString(LINE_BREAKER).length();
     // iterate through all lines of file
-    for (int i=1;i<=editor->lineCount();i++) {
+    for (int i = 1; i <= editor->lineCount(); i++) {
         QString line = editor->lineText(i);
-        charCounts+=line.length()+lineBreakerLen;
-//        while (j<line.length() && (line[j]=='\t' || line[j]==' '))
-//            j++;
+        charCounts += line.length() + lineBreakerLen;
+        //        while (j<line.length() && (line[j]=='\t' || line[j]==' '))
+        //            j++;
         QString token;
         QSynedit::PTokenAttribute attr;
-        if (editor->getTokenAttriAtRowCol(QSynedit::BufferCoord{1,i},
-                                                token,attr)) {
+        if (editor->getTokenAttriAtRowCol(QSynedit::BufferCoord{1, i}, token, attr)) {
             // if it is preprocessor...
             if (attr->name() == SYNS_AttrPreprocessor) {
                 // check for includes
-                token.remove(0,1);
-                token=token.trimmed();
+                token.remove(0, 1);
+                token = token.trimmed();
                 if (token.startsWith("include"))
                     includeLines++;
 
@@ -82,14 +75,13 @@ void FilePropertiesDialog::calcFile(Editor *editor,
             // if we don't get a token type, this line is empty or contains only spaces
             emptyLines++;
         }
-
     }
 }
 
-void FilePropertiesDialog::showEvent(QShowEvent *)
+void FilePropertiesDialog::showEvent(QShowEvent*)
 {
-    for (int i=0;i<pMainWindow->editorList()->pageCount();i++) {
-        Editor * editor =  (*(pMainWindow->editorList()))[i];
+    for (int i = 0; i < pMainWindow->editorList()->pageCount(); i++) {
+        Editor* editor = (*(pMainWindow->editorList()))[i];
         if (editor == mActiveEditor) {
             ui->cbFiles->setCurrentIndex(i);
             break;
@@ -97,24 +89,23 @@ void FilePropertiesDialog::showEvent(QShowEvent *)
     }
 }
 
-FilePropertiesModel::FilePropertiesModel(QObject *parent):QAbstractListModel(parent)
+FilePropertiesModel::FilePropertiesModel(QObject* parent) : QAbstractListModel(parent)
 {
-
 }
 
-int FilePropertiesModel::rowCount(const QModelIndex &) const
+int FilePropertiesModel::rowCount(const QModelIndex&) const
 {
     return pMainWindow->editorList()->pageCount();
 }
 
-QVariant FilePropertiesModel::data(const QModelIndex &index, int role) const
+QVariant FilePropertiesModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid())
         return QVariant();
     int row = index.row();
     if (role == Qt::DisplayRole) {
-        if (row>=0 && row < pMainWindow->editorList()->pageCount()) {
-            Editor *editor = (*(pMainWindow->editorList()))[row];
+        if (row >= 0 && row < pMainWindow->editorList()->pageCount()) {
+            Editor* editor = (*(pMainWindow->editorList()))[row];
             if (editor) {
                 return extractFileName(editor->filename());
             }
@@ -125,21 +116,22 @@ QVariant FilePropertiesModel::data(const QModelIndex &index, int role) const
 
 void FilePropertiesDialog::on_cbFiles_currentIndexChanged(int index)
 {
-    Editor *editor = (*(pMainWindow->editorList()))[index];
+    Editor* editor = (*(pMainWindow->editorList()))[index];
     if (editor) {
         QFileInfo info(editor->filename());
 
         int fileSize = info.size();
         // Pretty print total file size
         ui->txtFileSize->setText(getSizeString(fileSize));
-        ui->txtFileDate->setText( QLocale::system().toString(info.lastModified(), QLocale::LongFormat));
+        ui->txtFileDate->setText(
+            QLocale::system().toString(info.lastModified(), QLocale::LongFormat));
         ui->txtProject->setText("-");
         ui->txtPath->setText(editor->filename());
         ui->txtRelativeToProject->setText("_");
         ui->txtLines->setText(QString("%1").arg(editor->lineCount()));
 
-        int totalLines, codeLines,emptyLines,commentLines,includeLines, charCounts;
-        calcFile(editor,totalLines,commentLines,emptyLines,codeLines,includeLines,charCounts);
+        int totalLines, codeLines, emptyLines, commentLines, includeLines, charCounts;
+        calcFile(editor, totalLines, commentLines, emptyLines, codeLines, includeLines, charCounts);
 
         ui->txtLines->setText(QString("%1").arg(totalLines));
         ui->txtEmptyLines->setText(QString("%1").arg(emptyLines));
@@ -150,9 +142,7 @@ void FilePropertiesDialog::on_cbFiles_currentIndexChanged(int index)
     }
 }
 
-
 void FilePropertiesDialog::on_btnOK_clicked()
 {
     hide();
 }
-

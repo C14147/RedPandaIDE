@@ -28,7 +28,7 @@ class NewProjectUnitDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit NewProjectUnitDialog(QWidget *parent = nullptr);
+    explicit NewProjectUnitDialog(QWidget* parent = nullptr);
     ~NewProjectUnitDialog();
 
     QString folder() const;
@@ -37,8 +37,8 @@ public:
     QString filename() const;
     void setFilename(const QString& filename);
 
-    const QString &suffix() const;
-    void setSuffix(const QString &newSuffix);
+    const QString& suffix() const;
+    void setSuffix(const QString& newSuffix);
 
 private slots:
     void onUpdateIcons();
@@ -48,19 +48,21 @@ private slots:
 
     void on_btnCancel_clicked();
 
-    void on_txtFilename_textChanged(const QString &arg1);
-    void on_txtFolder_textChanged(const QString &arg1);
+    void on_txtFilename_textChanged(const QString& arg1);
+    void on_txtFolder_textChanged(const QString& arg1);
 
 private:
     void updateBtnOkStatus();
+
 private:
-    Ui::NewProjectUnitDialog *ui;
+    Ui::NewProjectUnitDialog* ui;
+
 private:
     QString mSuffix;
 
     // QWidget interface
 protected:
-    void closeEvent(QCloseEvent *event) override;
+    void closeEvent(QCloseEvent* event) override;
 };
 
 #endif // NEWPROJECTUNITDIALOG_H

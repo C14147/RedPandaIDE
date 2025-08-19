@@ -32,12 +32,13 @@ class SymbolUsageManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit SymbolUsageManager(QObject *parent = nullptr);
+    explicit SymbolUsageManager(QObject* parent = nullptr);
     void load();
     void save();
     void reset();
     PSymbolUsage findUsage(const QString& fullName) const;
     void updateUsage(const QString& symbol, int count);
+
 private:
     QHash<QString, PSymbolUsage> mUsages;
 };

@@ -26,17 +26,19 @@ class QPatchedComboBoxListView : public QListView
 {
     Q_OBJECT
 public:
-    QPatchedComboBoxListView(QComboBox *cmb = nullptr) : combo(cmb) {}
+    QPatchedComboBoxListView(QComboBox* cmb = nullptr) : combo(cmb)
+    {
+    }
 
 protected:
-    void resizeEvent(QResizeEvent *event) override
+    void resizeEvent(QResizeEvent* event) override
     {
         resizeContents(viewport()->width(), contentsSize().height());
         QListView::resizeEvent(event);
     }
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    void initViewItemOption(QStyleOptionViewItem *option) const override
+    void initViewItemOption(QStyleOptionViewItem* option) const override
     {
         QListView::initViewItemOption(option);
         option->showDecorationSelected = true;
@@ -46,20 +48,21 @@ protected:
     {
         QStyleOptionViewItem option = QListView::viewOptions();
         option.showDecorationSelected = true;
-//        if (combo)
-//            option.font = combo->font();
+        //        if (combo)
+        //            option.font = combo->font();
         return option;
     }
 #endif
 
-    void paintEvent(QPaintEvent *e) override
+    void paintEvent(QPaintEvent* e) override
     {
         if (combo) {
             QStyleOptionComboBox opt;
             opt.initFrom(combo);
             opt.editable = combo->isEditable();
             if (combo->style()->styleHint(QStyle::SH_ComboBox_Popup, &opt, combo)) {
-                //we paint the empty menu area to avoid having blank space that can happen when scrolling
+                // we paint the empty menu area to avoid having blank space that can happen when
+                // scrolling
                 QStyleOptionMenuItem menuOpt;
                 menuOpt.initFrom(this);
                 menuOpt.palette = palette();
@@ -80,14 +83,14 @@ protected:
     }
 
 private:
-    QComboBox *combo;
+    QComboBox* combo;
 };
 
 class QPatchedComboBox : public QComboBox
 {
     Q_OBJECT
 public:
-    explicit QPatchedComboBox(QWidget *parent = nullptr);
+    explicit QPatchedComboBox(QWidget* parent = nullptr);
 };
 
 #endif // QPATCHEDCOMBOBOX_H

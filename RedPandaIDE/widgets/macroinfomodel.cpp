@@ -16,7 +16,7 @@
  */
 #include "macroinfomodel.h"
 
-MacroInfoModel::MacroInfoModel(QObject *parent) : QAbstractListModel(parent)
+MacroInfoModel::MacroInfoModel(QObject* parent) : QAbstractListModel(parent)
 {
     addMacroInfo("<DEFAULT>", tr("The default directory"));
     addMacroInfo("<DEVCPP>", tr("Path to the RedPandaIDE's executable file."));
@@ -38,12 +38,12 @@ MacroInfoModel::MacroInfoModel(QObject *parent) : QAbstractListModel(parent)
     addMacroInfo("<PROJECTPATH>", tr("Path to the current project's folder"));
 }
 
-int MacroInfoModel::rowCount(const QModelIndex &/*parent*/) const
+int MacroInfoModel::rowCount(const QModelIndex& /*parent*/) const
 {
     return mMacroInfos.count();
 }
 
-QVariant MacroInfoModel::data(const QModelIndex &index, int role) const
+QVariant MacroInfoModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid())
         return QVariant();
@@ -57,18 +57,17 @@ QVariant MacroInfoModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-PMacroInfo MacroInfoModel::getInfo(const QModelIndex &index) const
+PMacroInfo MacroInfoModel::getInfo(const QModelIndex& index) const
 {
     if (!index.isValid())
         return PMacroInfo();
     return mMacroInfos[index.row()];
 }
 
-void MacroInfoModel::addMacroInfo(const QString& macro, const QString& description) {
+void MacroInfoModel::addMacroInfo(const QString& macro, const QString& description)
+{
     PMacroInfo info = std::make_shared<MacroInfo>();
     info->macro = macro;
     info->description = description;
     mMacroInfos.append(info);
 }
-
-

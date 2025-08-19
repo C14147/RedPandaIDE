@@ -20,9 +20,8 @@
 #include "../mainwindow.h"
 
 EditorAutoSaveWidget::EditorAutoSaveWidget(const QString& name, const QString& group,
-                                                             QWidget *parent) :
-    SettingsWidget(name,group,parent),
-    ui(new Ui::EditorAutoSaveWidget)
+                                           QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::EditorAutoSaveWidget)
 {
     ui->setupUi(this);
 }
@@ -51,7 +50,7 @@ void EditorAutoSaveWidget::doLoad()
     ui->chkAutoBackupEditContents->setChecked(pSettings->editor().enableEditTempBackup());
     ui->grpEnableAutoSave->setChecked(pSettings->editor().enableAutoSave());
     ui->spinInterval->setValue(pSettings->editor().autoSaveInterval());
-    switch(pSettings->editor().autoSaveTarget()) {
+    switch (pSettings->editor().autoSaveTarget()) {
     case astCurrentFile:
         ui->rbCurrentFile->setChecked(true);
         break;
@@ -61,7 +60,7 @@ void EditorAutoSaveWidget::doLoad()
     default:
         ui->rbProjectFiles->setChecked(true);
     }
-    switch(pSettings->editor().autoSaveStrategy()) {
+    switch (pSettings->editor().autoSaveStrategy()) {
     case assOverwrite:
         ui->rbOverwrite->setChecked(true);
         break;
@@ -75,7 +74,8 @@ void EditorAutoSaveWidget::doLoad()
 
 void EditorAutoSaveWidget::doSave()
 {
-    bool shouldApplyEditorSettings=(ui->chkAutoBackupEditContents->isChecked()!=pSettings->editor().enableEditTempBackup());
+    bool shouldApplyEditorSettings =
+        (ui->chkAutoBackupEditContents->isChecked() != pSettings->editor().enableEditTempBackup());
     pSettings->editor().setEnableEditTempBackup(ui->chkAutoBackupEditContents->isChecked());
     pSettings->editor().setEnableAutoSave(ui->grpEnableAutoSave->isChecked());
     pSettings->editor().setAutoSaveInterval(ui->spinInterval->value());
@@ -102,15 +102,12 @@ void EditorAutoSaveWidget::on_rbOverwrite_toggled(bool)
     onAutoSaveStrategyChanged();
 }
 
-
 void EditorAutoSaveWidget::on_rbAppendUNIXTimestamp_toggled(bool)
 {
     onAutoSaveStrategyChanged();
 }
 
-
 void EditorAutoSaveWidget::on_rbAppendFormattedTimestamp_toggled(bool)
 {
     onAutoSaveStrategyChanged();
 }
-

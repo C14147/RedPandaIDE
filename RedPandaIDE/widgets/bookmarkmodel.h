@@ -28,25 +28,28 @@ struct Bookmark {
     qint64 timestamp;
 };
 
-using PBookmark=std::shared_ptr<Bookmark>;
+using PBookmark = std::shared_ptr<Bookmark>;
 
 class BookmarkModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
-    BookmarkModel(QObject* parent=nullptr);
+    BookmarkModel(QObject* parent = nullptr);
     QSet<int> bookmarksInFile(const QString& filename, bool forProject);
-    void addBookmark(const QString&filename, int line, const QString& description, bool forProject);
+    void addBookmark(const QString& filename, int line, const QString& description,
+                     bool forProject);
     PBookmark bookmark(int i, bool forProject);
     PBookmark bookmark(int i);
-    PBookmark bookmark(const QString&filename, int line, bool forProject);
-    PBookmark bookmark(const QString&filename, int line);
-    bool removeBookmark(const QString&filename, int line, bool forProject);
+    PBookmark bookmark(const QString& filename, int line, bool forProject);
+    PBookmark bookmark(const QString& filename, int line);
+    bool removeBookmark(const QString& filename, int line, bool forProject);
     void removeBookmarks(const QString& filename, bool forProject);
-    void renameBookmarkFile(const QString& oldFilename, const QString& newFilename, bool forProject);
+    void renameBookmarkFile(const QString& oldFilename, const QString& newFilename,
+                            bool forProject);
     void clear(bool forProject);
-    bool updateDescription(const QString&filename, int line, const QString& description, bool forProject);
-    bool updateDescription(const QString&filename, int line, const QString& description);
+    bool updateDescription(const QString& filename, int line, const QString& description,
+                           bool forProject);
+    bool updateDescription(const QString& filename, int line, const QString& description);
     void saveBookmarks(const QString& filename);
     void loadBookmarks(const QString& filename);
     void saveProjectBookmarks(const QString& filename, const QString& projectFolder);
@@ -56,10 +59,12 @@ public:
 public slots:
     void onFileDeleteLines(const QString& filename, int startLine, int count, bool forProject);
     void onFileInsertLines(const QString& filename, int startLine, int count, bool forProject);
+
 private:
-    bool isBookmarkExists(const QString&filename, int line, bool forProject);
+    bool isBookmarkExists(const QString& filename, int line, bool forProject);
     void save(const QString& filename, const QString& projectFolder);
-    QList<PBookmark> load(const QString& filename, qint64 criteriaTimestamp, qint64* pFileTimestamp);
+    QList<PBookmark> load(const QString& filename, qint64 criteriaTimestamp,
+                          qint64* pFileTimestamp);
 
 private:
     QList<PBookmark> mBookmarks;
@@ -70,9 +75,9 @@ private:
 
     // QAbstractItemModel interface
 public:
-    int rowCount(const QModelIndex &parent) const override;
-    QVariant data(const QModelIndex &index, int role) const override;
-    int columnCount(const QModelIndex &parent) const override;
+    int rowCount(const QModelIndex& parent) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
+    int columnCount(const QModelIndex& parent) const override;
 
     // QAbstractItemModel interface
 public:

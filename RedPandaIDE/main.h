@@ -56,39 +56,39 @@
 #include <QFontDatabase>
 #include "widgets/cpudialog.h"
 
-class WindowLogoutEventFilter : public QAbstractNativeEventFilter {
-
+class WindowLogoutEventFilter : public QAbstractNativeEventFilter
+{
     // QAbstractNativeEventFilter interface
 public:
 #if QT_VERSION_MAJOR >= 6
-    bool nativeEventFilter(const QByteArray &eventType, void *message, qintptr *result) override;
+    bool nativeEventFilter(const QByteArray& eventType, void* message, qintptr* result) override;
 #else
-    bool nativeEventFilter(const QByteArray &eventType, void *message, long *result) override;
+    bool nativeEventFilter(const QByteArray& eventType, void* message, long* result) override;
 #endif
 };
 
 #ifndef WM_DPICHANGED
-# define WM_DPICHANGED 0x02e0
+#define WM_DPICHANGED 0x02e0
 #endif
 
 #define WM_APP_OPEN_FILE (WM_APP + 6736 /* “OPEN” on dial pad */)
 static_assert(WM_APP_OPEN_FILE < 0xc000);
 #endif
 
-
 QString getSettingFilename(const QString& filepath, bool& firstRun);
 
-class BlockWheelEventFiler : public QObject {
+class BlockWheelEventFiler : public QObject
+{
     Q_OBJECT
 public:
-    BlockWheelEventFiler(QObject* parent=nullptr);
+    BlockWheelEventFiler(QObject* parent = nullptr);
     ~BlockWheelEventFiler();
     BlockWheelEventFiler(const BlockWheelEventFiler&) = delete;
     BlockWheelEventFiler& operator=(const BlockWheelEventFiler&) = delete;
 
     // QObject interface
 public:
-    virtual bool eventFilter(QObject *watched, QEvent *event) override;
+    virtual bool eventFilter(QObject* watched, QEvent* event) override;
 };
 
 #endif

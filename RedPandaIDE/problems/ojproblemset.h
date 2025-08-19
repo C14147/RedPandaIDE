@@ -21,23 +21,11 @@
 #include <QVector>
 #include <QList>
 
-enum class ProblemCaseTestState {
-    NotTested,
-    Testing,
-    Passed,
-    Failed
-};
+enum class ProblemCaseTestState { NotTested, Testing, Passed, Failed };
 
-enum class ProblemTimeLimitUnit {
-    Seconds,
-    Milliseconds
-};
+enum class ProblemTimeLimitUnit { Seconds, Milliseconds };
 
-enum class ProblemMemoryLimitUnit {
-    KB,
-    MB,
-    GB
-};
+enum class ProblemMemoryLimitUnit { KB, MB, GB };
 
 struct OJProblemCase {
     QString name;
@@ -46,16 +34,16 @@ struct OJProblemCase {
     QString inputFileName;
     QString expectedOutputFileName;
     ProblemCaseTestState testState; // no persistence
-    QString output; // no persistence
-    qulonglong runningTime; // no persistence
-    qulonglong runningMemory; // no persistence;
-    int firstDiffLine; // no persistence
-    int outputLineCounts; // no persistence
+    QString output;                 // no persistence
+    qulonglong runningTime;         // no persistence
+    qulonglong runningMemory;       // no persistence;
+    int firstDiffLine;              // no persistence
+    int outputLineCounts;           // no persistence
     int expectedLineCounts;
     OJProblemCase();
 
 public:
-    const QString &getId() const;
+    const QString& getId() const;
 
 private:
     QString id;
@@ -87,6 +75,6 @@ struct OJProblemSet {
     QString exportFilename;
 };
 
-using POJProblemSet  = std::shared_ptr<OJProblemSet>;
+using POJProblemSet = std::shared_ptr<OJProblemSet>;
 
 #endif // OJPROBLEMSET_H

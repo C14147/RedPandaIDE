@@ -21,15 +21,13 @@
 
 #include <QFileDialog>
 
-NewProjectUnitDialog::NewProjectUnitDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::NewProjectUnitDialog),
-    mSuffix("cpp")
+NewProjectUnitDialog::NewProjectUnitDialog(QWidget* parent)
+    : QDialog(parent), ui(new Ui::NewProjectUnitDialog), mSuffix("cpp")
 {
     ui->setupUi(this);
     onUpdateIcons();
-    connect(pIconsManager,&IconsManager::actionIconsUpdated,
-            this, &NewProjectUnitDialog::onUpdateIcons);
+    connect(pIconsManager, &IconsManager::actionIconsUpdated, this,
+            &NewProjectUnitDialog::onUpdateIcons);
 }
 
 NewProjectUnitDialog::~NewProjectUnitDialog()
@@ -42,13 +40,13 @@ QString NewProjectUnitDialog::folder() const
     return ui->txtFolder->text();
 }
 
-void NewProjectUnitDialog::setFolder(const QString &folderName)
+void NewProjectUnitDialog::setFolder(const QString& folderName)
 {
-    if (folderName!=folder()) {
+    if (folderName != folder()) {
         ui->txtFolder->setText(folderName);
         QDir dir(folder());
         if (filename().isEmpty() || dir.exists(filename())) {
-            //todo change filename
+            // todo change filename
             QString newFileName;
             QString ext;
             if (filename().isEmpty()) {
@@ -71,13 +69,13 @@ QString NewProjectUnitDialog::filename() const
     return ui->txtFilename->text();
 }
 
-void NewProjectUnitDialog::setFilename(const QString &filename)
+void NewProjectUnitDialog::setFilename(const QString& filename)
 {
     ui->txtFilename->setText(filename);
     ui->txtFilename->setFocus();
     int pos = filename.lastIndexOf('.');
-    if (pos>=0)
-        ui->txtFilename->setSelection(0,pos);
+    if (pos >= 0)
+        ui->txtFilename->setSelection(0, pos);
     else
         ui->txtFilename->selectAll();
 }
@@ -89,11 +87,7 @@ void NewProjectUnitDialog::onUpdateIcons()
 
 void NewProjectUnitDialog::on_btnBrowse_clicked()
 {
-    QString dir = QFileDialog::getExistingDirectory(
-                this,
-                tr("Choose directory"),
-                folder()
-                );
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Choose directory"), folder());
     if (!dir.isEmpty()) {
         setFolder(dir);
     }
@@ -104,41 +98,38 @@ void NewProjectUnitDialog::on_btnOk_clicked()
     accept();
 }
 
-
 void NewProjectUnitDialog::on_btnCancel_clicked()
 {
     reject();
 }
 
-
-void NewProjectUnitDialog::on_txtFilename_textChanged(const QString &/*arg1*/)
+void NewProjectUnitDialog::on_txtFilename_textChanged(const QString& /*arg1*/)
 {
     updateBtnOkStatus();
 }
 
 void NewProjectUnitDialog::updateBtnOkStatus()
 {
-    ui->btnOk->setEnabled(!ui->txtFilename->text().isEmpty()
-                          && QFileInfo(ui->txtFolder->text()).isDir());
+    ui->btnOk->setEnabled(!ui->txtFilename->text().isEmpty() &&
+                          QFileInfo(ui->txtFolder->text()).isDir());
 }
 
-const QString &NewProjectUnitDialog::suffix() const
+const QString& NewProjectUnitDialog::suffix() const
 {
     return mSuffix;
 }
 
-void NewProjectUnitDialog::setSuffix(const QString &newSuffix)
+void NewProjectUnitDialog::setSuffix(const QString& newSuffix)
 {
     mSuffix = newSuffix;
 }
 
-void NewProjectUnitDialog::closeEvent(QCloseEvent */*event*/)
+void NewProjectUnitDialog::closeEvent(QCloseEvent* /*event*/)
 {
     reject();
 }
 
-void NewProjectUnitDialog::on_txtFolder_textChanged(const QString &/*arg1*/)
+void NewProjectUnitDialog::on_txtFolder_textChanged(const QString& /*arg1*/)
 {
     updateBtnOkStatus();
 }
-

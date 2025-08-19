@@ -24,19 +24,19 @@ class LineNumberTextEditor : public QPlainTextEdit
 {
     Q_OBJECT
 public:
-    LineNumberTextEditor(QWidget *parent = nullptr);
+    LineNumberTextEditor(QWidget* parent = nullptr);
 
-    void lineNumberAreaPaintEvent(QPaintEvent *event);
+    void lineNumberAreaPaintEvent(QPaintEvent* event);
     int lineNumberAreaWidth();
 
-    const QColor &lineNumberAreaForeground() const;
-    void setLineNumberAreaForeground(const QColor &newLineNumberAreaForeground);
+    const QColor& lineNumberAreaForeground() const;
+    void setLineNumberAreaForeground(const QColor& newLineNumberAreaForeground);
 
-    const QColor &lineNumberAreaBackground() const;
-    void setLineNumberAreaBackground(const QColor &newLineNumberAreaBackground);
+    const QColor& lineNumberAreaBackground() const;
+    void setLineNumberAreaBackground(const QColor& newLineNumberAreaBackground);
 
-    const QColor &lineNumberAreaCurrentLine() const;
-    void setLineNumberAreaCurrentLine(const QColor &newLineNumberAreaCurrentLine);
+    const QColor& lineNumberAreaCurrentLine() const;
+    void setLineNumberAreaCurrentLine(const QColor& newLineNumberAreaCurrentLine);
 
     void clearFormat();
 
@@ -50,17 +50,18 @@ signals:
     void lineNumberAreaCurrentLineChanged();
 
 protected:
-    void resizeEvent(QResizeEvent *event) override;
+    void resizeEvent(QResizeEvent* event) override;
 
 private slots:
     void updateLineNumberAreaWidth(int newBlockCount);
     void highlightCurrentLine();
-    void updateLineNumberArea(const QRect &rect, int dy);
+    void updateLineNumberArea(const QRect& rect, int dy);
+
 private:
     void clearStartFormat();
 
 private:
-    QWidget *lineNumberArea;
+    QWidget* lineNumberArea;
     QColor mLineNumberAreaForeground;
     QColor mLineNumberAreaBackground;
     QColor mLineNumberAreaCurrentLine;
@@ -69,8 +70,9 @@ private:
 class LineNumberArea : public QWidget
 {
 public:
-    LineNumberArea(LineNumberTextEditor *editor) : QWidget(editor), mParentEditor(editor)
-    {}
+    LineNumberArea(LineNumberTextEditor* editor) : QWidget(editor), mParentEditor(editor)
+    {
+    }
 
     QSize sizeHint() const override
     {
@@ -78,15 +80,13 @@ public:
     }
 
 protected:
-    void paintEvent(QPaintEvent *event) override
+    void paintEvent(QPaintEvent* event) override
     {
         mParentEditor->lineNumberAreaPaintEvent(event);
     }
 
 private:
-    LineNumberTextEditor *mParentEditor;
+    LineNumberTextEditor* mParentEditor;
 };
-
-
 
 #endif // LINENUMBERTEXTEDITOR_H

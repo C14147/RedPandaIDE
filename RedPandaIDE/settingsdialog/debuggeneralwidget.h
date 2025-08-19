@@ -29,11 +29,12 @@ class DebugGeneralWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit DebugGeneralWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit DebugGeneralWidget(const QString& name, const QString& group,
+                                QWidget* parent = nullptr);
     ~DebugGeneralWidget();
 
 private:
-    Ui::DebugGeneralWidget *ui;
+    Ui::DebugGeneralWidget* ui;
 
     // SettingsWidget interface
 protected:

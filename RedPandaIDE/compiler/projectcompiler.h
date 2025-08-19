@@ -27,8 +27,8 @@ class ProjectCompiler : public Compiler
     Q_OBJECT
 public:
     ProjectCompiler(std::shared_ptr<Project> project);
-    ProjectCompiler(const ProjectCompiler&)=delete;
-    ProjectCompiler& operator=(const ProjectCompiler&)=delete;
+    ProjectCompiler(const ProjectCompiler&) = delete;
+    ProjectCompiler& operator=(const ProjectCompiler&) = delete;
     virtual void buildMakeFile();
 
     bool onlyClean() const;
@@ -39,17 +39,18 @@ private:
     void createStaticMakeFile();
     void createDynamicMakeFile();
     void newMakeFile(QFile& file);
-    void newMakeFile(QFile& file, bool &genModuleDef);
+    void newMakeFile(QFile& file, bool& genModuleDef);
     void writeMakeHeader(QFile& file);
-    void writeMakeDefines(QFile& file, bool &genModuleDef);
+    void writeMakeDefines(QFile& file, bool& genModuleDef);
     void writeMakeTarget(QFile& file);
     void writeMakeIncludes(QFile& file);
     void writeMakeClean(QFile& file);
     void writeMakeObjFilesRules(QFile& file);
-    void writeln(QFile& file, const QString& s="");
+    void writeln(QFile& file, const QString& s = "");
     // Compiler interface
 private:
     bool mOnlyClean;
+
 protected:
     bool prepareForCompile() override;
     bool prepareForRebuild() override;

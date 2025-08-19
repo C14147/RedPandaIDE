@@ -19,9 +19,8 @@
 #include "../settings.h"
 #include "../mainwindow.h"
 
-DebugGeneralWidget::DebugGeneralWidget(const QString& name, const QString& group, QWidget *parent) :
-    SettingsWidget(name,group,parent),
-    ui(new Ui::DebugGeneralWidget)
+DebugGeneralWidget::DebugGeneralWidget(const QString& name, const QString& group, QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::DebugGeneralWidget)
 {
     ui->setupUi(this);
     ui->panelCharacters->setVisible(false);

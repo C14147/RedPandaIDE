@@ -18,9 +18,9 @@
 #include "ui_editorsymbolcompletionwidget.h"
 #include "../settings.h"
 
-EditorSymbolCompletionWidget::EditorSymbolCompletionWidget(const QString& name, const QString& group, QWidget *parent) :
-    SettingsWidget(name,group,parent),
-    ui(new Ui::EditorSymbolCompletionWidget)
+EditorSymbolCompletionWidget::EditorSymbolCompletionWidget(const QString& name,
+                                                           const QString& group, QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::EditorSymbolCompletionWidget)
 {
     ui->setupUi(this);
 }

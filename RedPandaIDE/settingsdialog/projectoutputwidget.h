@@ -29,11 +29,12 @@ class ProjectOutputWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit ProjectOutputWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit ProjectOutputWidget(const QString& name, const QString& group,
+                                 QWidget* parent = nullptr);
     ~ProjectOutputWidget();
 
 private:
-    Ui::ProjectOutputWidget *ui;
+    Ui::ProjectOutputWidget* ui;
 
     // SettingsWidget interface
 protected:
@@ -45,7 +46,7 @@ private slots:
     void on_btnCompileLog_clicked();
 
 protected:
-    void updateIcons(const QSize &size) override;
+    void updateIcons(const QSize& size) override;
 };
 
 #endif // PROJECTOUTPUTWIDGET_H

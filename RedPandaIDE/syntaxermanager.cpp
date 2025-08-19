@@ -31,12 +31,11 @@ SyntaxerManager syntaxerManager;
 
 SyntaxerManager::SyntaxerManager()
 {
-
 }
 
 QSynedit::PSyntaxer SyntaxerManager::getSyntaxer(QSynedit::ProgrammingLanguage language) const
 {
-    switch(language) {
+    switch (language) {
     case QSynedit::ProgrammingLanguage::CPP:
         return std::make_shared<QSynedit::CppSyntaxer>();
     case QSynedit::ProgrammingLanguage::Assembly:
@@ -54,8 +53,8 @@ QSynedit::PSyntaxer SyntaxerManager::getSyntaxer(QSynedit::ProgrammingLanguage l
     case QSynedit::ProgrammingLanguage::LUA:
         return std::make_shared<QSynedit::LuaSyntaxer>();
     case QSynedit::ProgrammingLanguage::XMAKE: {
-        auto syntaxer=getSyntaxer(QSynedit::ProgrammingLanguage::LUA);
-        QSynedit::LuaSyntaxer* pSyntaxer= (QSynedit::LuaSyntaxer*)syntaxer.get();
+        auto syntaxer = getSyntaxer(QSynedit::ProgrammingLanguage::LUA);
+        QSynedit::LuaSyntaxer* pSyntaxer = (QSynedit::LuaSyntaxer*)syntaxer.get();
         pSyntaxer->setUseXMakeLibs(true);
         return syntaxer;
     }
@@ -66,7 +65,7 @@ QSynedit::PSyntaxer SyntaxerManager::getSyntaxer(QSynedit::ProgrammingLanguage l
 
 QSynedit::PFormatter SyntaxerManager::getFormatter(QSynedit::ProgrammingLanguage language) const
 {
-    switch(language) {
+    switch (language) {
     case QSynedit::ProgrammingLanguage::CPP:
         return std::make_shared<QSynedit::CppFormatter>();
     default:
@@ -74,39 +73,39 @@ QSynedit::PFormatter SyntaxerManager::getFormatter(QSynedit::ProgrammingLanguage
     }
 }
 
-//QSynedit::ProgrammingLanguage SyntaxerManager::getLanguage(const QString &filename) const
+// QSynedit::ProgrammingLanguage SyntaxerManager::getLanguage(const QString &filename) const
 //{
-//    QFileInfo info(filename);
-//    QString suffix = info.suffix();
-//    QString basename = info.baseName();
-//    if (suffix == "c" || suffix == "cpp" || suffix == "cxx"
-//            || suffix == "cc" || suffix == "h" || suffix == "hpp"
-//            || suffix == "hxx" || suffix == "hh" || suffix == "C"
-//            || suffix == "CPP" || suffix =="H" || suffix == "c++"
-//            || suffix == "h++") {
-//        return QSynedit::ProgrammingLanguage::CPP;
-//    } else if (suffix == "vs" || suffix == "fs" || suffix == "frag") {
-//        return QSynedit::ProgrammingLanguage::GLSL;
-//    } else if (suffix == "asm") {
-//        return QSynedit::ProgrammingLanguage::Assembly;
-//    } else if (suffix == "s" || suffix == "S") {
-//        return QSynedit::ProgrammingLanguage::ATTAssembly;
-//    } else if (suffix == "lua") {
-//        if (basename=="xmake") {
-//            return QSynedit::ProgrammingLanguage::XMAKE;
-//        } else
-//            return QSynedit::ProgrammingLanguage::LUA;
-//    } else if (basename.compare("makefile", Qt::CaseInsensitive)==0) {
-//        return QSynedit::ProgrammingLanguage::Makefile;
-//    } else if (suffix.isEmpty()) {
-//        return QSynedit::ProgrammingLanguage::CPP;
-//    }
-//    return QSynedit::ProgrammingLanguage::Textfile;
-//}
+//     QFileInfo info(filename);
+//     QString suffix = info.suffix();
+//     QString basename = info.baseName();
+//     if (suffix == "c" || suffix == "cpp" || suffix == "cxx"
+//             || suffix == "cc" || suffix == "h" || suffix == "hpp"
+//             || suffix == "hxx" || suffix == "hh" || suffix == "C"
+//             || suffix == "CPP" || suffix =="H" || suffix == "c++"
+//             || suffix == "h++") {
+//         return QSynedit::ProgrammingLanguage::CPP;
+//     } else if (suffix == "vs" || suffix == "fs" || suffix == "frag") {
+//         return QSynedit::ProgrammingLanguage::GLSL;
+//     } else if (suffix == "asm") {
+//         return QSynedit::ProgrammingLanguage::Assembly;
+//     } else if (suffix == "s" || suffix == "S") {
+//         return QSynedit::ProgrammingLanguage::ATTAssembly;
+//     } else if (suffix == "lua") {
+//         if (basename=="xmake") {
+//             return QSynedit::ProgrammingLanguage::XMAKE;
+//         } else
+//             return QSynedit::ProgrammingLanguage::LUA;
+//     } else if (basename.compare("makefile", Qt::CaseInsensitive)==0) {
+//         return QSynedit::ProgrammingLanguage::Makefile;
+//     } else if (suffix.isEmpty()) {
+//         return QSynedit::ProgrammingLanguage::CPP;
+//     }
+//     return QSynedit::ProgrammingLanguage::Textfile;
+// }
 
 QSynedit::ProgrammingLanguage SyntaxerManager::getLanguage(FileType fileType) const
 {
-    switch(fileType) {
+    switch (fileType) {
     case FileType::ATTASM:
         return QSynedit::ProgrammingLanguage::ATTAssembly;
     case FileType::INTELASM:
@@ -138,13 +137,14 @@ QSynedit::PSyntaxer SyntaxerManager::copy(QSynedit::PSyntaxer syntaxer) const
     return getSyntaxer(syntaxer->language());
 }
 
-void SyntaxerManager::applyColorScheme(QSynedit::PSyntaxer syntaxer, const QString &schemeName) const
+void SyntaxerManager::applyColorScheme(QSynedit::PSyntaxer syntaxer,
+                                       const QString& schemeName) const
 {
     if (!syntaxer)
         return;
 
-    foreach (const QString &name, syntaxer->attributes().keys()) {
-        PColorSchemeItem item = pColorManager->getItem(schemeName,name);
+    foreach (const QString& name, syntaxer->attributes().keys()) {
+        PColorSchemeItem item = pColorManager->getItem(schemeName, name);
         if (item) {
             QSynedit::PTokenAttribute attr = syntaxer->attributes()[name];
             attr->setBackground(item->background());

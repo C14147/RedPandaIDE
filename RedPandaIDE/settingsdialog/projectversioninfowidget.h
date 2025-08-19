@@ -29,12 +29,12 @@ class ProjectVersionInfoWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit ProjectVersionInfoWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit ProjectVersionInfoWidget(const QString& name, const QString& group,
+                                      QWidget* parent = nullptr);
     ~ProjectVersionInfoWidget();
 
 private:
-    Ui::ProjectVersionInfoWidget *ui;
-
+    Ui::ProjectVersionInfoWidget* ui;
 
     // SettingsWidget interface
 protected:

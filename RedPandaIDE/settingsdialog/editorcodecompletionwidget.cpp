@@ -21,12 +21,11 @@
 #include "../symbolusagemanager.h"
 
 EditorCodeCompletionWidget::EditorCodeCompletionWidget(const QString& name, const QString& group,
-                                                       QWidget *parent) :
-    SettingsWidget(name,group,parent),
-    ui(new Ui::EditorCodeCompletionWidget)
+                                                       QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::EditorCodeCompletionWidget)
 {
     ui->setupUi(this);
-//    ui->chkClearWhenEditorHidden->setVisible(false);
+    //    ui->chkClearWhenEditorHidden->setVisible(false);
 }
 
 EditorCodeCompletionWidget::~EditorCodeCompletionWidget()
@@ -44,7 +43,8 @@ void EditorCodeCompletionWidget::doLoad()
     ui->spinWidth->setValue(pSettings->codeCompletion().widthInColumns());
     ui->spinHeight->setValue(pSettings->codeCompletion().heightInLines());
 
-    ui->chkShowSuggestionWhileTyping->setChecked(pSettings->codeCompletion().showCompletionWhileInput());
+    ui->chkShowSuggestionWhileTyping->setChecked(
+        pSettings->codeCompletion().showCompletionWhileInput());
     ui->chkRecordUsage->setChecked(pSettings->codeCompletion().recordUsage());
     ui->chkSortByScope->setChecked(pSettings->codeCompletion().sortByScope());
     ui->chkShowKeywords->setChecked(pSettings->codeCompletion().showKeywords());
@@ -52,8 +52,10 @@ void EditorCodeCompletionWidget::doLoad()
     ui->chkAppendFunc->setChecked(pSettings->codeCompletion().appendFunc());
     ui->chkShowCodeIns->setChecked(pSettings->codeCompletion().showCodeIns());
     ui->chkClearWhenEditorHidden->setChecked(pSettings->codeCompletion().clearWhenEditorHidden());
-    ui->chkHideSymbolsStartWithTwoUnderline->setChecked(pSettings->codeCompletion().hideSymbolsStartsWithTwoUnderLine());
-    ui->chkHideSymbolsStartWithUnderline->setChecked(pSettings->codeCompletion().hideSymbolsStartsWithUnderLine());
+    ui->chkHideSymbolsStartWithTwoUnderline->setChecked(
+        pSettings->codeCompletion().hideSymbolsStartsWithTwoUnderLine());
+    ui->chkHideSymbolsStartWithUnderline->setChecked(
+        pSettings->codeCompletion().hideSymbolsStartsWithUnderLine());
 
     ui->chkEditorShareCodeParser->setChecked(pSettings->codeCompletion().shareParser());
     ui->spinMinCharRequired->setValue(pSettings->codeCompletion().minCharRequired());
@@ -61,7 +63,7 @@ void EditorCodeCompletionWidget::doLoad()
 
 void EditorCodeCompletionWidget::doSave()
 {
-    //font
+    // font
     pSettings->codeCompletion().setEnabled(ui->grpEnabled->isChecked());
 
     pSettings->codeCompletion().setParseLocalHeaders(ui->chkParseLocalFiles->isChecked());
@@ -70,7 +72,8 @@ void EditorCodeCompletionWidget::doSave()
     pSettings->codeCompletion().setWidthInColumns(ui->spinWidth->value());
     pSettings->codeCompletion().setHeightInLines(ui->spinHeight->value());
 
-    pSettings->codeCompletion().setShowCompletionWhileInput(ui->chkShowSuggestionWhileTyping->isChecked());
+    pSettings->codeCompletion().setShowCompletionWhileInput(
+        ui->chkShowSuggestionWhileTyping->isChecked());
     pSettings->codeCompletion().setRecordUsage(ui->chkRecordUsage->isChecked());
     pSettings->codeCompletion().setSortByScope(ui->chkSortByScope->isChecked());
     pSettings->codeCompletion().setShowKeywords(ui->chkShowKeywords->isChecked());
@@ -81,17 +84,17 @@ void EditorCodeCompletionWidget::doSave()
 
     pSettings->codeCompletion().setClearWhenEditorHidden(ui->chkClearWhenEditorHidden->isChecked());
 
-    pSettings->codeCompletion().setHideSymbolsStartsWithTwoUnderLine(ui->chkHideSymbolsStartWithTwoUnderline->isChecked());
-    pSettings->codeCompletion().setHideSymbolsStartsWithUnderLine(ui->chkHideSymbolsStartWithUnderline->isChecked());
+    pSettings->codeCompletion().setHideSymbolsStartsWithTwoUnderLine(
+        ui->chkHideSymbolsStartWithTwoUnderline->isChecked());
+    pSettings->codeCompletion().setHideSymbolsStartsWithUnderLine(
+        ui->chkHideSymbolsStartWithUnderline->isChecked());
 
     pSettings->codeCompletion().setShareParser(ui->chkEditorShareCodeParser->isChecked());
 
     pSettings->codeCompletion().save();
 }
 
-
 void EditorCodeCompletionWidget::on_btnClearUsageData_clicked()
 {
     pMainWindow->symbolUsageManager()->reset();
 }
-

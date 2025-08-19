@@ -30,12 +30,13 @@ class ProjectMakefileWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit ProjectMakefileWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit ProjectMakefileWidget(const QString& name, const QString& group,
+                                   QWidget* parent = nullptr);
     ~ProjectMakefileWidget();
 
 private:
-    Ui::ProjectMakefileWidget *ui;
-    CompilerSetDirectoriesWidget * mIncludesDirWidget;
+    Ui::ProjectMakefileWidget* ui;
+    CompilerSetDirectoriesWidget* mIncludesDirWidget;
 
     // SettingsWidget interface
 protected:
@@ -46,7 +47,7 @@ private slots:
     void on_btnInfo_clicked();
 
 protected:
-    void updateIcons(const QSize &size) override;
+    void updateIcons(const QSize& size) override;
 };
 
 #endif // PROJECTMAKEFILEWIDGET_H

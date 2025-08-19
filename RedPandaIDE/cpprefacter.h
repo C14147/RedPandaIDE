@@ -24,32 +24,30 @@
 
 class Editor;
 namespace QSynedit {
-    struct BufferCoord;
+struct BufferCoord;
 }
 class Project;
 class CppRefacter : public QObject
 {
     Q_OBJECT
 public:
-    explicit CppRefacter(QObject *parent = nullptr);
+    explicit CppRefacter(QObject* parent = nullptr);
 
-    bool findOccurence(Editor * editor, const QSynedit::BufferCoord& pos);
-    bool findOccurence(Editor * editor, const QString& statementFullname, SearchFileScope scope);
+    bool findOccurence(Editor* editor, const QSynedit::BufferCoord& pos);
+    bool findOccurence(Editor* editor, const QString& statementFullname, SearchFileScope scope);
 
     void renameSymbol(Editor* editor, const QSynedit::BufferCoord& pos, const QString& newWord);
+
 private:
     void doFindOccurenceInEditor(PStatement statement, Editor* editor, const PCppParser& parser);
-    void doFindOccurenceInProject(PStatement statement, std::shared_ptr<Project> project, const PCppParser& parser);
-    PSearchResultTreeItem findOccurenceInFile(
-            const QString& filename,
-            const QByteArray& fileEncoding,
-            const PStatement& statement,
-            const PCppParser& parser);
-    void renameSymbolInFile(
-            const QString& filename,
-            const PStatement& statement,
-            const QString& newWord,
-            const PCppParser& parser);
+    void doFindOccurenceInProject(PStatement statement, std::shared_ptr<Project> project,
+                                  const PCppParser& parser);
+    PSearchResultTreeItem findOccurenceInFile(const QString& filename,
+                                              const QByteArray& fileEncoding,
+                                              const PStatement& statement,
+                                              const PCppParser& parser);
+    void renameSymbolInFile(const QString& filename, const PStatement& statement,
+                            const QString& newWord, const PCppParser& parser);
 };
 
 #endif // CPPREFACTER_H

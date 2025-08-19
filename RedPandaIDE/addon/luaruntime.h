@@ -29,16 +29,17 @@
 
 struct lua_State;
 struct lua_Debug;
-typedef int (*lua_CFunction) (lua_State *L);
-typedef void (*lua_Hook) (lua_State *L, lua_Debug *ar);
+typedef int (*lua_CFunction)(lua_State* L);
+typedef void (*lua_Hook)(lua_State* L, lua_Debug* ar);
 
 namespace AddOn {
 
-void registerApiGroup(lua_State *L, const QString &groupName);
+void registerApiGroup(lua_State* L, const QString& groupName);
 
-class LuaError : public BaseError {
+class LuaError : public BaseError
+{
 public:
-    explicit LuaError(const QString &reason);
+    explicit LuaError(const QString& reason);
 };
 
 struct LuaExtraState {
@@ -47,13 +48,14 @@ struct LuaExtraState {
     std::chrono::time_point<std::chrono::system_clock> timeStart;
 };
 
-class RaiiLuaState {
+class RaiiLuaState
+{
 public:
-    RaiiLuaState(const QString &name, std::chrono::microseconds timeLimit);
-    RaiiLuaState(const RaiiLuaState &) = delete;
-    RaiiLuaState(RaiiLuaState &&rhs);
-    RaiiLuaState &operator=(const RaiiLuaState &) = delete;
-    RaiiLuaState &operator=(RaiiLuaState &&rhs);
+    RaiiLuaState(const QString& name, std::chrono::microseconds timeLimit);
+    RaiiLuaState(const RaiiLuaState&) = delete;
+    RaiiLuaState(RaiiLuaState&& rhs);
+    RaiiLuaState& operator=(const RaiiLuaState&) = delete;
+    RaiiLuaState& operator=(RaiiLuaState&& rhs);
     ~RaiiLuaState();
 
     bool fetchBoolean(int index);
@@ -64,13 +66,13 @@ public:
     QJsonObject fetchObject(int index);
     QJsonValue fetch(int index);
 
-    static bool fetchBoolean(lua_State *L, int index);
-    static long long fetchInteger(lua_State *L, int index);
-    static double fetchNumber(lua_State *L, int index);
-    static QString fetchString(lua_State *L, int index);
-    static QJsonArray fetchArray(lua_State *L, int index);
-    static QJsonObject fetchObject(lua_State *L, int index);
-    static QJsonValue fetch(lua_State *L, int index);
+    static bool fetchBoolean(lua_State* L, int index);
+    static long long fetchInteger(lua_State* L, int index);
+    static double fetchNumber(lua_State* L, int index);
+    static QString fetchString(lua_State* L, int index);
+    static QJsonArray fetchArray(lua_State* L, int index);
+    static QJsonObject fetchObject(lua_State* L, int index);
+    static QJsonValue fetch(lua_State* L, int index);
 
     bool popBoolean();
     long long popInteger();
@@ -80,43 +82,43 @@ public:
     QJsonObject popObject();
     QJsonValue pop();
 
-    static QJsonValue pop(lua_State *L);
+    static QJsonValue pop(lua_State* L);
 
     void push(decltype(nullptr));
-    void push(const QMap<QString, lua_CFunction> &value);
+    void push(const QMap<QString, lua_CFunction>& value);
 
-    static void push(lua_State *L, decltype(nullptr));
-    static void push(lua_State *L, bool value);
-    static void push(lua_State *L, const QString &value);
-    static void push(lua_State *L, const QStringList &value);
-    static void push(lua_State *L, const QJsonArray &value);
-    static void push(lua_State *L, const QJsonObject &value);
+    static void push(lua_State* L, decltype(nullptr));
+    static void push(lua_State* L, bool value);
+    static void push(lua_State* L, const QString& value);
+    static void push(lua_State* L, const QStringList& value);
+    static void push(lua_State* L, const QJsonArray& value);
+    static void push(lua_State* L, const QJsonObject& value);
 
     int getTop();
-    static int getTop(lua_State *L);
+    static int getTop(lua_State* L);
 
-    int loadBuffer(const QByteArray &buff, const QString &name);
+    int loadBuffer(const QByteArray& buff, const QString& name);
     void openLibs();
     int pCall(int nargs, int nresults, int msgh);
-    int getGlobal(const QString &name);
-    void setGlobal(const QString &name);
+    int getGlobal(const QString& name);
+    void setGlobal(const QString& name);
     void setHook(lua_Hook f, int mask, int count);
 
     void setTimeStart();
-    LuaExtraState &extraState();
-    static LuaExtraState &extraState(lua_State *lua);
+    LuaExtraState& extraState();
+    static LuaExtraState& extraState(lua_State* lua);
 
 private:
-    static QJsonValue fetchTableImpl(lua_State *L, int index, int depth);
-    static QJsonValue fetchValueImpl(lua_State *L, int index, int depth);
+    static QJsonValue fetchTableImpl(lua_State* L, int index, int depth);
+    static QJsonValue fetchValueImpl(lua_State* L, int index, int depth);
 
-    static void pushArrayImpl(lua_State *L, const QJsonArray &value, int depth);
-    static void pushObjectImpl(lua_State *L, const QJsonObject &value, int depth);
-    static void pushValueImpl(lua_State *L, const QJsonValue &value, int depth);
+    static void pushArrayImpl(lua_State* L, const QJsonArray& value, int depth);
+    static void pushObjectImpl(lua_State* L, const QJsonObject& value, int depth);
+    static void pushValueImpl(lua_State* L, const QJsonValue& value, int depth);
 
 private:
-    lua_State *mLua;
-    static QHash<lua_State *, LuaExtraState> mExtraState;
+    lua_State* mLua;
+    static QHash<lua_State*, LuaExtraState> mExtraState;
 
     static constexpr int TABLE_MAX_DEPTH = 10;
     // each nesting level of table requires 2 slots in Lua stack
@@ -126,6 +128,6 @@ private:
     static constexpr int LUA_STACK_SIZE = TABLE_MAX_DEPTH * 2 + 10;
 };
 
-}
+} // namespace AddOn
 
 #endif // ADDON_LUA_RUNTIME_H

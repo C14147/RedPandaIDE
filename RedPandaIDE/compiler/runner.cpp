@@ -17,16 +17,11 @@
 #include "runner.h"
 #include <QDebug>
 
-Runner::Runner(const QString &filename, const QStringList &arguments, const QString &workDir
-               ,QObject *parent) : QThread(parent),
-    mPausing(false),
-    mStop(false),
-    mFilename(filename),
-    mArguments(arguments),
-    mWorkDir(workDir),
-    mWaitForFinishTime(100)
+Runner::Runner(const QString& filename, const QStringList& arguments, const QString& workDir,
+               QObject* parent)
+    : QThread(parent), mPausing(false), mStop(false), mFilename(filename), mArguments(arguments),
+      mWorkDir(workDir), mWaitForFinishTime(100)
 {
-
 }
 
 void Runner::stop()
@@ -37,7 +32,6 @@ void Runner::stop()
 
 void Runner::doStop()
 {
-
 }
 
 bool Runner::pausing() const
@@ -59,4 +53,3 @@ void Runner::setWaitForFinishTime(int newWaitForFinishTime)
 {
     mWaitForFinishTime = newWaitForFinishTime;
 }
-

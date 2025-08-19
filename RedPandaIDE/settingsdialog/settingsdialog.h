@@ -34,64 +34,63 @@ class SettingsDialog : public QDialog
     Q_OBJECT
 
 public:
-    enum {
-        GetWidgetIndexRole = Qt::UserRole + 1
-    };
-    explicit SettingsDialog(QWidget *parent = nullptr);
+    enum { GetWidgetIndexRole = Qt::UserRole + 1 };
+    explicit SettingsDialog(QWidget* parent = nullptr);
     ~SettingsDialog();
 
     void addWidget(SettingsWidget* pWidget);
 
     void selectFirstWidget();
 
-    static PSettingsDialog optionDialog(QWidget *parent);
-    static PSettingsDialog projectOptionDialog(QWidget *parent);
+    static PSettingsDialog optionDialog(QWidget* parent);
+    static PSettingsDialog projectOptionDialog(QWidget* parent);
 
-    bool setCurrentWidget(const QString &widgetName, const QString &groupName);
+    bool setCurrentWidget(const QString& widgetName, const QString& groupName);
 
     bool appShouldQuit() const;
 
 private slots:
     void closeAndQuit();
-    void showWidget(const QModelIndex &index);
+    void showWidget(const QModelIndex& index);
 
     void widget_settings_changed(bool value);
 
-    void onWidgetsViewCurrentChanged(const QModelIndex &index, const QModelIndex &previous);
+    void onWidgetsViewCurrentChanged(const QModelIndex& index, const QModelIndex& previous);
 
     void on_btnCancel_pressed();
 
     void on_btnApply_pressed();
 
     void on_btnOk_pressed();
+
 private:
     void saveCurrentPageSettings(bool confirm);
+
 private:
-    Ui::SettingsDialog *ui;
+    Ui::SettingsDialog* ui;
     QList<SettingsWidget*> mSettingWidgets;
     QStandardItemModel model;
     bool mAppShouldQuit;
 
-//    CompilerSetOptionWidget *pCompilerSetOptionWidget;
-//    CompilerAutolinkWidget *pCompilerAutolinkWidget;
-//    EditorGeneralWidget *pEditorGeneralWidget;
-//    EditorFontWidget *pEditorFontWidget;
-//    EditorClipboardWidget *pEditorClipboardWidget;
-//    EditorColorSchemeWidget *pEditorColorSchemeWidget;
-//    EnvironmentAppearanceWidget *pEnvironmentAppearanceWidget;
-//    EditorSymbolCompletionWidget *pEditorSymbolCompletionWidget;
-//    EditorCodeCompletionWidget *pEditorCodeCompletionWidget;
-//    EditorSyntaxCheckWidget *pEditorSyntaxCheckWidget;
-//    EditorAutoSaveWidget *pEditorAutoSaveWidget;
-//    EditorMiscWidget *pEditorMiscWidget;
-//    ExecutorGeneralWidget  *pExecutorGeneralWidget;
-//    DebugGeneralWidget *pDebugGeneralWidget;
-//    FormatterGeneralWidget  *pFormatterGeneralWidget;
-
+    //    CompilerSetOptionWidget *pCompilerSetOptionWidget;
+    //    CompilerAutolinkWidget *pCompilerAutolinkWidget;
+    //    EditorGeneralWidget *pEditorGeneralWidget;
+    //    EditorFontWidget *pEditorFontWidget;
+    //    EditorClipboardWidget *pEditorClipboardWidget;
+    //    EditorColorSchemeWidget *pEditorColorSchemeWidget;
+    //    EnvironmentAppearanceWidget *pEnvironmentAppearanceWidget;
+    //    EditorSymbolCompletionWidget *pEditorSymbolCompletionWidget;
+    //    EditorCodeCompletionWidget *pEditorCodeCompletionWidget;
+    //    EditorSyntaxCheckWidget *pEditorSyntaxCheckWidget;
+    //    EditorAutoSaveWidget *pEditorAutoSaveWidget;
+    //    EditorMiscWidget *pEditorMiscWidget;
+    //    ExecutorGeneralWidget  *pExecutorGeneralWidget;
+    //    DebugGeneralWidget *pDebugGeneralWidget;
+    //    FormatterGeneralWidget  *pFormatterGeneralWidget;
 
     // QWidget interface
 protected:
-    void closeEvent(QCloseEvent *event) override;
+    void closeEvent(QCloseEvent* event) override;
 };
 
 #endif // SETTINGSDIALOG_H

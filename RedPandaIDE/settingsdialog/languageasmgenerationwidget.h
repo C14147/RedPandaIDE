@@ -12,11 +12,12 @@ class LanguageAsmGenerationWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit LanguageAsmGenerationWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit LanguageAsmGenerationWidget(const QString& name, const QString& group,
+                                         QWidget* parent = nullptr);
     ~LanguageAsmGenerationWidget();
 
 private:
-    Ui::LanguageAsmGenerationWidget *ui;
+    Ui::LanguageAsmGenerationWidget* ui;
 
     // SettingsWidget interface
 protected:

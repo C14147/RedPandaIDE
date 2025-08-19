@@ -20,10 +20,8 @@
 #include "qt_utils/charsetinfo.h"
 #include "../mainwindow.h"
 
-EditorMiscWidget::EditorMiscWidget(const QString& name, const QString& group,
-                                   QWidget *parent) :
-    SettingsWidget(name,group,parent),
-    ui(new Ui::EditorMiscWidget)
+EditorMiscWidget::EditorMiscWidget(const QString& name, const QString& group, QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::EditorMiscWidget)
 {
     ui->setupUi(this);
 }
@@ -46,11 +44,9 @@ void EditorMiscWidget::doLoad()
     ui->chkAutoDetectFileEncoding->setChecked(pSettings->editor().autoDetectFileEncoding());
 
     QByteArray defaultEncoding = pSettings->editor().defaultEncoding();
-    if (defaultEncoding == ENCODING_AUTO_DETECT
-            || defaultEncoding == ENCODING_SYSTEM_DEFAULT
-            || defaultEncoding == ENCODING_UTF8
-            || defaultEncoding == ENCODING_UTF8_BOM) {
-        int index =ui->cbEncoding->findData(defaultEncoding);
+    if (defaultEncoding == ENCODING_AUTO_DETECT || defaultEncoding == ENCODING_SYSTEM_DEFAULT ||
+        defaultEncoding == ENCODING_UTF8 || defaultEncoding == ENCODING_UTF8_BOM) {
+        int index = ui->cbEncoding->findData(defaultEncoding);
         ui->cbEncoding->setCurrentIndex(index);
         ui->cbEncodingDetail->clear();
         ui->cbEncodingDetail->setVisible(false);
@@ -92,7 +88,6 @@ void EditorMiscWidget::doSave()
     pSettings->editor().setRemoveTrailingSpacesWhenSaved(ui->rbRemoveTrailingSpaces->isChecked());
     pSettings->editor().setParseTodos(ui->chkParseTodos->isChecked());
 
-
     pSettings->editor().save();
     pMainWindow->updateEditorSettings();
 }
@@ -101,22 +96,22 @@ void EditorMiscWidget::init()
 {
     ui->cbEncodingDetail->setVisible(false);
     ui->cbEncoding->clear();
-    ui->cbEncoding->addItem(tr("System Default(%1)").arg(QString(pCharsetInfoManager->getDefaultSystemEncoding())),ENCODING_SYSTEM_DEFAULT);
-    ui->cbEncoding->addItem(tr("UTF-8"),ENCODING_UTF8);
-    ui->cbEncoding->addItem(tr("UTF-8 BOM"),ENCODING_UTF8_BOM);
+    ui->cbEncoding->addItem(
+        tr("System Default(%1)").arg(QString(pCharsetInfoManager->getDefaultSystemEncoding())),
+        ENCODING_SYSTEM_DEFAULT);
+    ui->cbEncoding->addItem(tr("UTF-8"), ENCODING_UTF8);
+    ui->cbEncoding->addItem(tr("UTF-8 BOM"), ENCODING_UTF8_BOM);
     foreach (const QString& langName, pCharsetInfoManager->languageNames()) {
-        ui->cbEncoding->addItem(langName,langName);
+        ui->cbEncoding->addItem(langName, langName);
     }
     SettingsWidget::init();
 }
 
-void EditorMiscWidget::on_cbEncoding_currentTextChanged(const QString &/*arg1*/)
+void EditorMiscWidget::on_cbEncoding_currentTextChanged(const QString& /*arg1*/)
 {
     QString userData = ui->cbEncoding->currentData().toString();
-    if (userData == ENCODING_AUTO_DETECT
-            || userData == ENCODING_SYSTEM_DEFAULT
-            || userData == ENCODING_UTF8
-            || userData == ENCODING_UTF8_BOM) {
+    if (userData == ENCODING_AUTO_DETECT || userData == ENCODING_SYSTEM_DEFAULT ||
+        userData == ENCODING_UTF8 || userData == ENCODING_UTF8_BOM) {
         ui->cbEncodingDetail->setVisible(false);
         ui->cbEncodingDetail->clear();
     } else {
@@ -128,4 +123,3 @@ void EditorMiscWidget::on_cbEncoding_currentTextChanged(const QString &/*arg1*/)
         }
     }
 }
-

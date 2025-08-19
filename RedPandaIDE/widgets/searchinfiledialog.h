@@ -33,33 +33,35 @@ class SearchInFileDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SearchInFileDialog(QWidget *parent = nullptr);
+    explicit SearchInFileDialog(QWidget* parent = nullptr);
     ~SearchInFileDialog();
     void findInFiles(const QString& text);
-    void findInFiles(const QString& keyword, SearchFileScope scope, QSynedit::SearchOptions options, const QString& folder, const QString& filters, bool searchSubfolders );
+    void findInFiles(const QString& keyword, SearchFileScope scope, QSynedit::SearchOptions options,
+                     const QString& folder, const QString& filters, bool searchSubfolders);
     QSynedit::PSynSearchBase searchEngine() const;
 
 private slots:
-   void on_cbFind_currentTextChanged(const QString &arg1);
+    void on_cbFind_currentTextChanged(const QString& arg1);
 
-   void on_btnCancel_clicked();
+    void on_btnCancel_clicked();
 
-   void on_btnExecute_clicked();
-   void on_btnReplace_clicked();
+    void on_btnExecute_clicked();
+    void on_btnReplace_clicked();
 
-   void on_rbFolder_toggled(bool checked);
+    void on_rbFolder_toggled(bool checked);
 
-   void on_btnChangeFolder_clicked();
+    void on_btnChangeFolder_clicked();
 
 private:
-   void doSearch(bool replace);
-   int execute(QSynedit::QSynEdit* editor, const QString& sSearch,
-               const QString& sReplace,
-               QSynedit::SearchMathedProc matchCallback = nullptr,
-               QSynedit::SearchConfirmAroundProc confirmAroundCallback = nullptr);
-   std::shared_ptr<SearchResultTreeItem> batchFindInEditor(QSynedit::QSynEdit * editor,const QString& filename, const QString& keyword);
+    void doSearch(bool replace);
+    int execute(QSynedit::QSynEdit* editor, const QString& sSearch, const QString& sReplace,
+                QSynedit::SearchMathedProc matchCallback = nullptr,
+                QSynedit::SearchConfirmAroundProc confirmAroundCallback = nullptr);
+    std::shared_ptr<SearchResultTreeItem>
+    batchFindInEditor(QSynedit::QSynEdit* editor, const QString& filename, const QString& keyword);
+
 private:
-    Ui::SearchInFileDialog *ui;
+    Ui::SearchInFileDialog* ui;
     QSynedit::SearchOptions mSearchOptions;
     QSynedit::PSynSearchBase mBasicSearchEngine;
     QSynedit::PSynSearchBase mRegexSearchEngine;
@@ -67,7 +69,7 @@ private:
 
     // QWidget interface
 protected:
-    void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
+    void showEvent(QShowEvent* event) Q_DECL_OVERRIDE;
 };
 
 #endif // SEARCHINFILEDIALOG_H

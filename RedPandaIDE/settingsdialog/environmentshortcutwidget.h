@@ -29,38 +29,42 @@ class EnvironmentShortcutWidget;
 }
 
 class QMenu;
-class EnvironmentShortcutModel: public QAbstractTableModel {
+class EnvironmentShortcutModel : public QAbstractTableModel
+{
     Q_OBJECT
     // QAbstractItemModel interface
 public:
-    explicit EnvironmentShortcutModel(QObject* parent=nullptr);
+    explicit EnvironmentShortcutModel(QObject* parent = nullptr);
     void reload();
 
-    int rowCount(const QModelIndex &parent) const override;
-    int columnCount(const QModelIndex &parent) const override;
-    QVariant data(const QModelIndex &index, int role) const override;
-    bool setData(const QModelIndex &index, const QVariant &value, int role) override;
+    int rowCount(const QModelIndex& parent) const override;
+    int columnCount(const QModelIndex& parent) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
+    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-    Qt::ItemFlags flags(const QModelIndex &index) const override;
-    const QList<PEnvironmentShortcut> &shortcuts() const;
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
+    const QList<PEnvironmentShortcut>& shortcuts() const;
 signals:
     void shortcutChanged();
 public slots:
     void shortcutsUpdated();
+
 private:
-    void loadShortCutsOfMenu(const QMenu * menu, QList<QAction*>& globalActions);
+    void loadShortCutsOfMenu(const QMenu* menu, QList<QAction*>& globalActions);
+
 private:
     QList<PEnvironmentShortcut> mShortcuts;
-
 };
 
-class EnvironmentShortcutDelegate: public QStyledItemDelegate {
+class EnvironmentShortcutDelegate : public QStyledItemDelegate
+{
     Q_OBJECT
 public:
-    explicit EnvironmentShortcutDelegate(QObject *parent = nullptr);
+    explicit EnvironmentShortcutDelegate(QObject* parent = nullptr);
 
 public:
-    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
+                          const QModelIndex& index) const override;
 protected slots:
     void onEditingFinished(QWidget* editor);
 };
@@ -70,18 +74,19 @@ class EnvironmentShortcutWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit EnvironmentShortcutWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit EnvironmentShortcutWidget(const QString& name, const QString& group,
+                                       QWidget* parent = nullptr);
     ~EnvironmentShortcutWidget();
 
 private:
-    Ui::EnvironmentShortcutWidget *ui;
+    Ui::EnvironmentShortcutWidget* ui;
 
     // SettingsWidget interface
 protected:
     void doLoad() override;
     void doSave() override;
 private slots:
-    void on_txtKeyword_textChanged(const QString &arg1);
+    void on_txtKeyword_textChanged(const QString& arg1);
 
 private:
     EnvironmentShortcutModel mModel;

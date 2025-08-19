@@ -35,10 +35,9 @@ class FunctionTooltipWidget : public QFrame
 {
     Q_OBJECT
 public:
-    explicit FunctionTooltipWidget(QWidget *parent = nullptr);
-    void addTip(const QString& name, const QString& fullName,
-                const QString& returnType, const QString& args,
-                const QString& noNameArgs);
+    explicit FunctionTooltipWidget(QWidget* parent = nullptr);
+    void addTip(const QString& name, const QString& fullName, const QString& returnType,
+                const QString& args, const QString& noNameArgs);
     void clearTips();
     int tipCount();
     int paramPos() const;
@@ -51,14 +50,15 @@ public:
     int paramIndex() const;
     void setParamIndex(int newParamIndex);
 
-    const QString &functionFullName() const;
-    void setFunctioFullName(const QString &newFunctioFullName);
+    const QString& functionFullName() const;
+    void setFunctioFullName(const QString& newFunctioFullName);
 
     int minWidth() const;
     void setMinWidth(int newMinWidth);
 
 private:
     QStringList splitArgs(QString args);
+
 private:
     QLabel* mInfoLabel;
     QLabel* mTotalLabel;
@@ -74,9 +74,9 @@ private:
 
     // QWidget interface
 protected:
-    void closeEvent(QCloseEvent *event) override;
-    void showEvent(QShowEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
+    void closeEvent(QCloseEvent* event) override;
+    void showEvent(QShowEvent* event) override;
+    void hideEvent(QHideEvent* event) override;
 };
 
 #endif // FUNCTIONTOOLTIPWIDGET_H

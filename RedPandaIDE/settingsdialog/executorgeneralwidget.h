@@ -29,11 +29,12 @@ class ExecutorGeneralWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit ExecutorGeneralWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit ExecutorGeneralWidget(const QString& name, const QString& group,
+                                   QWidget* parent = nullptr);
     ~ExecutorGeneralWidget();
 
 private:
-    Ui::ExecutorGeneralWidget *ui;
+    Ui::ExecutorGeneralWidget* ui;
 
     // SettingsWidget interface
 protected:
@@ -43,10 +44,10 @@ private slots:
     void on_btnBrowse_clicked();
 
     // SettingsWidget interface
-    void on_txtExecuteParamaters_textChanged(const QString &commandLine);
+    void on_txtExecuteParamaters_textChanged(const QString& commandLine);
 
 protected:
-    void updateIcons(const QSize &size) override;
+    void updateIcons(const QSize& size) override;
 };
 
 #endif // EXECUTORGENERALWIDGET_H

@@ -83,28 +83,24 @@ enum class CompilerType {
     Unknown
 };
 
-enum class CompilerOptionType {
-    Checkbox,
-    Choice,
-    Input,
-    Number
-};
+enum class CompilerOptionType { Checkbox, Choice, Input, Number };
 
-using CompileOptionChoiceList = QList<QPair<QString,QString>>;
+using CompileOptionChoiceList = QList<QPair<QString, QString>>;
 
 typedef struct {
     QString key;
-    QString name; // "Generate debugging info"
+    QString name;    // "Generate debugging info"
     QString section; // "C options"
     bool isC;
-    bool isCpp; // True (C++ option?) - can be both C and C++ option...
-    bool isLinker; // Is it a linker param
+    bool isCpp;      // True (C++ option?) - can be both C and C++ option...
+    bool isLinker;   // Is it a linker param
     QString setting; // "-g3"
     CompilerOptionType type;
-    CompileOptionChoiceList choices; // replaces "Yes/No" standard choices (max 30 different choices)
+    CompileOptionChoiceList
+        choices; // replaces "Yes/No" standard choices (max 30 different choices)
     /* for spin control */
-    int scale; //Scale
-    QString suffix;  //suffix
+    int scale;      // Scale
+    QString suffix; // suffix
     int defaultValue;
     int minValue;
     int maxValue;
@@ -112,49 +108,37 @@ typedef struct {
 
 using PCompilerOption = std::shared_ptr<CompilerOption>;
 
-using CompilerOptionMap=QMap<QString,PCompilerOption>;
+using CompilerOptionMap = QMap<QString, PCompilerOption>;
 
 class CompilerInfo
 {
 public:
     CompilerInfo(const QString& name);
-    CompilerInfo(const CompilerInfo&)=delete;
-    CompilerInfo& operator=(const CompilerInfo&)=delete;
+    CompilerInfo(const CompilerInfo&) = delete;
+    CompilerInfo& operator=(const CompilerInfo&) = delete;
 
-    const QList<PCompilerOption> &compilerOptions() const;
-    const QString &name() const;
+    const QList<PCompilerOption>& compilerOptions() const;
+    const QString& name() const;
     PCompilerOption getCompilerOption(const QString& key) const;
     bool hasCompilerOption(const QString& key) const;
     void init();
 
-    virtual bool forceUTF8InDebugger()=0;
-    virtual bool forceUTF8InMakefile()=0;
-    virtual bool supportStaticLink()=0;
+    virtual bool forceUTF8InDebugger() = 0;
+    virtual bool forceUTF8InMakefile() = 0;
+    virtual bool supportStaticLink() = 0;
     virtual bool supportSyntaxCheck();
+
 protected:
-    PCompilerOption addOption(const QString& key,
-                   const QString& name,
-                   const QString section,
-                   bool isC,
-                   bool isCpp,
-                   bool isLinker,
-                   const QString& setting,
-                   CompilerOptionType type = CompilerOptionType::Checkbox,
-                   const CompileOptionChoiceList& choices = CompileOptionChoiceList());
-    PCompilerOption addNumberOption(const QString& key,
-                   const QString& name,
-                   const QString section,
-                   bool isC,
-                   bool isCpp,
-                   bool isLinker,
-                   const QString& setting,
-                   const QString& suffix,
-                   int scale,
-                   int defaultValue,
-                   int minValue,
-                   int maxValue
-                    );
+    PCompilerOption addOption(const QString& key, const QString& name, const QString section,
+                              bool isC, bool isCpp, bool isLinker, const QString& setting,
+                              CompilerOptionType type = CompilerOptionType::Checkbox,
+                              const CompileOptionChoiceList& choices = CompileOptionChoiceList());
+    PCompilerOption addNumberOption(const QString& key, const QString& name, const QString section,
+                                    bool isC, bool isCpp, bool isLinker, const QString& setting,
+                                    const QString& suffix, int scale, int defaultValue,
+                                    int minValue, int maxValue);
     virtual void prepareCompilerOptions();
+
 protected:
     CompilerOptionMap mCompilerOptions;
     QList<PCompilerOption> mCompilerOptionList;
@@ -166,7 +150,8 @@ using PCompilerInfo = std::shared_ptr<CompilerInfo>;
 class CompilerInfoManager;
 using PCompilerInfoManager = std::shared_ptr<CompilerInfoManager>;
 
-class CompilerInfoManager {
+class CompilerInfoManager
+{
 public:
     CompilerInfoManager();
     static PCompilerInfo getInfo(CompilerType compilerType);
@@ -178,12 +163,14 @@ public:
     static bool forceUTF8InDebugger(CompilerType compilerType);
     static PCompilerInfoManager getInstance();
     static void addInfo(CompilerType compilerType, PCompilerInfo info);
+
 private:
     static PCompilerInfoManager instance;
-    QMap<CompilerType,PCompilerInfo> mInfos;
+    QMap<CompilerType, PCompilerInfo> mInfos;
 };
 
-class ClangCompilerInfo: public CompilerInfo{
+class ClangCompilerInfo : public CompilerInfo
+{
 public:
     ClangCompilerInfo();
     bool forceUTF8InDebugger() override;
@@ -191,7 +178,8 @@ public:
     bool supportStaticLink() override;
 };
 
-class GCCCompilerInfo: public CompilerInfo{
+class GCCCompilerInfo : public CompilerInfo
+{
 public:
     GCCCompilerInfo();
     bool forceUTF8InDebugger() override;
@@ -199,7 +187,8 @@ public:
     bool supportStaticLink() override;
 };
 
-class GCCUTF8CompilerInfo: public CompilerInfo{
+class GCCUTF8CompilerInfo : public CompilerInfo
+{
 public:
     GCCUTF8CompilerInfo();
     bool forceUTF8InDebugger() override;
@@ -208,17 +197,18 @@ public:
 };
 
 #ifdef ENABLE_SDCC
-class SDCCCompilerInfo: public CompilerInfo{
+class SDCCCompilerInfo : public CompilerInfo
+{
 public:
     SDCCCompilerInfo();
     bool forceUTF8InDebugger() override;
     bool forceUTF8InMakefile() override;
     bool supportStaticLink() override;
     bool supportSyntaxCheck() override;
+
 protected:
     void prepareCompilerOptions() override;
 };
 #endif
-
 
 #endif // COMPILERINFO_H

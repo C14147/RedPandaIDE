@@ -3,14 +3,13 @@
 #include "gitmanager.h"
 #include "../widgets/infomessagebox.h"
 
-GitMergeDialog::GitMergeDialog(const QString& folder, QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::GitMergeDialog)
+GitMergeDialog::GitMergeDialog(const QString& folder, QWidget* parent)
+    : QDialog(parent), ui(new Ui::GitMergeDialog)
 {
     ui->setupUi(this);
     mManager = new GitManager();
-    mCurrentBranchIndex=-1;
-    QStringList branches =mManager->listBranches(mFolder,mCurrentBranchIndex);
+    mCurrentBranchIndex = -1;
+    QStringList branches = mManager->listBranches(mFolder, mCurrentBranchIndex);
     ui->cbBranch->addItems(branches);
     ui->cbBranch->setCurrentIndex(mCurrentBranchIndex);
     ui->btnOk->setEnabled(false);
@@ -19,7 +18,7 @@ GitMergeDialog::GitMergeDialog(const QString& folder, QWidget *parent) :
     mFolder = mManager->rootFolder(folder);
     if (branches.isEmpty()) {
         QString currentBranch;
-        if (mManager->hasRepository(folder,currentBranch)) {
+        if (mManager->hasRepository(folder, currentBranch)) {
             ui->cbBranch->addItem(currentBranch);
             ui->btnOk->setEnabled(false);
         }
@@ -39,23 +38,17 @@ void GitMergeDialog::on_btnCancel_clicked()
     reject();
 }
 
-void GitMergeDialog::closeEvent(QCloseEvent */* event */)
+void GitMergeDialog::closeEvent(QCloseEvent* /* event */)
 {
     reject();
 }
 
-
 void GitMergeDialog::on_btnOk_clicked()
 {
     QString output;
-    if (mManager->merge(mFolder,ui->cbBranch->currentText(),
-                    ui->chkSquash->isChecked(),
-                    ui->chkFastForwardOnly->isChecked(),
-                    ui->chkNoFastFoward->isChecked(),
-                    ui->chkNoCommit->isChecked(),
-                    output,
-                    ui->txtMergeMessage->toPlainText()
-                        )) {
+    if (mManager->merge(mFolder, ui->cbBranch->currentText(), ui->chkSquash->isChecked(),
+                        ui->chkFastForwardOnly->isChecked(), ui->chkNoFastFoward->isChecked(),
+                        ui->chkNoCommit->isChecked(), output, ui->txtMergeMessage->toPlainText())) {
         InfoMessageBox box;
         box.setMessage(output);
         box.exec();
@@ -68,9 +61,7 @@ void GitMergeDialog::on_btnOk_clicked()
     }
 }
 
-
 void GitMergeDialog::on_cbBranch_currentIndexChanged(int index)
 {
-    ui->btnOk->setEnabled(mCurrentBranchIndex!=index);
+    ui->btnOk->setEnabled(mCurrentBranchIndex != index);
 }
-

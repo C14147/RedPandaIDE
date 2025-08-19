@@ -13,7 +13,7 @@ class GitMergeDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit GitMergeDialog(const QString& folder, QWidget *parent = nullptr);
+    explicit GitMergeDialog(const QString& folder, QWidget* parent = nullptr);
     ~GitMergeDialog();
 
 private slots:
@@ -24,14 +24,14 @@ private slots:
     void on_cbBranch_currentIndexChanged(int index);
 
 private:
-    Ui::GitMergeDialog *ui;
-    GitManager *mManager;
+    Ui::GitMergeDialog* ui;
+    GitManager* mManager;
     QString mFolder;
     int mCurrentBranchIndex;
 
     // QWidget interface
 protected:
-    void closeEvent(QCloseEvent *event) override;
+    void closeEvent(QCloseEvent* event) override;
 };
 
 #endif // GITMERGEDIALOG_H

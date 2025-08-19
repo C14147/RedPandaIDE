@@ -27,9 +27,9 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 
-ExecutorGeneralWidget::ExecutorGeneralWidget(const QString& name, const QString& group, QWidget *parent):
-    SettingsWidget(name,group,parent),
-    ui(new Ui::ExecutorGeneralWidget)
+ExecutorGeneralWidget::ExecutorGeneralWidget(const QString& name, const QString& group,
+                                             QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::ExecutorGeneralWidget)
 {
     ui->setupUi(this);
     ui->txtParsedArgsInJson->setFont(defaultMonoFont());
@@ -75,23 +75,19 @@ void ExecutorGeneralWidget::doSave()
 
 void ExecutorGeneralWidget::on_btnBrowse_clicked()
 {
-    QString filename = QFileDialog::getOpenFileName(
-                this,
-                tr("Choose input file"),
-                QString(),
-                tr("All files (%1)").arg(ALL_FILE_WILDCARD));
+    QString filename = QFileDialog::getOpenFileName(this, tr("Choose input file"), QString(),
+                                                    tr("All files (%1)").arg(ALL_FILE_WILDCARD));
     if (!filename.isEmpty() && fileExists(filename)) {
         ui->txtRedirectInputFile->setText(filename);
     }
 }
 
-void ExecutorGeneralWidget::updateIcons(const QSize &/*size*/)
+void ExecutorGeneralWidget::updateIcons(const QSize& /*size*/)
 {
-    pIconsManager->setIcon(ui->btnBrowse,IconsManager::ACTION_FILE_OPEN_FOLDER);
+    pIconsManager->setIcon(ui->btnBrowse, IconsManager::ACTION_FILE_OPEN_FOLDER);
 }
 
-
-void ExecutorGeneralWidget::on_txtExecuteParamaters_textChanged(const QString &commandLine)
+void ExecutorGeneralWidget::on_txtExecuteParamaters_textChanged(const QString& commandLine)
 {
     QStringList parsed = parseArgumentsWithoutVariables(commandLine);
     QJsonArray obj = QJsonArray::fromStringList(parsed);

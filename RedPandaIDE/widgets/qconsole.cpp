@@ -30,10 +30,7 @@
 #include <QClipboard>
 #include "../utils.h"
 
-QConsole::QConsole(QWidget *parent):
-    QAbstractScrollArea{parent},
-    mContents{this},
-    mContentImage{}
+QConsole::QConsole(QWidget* parent) : QAbstractScrollArea{parent}, mContents{this}, mContentImage{}
 {
     mMaxHistory = 500;
     mHistoryIndex = -1;
@@ -45,32 +42,30 @@ QConsole::QConsole(QWidget *parent):
     mColumnsPerRow = 0;
     mColumnWidth = 0;
     mReadonly = false;
-    mSelectionBegin = {0,0};
-    mSelectionEnd = {0,0};
+    mSelectionBegin = {0, 0};
+    mSelectionEnd = {0, 0};
     mCaretChar = 0;
     mBackground = palette().color(QPalette::Base);
     mForeground = palette().color(QPalette::Text);
     mSelectionBackground = palette().color(QPalette::Highlight);
     mSelectionForeground = palette().color(QPalette::HighlightedText);
-    mInactiveSelectionBackground = palette().color(QPalette::Inactive,QPalette::Highlight);
-    mInactiveSelectionForeground = palette().color(QPalette::Inactive,QPalette::HighlightedText);
+    mInactiveSelectionBackground = palette().color(QPalette::Inactive, QPalette::Highlight);
+    mInactiveSelectionForeground = palette().color(QPalette::Inactive, QPalette::HighlightedText);
     mTabSize = 4;
     mBlinkTimerId = 0;
     mBlinkStatus = 0;
-    //enable input method
+    // enable input method
     setAttribute(Qt::WA_InputMethodEnabled);
-//    setMouseTracking(false);
+    //    setMouseTracking(false);
     recalcCharExtent();
     mScrollTimer = new QTimer(this);
     mScrollTimer->setInterval(100);
-    connect(mScrollTimer,&QTimer::timeout,this, &QConsole::scrollTimerHandler);
-    connect(&mContents,&ConsoleLines::layoutFinished,this, &QConsole::contentsLayouted);
-    connect(&mContents,&ConsoleLines::rowsAdded,this, &QConsole::contentsRowsAdded);
-    connect(&mContents,&ConsoleLines::lastRowsChanged,this, &QConsole::contentsLastRowsChanged);
-    connect(&mContents,&ConsoleLines::lastRowsRemoved,this, &QConsole::contentsLastRowsRemoved);
-    connect(verticalScrollBar(),&QScrollBar::valueChanged,
-            this, &QConsole::doScrolled);
-
+    connect(mScrollTimer, &QTimer::timeout, this, &QConsole::scrollTimerHandler);
+    connect(&mContents, &ConsoleLines::layoutFinished, this, &QConsole::contentsLayouted);
+    connect(&mContents, &ConsoleLines::rowsAdded, this, &QConsole::contentsRowsAdded);
+    connect(&mContents, &ConsoleLines::lastRowsChanged, this, &QConsole::contentsLastRowsChanged);
+    connect(&mContents, &ConsoleLines::lastRowsRemoved, this, &QConsole::contentsLastRowsRemoved);
+    connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &QConsole::doScrolled);
 }
 
 int QConsole::maxHistory() const
@@ -105,7 +100,7 @@ int QConsole::charColumns(QChar ch, int columnsBefore) const
     }
     if (ch == ' ')
         return 1;
-    return std::ceil((int)(fontMetrics().horizontalAdvance(ch)) / (double) mColumnWidth);
+    return std::ceil((int)(fontMetrics().horizontalAdvance(ch)) / (double)mColumnWidth);
 }
 
 void QConsole::invalidate()
@@ -132,39 +127,35 @@ void QConsole::invalidateRows(int startRow, int endRow)
         // mTopLine is in display coordinates, so FirstLine and LastLine must be
         // converted previously.
         startRow = std::max(startRow, mTopRow);
-        endRow = std::min(endRow, mTopRow + mRowsInWindow-1);
+        endRow = std::min(endRow, mTopRow + mRowsInWindow - 1);
 
         // any line visible?
         if (endRow >= startRow) {
-            QRect rcInval = {
-                0,
-                mRowHeight * (startRow - mTopRow),
-                clientWidth(), mRowHeight * (endRow - mTopRow + 1)
-            };
+            QRect rcInval = {0, mRowHeight * (startRow - mTopRow), clientWidth(),
+                             mRowHeight * (endRow - mTopRow + 1)};
             invalidateRect(rcInval);
         }
     }
-
 }
 
-void QConsole::invalidateRect(const QRect &rect)
+void QConsole::invalidateRect(const QRect& rect)
 {
     viewport()->update(rect);
 }
 
-void QConsole::addLine(const QString &line)
+void QConsole::addLine(const QString& line)
 {
     mCurrentEditableLine = "";
-    mCaretChar=0;
+    mCaretChar = 0;
     mSelectionBegin = caretPos();
     mSelectionEnd = caretPos();
     mContents.addLine(line);
 }
 
-void QConsole::addText(const QString &text)
+void QConsole::addText(const QString& text)
 {
     QStringList lst = textToLines(text);
-    for (const QString& line:lst) {
+    for (const QString& line : lst) {
         addLine(line);
     }
 }
@@ -172,13 +163,13 @@ void QConsole::addText(const QString &text)
 void QConsole::removeLastLine()
 {
     mCurrentEditableLine = "";
-    mCaretChar=0;
+    mCaretChar = 0;
     mSelectionBegin = caretPos();
     mSelectionEnd = caretPos();
     mContents.RemoveLastLine();
 }
 
-void QConsole::changeLastLine(const QString &line)
+void QConsole::changeLastLine(const QString& line)
 {
     mContents.changeLastLine(line);
 }
@@ -194,8 +185,8 @@ void QConsole::clear()
     mCommand = "";
     mCurrentEditableLine = "";
     mTopRow = 1;
-    mSelectionBegin = {0,0};
-    mSelectionEnd = {0,0};
+    mSelectionBegin = {0, 0};
+    mSelectionEnd = {0, 0};
     mCaretChar = 0;
     updateScrollbars();
 }
@@ -205,7 +196,7 @@ void QConsole::copy()
     if (!this->hasSelection())
         return;
     QString s = selText();
-    QClipboard* clipboard=QGuiApplication::clipboard();
+    QClipboard* clipboard = QGuiApplication::clipboard();
     clipboard->clear();
     clipboard->setText(s);
 }
@@ -214,15 +205,15 @@ void QConsole::paste()
 {
     if (mReadonly)
         return;
-    QClipboard* clipboard=QGuiApplication::clipboard();
+    QClipboard* clipboard = QGuiApplication::clipboard();
     textInputed(clipboard->text());
 }
 
 void QConsole::selectAll()
 {
-    if (mContents.lines()>0) {
-        mSelectionBegin = {1,1};
-        mSelectionEnd = { mContents.getLastLine().length()+1,mContents.lines()};
+    if (mContents.lines() > 0) {
+        mSelectionBegin = {1, 1};
+        mSelectionEnd = {mContents.getLastLine().length() + 1, mContents.lines()};
         invalidate();
     }
 }
@@ -242,22 +233,23 @@ QString QConsole::selText()
         }
         return s.mid(ColFrom, ColTo - ColFrom);
 
-    } else  {
+    } else {
         QString result = mContents.getLine(First).mid(ColFrom);
-        result+= lineBreak();
-        for (int i = First + 1; i<=Last - 1; i++) {
+        result += lineBreak();
+        for (int i = First + 1; i <= Last - 1; i++) {
             result += mContents.getLine(i);
-            result+= lineBreak();
+            result += lineBreak();
         }
         QString s = mContents.getLine(Last);
         if (Last == mContents.lines())
-            s+= this->mCommand;
+            s += this->mCommand;
         result.append(s.constData(), ColTo);
         return result;
     }
 }
 
-void QConsole::recalcCharExtent() {
+void QConsole::recalcCharExtent()
+{
     mRowHeight = fontMetrics().lineSpacing();
     mColumnWidth = fontMetrics().horizontalAdvance("M");
 }
@@ -265,11 +257,10 @@ void QConsole::recalcCharExtent() {
 void QConsole::sizeOrFontChanged(bool)
 {
     if (mColumnWidth != 0) {
-        mColumnsPerRow = std::max(clientWidth()-2,0) / mColumnWidth;
+        mColumnsPerRow = std::max(clientWidth() - 2, 0) / mColumnWidth;
         mRowsInWindow = clientHeight() / mRowHeight;
         mContents.layout();
     }
-
 }
 
 int QConsole::clientWidth()
@@ -284,7 +275,7 @@ int QConsole::clientHeight()
 
 void QConsole::setTopRow(int value)
 {
-    value = std::min(value,maxScrollHeight());
+    value = std::min(value, maxScrollHeight());
     value = std::max(value, 1);
     if (value != mTopRow) {
         verticalScrollBar()->setValue(value);
@@ -293,7 +284,7 @@ void QConsole::setTopRow(int value)
 
 int QConsole::maxScrollHeight()
 {
-    return std::max(mContents.rows()-mRowsInWindow+1,1);
+    return std::max(mContents.rows() - mRowsInWindow + 1, 1);
 }
 
 void QConsole::updateScrollbars()
@@ -304,7 +295,7 @@ void QConsole::updateScrollbars()
     int nMin = 1;
     int nMax = std::max(1, nMaxScroll);
     int nPage = mRowsInWindow;
-    int nPos = std::min(std::max(mTopRow,nMin),nMax);
+    int nPos = std::min(std::max(mTopRow, nMin), nMax);
     verticalScrollBar()->setMinimum(nMin);
     verticalScrollBar()->setMaximum(nMax);
     verticalScrollBar()->setPageStep(nPage);
@@ -315,49 +306,46 @@ void QConsole::updateScrollbars()
         invalidate();
 }
 
-void QConsole::paintRows(QPainter &painter, int row1, int row2)
+void QConsole::paintRows(QPainter& painter, int row1, int row2)
 {
-    if (row1>row2)
+    if (row1 > row2)
         return;
-    QRect rect(0,(row1-mTopRow)*mRowHeight,clientWidth(),(row2-row1+1)*mRowHeight);
-    painter.fillRect(rect,mBackground);
-    QStringList lst = mContents.getRows(row1,row2);
-    int startRow = row1-mTopRow;
+    QRect rect(0, (row1 - mTopRow) * mRowHeight, clientWidth(), (row2 - row1 + 1) * mRowHeight);
+    painter.fillRect(rect, mBackground);
+    QStringList lst = mContents.getRows(row1, row2);
+    int startRow = row1 - mTopRow;
     painter.setPen(mForeground);
     RowColumn selBeginRC = mContents.lineCharToRowColumn(selectionBegin());
     RowColumn selEndRC = mContents.lineCharToRowColumn(selectionEnd());
-    LineChar editBegin = {
-        mContents.getLastLine().length() - mCurrentEditableLine.length(),
-        mContents.lines()-1
-    };
+    LineChar editBegin = {mContents.getLastLine().length() - mCurrentEditableLine.length(),
+                          mContents.lines() - 1};
     RowColumn editBeginRC = mContents.lineCharToRowColumn(editBegin);
     bool isSelection = false;
     painter.setPen(mForeground);
-    for (int i=0; i< lst.size(); i++) {
-        int currentRow = i+row1-1;
-        int left=2;
-        int top = (startRow+i) * mRowHeight;
-        int baseLine = (startRow+i+1)*mRowHeight - painter.fontMetrics().descent();
+    for (int i = 0; i < lst.size(); i++) {
+        int currentRow = i + row1 - 1;
+        int left = 2;
+        int top = (startRow + i) * mRowHeight;
+        int baseLine = (startRow + i + 1) * mRowHeight - painter.fontMetrics().descent();
         QString s = lst[i];
         int columnsBefore = 0;
-        for (QChar ch:s) {
-            int charCol = charColumns(ch,columnsBefore);
+        for (QChar ch : s) {
+            int charCol = charColumns(ch, columnsBefore);
             int width = charCol * mColumnWidth;
-            if  ((currentRow > selBeginRC.row ||
-                    (currentRow == selBeginRC.row && columnsBefore>=selBeginRC.column))
-                 &&
-                 (currentRow < selEndRC.row ||
-                                     (currentRow == selEndRC.row && columnsBefore+charCol<=selEndRC.column))) {
+            if ((currentRow > selBeginRC.row ||
+                 (currentRow == selBeginRC.row && columnsBefore >= selBeginRC.column)) &&
+                (currentRow < selEndRC.row ||
+                 (currentRow == selEndRC.row && columnsBefore + charCol <= selEndRC.column))) {
                 if (!isSelection) {
                     isSelection = true;
                 }
-                if (!mReadonly &&(currentRow>editBeginRC.row ||
-                        columnsBefore >= editBeginRC.column)) {
+                if (!mReadonly &&
+                    (currentRow > editBeginRC.row || columnsBefore >= editBeginRC.column)) {
                     painter.setPen(mSelectionForeground);
-                    painter.fillRect(left,top,width,mRowHeight,mSelectionBackground);
+                    painter.fillRect(left, top, width, mRowHeight, mSelectionBackground);
                 } else {
                     painter.setPen(mInactiveSelectionForeground);
-                    painter.fillRect(left,top,width,mRowHeight,mInactiveSelectionBackground);
+                    painter.fillRect(left, top, width, mRowHeight, mInactiveSelectionBackground);
                 }
             } else {
                 if (isSelection) {
@@ -365,8 +353,8 @@ void QConsole::paintRows(QPainter &painter, int row1, int row2)
                     painter.setPen(mForeground);
                 }
             }
-            painter.drawText(left,baseLine,ch);
-            left+= width;
+            painter.drawText(left, baseLine, ch);
+            left += width;
             columnsBefore += charCol;
         }
     }
@@ -380,19 +368,19 @@ void QConsole::ensureCaretVisible()
         return;
     }
     if (caretRow >= mTopRow + mRowsInWindow) {
-        mTopRow = caretRow + 1 -mRowsInWindow;
+        mTopRow = caretRow + 1 - mRowsInWindow;
     }
 }
 
 void QConsole::showCaret()
 {
-    if (mBlinkTimerId==0)
+    if (mBlinkTimerId == 0)
         mBlinkTimerId = startTimer(500);
 }
 
 void QConsole::hideCaret()
 {
-    if (mBlinkTimerId!=0) {
+    if (mBlinkTimerId != 0) {
         killTimer(mBlinkTimerId);
         mBlinkTimerId = 0;
         mBlinkStatus = 0;
@@ -409,14 +397,14 @@ void QConsole::updateCaret()
 LineChar QConsole::caretPos()
 {
     QString lastLine = mContents.getLastLine();
-    int line = std::max(mContents.lines()-1,0);
+    int line = std::max(mContents.lines() - 1, 0);
     int charIndex = 0;
-    if (mCaretChar>=mCurrentEditableLine.length()) {
+    if (mCaretChar >= mCurrentEditableLine.length()) {
         charIndex = lastLine.length();
     } else {
-        charIndex = lastLine.length()-mCurrentEditableLine.length()+mCaretChar;
+        charIndex = lastLine.length() - mCurrentEditableLine.length() + mCaretChar;
     }
-    return {charIndex,line};
+    return {charIndex, line};
 }
 
 RowColumn QConsole::caretRowColumn()
@@ -424,14 +412,14 @@ RowColumn QConsole::caretRowColumn()
     return mContents.lineCharToRowColumn(caretPos());
 }
 
-QPoint QConsole::rowColumnToPixels(const RowColumn &rowColumn)
+QPoint QConsole::rowColumnToPixels(const RowColumn& rowColumn)
 {
     /*
      mTopRow is 1-based; rowColumn.row is 0-based
      */
-    int row =rowColumn.row+1 - mTopRow;
-    int col =rowColumn.column;
-    return QPoint(2+col*mColumnWidth, row*mRowHeight);
+    int row = rowColumn.row + 1 - mTopRow;
+    int col = rowColumn.column;
+    return QPoint(2 + col * mColumnWidth, row * mRowHeight);
 }
 
 QRect QConsole::getCaretRect()
@@ -440,14 +428,13 @@ QRect QConsole::getCaretRect()
     QChar caretChar = mContents.getChar(caret);
     RowColumn caretRC = mContents.lineCharToRowColumn(caret);
     QPoint caretPos = rowColumnToPixels(caretRC);
-    int caretWidth=mColumnWidth;
-    //qDebug()<<"caret"<<mCaretX<<mCaretY;
+    int caretWidth = mColumnWidth;
+    // qDebug()<<"caret"<<mCaretX<<mCaretY;
     int columnsBefore = caretRC.column;
     if (!caretChar.isNull()) {
-        caretWidth = charColumns(caretChar, columnsBefore)*mColumnWidth;
+        caretWidth = charColumns(caretChar, columnsBefore) * mColumnWidth;
     }
-    return QRect(caretPos.x(),caretPos.y(),caretWidth,
-                  mRowHeight);
+    return QRect(caretPos.x(), caretPos.y(), caretWidth, mRowHeight);
 }
 
 void QConsole::doScrolled()
@@ -461,13 +448,13 @@ void QConsole::contentsLayouted()
     updateScrollbars();
 }
 
-void QConsole::contentsRowsAdded(int )
+void QConsole::contentsRowsAdded(int)
 {
     ensureCaretVisible();
     updateScrollbars();
 }
 
-void QConsole::contentsLastRowsRemoved(int )
+void QConsole::contentsLastRowsRemoved(int)
 {
     ensureCaretVisible();
     updateScrollbars();
@@ -476,7 +463,7 @@ void QConsole::contentsLastRowsRemoved(int )
 void QConsole::contentsLastRowsChanged(int rowCount)
 {
     ensureCaretVisible();
-    invalidateRows(mContents.rows()-rowCount+1,mContents.rows());
+    invalidateRows(mContents.rows() - rowCount + 1, mContents.rows());
 }
 
 void QConsole::scrollTimerHandler()
@@ -484,104 +471,102 @@ void QConsole::scrollTimerHandler()
 {
     QPoint iMousePos = QCursor::pos();
     iMousePos = mapFromGlobal(iMousePos);
-    RowColumn mousePosRC = pixelsToNearestRowColumn(iMousePos.x(),iMousePos.y());
+    RowColumn mousePosRC = pixelsToNearestRowColumn(iMousePos.x(), iMousePos.y());
 
     if (mScrollDeltaY != 0) {
         if (QApplication::queryKeyboardModifiers().testFlag(Qt::ShiftModifier))
-          setTopRow(mTopRow + mScrollDeltaY * mRowsInWindow);
+            setTopRow(mTopRow + mScrollDeltaY * mRowsInWindow);
         else
-          setTopRow(mTopRow + mScrollDeltaY);
+            setTopRow(mTopRow + mScrollDeltaY);
         int row = mTopRow;
-        if (mScrollDeltaY > 0)  // scrolling down?
-            row+=mRowsInWindow - 1;
+        if (mScrollDeltaY > 0) // scrolling down?
+            row += mRowsInWindow - 1;
         mousePosRC.row = row - 1;
-        int oldStartRow = mContents.lineCharToRowColumn(selectionBegin()).row+1;
-        int oldEndRow = mContents.lineCharToRowColumn(selectionEnd()).row+1;
-        invalidateRows(oldStartRow,oldEndRow);
+        int oldStartRow = mContents.lineCharToRowColumn(selectionBegin()).row + 1;
+        int oldEndRow = mContents.lineCharToRowColumn(selectionEnd()).row + 1;
+        invalidateRows(oldStartRow, oldEndRow);
         mSelectionEnd = mContents.rowColumnToLineChar(mousePosRC);
-        invalidateRows(row,row);
+        invalidateRows(row, row);
     }
 
-//    computeScrollY(Y);
+    //    computeScrollY(Y);
 }
 
-void QConsole::mousePressEvent(QMouseEvent *event)
+void QConsole::mousePressEvent(QMouseEvent* event)
 {
     Qt::MouseButton button = event->button();
-    int X=event->pos().x();
-    int Y=event->pos().y();
+    int X = event->pos().x();
+    int Y = event->pos().y();
 
     QAbstractScrollArea::mousePressEvent(event);
 
-    //fKbdHandler.ExecuteMouseDown(Self, Button, Shift, X, Y);
+    // fKbdHandler.ExecuteMouseDown(Self, Button, Shift, X, Y);
 
     if (button == Qt::LeftButton) {
-//        setMouseTracking(true);
-        RowColumn mousePosRC = pixelsToNearestRowColumn(X,Y);
+        //        setMouseTracking(true);
+        RowColumn mousePosRC = pixelsToNearestRowColumn(X, Y);
         LineChar mousePos = mContents.rowColumnToLineChar(mousePosRC);
-        //I couldn't track down why, but sometimes (and definitely not all the time)
-        //the block positioning is lost.  This makes sure that the block is
-        //maintained in case they started a drag operation on the block
-        int oldStartRow = mContents.lineCharToRowColumn(selectionBegin()).row+1;
-        int oldEndRow = mContents.lineCharToRowColumn(selectionEnd()).row+1;
-        invalidateRows(oldStartRow,oldEndRow);
+        // I couldn't track down why, but sometimes (and definitely not all the time)
+        // the block positioning is lost.  This makes sure that the block is
+        // maintained in case they started a drag operation on the block
+        int oldStartRow = mContents.lineCharToRowColumn(selectionBegin()).row + 1;
+        int oldEndRow = mContents.lineCharToRowColumn(selectionEnd()).row + 1;
+        invalidateRows(oldStartRow, oldEndRow);
         mSelectionBegin = mousePos;
         mSelectionEnd = mousePos;
     }
 }
 
-void QConsole::mouseReleaseEvent(QMouseEvent *event)
+void QConsole::mouseReleaseEvent(QMouseEvent* event)
 {
     QAbstractScrollArea::mouseReleaseEvent(event);
     mScrollTimer->stop();
-//    setMouseTracking(false);
-
+    //    setMouseTracking(false);
 }
 
-void QConsole::mouseMoveEvent(QMouseEvent *event)
+void QConsole::mouseMoveEvent(QMouseEvent* event)
 {
     QAbstractScrollArea::mouseMoveEvent(event);
     Qt::MouseButtons buttons = event->buttons();
-    int x=event->pos().x();
-    int y=event->pos().y();
+    int x = event->pos().x();
+    int y = event->pos().y();
 
     if ((buttons == Qt::LeftButton)) {
-      // should we begin scrolling?
-      computeScrollY(y);
-      RowColumn mousePosRC = pixelsToNearestRowColumn(x, y);
-      LineChar mousePos = mContents.rowColumnToLineChar(mousePosRC);
-      //qDebug()<<x<<y<<mousePosRC.row<<mousePosRC.column<<mousePos.line<<mousePos.ch;
-      if (mScrollDeltaY == 0) {
-          int oldStartRow = mContents.lineCharToRowColumn(selectionBegin()).row+1;
-          int oldEndRow = mContents.lineCharToRowColumn(selectionEnd()).row+1;
-          invalidateRows(oldStartRow,oldEndRow);
-          mSelectionEnd = mousePos;
-          int row = mContents.lineCharToRowColumn(mSelectionEnd).row+1;
-          invalidateRows(row,row);
-      }
+        // should we begin scrolling?
+        computeScrollY(y);
+        RowColumn mousePosRC = pixelsToNearestRowColumn(x, y);
+        LineChar mousePos = mContents.rowColumnToLineChar(mousePosRC);
+        // qDebug()<<x<<y<<mousePosRC.row<<mousePosRC.column<<mousePos.line<<mousePos.ch;
+        if (mScrollDeltaY == 0) {
+            int oldStartRow = mContents.lineCharToRowColumn(selectionBegin()).row + 1;
+            int oldEndRow = mContents.lineCharToRowColumn(selectionEnd()).row + 1;
+            invalidateRows(oldStartRow, oldEndRow);
+            mSelectionEnd = mousePos;
+            int row = mContents.lineCharToRowColumn(mSelectionEnd).row + 1;
+            invalidateRows(row, row);
+        }
     }
 }
 
-void QConsole::keyPressEvent(QKeyEvent *event)
+void QConsole::keyPressEvent(QKeyEvent* event)
 {
-    switch(event->key()) {
+    switch (event->key()) {
     case Qt::Key_Return:
     case Qt::Key_Enter:
         event->accept();
         if (mReadonly)
             return;
         emit commandInput(mCommand);
-        if (mMaxHistory>0 && !mCommand.trimmed().isEmpty()) {
-            if (mCommandHistory.isEmpty()
-                || mCommandHistory.last()!=mCommand) {
-                if (mCommandHistory.length()==mMaxHistory) {
+        if (mMaxHistory > 0 && !mCommand.trimmed().isEmpty()) {
+            if (mCommandHistory.isEmpty() || mCommandHistory.last() != mCommand) {
+                if (mCommandHistory.length() == mMaxHistory) {
                     mCommandHistory.pop_front();
                 }
                 mCommandHistory.append(mCommand);
             }
             mHistoryIndex = mCommandHistory.length();
         }
-        mCommand="";
+        mCommand = "";
         addLine("");
         return;
     case Qt::Key_Up:
@@ -598,23 +583,23 @@ void QConsole::keyPressEvent(QKeyEvent *event)
         event->accept();
         if (mReadonly)
             return;
-        if (mCaretChar>0 && mCaretChar<=mCurrentEditableLine.size()) {
-            setCaretChar(mCaretChar-1, !(event->modifiers() & Qt::ShiftModifier));
+        if (mCaretChar > 0 && mCaretChar <= mCurrentEditableLine.size()) {
+            setCaretChar(mCaretChar - 1, !(event->modifiers() & Qt::ShiftModifier));
         }
         return;
     case Qt::Key_Right:
         event->accept();
         if (mReadonly)
             return;
-        if (mCaretChar<mCurrentEditableLine.size()) {
-            setCaretChar(mCaretChar+1, !(event->modifiers() & Qt::ShiftModifier));
+        if (mCaretChar < mCurrentEditableLine.size()) {
+            setCaretChar(mCaretChar + 1, !(event->modifiers() & Qt::ShiftModifier));
         }
         return;
     case Qt::Key_Home:
         event->accept();
         if (mReadonly)
             return;
-        if (mCaretChar>0 && mCaretChar<=mCurrentEditableLine.size()) {
+        if (mCaretChar > 0 && mCaretChar <= mCurrentEditableLine.size()) {
             setCaretChar(0, !(event->modifiers() & Qt::ShiftModifier));
         }
         return;
@@ -622,7 +607,7 @@ void QConsole::keyPressEvent(QKeyEvent *event)
         event->accept();
         if (mReadonly)
             return;
-        if (mCaretChar<mCurrentEditableLine.size()) {
+        if (mCaretChar < mCurrentEditableLine.size()) {
             setCaretChar(mCurrentEditableLine.size(), !(event->modifiers() & Qt::ShiftModifier));
         }
         return;
@@ -630,18 +615,18 @@ void QConsole::keyPressEvent(QKeyEvent *event)
         event->accept();
         if (mReadonly)
             return;
-        if (!mCurrentEditableLine.isEmpty() && (mCaretChar-1)<mCurrentEditableLine.size()
-                &&(mCaretChar-1>=0)) {
+        if (!mCurrentEditableLine.isEmpty() && (mCaretChar - 1) < mCurrentEditableLine.size() &&
+            (mCaretChar - 1 >= 0)) {
             QString lastLine;
             if (caretInSelection()) {
                 lastLine = removeSelection();
             } else {
                 lastLine = mContents.getLastLine();
-                int len=mCurrentEditableLine.length();
+                int len = mCurrentEditableLine.length();
                 mCaretChar--;
-                mCommand.remove(mCommand.length()-len+mCaretChar,1);
-                lastLine.remove(lastLine.length()-len+mCaretChar,1);
-                mCurrentEditableLine.remove(mCaretChar,1);
+                mCommand.remove(mCommand.length() - len + mCaretChar, 1);
+                lastLine.remove(lastLine.length() - len + mCaretChar, 1);
+                mCurrentEditableLine.remove(mCaretChar, 1);
             }
             mContents.changeLastLine(lastLine);
             mSelectionBegin = caretPos();
@@ -658,17 +643,17 @@ void QConsole::keyPressEvent(QKeyEvent *event)
         event->accept();
         if (mReadonly)
             return;
-        if (!mCurrentEditableLine.isEmpty() && (mCaretChar)<mCurrentEditableLine.size()
-                &&(mCaretChar>=0)) {
+        if (!mCurrentEditableLine.isEmpty() && (mCaretChar) < mCurrentEditableLine.size() &&
+            (mCaretChar >= 0)) {
             QString lastLine;
             if (caretInSelection()) {
                 lastLine = removeSelection();
             } else {
                 lastLine = mContents.getLastLine();
-                int len=mCurrentEditableLine.length();
-                mCommand.remove(mCommand.length()-len+mCaretChar,1);
-                lastLine.remove(lastLine.length()-len+mCaretChar,1);
-                mCurrentEditableLine.remove(mCaretChar,1);
+                int len = mCurrentEditableLine.length();
+                mCommand.remove(mCommand.length() - len + mCaretChar, 1);
+                lastLine.remove(lastLine.length() - len + mCaretChar, 1);
+                mCurrentEditableLine.remove(mCaretChar, 1);
             }
             mContents.changeLastLine(lastLine);
             mSelectionBegin = caretPos();
@@ -693,74 +678,78 @@ void QConsole::keyPressEvent(QKeyEvent *event)
     QAbstractScrollArea::keyPressEvent(event);
 }
 
-void QConsole::focusInEvent(QFocusEvent *)
+void QConsole::focusInEvent(QFocusEvent*)
 {
     showCaret();
 }
 
-void QConsole::focusOutEvent(QFocusEvent *)
+void QConsole::focusOutEvent(QFocusEvent*)
 {
     hideCaret();
 }
 
-void QConsole::paintEvent(QPaintEvent *event)
+void QConsole::paintEvent(QPaintEvent* event)
 {
-    if (mRowHeight==0)
+    if (mRowHeight == 0)
         return;
     // Now paint everything while the caret is hidden.
     QPainter painter(viewport());
-    //Get the invalidated rect.
+    // Get the invalidated rect.
     QRect rcClip = event->rect();
-    QRect rcCaret= getCaretRect();
+    QRect rcCaret = getCaretRect();
 
     if (rcCaret == rcClip) {
         // only update caret
-        painter.drawImage(rcCaret,*mContentImage,rcCaret);
+        painter.drawImage(rcCaret, *mContentImage, rcCaret);
     } else {
         int nL1, nL2;
         // Compute the invalid area in lines
         // lines
-        nL1 = std::min(std::max(mTopRow + rcClip.top() / mRowHeight, mTopRow), maxScrollHeight() + mRowsInWindow  - 1 );
-        nL2 = std::min(std::max(mTopRow + (rcClip.bottom() + mRowHeight - 1) / mRowHeight, 1), maxScrollHeight() + mRowsInWindow  - 1);
+        nL1 = std::min(std::max(mTopRow + rcClip.top() / mRowHeight, mTopRow),
+                       maxScrollHeight() + mRowsInWindow - 1);
+        nL2 = std::min(std::max(mTopRow + (rcClip.bottom() + mRowHeight - 1) / mRowHeight, 1),
+                       maxScrollHeight() + mRowsInWindow - 1);
         QPainter cachePainter(mContentImage.get());
         cachePainter.setFont(font());
         if (viewport()->rect() == rcClip) {
             cachePainter.fillRect(rcClip, mBackground);
         }
-        paintRows(cachePainter,nL1,nL2);
-        painter.drawImage(rcClip,*mContentImage,rcClip);
+        paintRows(cachePainter, nL1, nL2);
+        painter.drawImage(rcClip, *mContentImage, rcClip);
     }
     paintCaret(painter, rcCaret);
 }
 
-void QConsole::paintCaret(QPainter &painter, const QRect rcClip)
+void QConsole::paintCaret(QPainter& painter, const QRect rcClip)
 {
-    if (mBlinkStatus!=1)
+    if (mBlinkStatus != 1)
         return;
     painter.setClipRect(rcClip);
     ConsoleCaretType ct = ConsoleCaretType::ctHorizontalLine;
     QColor caretColor = mForeground;
-    switch(ct) {
+    switch (ct) {
     case ConsoleCaretType::ctVerticalLine:
-        painter.fillRect(rcClip.left()+1,rcClip.top(),rcClip.left()+2,rcClip.bottom(),caretColor);
+        painter.fillRect(rcClip.left() + 1, rcClip.top(), rcClip.left() + 2, rcClip.bottom(),
+                         caretColor);
         break;
     case ConsoleCaretType::ctHorizontalLine:
-        painter.fillRect(rcClip.left(),rcClip.bottom()-2,rcClip.right(),rcClip.bottom()-1,caretColor);
+        painter.fillRect(rcClip.left(), rcClip.bottom() - 2, rcClip.right(), rcClip.bottom() - 1,
+                         caretColor);
         break;
     case ConsoleCaretType::ctBlock:
         painter.fillRect(rcClip, caretColor);
         break;
     case ConsoleCaretType::ctHalfBlock:
-        QRect rc=rcClip;
-        rc.setTop(rcClip.top()+rcClip.height() / 2);
+        QRect rc = rcClip;
+        rc.setTop(rcClip.top() + rcClip.height() / 2);
         painter.fillRect(rcClip, caretColor);
         break;
     }
 }
 
-void QConsole::textInputed(const QString &text)
+void QConsole::textInputed(const QString& text)
 {
-    if (mContents.rows()<=0) {
+    if (mContents.rows() <= 0) {
         mContents.addLine("");
     }
     QString lastLine;
@@ -769,18 +758,18 @@ void QConsole::textInputed(const QString &text)
     } else {
         lastLine = mContents.getLastLine();
     }
-    if (mCaretChar>=mCurrentEditableLine.size()) {
+    if (mCaretChar >= mCurrentEditableLine.size()) {
         mCommand += text;
         mCurrentEditableLine += text;
-        mCaretChar=mCurrentEditableLine.size();
-        mContents.changeLastLine(lastLine+text);
-    } else {        
-        int len=mCurrentEditableLine.length();
-        mCommand.insert(mCommand.length()-len+mCaretChar,text);
-        lastLine.insert(lastLine.length()-len+mCaretChar,text);
-        mCurrentEditableLine.insert(mCaretChar,text);
+        mCaretChar = mCurrentEditableLine.size();
+        mContents.changeLastLine(lastLine + text);
+    } else {
+        int len = mCurrentEditableLine.length();
+        mCommand.insert(mCommand.length() - len + mCaretChar, text);
+        lastLine.insert(lastLine.length() - len + mCaretChar, text);
+        mCurrentEditableLine.insert(mCaretChar, text);
         mContents.changeLastLine(lastLine);
-        mCaretChar+=text.length();
+        mCaretChar += text.length();
     }
     mSelectionBegin = caretPos();
     mSelectionEnd = caretPos();
@@ -788,20 +777,20 @@ void QConsole::textInputed(const QString &text)
 
 void QConsole::loadCommandFromHistory()
 {
-    if (mMaxHistory<=0)
+    if (mMaxHistory <= 0)
         return;
-    if (mHistoryIndex<0)
-        mHistoryIndex=0;
-    if (mHistoryIndex<mCommandHistory.length())
+    if (mHistoryIndex < 0)
+        mHistoryIndex = 0;
+    if (mHistoryIndex < mCommandHistory.length())
         mCommand = mCommandHistory[mHistoryIndex];
     else
         mCommand = "";
-    if (mHistoryIndex>mCommandHistory.length())
-        mHistoryIndex=mCommandHistory.length();
+    if (mHistoryIndex > mCommandHistory.length())
+        mHistoryIndex = mCommandHistory.length();
     QString lastLine = mContents.getLastLine();
-    int len=mCurrentEditableLine.length();
-    lastLine.remove(lastLine.length()-len,INT_MAX);
-    mCurrentEditableLine=mCommand;
+    int len = mCurrentEditableLine.length();
+    lastLine.remove(lastLine.length() - len, INT_MAX);
+    mCurrentEditableLine = mCommand;
     mCaretChar = mCurrentEditableLine.length();
     mSelectionBegin = caretPos();
     mSelectionEnd = caretPos();
@@ -811,8 +800,7 @@ void QConsole::loadCommandFromHistory()
 LineChar QConsole::selectionBegin()
 {
     if (mSelectionBegin.line < mSelectionEnd.line ||
-            (mSelectionBegin.line == mSelectionEnd.line &&
-             mSelectionBegin.ch < mSelectionEnd.ch))
+        (mSelectionBegin.line == mSelectionEnd.line && mSelectionBegin.ch < mSelectionEnd.ch))
         return mSelectionBegin;
     return mSelectionEnd;
 }
@@ -820,8 +808,7 @@ LineChar QConsole::selectionBegin()
 LineChar QConsole::selectionEnd()
 {
     if (mSelectionBegin.line < mSelectionEnd.line ||
-            (mSelectionBegin.line == mSelectionEnd.line &&
-             mSelectionBegin.ch < mSelectionEnd.ch))
+        (mSelectionBegin.line == mSelectionEnd.line && mSelectionBegin.ch < mSelectionEnd.ch))
         return mSelectionEnd;
     return mSelectionBegin;
 }
@@ -831,8 +818,8 @@ void QConsole::setCaretChar(int newCaretChar, bool resetSelection)
     RowColumn oldPosRC = caretRowColumn();
     RowColumn oldSelBegin = mContents.lineCharToRowColumn(selectionBegin());
     RowColumn oldSelEnd = mContents.lineCharToRowColumn(selectionEnd());
-    int oldStartRow = std::min(std::min(oldPosRC.row,oldSelBegin.row),oldSelEnd.row);
-    int oldEndRow = std::max(std::max(oldPosRC.row,oldSelBegin.row),oldSelEnd.row);
+    int oldStartRow = std::min(std::min(oldPosRC.row, oldSelBegin.row), oldSelEnd.row);
+    int oldEndRow = std::max(std::max(oldPosRC.row, oldSelBegin.row), oldSelEnd.row);
     mCaretChar = newCaretChar;
     LineChar newPos = caretPos();
     RowColumn newPosRC = mContents.lineCharToRowColumn(newPos);
@@ -840,8 +827,8 @@ void QConsole::setCaretChar(int newCaretChar, bool resetSelection)
         mSelectionBegin = newPos;
     mSelectionEnd = newPos;
 
-    int startRow = std::min(newPosRC.row, oldStartRow)+1;
-    int endRow = std::max(newPosRC.row, oldEndRow)+1;
+    int startRow = std::min(newPosRC.row, oldStartRow) + 1;
+    int endRow = std::max(newPosRC.row, oldEndRow) + 1;
     invalidateRows(startRow, endRow);
 }
 
@@ -849,11 +836,11 @@ bool QConsole::caretInSelection()
 {
     if (!hasSelection())
         return false;
-    //LineChar selBegin = selectionBegin();
+    // LineChar selBegin = selectionBegin();
     LineChar selEnd = selectionEnd();
     QString lastline = mContents.getLastLine();
     int editBeginChar = lastline.length() - mCurrentEditableLine.length();
-    if (selEnd.line == mContents.lines()-1 && selEnd.ch > editBeginChar ) {
+    if (selEnd.line == mContents.lines() - 1 && selEnd.ch > editBeginChar) {
         return true;
     }
     return false;
@@ -861,32 +848,30 @@ bool QConsole::caretInSelection()
 
 QString QConsole::removeSelection()
 {
-
     QString lastLine = mContents.getLastLine();
-    int len=mCurrentEditableLine.length();
+    int len = mCurrentEditableLine.length();
     LineChar selBegin = selectionBegin();
     LineChar selEnd = selectionEnd();
-    int selLen = selEnd.ch -selBegin.ch;
-    int ch = selBegin.ch -(lastLine.length()-len);
-    if (selBegin.line < mContents.lines()-1) {
+    int selLen = selEnd.ch - selBegin.ch;
+    int ch = selBegin.ch - (lastLine.length() - len);
+    if (selBegin.line < mContents.lines() - 1) {
         mCaretChar = 0;
-        selLen = selEnd.ch - (lastLine.length()-len);
-    }  else if (ch<0) {
+        selLen = selEnd.ch - (lastLine.length() - len);
+    } else if (ch < 0) {
         mCaretChar = 0;
         selLen = selLen + ch;
     } else {
-        mCaretChar=ch;
+        mCaretChar = ch;
     }
-    mCommand.remove(mCommand.length()-len+mCaretChar,selLen);
-    lastLine.remove(lastLine.length()-len+mCaretChar,selLen);
-    mCurrentEditableLine.remove(mCaretChar,selLen);
+    mCommand.remove(mCommand.length() - len + mCaretChar, selLen);
+    lastLine.remove(lastLine.length() - len + mCaretChar, selLen);
+    mCurrentEditableLine.remove(mCaretChar, selLen);
     return lastLine;
 }
 
 bool QConsole::hasSelection()
 {
-    return (mSelectionBegin.line != mSelectionEnd.line)
-            || (mSelectionBegin.ch != mSelectionEnd.ch);
+    return (mSelectionBegin.line != mSelectionEnd.line) || (mSelectionBegin.ch != mSelectionEnd.ch);
 }
 
 int QConsole::computeScrollY(int y)
@@ -913,10 +898,7 @@ RowColumn QConsole::pixelsToNearestRowColumn(int x, int y)
         if (y < 0)
             y = 0;
     }
-    return {
-      std::max(0, (x - 2) / mColumnWidth),
-      mTopRow + (y / mRowHeight)-1
-    };
+    return {std::max(0, (x - 2) / mColumnWidth), mTopRow + (y / mRowHeight) - 1};
 }
 
 QString QConsole::lineBreak()
@@ -924,16 +906,15 @@ QString QConsole::lineBreak()
     return "\r\n";
 }
 
-
 void QConsole::fontChanged()
 {
     recalcCharExtent();
     sizeOrFontChanged(true);
 }
 
-bool QConsole::event(QEvent *event)
+bool QConsole::event(QEvent* event)
 {
-    switch(event->type()) {
+    switch (event->type()) {
     case QEvent::FontChange:
         fontChanged();
         break;
@@ -942,8 +923,9 @@ bool QConsole::event(QEvent *event)
         mForeground = palette().color(QPalette::Text);
         mSelectionBackground = palette().color(QPalette::Highlight);
         mSelectionForeground = palette().color(QPalette::HighlightedText);
-        mInactiveSelectionBackground = palette().color(QPalette::Inactive,QPalette::Highlight);
-        mInactiveSelectionForeground = palette().color(QPalette::Inactive,QPalette::HighlightedText);
+        mInactiveSelectionBackground = palette().color(QPalette::Inactive, QPalette::Highlight);
+        mInactiveSelectionForeground =
+            palette().color(QPalette::Inactive, QPalette::HighlightedText);
         break;
     default:
         break;
@@ -951,16 +933,16 @@ bool QConsole::event(QEvent *event)
     return QAbstractScrollArea::event(event);
 }
 
-void QConsole::resizeEvent(QResizeEvent *)
+void QConsole::resizeEvent(QResizeEvent*)
 {
-    //resize the cache image
-    std::shared_ptr<QImage> image = std::make_shared<QImage>(clientWidth(),clientHeight(),
-                                                            QImage::Format_ARGB32);
+    // resize the cache image
+    std::shared_ptr<QImage> image =
+        std::make_shared<QImage>(clientWidth(), clientHeight(), QImage::Format_ARGB32);
     if (mContentImage) {
-        //QRect newRect = image->rect().intersected(mContentImage->rect());
+        // QRect newRect = image->rect().intersected(mContentImage->rect());
         QPainter painter(image.get());
-        painter.fillRect(viewport()->rect(),mBackground);
-//        painter.drawImage(newRect,*mContentImage);
+        painter.fillRect(viewport()->rect(), mBackground);
+        //        painter.drawImage(newRect,*mContentImage);
     }
 
     mContentImage = image;
@@ -968,31 +950,31 @@ void QConsole::resizeEvent(QResizeEvent *)
     sizeOrFontChanged(false);
 }
 
-void QConsole::timerEvent(QTimerEvent *event)
+void QConsole::timerEvent(QTimerEvent* event)
 {
     if (event->timerId() == mBlinkTimerId) {
-        mBlinkStatus = 1- mBlinkStatus;
+        mBlinkStatus = 1 - mBlinkStatus;
         updateCaret();
     }
 }
 
-void QConsole::inputMethodEvent(QInputMethodEvent *event)
+void QConsole::inputMethodEvent(QInputMethodEvent* event)
 {
     if (mReadonly)
         return;
-    QString s=event->commitString();
+    QString s = event->commitString();
     if (!s.isEmpty())
         textInputed(s);
 }
 
-void QConsole::wheelEvent(QWheelEvent *event)
+void QConsole::wheelEvent(QWheelEvent* event)
 {
-    if (event->angleDelta().y()>0) {
-        verticalScrollBar()->setValue(verticalScrollBar()->value()-1);
+    if (event->angleDelta().y() > 0) {
+        verticalScrollBar()->setValue(verticalScrollBar()->value() - 1);
         event->accept();
         return;
-    } else if (event->angleDelta().y()<0)  {
-        verticalScrollBar()->setValue(verticalScrollBar()->value()+1);
+    } else if (event->angleDelta().y() < 0) {
+        verticalScrollBar()->setValue(verticalScrollBar()->value() + 1);
         event->accept();
         return;
     }
@@ -1020,12 +1002,12 @@ void ConsoleLines::layout()
     mNeedRelayout = false;
     emit layoutStarted();
     mRows = 0;
-    bool forceUpdate = (mOldTabSize!=mConsole->tabSize());
-    foreach (const PConsoleLine &consoleLine, mLines) {
+    bool forceUpdate = (mOldTabSize != mConsole->tabSize());
+    foreach (const PConsoleLine& consoleLine, mLines) {
         if (forceUpdate || consoleLine->maxColumns > mConsole->columnsPerRow()) {
-            consoleLine->maxColumns = breakLine(consoleLine->text,consoleLine->fragments);
+            consoleLine->maxColumns = breakLine(consoleLine->text, consoleLine->fragments);
         }
-        mRows+=consoleLine->fragments.count();
+        mRows += consoleLine->fragments.count();
     }
     emit layoutFinished();
     mLayouting = false;
@@ -1033,7 +1015,7 @@ void ConsoleLines::layout()
         emit needRelayout();
 }
 
-ConsoleLines::ConsoleLines(QConsole *console)
+ConsoleLines::ConsoleLines(QConsole* console)
 {
     mConsole = console;
     mRows = 0;
@@ -1041,15 +1023,15 @@ ConsoleLines::ConsoleLines(QConsole *console)
     mNeedRelayout = false;
     mOldTabSize = -1;
     mMaxLines = 1000;
-    connect(this,&ConsoleLines::needRelayout,this,&ConsoleLines::layout);
+    connect(this, &ConsoleLines::needRelayout, this, &ConsoleLines::layout);
 }
 
-void ConsoleLines::addLine(const QString &line)
+void ConsoleLines::addLine(const QString& line)
 {
-    PConsoleLine consoleLine=std::make_shared<ConsoleLine>();
+    PConsoleLine consoleLine = std::make_shared<ConsoleLine>();
     consoleLine->text = line;
-    consoleLine->maxColumns = breakLine(line,consoleLine->fragments);
-    if (mLines.count()<mMaxLines || mMaxLines <= 0) {
+    consoleLine->maxColumns = breakLine(line, consoleLine->fragments);
+    if (mLines.count() < mMaxLines || mMaxLines <= 0) {
         mLines.append(consoleLine);
         mRows += consoleLine->fragments.count();
         emit rowsAdded(consoleLine->fragments.count());
@@ -1066,27 +1048,27 @@ void ConsoleLines::addLine(const QString &line)
 
 void ConsoleLines::RemoveLastLine()
 {
-    if (mLines.count()<=0)
+    if (mLines.count() <= 0)
         return;
-    PConsoleLine consoleLine = mLines[mLines.count()-1];
+    PConsoleLine consoleLine = mLines[mLines.count() - 1];
     mLines.pop_back();
     mRows -= consoleLine->fragments.count();
     emit lastRowsRemoved(consoleLine->fragments.count());
 }
 
-void ConsoleLines::changeLastLine(const QString &newLine)
+void ConsoleLines::changeLastLine(const QString& newLine)
 {
-    if (mLines.count()<=0) {
+    if (mLines.count() <= 0) {
         return;
     }
-    PConsoleLine consoleLine = mLines[mLines.count()-1];
+    PConsoleLine consoleLine = mLines[mLines.count() - 1];
     int oldRows = consoleLine->fragments.count();
     consoleLine->text = newLine;
-    breakLine(newLine,consoleLine->fragments);
+    breakLine(newLine, consoleLine->fragments);
     int newRows = consoleLine->fragments.count();
     if (newRows == oldRows) {
         emit lastRowsChanged(oldRows);
-        return ;
+        return;
     } else {
         mRows -= oldRows;
         mRows += newRows;
@@ -1097,14 +1079,14 @@ void ConsoleLines::changeLastLine(const QString &newLine)
 
 QString ConsoleLines::getLastLine()
 {
-    if (mLines.count()<=0)
+    if (mLines.count() <= 0)
         return "";
-    return mLines[mLines.count()-1]->text;
+    return mLines[mLines.count() - 1]->text;
 }
 
 QString ConsoleLines::getLine(int line)
 {
-    if (line>=0 && line < mLines.count()) {
+    if (line >= 0 && line < mLines.count()) {
         return mLines[line]->text;
     }
     return "";
@@ -1113,33 +1095,33 @@ QString ConsoleLines::getLine(int line)
 QChar ConsoleLines::getChar(int line, int ch)
 {
     QString s = getLine(line);
-    if (ch>=0 && ch<s.length()) {
+    if (ch >= 0 && ch < s.length()) {
         return s[ch];
     } else {
         return QChar();
     }
 }
 
-QChar ConsoleLines::getChar(const LineChar &lineChar)
+QChar ConsoleLines::getChar(const LineChar& lineChar)
 {
-    return getChar(lineChar.line,lineChar.ch);
+    return getChar(lineChar.line, lineChar.ch);
 }
 
 QStringList ConsoleLines::getRows(int startRow, int endRow)
 {
-    if (startRow>mRows)
+    if (startRow > mRows)
         return QStringList();
     if (startRow > endRow)
         return QStringList();
     QStringList lst;
     int row = 0;
-    foreach (const PConsoleLine &line, mLines) {
+    foreach (const PConsoleLine& line, mLines) {
         foreach (const QString& s, line->fragments) {
-            row+=1;
-            if (row>endRow) {
+            row += 1;
+            if (row > endRow) {
                 return lst;
             }
-            if (row>=startRow) {
+            if (row >= startRow) {
                 lst.append(s);
             }
         }
@@ -1147,29 +1129,29 @@ QStringList ConsoleLines::getRows(int startRow, int endRow)
     return lst;
 }
 
-LineChar ConsoleLines::rowColumnToLineChar(const RowColumn &rowColumn)
+LineChar ConsoleLines::rowColumnToLineChar(const RowColumn& rowColumn)
 {
-    return rowColumnToLineChar(rowColumn.row,rowColumn.column);
+    return rowColumnToLineChar(rowColumn.row, rowColumn.column);
 }
 
 LineChar ConsoleLines::rowColumnToLineChar(int row, int column)
 {
-    LineChar result{column,mLines.size()-1};
-    int rows=0;
-    for (int i=0;i<mLines.size();i++) {
+    LineChar result{column, mLines.size() - 1};
+    int rows = 0;
+    for (int i = 0; i < mLines.size(); i++) {
         PConsoleLine line = mLines[i];
-        if (row >= rows && row<rows+line->fragments.size()) {
-            int r=row - rows;
+        if (row >= rows && row < rows + line->fragments.size()) {
+            int r = row - rows;
             QString fragment = line->fragments[r];
             int columnsBefore = 0;
             int charsBefore = 0;
-            for (int j=0;j<r;j++) {
+            for (int j = 0; j < r; j++) {
                 charsBefore += line->fragments[j].length();
             }
-            for (int j=0;j<fragment.size();j++) {
+            for (int j = 0; j < fragment.size(); j++) {
                 QChar ch = fragment[j];
-                int charColumns= mConsole->charColumns(ch, columnsBefore);
-                if (column>=columnsBefore && column<columnsBefore+charColumns) {
+                int charColumns = mConsole->charColumns(ch, columnsBefore);
+                if (column >= columnsBefore && column < columnsBefore + charColumns) {
                     result.ch = charsBefore + j;
                     break;
                 }
@@ -1183,34 +1165,35 @@ LineChar ConsoleLines::rowColumnToLineChar(int row, int column)
     return result;
 }
 
-RowColumn ConsoleLines::lineCharToRowColumn(const LineChar &lineChar)
+RowColumn ConsoleLines::lineCharToRowColumn(const LineChar& lineChar)
 {
-    return lineCharToRowColumn(lineChar.line,lineChar.ch);
+    return lineCharToRowColumn(lineChar.line, lineChar.ch);
 }
 
 RowColumn ConsoleLines::lineCharToRowColumn(int line, int ch)
 {
-    RowColumn result{ch,std::max(0,mRows-1)};
+    RowColumn result{ch, std::max(0, mRows - 1)};
     int rowsBefore = 0;
-    if (line>=0 && line < mLines.size()) {
-        for (int i=0;i<line;i++) {
+    if (line >= 0 && line < mLines.size()) {
+        for (int i = 0; i < line; i++) {
             int rows = mLines[i]->fragments.size();
             rowsBefore += rows;
         }
         PConsoleLine consoleLine = mLines[line];
         int charsBefore = 0;
-        for (int r=0;r<consoleLine->fragments.size();r++) {
+        for (int r = 0; r < consoleLine->fragments.size(); r++) {
             int chars = consoleLine->fragments[r].size();
-            if (r==consoleLine->fragments.size()-1 || (ch>=charsBefore && ch<charsBefore+chars)) {
+            if (r == consoleLine->fragments.size() - 1 ||
+                (ch >= charsBefore && ch < charsBefore + chars)) {
                 QString fragment = consoleLine->fragments[r];
                 int columnsBefore = 0;
-                int len = std::min(ch-charsBefore,fragment.size());
-                for (int j=0;j<len;j++) {
+                int len = std::min(ch - charsBefore, fragment.size());
+                for (int j = 0; j < len; j++) {
                     QChar ch = fragment[j];
-                    int charColumns = mConsole->charColumns(ch,columnsBefore);
+                    int charColumns = mConsole->charColumns(ch, columnsBefore);
                     columnsBefore += charColumns;
                 }
-                result.column=columnsBefore;
+                result.column = columnsBefore;
                 result.row = rowsBefore + r;
                 break;
             }
@@ -1225,17 +1208,17 @@ bool ConsoleLines::layouting() const
     return mLayouting;
 }
 
-int ConsoleLines::breakLine(const QString &line, QStringList &fragments)
+int ConsoleLines::breakLine(const QString& line, QStringList& fragments)
 {
     fragments.clear();
     QString s = "";
     int maxColLen = 0;
     int columnsBefore = 0;
-    for (QChar ch:line) {
-        int charColumn = mConsole->charColumns(ch,columnsBefore);
+    for (QChar ch : line) {
+        int charColumn = mConsole->charColumns(ch, columnsBefore);
         if (charColumn + columnsBefore > mConsole->columnsPerRow()) {
             if (ch == '\t') {
-                if  (columnsBefore != mConsole->columnsPerRow()) {
+                if (columnsBefore != mConsole->columnsPerRow()) {
                     charColumn = 0;
                 } else
                     charColumn = mConsole->tabSize();
@@ -1275,7 +1258,7 @@ void ConsoleLines::setMaxLines(int maxLines)
 {
     mMaxLines = maxLines;
     if (mMaxLines > 0) {
-        while (mLines.count()>mMaxLines) {
+        while (mLines.count() > mMaxLines) {
             mLines.pop_front();
         }
     }

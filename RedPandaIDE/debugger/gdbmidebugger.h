@@ -27,7 +27,7 @@
 #include <memory>
 #include <QRegularExpression>
 
-struct GDBMICommand{
+struct GDBMICommand {
     QString command;
     QString params;
     DebugCommandSource source;
@@ -35,20 +35,23 @@ struct GDBMICommand{
 
 using PGDBMICommand = std::shared_ptr<GDBMICommand>;
 
-class GDBMIDebuggerClient: public DebuggerClient {
+class GDBMIDebuggerClient : public DebuggerClient
+{
     Q_OBJECT
 public:
-    explicit GDBMIDebuggerClient(Debugger* debugger, DebuggerType clientType, QObject *parent = nullptr);
+    explicit GDBMIDebuggerClient(Debugger* debugger, DebuggerType clientType,
+                                 QObject* parent = nullptr);
     GDBMIDebuggerClient(const GDBMIDebuggerClient&) = delete;
-    GDBMIDebuggerClient& operator=(const GDBMIDebuggerClient &) = delete;
+    GDBMIDebuggerClient& operator=(const GDBMIDebuggerClient&) = delete;
 
     // DebuggerClient interface
 public:
-    void postCommand(const QString &command, const QString &params, DebugCommandSource source = DebugCommandSource::Other);
+    void postCommand(const QString& command, const QString& params,
+                     DebugCommandSource source = DebugCommandSource::Other);
 
     void stopDebug() override;
     DebuggerType clientType() override;
-    const PGDBMICommand &currentCmd() const;
+    const PGDBMICommand& currentCmd() const;
     bool commandRunning() override;
 
     void initialize(const QString& inferior, bool hasSymbols) override;
@@ -65,7 +68,7 @@ public:
 
     void refreshStackVariables() override;
 
-    void readMemory(const QString&  startAddress, int rows, int cols) override;
+    void readMemory(const QString& startAddress, int rows, int cols) override;
     void writeMemory(qulonglong address, unsigned char data) override;
 
     void addBreakpoint(PBreakpoint breakpoint) override;
@@ -88,29 +91,29 @@ public:
     void disassembleCurrentFrame(bool blendMode) override;
     void setDisassemblyLanguage(bool isIntel) override;
 
-
     void skipDirectoriesInSymbolSearch(const QStringList& lst) override;
     void addSymbolSearchDirectories(const QStringList& lst) override;
     // QThread interface
 protected:
     void run() override;
     void runNextCmd();
+
 private:
     QStringList tokenize(const QString& s) const;
-    //bool outputTerminated(const QByteArray& text) const;
+    // bool outputTerminated(const QByteArray& text) const;
     void handleBreakpoint(const GDBMIResultParser::ParseObject& breakpoint);
-    void handleCreateVar(const GDBMIResultParser::ParseObject &multiVars);
-    void handleFrame(const GDBMIResultParser::ParseValue &frame);
-    void handleStack(const QList<GDBMIResultParser::ParseValue> & stack);
-    void handleLocalVariables(const QList<GDBMIResultParser::ParseValue> & variables);
+    void handleCreateVar(const GDBMIResultParser::ParseObject& multiVars);
+    void handleFrame(const GDBMIResultParser::ParseValue& frame);
+    void handleStack(const QList<GDBMIResultParser::ParseValue>& stack);
+    void handleLocalVariables(const QList<GDBMIResultParser::ParseValue>& variables);
     void handleEvaluation(const QString& value);
-    void handleMemory(const QList<GDBMIResultParser::ParseValue> & rows);
-    void handleMemoryBytes(const QList<GDBMIResultParser::ParseValue> & rows);
-    void handleRegisterNames(const QList<GDBMIResultParser::ParseValue> & names);
-    void handleRegisterValue(const QList<GDBMIResultParser::ParseValue> & values, bool hexValue);
+    void handleMemory(const QList<GDBMIResultParser::ParseValue>& rows);
+    void handleMemoryBytes(const QList<GDBMIResultParser::ParseValue>& rows);
+    void handleRegisterNames(const QList<GDBMIResultParser::ParseValue>& names);
+    void handleRegisterValue(const QList<GDBMIResultParser::ParseValue>& values, bool hexValue);
     void handleListVarChildren(const GDBMIResultParser::ParseObject& multiVars);
-    void handleUpdateVarValue(const QList<GDBMIResultParser::ParseValue> &changes);
-    void handleDisassembly(const QList<GDBMIResultParser::ParseValue> &instructions);
+    void handleUpdateVarValue(const QList<GDBMIResultParser::ParseValue>& changes);
+    void handleDisassembly(const QList<GDBMIResultParser::ParseValue>& instructions);
     void processConsoleOutput(const QByteArray& line);
     void processLogOutput(const QByteArray& line);
     void processResult(const QByteArray& result);
@@ -121,13 +124,14 @@ private:
     QByteArray removeToken(const QByteArray& line) const;
     void runInferiorStoppedHook();
     void clearCmdQueue();
-    void registerInferiorStoppedCommand(const QString &command, const QString &params);
+    void registerInferiorStoppedCommand(const QString& command, const QString& params);
 private slots:
     void asyncUpdate();
+
 private:
     bool mStop;
     std::shared_ptr<QProcess> mProcess;
-    QMap<QString,QStringList> mFileCache;
+    QMap<QString, QStringList> mFileCache;
     int mCurrentLine;
     qulonglong mCurrentAddress;
     QString mCurrentFunc;

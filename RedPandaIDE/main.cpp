@@ -27,7 +27,8 @@
 static_assert(WM_APP_OPEN_FILE < 0xc000);
 
 HWND prevAppInstance = NULL;
-BOOL CALLBACK GetPreviousInstanceCallback(HWND hwnd, LPARAM param) {
+BOOL CALLBACK GetPreviousInstanceCallback(HWND hwnd, LPARAM param)
+{
     BOOL result = TRUE;
     WCHAR buffer[4098];
     HINSTANCE hWindowModule = (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE);
@@ -67,7 +68,8 @@ BOOL CALLBACK GetPreviousInstanceCallback(HWND hwnd, LPARAM param) {
     return TRUE;
 }
 
-HWND getPreviousInstance() {
+HWND getPreviousInstance()
+{
     WCHAR buffer[4098];
     // ShowMessage('ERROR_ALREADY_EXISTS');
     //  Store our own module filename
@@ -142,7 +144,8 @@ bool WindowLogoutEventFilter::nativeEventFilter(const QByteArray& /*eventType*/,
     return false;
 }
 
-bool sendFilesToInstance() {
+bool sendFilesToInstance()
+{
     HWND prevInstance = getPreviousInstance();
     if (prevInstance != NULL) {
         QSharedMemory sharedMemory("RedPandaCpp/openfiles");
@@ -167,12 +170,15 @@ bool sendFilesToInstance() {
 }
 #endif
 
-BlockWheelEventFiler::BlockWheelEventFiler(QObject* parent) : QObject(parent) {
+BlockWheelEventFiler::BlockWheelEventFiler(QObject* parent) : QObject(parent)
+{
 }
 
-BlockWheelEventFiler::~BlockWheelEventFiler() {
+BlockWheelEventFiler::~BlockWheelEventFiler()
+{
 }
-bool BlockWheelEventFiler::eventFilter(QObject* watched, QEvent* event) {
+bool BlockWheelEventFiler::eventFilter(QObject* watched, QEvent* event)
+{
     // Prevent QComboBox wheel event
     if (event->type() == QEvent::Wheel && !pSettings->environment().comboboxWheel()) {
         QComboBox* p = qobject_cast<QComboBox*>(watched);
@@ -182,7 +188,8 @@ bool BlockWheelEventFiler::eventFilter(QObject* watched, QEvent* event) {
     return false;
 }
 
-QString getSettingFilename(const QString& filepath, bool& firstRun) {
+QString getSettingFilename(const QString& filepath, bool& firstRun)
+{
     QString filename;
     if (filepath.isEmpty()) {
         if (isGreenEdition()) {
@@ -219,7 +226,8 @@ QString getSettingFilename(const QString& filepath, bool& firstRun) {
     return filename;
 }
 
-void setTheme(const QString& theme) {
+void setTheme(const QString& theme)
+{
     pSettings->environment().setTheme(theme);
     ThemeManager themeManager;
     PAppTheme appTheme = themeManager.theme(theme);

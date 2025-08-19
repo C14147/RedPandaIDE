@@ -27,19 +27,18 @@
 
 #include <QDir>
 
-ProjectCompiler::ProjectCompiler(std::shared_ptr<Project> project):
-    Compiler("",false),
-    mOnlyClean(false)
+ProjectCompiler::ProjectCompiler(std::shared_ptr<Project> project)
+    : Compiler("", false), mOnlyClean(false)
 {
     setProject(project);
 }
 
 void ProjectCompiler::buildMakeFile()
 {
-    //we are using custom make file, don't overwrite it
+    // we are using custom make file, don't overwrite it
     if (mProject->options().useCustomMakefile && !mProject->options().customMakefile.isEmpty())
         return;
-    switch(mProject->options().type) {
+    switch (mProject->options().type) {
     case ProjectType::StaticLib:
         createStaticMakeFile();
         break;
@@ -87,33 +86,40 @@ void ProjectCompiler::createDynamicMakeFile()
     QFile file(mProject->makeFileName());
     bool genModuleDef;
     newMakeFile(file, genModuleDef);
-    QString dynamicLibFilename = extractRelativePath(mProject->makeFileName(), mProject->outputFilename());
+    QString dynamicLibFilename =
+        extractRelativePath(mProject->makeFileName(), mProject->outputFilename());
     QString dynamicLibTarget = escapeFilenameForMakefileTarget(dynamicLibFilename);
     QString dynamicLibCommand = escapeArgumentForMakefileRecipe(dynamicLibFilename, false);
     writeln(file, dynamicLibTarget + ": $(DEF) $(OBJ)");
     if (genModuleDef) {
         if (mProject->options().isCpp) {
-            writeln(file, "\t$(CXX) -mdll $(LINKOBJ) -o " + dynamicLibCommand + " $(LIBS) $(DEF) -Wl,--output-def,$(OUTPUT_DEF),--out-implib,$(STATIC)");
+            writeln(file,
+                    "\t$(CXX) -mdll $(LINKOBJ) -o " + dynamicLibCommand +
+                        " $(LIBS) $(DEF) -Wl,--output-def,$(OUTPUT_DEF),--out-implib,$(STATIC)");
         } else {
-            writeln(file, "\t$(CC) -mdll $(LINKOBJ) -o " + dynamicLibCommand + " $(LIBS) $(DEF) -Wl,--output-def,$(OUTPUT_DEF),--out-implib,$(STATIC)");
+            writeln(file,
+                    "\t$(CC) -mdll $(LINKOBJ) -o " + dynamicLibCommand +
+                        " $(LIBS) $(DEF) -Wl,--output-def,$(OUTPUT_DEF),--out-implib,$(STATIC)");
         }
     } else {
         if (mProject->options().isCpp) {
-            writeln(file, "\t$(CXX) -mdll $(LINKOBJ) -o " + dynamicLibCommand + " $(LIBS) $(DEF) -Wl,--out-implib,$(STATIC)");
+            writeln(file, "\t$(CXX) -mdll $(LINKOBJ) -o " + dynamicLibCommand +
+                              " $(LIBS) $(DEF) -Wl,--out-implib,$(STATIC)");
         } else {
-            writeln(file, "\t$(CC) -mdll $(LINKOBJ) -o " + dynamicLibCommand + " $(LIBS) $(DEF) -Wl,--out-implib,$(STATIC)");
+            writeln(file, "\t$(CC) -mdll $(LINKOBJ) -o " + dynamicLibCommand +
+                              " $(LIBS) $(DEF) -Wl,--out-implib,$(STATIC)");
         }
     }
     writeMakeObjFilesRules(file);
 }
 
-void ProjectCompiler::newMakeFile(QFile &file)
+void ProjectCompiler::newMakeFile(QFile& file)
 {
     bool dummy;
     newMakeFile(file, dummy);
 }
 
-void ProjectCompiler::newMakeFile(QFile& file, bool &genModuleDef)
+void ProjectCompiler::newMakeFile(QFile& file, bool& genModuleDef)
 {
     // Create OBJ output directory
     if (!mProject->options().folderForObjFiles.isEmpty()) {
@@ -148,11 +154,13 @@ void ProjectCompiler::newMakeFile(QFile& file, bool &genModuleDef)
     writeMakeClean(file);
 
     // PCH
-    if (mProject->options().usePrecompiledHeader
-            && fileExists(mProject->options().precompiledHeader)) {
-        QString pchH = extractRelativePath(mProject->makeFileName(), mProject->options().precompiledHeader);
+    if (mProject->options().usePrecompiledHeader &&
+        fileExists(mProject->options().precompiledHeader)) {
+        QString pchH =
+            extractRelativePath(mProject->makeFileName(), mProject->options().precompiledHeader);
         QString pchHCommand = escapeArgumentForMakefileRecipe(pchH, false);
-        QString pch = extractRelativePath(mProject->makeFileName(), mProject->options().precompiledHeader + "." GCH_EXT);
+        QString pch = extractRelativePath(mProject->makeFileName(),
+                                          mProject->options().precompiledHeader + "." GCH_EXT);
         QString pchTarget = escapeFilenameForMakefileTarget(pch);
         QString pchCommand = escapeArgumentForMakefileRecipe(pch, false);
         writeln(file, pchTarget + ": $(PCH_H)");
@@ -161,14 +169,14 @@ void ProjectCompiler::newMakeFile(QFile& file, bool &genModuleDef)
     }
 }
 
-void ProjectCompiler::writeMakeHeader(QFile &file)
+void ProjectCompiler::writeMakeHeader(QFile& file)
 {
-    writeln(file,"# Project: " + mProject->name());
-    writeln(file,QString("# Makefile created by RedPandaIDE") + REDPANDA_CPP_VERSION);
+    writeln(file, "# Project: " + mProject->name());
+    writeln(file, QString("# Makefile created by RedPandaIDE") + REDPANDA_CPP_VERSION);
     writeln(file);
 }
 
-void ProjectCompiler::writeMakeDefines(QFile &file, bool &genModuleDef)
+void ProjectCompiler::writeMakeDefines(QFile& file, bool& genModuleDef)
 {
     // Get list of object files
     QStringList objects;
@@ -179,8 +187,7 @@ void ProjectCompiler::writeMakeDefines(QFile &file, bool &genModuleDef)
     genModuleDef = false;
 
     // Create a list of object files
-    foreach(const PProjectUnit &unit, mProject->unitList()) {
-
+    foreach (const PProjectUnit& unit, mProject->unitList()) {
         // Only process source files
         FileType fileType = getFileType(unit->fileName());
 
@@ -188,9 +195,11 @@ void ProjectCompiler::writeMakeDefines(QFile &file, bool &genModuleDef)
             QString relativeName = extractRelativePath(mProject->directory(), unit->fileName());
             if (!mProject->options().folderForObjFiles.isEmpty()) {
                 // ofile = C:\MyProgram\obj\main.o
-                QString fullObjFile = includeTrailingPathDelimiter(mProject->options().folderForObjFiles)
-                        + extractFileName(unit->fileName());
-                QString relativeObjFile = extractRelativePath(mProject->directory(), changeFileExt(fullObjFile, OBJ_EXT));
+                QString fullObjFile =
+                    includeTrailingPathDelimiter(mProject->options().folderForObjFiles) +
+                    extractFileName(unit->fileName());
+                QString relativeObjFile =
+                    extractRelativePath(mProject->directory(), changeFileExt(fullObjFile, OBJ_EXT));
                 objects << relativeObjFile;
                 cleanObjects << localizePath(relativeObjFile);
                 if (unit->link()) {
@@ -212,8 +221,9 @@ void ProjectCompiler::writeMakeDefines(QFile &file, bool &genModuleDef)
 #ifdef Q_OS_WIN
     if (!mProject->options().privateResource.isEmpty()) {
         if (!mProject->options().folderForObjFiles.isEmpty()) {
-            QString fullResFile = includeTrailingPathDelimiter(mProject->options().folderForObjFiles) +
-                    changeFileExt(mProject->options().privateResource, RES_EXT);
+            QString fullResFile =
+                includeTrailingPathDelimiter(mProject->options().folderForObjFiles) +
+                changeFileExt(mProject->options().privateResource, RES_EXT);
 
             QString relativeResFile = extractRelativePath(mProject->directory(), fullResFile);
             objResFile = relativeResFile;
@@ -227,7 +237,7 @@ void ProjectCompiler::writeMakeDefines(QFile &file, bool &genModuleDef)
 
     // Mention progress in the logs
     if (!objResFile.isEmpty()) {
-        QString absolutePath = generateAbsolutePath(mProject->directory(),objResFile);
+        QString absolutePath = generateAbsolutePath(mProject->directory(), objResFile);
         QString escaped = escapeArgumentForPlatformShell(absolutePath, false);
         log(tr("- Resource File: %1").arg(escaped));
     }
@@ -249,13 +259,16 @@ void ProjectCompiler::writeMakeDefines(QFile &file, bool &genModuleDef)
     QStringList cxxIncludeArguments = getCppIncludeArguments();
     cxxIncludeArguments += getProjectIncludeArguments();
 #ifdef Q_OS_WIN
-    QStringList resourceArguments = parseArguments(mProject->options().resourceCmd, devCppMacroVariables(), true);
+    QStringList resourceArguments =
+        parseArguments(mProject->options().resourceCmd, devCppMacroVariables(), true);
 #endif
 
     QString executable = extractRelativePath(mProject->makeFileName(), mProject->outputFilename());
     QString cleanExe = localizePath(executable);
-    QString pchHeader = extractRelativePath(mProject->makeFileName(), mProject->options().precompiledHeader);
-    QString pch = extractRelativePath(mProject->makeFileName(), mProject->options().precompiledHeader + "." GCH_EXT);
+    QString pchHeader =
+        extractRelativePath(mProject->makeFileName(), mProject->options().precompiledHeader);
+    QString pch = extractRelativePath(mProject->makeFileName(),
+                                      mProject->options().precompiledHeader + "." GCH_EXT);
 
     // programs
     writeln(file, "CXX      = " + escapeArgumentForMakefileVariableValue(cxx, true));
@@ -270,8 +283,10 @@ void ProjectCompiler::writeMakeDefines(QFile &file, bool &genModuleDef)
     writeln(file, "LIBS     = " + escapeArgumentsForMakefileVariableValue(libraryArguments));
     writeln(file, "INCS     = " + escapeArgumentsForMakefileVariableValue(cIncludeArguments));
     writeln(file, "CXXINCS  = " + escapeArgumentsForMakefileVariableValue(cxxIncludeArguments));
-    writeln(file, "CXXFLAGS = $(CXXINCS) " + escapeArgumentsForMakefileVariableValue(cxxCompileArguments));
-    writeln(file, "CFLAGS   = $(INCS) " + escapeArgumentsForMakefileVariableValue(cCompileArguments));
+    writeln(file, "CXXFLAGS = $(CXXINCS) " +
+                      escapeArgumentsForMakefileVariableValue(cxxCompileArguments));
+    writeln(file,
+            "CFLAGS   = $(INCS) " + escapeArgumentsForMakefileVariableValue(cCompileArguments));
 #ifdef Q_OS_WIN
     writeln(file, "WINDRESFLAGS = " + escapeArgumentsForMakefileVariableValue(resourceArguments));
 #endif
@@ -285,8 +300,8 @@ void ProjectCompiler::writeMakeDefines(QFile &file, bool &genModuleDef)
         writeln(file, "OBJ      = " + escapeFilenamesForMakefilePrerequisite(objects));
     };
     writeln(file, "BIN      = " + escapeFilenameForMakefilePrerequisite(executable));
-    if (mProject->options().usePrecompiledHeader
-            && fileExists(mProject->options().precompiledHeader)){
+    if (mProject->options().usePrecompiledHeader &&
+        fileExists(mProject->options().precompiledHeader)) {
         writeln(file, "PCH_H    = " + escapeFilenameForMakefilePrerequisite(pchHeader));
         writeln(file, "PCH      = " + escapeFilenameForMakefilePrerequisite(pch));
     }
@@ -294,11 +309,15 @@ void ProjectCompiler::writeMakeDefines(QFile &file, bool &genModuleDef)
     // object referenced in command arguments
     // use them in targets or prerequisites, they have different escaping rules
     if (!objResFile.isEmpty()) {
-        writeln(file, "LINKOBJ  = " + escapeArgumentsForMakefileVariableValue(LinkObjects) + " " + escapeArgumentForMakefileVariableValue(objResFile, false));
-        writeln(file, "CLEANOBJ = " + escapeArgumentsForMakefileVariableValue(cleanObjects) + " " + escapeArgumentForMakefileVariableValue(cleanRes, false) + " " + escapeArgumentForMakefileVariableValue(cleanExe, false));
+        writeln(file, "LINKOBJ  = " + escapeArgumentsForMakefileVariableValue(LinkObjects) + " " +
+                          escapeArgumentForMakefileVariableValue(objResFile, false));
+        writeln(file, "CLEANOBJ = " + escapeArgumentsForMakefileVariableValue(cleanObjects) + " " +
+                          escapeArgumentForMakefileVariableValue(cleanRes, false) + " " +
+                          escapeArgumentForMakefileVariableValue(cleanExe, false));
     } else {
         writeln(file, "LINKOBJ  = " + escapeArgumentsForMakefileVariableValue(LinkObjects));
-        writeln(file, "CLEANOBJ = " + escapeArgumentsForMakefileVariableValue(cleanObjects) + " " + escapeArgumentForMakefileVariableValue(cleanExe, false));
+        writeln(file, "CLEANOBJ = " + escapeArgumentsForMakefileVariableValue(cleanObjects) + " " +
+                          escapeArgumentForMakefileVariableValue(cleanExe, false));
     };
 
     // This needs to be put in before the clean command.
@@ -311,36 +330,34 @@ void ProjectCompiler::writeMakeDefines(QFile &file, bool &genModuleDef)
         } else {
             libOutputFile = includeTrailingPathDelimiter(outputFileDir) + outputFilename;
         }
-        if (QFileInfo(libOutputFile).absoluteFilePath()
-                == mProject->directory())
+        if (QFileInfo(libOutputFile).absoluteFilePath() == mProject->directory())
             libOutputFile = extractFileName(libOutputFile);
         else
             libOutputFile = extractRelativePath(mProject->makeFileName(), libOutputFile);
 
         QString defFile = localizePath(changeFileExt(libOutputFile, DEF_EXT));
         QString staticFile = localizePath(changeFileExt(libOutputFile, LIB_EXT));
-        writeln(file,"DEF      = " + escapeFilenamesForMakefilePrerequisite(moduleDefines));
-        writeln(file,"STATIC   = " + escapeFilenameForMakefilePrerequisite(staticFile));
+        writeln(file, "DEF      = " + escapeFilenamesForMakefilePrerequisite(moduleDefines));
+        writeln(file, "STATIC   = " + escapeFilenameForMakefilePrerequisite(staticFile));
 
         genModuleDef = !moduleDefines.contains(defFile);
         if (genModuleDef)
-            writeln(file,"OUTPUT_DEF = " + escapeFilenameForMakefilePrerequisite(defFile));
+            writeln(file, "OUTPUT_DEF = " + escapeFilenameForMakefilePrerequisite(defFile));
     }
     writeln(file);
 }
 
-void ProjectCompiler::writeMakeTarget(QFile &file)
+void ProjectCompiler::writeMakeTarget(QFile& file)
 {
     writeln(file, ".PHONY: all all-before all-after clean clean-custom");
     writeln(file);
     writeln(file, "all: all-before $(BIN) all-after");
     writeln(file);
-
 }
 
-void ProjectCompiler::writeMakeIncludes(QFile &file)
+void ProjectCompiler::writeMakeIncludes(QFile& file)
 {
-    foreach(const QString& s, mProject->options().makeIncludes) {
+    foreach (const QString& s, mProject->options().makeIncludes) {
         writeln(file, "include " + escapeFilenameForMakefileInclude(s));
     }
     if (!mProject->options().makeIncludes.isEmpty()) {
@@ -348,30 +365,31 @@ void ProjectCompiler::writeMakeIncludes(QFile &file)
     }
 }
 
-void ProjectCompiler::writeMakeClean(QFile &file)
+void ProjectCompiler::writeMakeClean(QFile& file)
 {
     writeln(file, "clean: clean-custom");
-    QString target="$(CLEANOBJ)";
-    if (mProject->options().usePrecompiledHeader
-            && fileExists(mProject->options().precompiledHeader)) {
-        QString pch = extractRelativePath(mProject->makeFileName(), mProject->options().precompiledHeader + "." GCH_EXT);
+    QString target = "$(CLEANOBJ)";
+    if (mProject->options().usePrecompiledHeader &&
+        fileExists(mProject->options().precompiledHeader)) {
+        QString pch = extractRelativePath(mProject->makeFileName(),
+                                          mProject->options().precompiledHeader + "." GCH_EXT);
         target += ' ' + escapeArgumentForMakefileRecipe(pch, false);
     }
 
     if (mProject->options().type == ProjectType::DynamicLib) {
-        target +=" $(STATIC)";
+        target += " $(STATIC)";
     }
-    writeln(file, QString("\t-$(RM) %1 >%2 2>&1").arg(target,NULL_FILE));
+    writeln(file, QString("\t-$(RM) %1 >%2 2>&1").arg(target, NULL_FILE));
     writeln(file);
 }
 
-void ProjectCompiler::writeMakeObjFilesRules(QFile &file)
+void ProjectCompiler::writeMakeObjFilesRules(QFile& file)
 {
     PCppParser parser = mProject->cppParser();
     QString precompileStr;
 
-    QList<PProjectUnit> projectUnits=mProject->unitList();
-    foreach(const PProjectUnit &unit, projectUnits) {
+    QList<PProjectUnit> projectUnits = mProject->unitList();
+    foreach (const PProjectUnit& unit, projectUnits) {
         if (!unit->compile())
             continue;
         FileType fileType = getFileType(unit->fileName());
@@ -379,31 +397,33 @@ void ProjectCompiler::writeMakeObjFilesRules(QFile &file)
         if (!isC_CPP_ASMSourceFile(fileType))
             continue;
 
-        QString shortFileName = extractRelativePath(mProject->makeFileName(),unit->fileName());
+        QString shortFileName = extractRelativePath(mProject->makeFileName(), unit->fileName());
 
         writeln(file);
         QString objStr = escapeFilenameForMakefilePrerequisite(shortFileName);
         // if we have scanned it, use scanned info
         if (parser && parser->fileScanned(unit->fileName())) {
             QSet<QString> includedFiles = parser->getIncludedFiles(unit->fileName());
-            foreach(const PProjectUnit &unit2, projectUnits) {
-                if (unit2==unit)
+            foreach (const PProjectUnit& unit2, projectUnits) {
+                if (unit2 == unit)
                     continue;
                 if (includedFiles.contains(unit2->fileName())) {
                     if (mProject->options().usePrecompiledHeader &&
-                           unit2->fileName() == mProject->options().precompiledHeader)
+                        unit2->fileName() == mProject->options().precompiledHeader)
                         precompileStr = " $(PCH) ";
                     else {
-                        QString prereq = extractRelativePath(mProject->makeFileName(), unit2->fileName());
+                        QString prereq =
+                            extractRelativePath(mProject->makeFileName(), unit2->fileName());
                         objStr = objStr + ' ' + escapeFilenameForMakefilePrerequisite(prereq);
                     }
                 }
             }
         } else {
-            foreach(const PProjectUnit &unit2, projectUnits) {
+            foreach (const PProjectUnit& unit2, projectUnits) {
                 FileType fileType = getFileType(unit2->fileName());
                 if (isC_CPPHeaderFile(fileType)) {
-                    QString prereq = extractRelativePath(mProject->makeFileName(), unit2->fileName());
+                    QString prereq =
+                        extractRelativePath(mProject->makeFileName(), unit2->fileName());
                     objStr = objStr + ' ' + escapeFilenameForMakefilePrerequisite(prereq);
                 }
             }
@@ -411,9 +431,11 @@ void ProjectCompiler::writeMakeObjFilesRules(QFile &file)
         QString objFileNameTarget;
         QString objFileNameCommand;
         if (!mProject->options().folderForObjFiles.isEmpty()) {
-            QString fullObjname = includeTrailingPathDelimiter(mProject->options().folderForObjFiles) +
-                    extractFileName(unit->fileName());
-            QString objectFile = extractRelativePath(mProject->makeFileName(), changeFileExt(fullObjname, OBJ_EXT));
+            QString fullObjname =
+                includeTrailingPathDelimiter(mProject->options().folderForObjFiles) +
+                extractFileName(unit->fileName());
+            QString objectFile =
+                extractRelativePath(mProject->makeFileName(), changeFileExt(fullObjname, OBJ_EXT));
             objFileNameTarget = escapeFilenameForMakefileTarget(objectFile);
             objFileNameCommand = escapeArgumentForMakefileRecipe(objectFile, false);
         } else {
@@ -424,7 +446,7 @@ void ProjectCompiler::writeMakeObjFilesRules(QFile &file)
 
         objStr = objFileNameTarget + ": " + objStr + precompileStr;
 
-        writeln(file,objStr);
+        writeln(file, objStr);
 
         // Write custom build command
         if (unit->overrideBuildCmd() && !unit->buildCmd().isEmpty()) {
@@ -439,7 +461,7 @@ void ProjectCompiler::writeMakeObjFilesRules(QFile &file)
                 QByteArray encoding = mProject->options().execEncoding;
                 QByteArray targetEncoding;
                 QByteArray sourceEncoding;
-                if ( encoding == ENCODING_SYSTEM_DEFAULT || encoding.isEmpty()) {
+                if (encoding == ENCODING_SYSTEM_DEFAULT || encoding.isEmpty()) {
                     targetEncoding = defaultSystemEncoding;
                 } else if (encoding == ENCODING_OEM_DEFAULT) {
                     targetEncoding = pCharsetInfoManager->getDefaultConsoleEncoding();
@@ -456,43 +478,48 @@ void ProjectCompiler::writeMakeObjFilesRules(QFile &file)
                 if (unit->realEncoding().isEmpty()) {
                     if (unit->encoding() == ENCODING_AUTO_DETECT) {
                         Editor* editor = mProject->unitEditor(unit);
-                        if (editor && editor->fileEncoding()!=ENCODING_ASCII
-                                && editor->fileEncoding()!=targetEncoding) {
+                        if (editor && editor->fileEncoding() != ENCODING_ASCII &&
+                            editor->fileEncoding() != targetEncoding) {
                             sourceEncoding = editor->fileEncoding();
                         } else {
                             sourceEncoding = targetEncoding;
                         }
-                    } else if (unit->encoding()==ENCODING_PROJECT) {
-                        sourceEncoding=mProject->options().encoding;
-                    } else if (unit->encoding()==ENCODING_SYSTEM_DEFAULT) {
+                    } else if (unit->encoding() == ENCODING_PROJECT) {
+                        sourceEncoding = mProject->options().encoding;
+                    } else if (unit->encoding() == ENCODING_SYSTEM_DEFAULT) {
                         sourceEncoding = defaultSystemEncoding;
-                    } else if (unit->encoding()!=ENCODING_ASCII && !unit->encoding().isEmpty()) {
+                    } else if (unit->encoding() != ENCODING_ASCII && !unit->encoding().isEmpty()) {
                         sourceEncoding = unit->encoding();
                     } else {
                         sourceEncoding = targetEncoding;
                     }
-                } else if (unit->realEncoding()==ENCODING_ASCII) {
+                } else if (unit->realEncoding() == ENCODING_ASCII) {
                     sourceEncoding = targetEncoding;
                 } else {
                     sourceEncoding = unit->realEncoding();
                 }
-                if (sourceEncoding==ENCODING_SYSTEM_DEFAULT)
+                if (sourceEncoding == ENCODING_SYSTEM_DEFAULT)
                     sourceEncoding = defaultSystemEncoding;
 
-                if (QString::compare(sourceEncoding,targetEncoding,Qt::CaseInsensitive)!=0) {
+                if (QString::compare(sourceEncoding, targetEncoding, Qt::CaseInsensitive) != 0) {
                     encodingStr = QString(" -finput-charset=%1 -fexec-charset=%2")
-                            .arg(QString(sourceEncoding),
-                                 QString(targetEncoding));
+                                      .arg(QString(sourceEncoding), QString(targetEncoding));
                 }
             }
 
             if (isC_CPPSourceFile(fileType)) {
                 if (unit->compileCpp())
-                    writeln(file, "\t$(CXX) -c " + escapeArgumentForMakefileRecipe(shortFileName, false) + " -o " + objFileNameCommand + " $(CXXFLAGS) " + encodingStr);
+                    writeln(file, "\t$(CXX) -c " +
+                                      escapeArgumentForMakefileRecipe(shortFileName, false) +
+                                      " -o " + objFileNameCommand + " $(CXXFLAGS) " + encodingStr);
                 else
-                    writeln(file, "\t$(CC) -c " + escapeArgumentForMakefileRecipe(shortFileName, false) + " -o " + objFileNameCommand + " $(CFLAGS) " + encodingStr);
+                    writeln(file, "\t$(CC) -c " +
+                                      escapeArgumentForMakefileRecipe(shortFileName, false) +
+                                      " -o " + objFileNameCommand + " $(CFLAGS) " + encodingStr);
             } else if (isASMSourceFile(fileType)) {
-                writeln(file, "\t$(CC) -c " + escapeArgumentForMakefileRecipe(shortFileName, false) + " -o " + objFileNameCommand + " $(CFLAGS) " + encodingStr);
+                writeln(file, "\t$(CC) -c " +
+                                  escapeArgumentForMakefileRecipe(shortFileName, false) + " -o " +
+                                  objFileNameCommand + " $(CFLAGS) " + encodingStr);
             }
         }
     }
@@ -501,7 +528,7 @@ void ProjectCompiler::writeMakeObjFilesRules(QFile &file)
     if (!mProject->options().privateResource.isEmpty()) {
         // Concatenate all resource include directories
         QString ResIncludes(" ");
-        for (int i=0;i<mProject->options().resourceIncludes.count();i++) {
+        for (int i = 0; i < mProject->options().resourceIncludes.count(); i++) {
             QString filename = mProject->options().resourceIncludes[i];
             if (!filename.isEmpty())
                 ResIncludes += " --include-dir " + escapeArgumentForMakefileRecipe(filename, false);
@@ -509,8 +536,8 @@ void ProjectCompiler::writeMakeObjFilesRules(QFile &file)
 
         QString resFiles;
         // Concatenate all resource filenames (not created when syntax checking)
-        foreach(const PProjectUnit& unit, mProject->unitList()) {
-            if (getFileType(unit->fileName())!=FileType::WindowsResourceSource)
+        foreach (const PProjectUnit& unit, mProject->unitList()) {
+            if (getFileType(unit->fileName()) != FileType::WindowsResourceSource)
                 continue;
             if (fileExists(unit->fileName())) {
                 QString ResFile = extractRelativePath(mProject->makeFileName(), unit->fileName());
@@ -522,33 +549,35 @@ void ProjectCompiler::writeMakeObjFilesRules(QFile &file)
         QString fullName;
         if (!mProject->options().folderForObjFiles.isEmpty()) {
             fullName = includeTrailingPathDelimiter(mProject->options().folderForObjFiles) +
-                  changeFileExt(mProject->options().privateResource, RES_EXT);
+                       changeFileExt(mProject->options().privateResource, RES_EXT);
         } else {
             fullName = changeFileExt(mProject->options().privateResource, RES_EXT);
         }
         QString objFile = extractRelativePath(mProject->filename(), fullName);
         QString objFileNameCommand = escapeArgumentForMakefileRecipe(objFile, false);
         QString objFileNameTarget = escapeFilenameForMakefileTarget(objFile);
-        QString privRes = extractRelativePath(mProject->filename(), mProject->options().privateResource);
+        QString privRes =
+            extractRelativePath(mProject->filename(), mProject->options().privateResource);
         QString privResNameCommand = escapeArgumentForMakefileRecipe(privRes, false);
         QString privResNamePrereq = escapeFilenameForMakefilePrerequisite(privRes);
 
         // Build final cmd
         QString windresArgs;
 
-        if (mProject->getCompileOption(CC_CMD_OPT_POINTER_SIZE)=="32")
-              windresArgs = " -F pe-i386";
+        if (mProject->getCompileOption(CC_CMD_OPT_POINTER_SIZE) == "32")
+            windresArgs = " -F pe-i386";
 
         writeln(file);
         writeln(file, objFileNameTarget + ": " + privResNamePrereq + ' ' + resFiles);
-        writeln(file, "\t$(WINDRES) -i " + privResNameCommand + windresArgs + " --input-format=rc -o " + objFileNameCommand + " -O coff $(WINDRESFLAGS)"
-            + ResIncludes);
+        writeln(file, "\t$(WINDRES) -i " + privResNameCommand + windresArgs +
+                          " --input-format=rc -o " + objFileNameCommand +
+                          " -O coff $(WINDRESFLAGS)" + ResIncludes);
         writeln(file);
     }
 #endif
 }
 
-void ProjectCompiler::writeln(QFile &file, const QString &s)
+void ProjectCompiler::writeln(QFile& file, const QString& s)
 {
     if (!s.isEmpty())
         file.write(s.toLocal8Bit());
@@ -567,7 +596,7 @@ void ProjectCompiler::setOnlyClean(bool newOnlyClean)
 
 bool ProjectCompiler::prepareForRebuild()
 {
-    //we use make argument to clean
+    // we use make argument to clean
     return true;
 }
 
@@ -575,7 +604,7 @@ bool ProjectCompiler::prepareForCompile()
 {
     if (!mProject)
         return false;
-    //initProgressForm();
+    // initProgressForm();
     log(tr("Compiling project changes..."));
     log("--------");
     log(tr("- Project Filename: %1").arg(mProject->filename()));
@@ -587,15 +616,13 @@ bool ProjectCompiler::prepareForCompile()
     mCompiler = compilerSet()->make();
 
     if (!fileExists(mCompiler)) {
-        throw CompileError(
-                    tr("Make program '%1' doesn't exists!").arg(mCompiler)
-                    +"<br />"
-                    +tr("Please check the \"program\" page of compiler settings."));
+        throw CompileError(tr("Make program '%1' doesn't exists!").arg(mCompiler) + "<br />" +
+                           tr("Please check the \"program\" page of compiler settings."));
     }
 
     QString parallelParam;
     if (mProject->options().allowParallelBuilding) {
-        if (mProject->options().parellelBuildingJobs==0) {
+        if (mProject->options().parellelBuildingJobs == 0) {
             parallelParam = "--jobs";
         } else {
             parallelParam = QString("-j%1").arg(mProject->options().parellelBuildingJobs);

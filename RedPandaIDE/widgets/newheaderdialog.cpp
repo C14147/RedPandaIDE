@@ -21,16 +21,14 @@
 
 #include <QFileDialog>
 
-NewHeaderDialog::NewHeaderDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::NewHeaderDialog)
+NewHeaderDialog::NewHeaderDialog(QWidget* parent) : QDialog(parent), ui(new Ui::NewHeaderDialog)
 {
-    setWindowFlag(Qt::WindowContextHelpButtonHint,false);
+    setWindowFlag(Qt::WindowContextHelpButtonHint, false);
     ui->setupUi(this);
-    resize(pSettings->ui().newHeaderDialogWidth(),pSettings->ui().newHeaderDialogHeight());
+    resize(pSettings->ui().newHeaderDialogWidth(), pSettings->ui().newHeaderDialogHeight());
     onUpdateIcons();
-    connect(pIconsManager,&IconsManager::actionIconsUpdated,
-            this, &NewHeaderDialog::onUpdateIcons);
+    connect(pIconsManager, &IconsManager::actionIconsUpdated, this,
+            &NewHeaderDialog::onUpdateIcons);
     ui->txtHeader->setFocus();
 }
 
@@ -49,17 +47,17 @@ QString NewHeaderDialog::path() const
     return ui->txtPath->text();
 }
 
-void NewHeaderDialog::setHeaderName(const QString &name)
+void NewHeaderDialog::setHeaderName(const QString& name)
 {
     ui->txtHeader->setText(name);
     int pos = name.lastIndexOf('.');
-    if (pos>=0)
-        ui->txtHeader->setSelection(0,pos);
+    if (pos >= 0)
+        ui->txtHeader->setSelection(0, pos);
     else
         ui->txtHeader->selectAll();
 }
 
-void NewHeaderDialog::setPath(const QString &location)
+void NewHeaderDialog::setPath(const QString& location)
 {
     ui->txtPath->setText(location);
 }
@@ -69,7 +67,7 @@ void NewHeaderDialog::onUpdateIcons()
     pIconsManager->setIcon(ui->btnBrowse, IconsManager::ACTION_FILE_OPEN_FOLDER);
 }
 
-void NewHeaderDialog::closeEvent(QCloseEvent */*event*/)
+void NewHeaderDialog::closeEvent(QCloseEvent* /*event*/)
 {
     reject();
 }
@@ -79,19 +77,13 @@ void NewHeaderDialog::on_btnCreate_clicked()
     accept();
 }
 
-
 void NewHeaderDialog::on_btnCancel_clicked()
 {
     reject();
 }
 
-
 void NewHeaderDialog::on_btnBrowse_clicked()
 {
-    QString fileName = QFileDialog::getExistingDirectory(
-                this,
-                tr("Path"),
-                ui->txtPath->text());
+    QString fileName = QFileDialog::getExistingDirectory(this, tr("Path"), ui->txtPath->text());
     ui->txtPath->setText(fileName);
 }
-

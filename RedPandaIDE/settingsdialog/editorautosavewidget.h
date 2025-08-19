@@ -29,13 +29,15 @@ class EditorAutoSaveWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit EditorAutoSaveWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit EditorAutoSaveWidget(const QString& name, const QString& group,
+                                  QWidget* parent = nullptr);
     ~EditorAutoSaveWidget();
 
 private:
     void onAutoSaveStrategyChanged();
+
 private:
-    Ui::EditorAutoSaveWidget *ui;
+    Ui::EditorAutoSaveWidget* ui;
 
     // SettingsWidget interface
 protected:

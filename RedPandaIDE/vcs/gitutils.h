@@ -5,21 +5,9 @@
 #include <QString>
 #include <memory>
 
+enum class GitResetStrategy { Soft, Hard, Merge, Mixed, Keep };
 
-enum class GitResetStrategy {
-    Soft,
-    Hard,
-    Merge,
-    Mixed,
-    Keep
-};
-
-enum class GitMergeStrategy {
-    Resolve,
-    Recursive,
-    Ours,
-    Subtree
-};
+enum class GitMergeStrategy { Resolve, Recursive, Ours, Subtree };
 
 enum class GitMergeStrategyOption {
     Ours,

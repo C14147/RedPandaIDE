@@ -24,18 +24,15 @@
 
 #include <QItemSelectionModel>
 
-EditorSnippetWidget::EditorSnippetWidget(const QString& name, const QString& group,
-                                         QWidget *parent) :
-    SettingsWidget(name,group,parent),
-    ui(new Ui::EditorSnippetWidget)
+EditorSnippetWidget::EditorSnippetWidget(const QString& name, const QString& group, QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::EditorSnippetWidget)
 {
     mUpdatingCode = false;
     ui->setupUi(this);
-    QItemSelectionModel* m=ui->tblSnippets->selectionModel();
+    QItemSelectionModel* m = ui->tblSnippets->selectionModel();
     ui->tblSnippets->setModel(&mModel);
     delete m;
-    connect(ui->editCode, &Editor::changed,
-            [this] {
+    connect(ui->editCode, &Editor::changed, [this] {
         if (mUpdatingCode)
             return;
         QModelIndex index = ui->tblSnippets->currentIndex();
@@ -45,8 +42,7 @@ EditorSnippetWidget::EditorSnippetWidget(const QString& name, const QString& gro
         snippet->code = ui->editCode->text();
         setSettingsChanged();
     });
-    connect(ui->tblSnippets->selectionModel(), &QItemSelectionModel::currentChanged,
-            [this] {
+    connect(ui->tblSnippets->selectionModel(), &QItemSelectionModel::currentChanged, [this] {
         QModelIndex index = ui->tblSnippets->currentIndex();
         if (!index.isValid()) {
             ui->editCode->setEnabled(false);
@@ -59,17 +55,14 @@ EditorSnippetWidget::EditorSnippetWidget(const QString& name, const QString& gro
             mUpdatingCode = false;
         }
     });
-    connect(ui->editCppFileTemplate,&Editor::changed,
-            this, &SettingsWidget::setSettingsChanged);
-    connect(ui->editCFileTemplate,&Editor::changed,
-            this, &SettingsWidget::setSettingsChanged);
-    connect(ui->editGASFileTemplate,&Editor::changed,
-            this, &SettingsWidget::setSettingsChanged);
+    connect(ui->editCppFileTemplate, &Editor::changed, this, &SettingsWidget::setSettingsChanged);
+    connect(ui->editCFileTemplate, &Editor::changed, this, &SettingsWidget::setSettingsChanged);
+    connect(ui->editGASFileTemplate, &Editor::changed, this, &SettingsWidget::setSettingsChanged);
     ui->editCode->setFileType(FileType::CppSource);
     ui->editCppFileTemplate->setFileType(FileType::CppSource);
     ui->editCFileTemplate->setFileType(FileType::CSource);
     ui->editGASFileTemplate->setFileType(FileType::ATTASM);
-    //ui->editGASFileTemplate->setSyntaxer(syntaxerManager.getSyntaxer(QSynedit::ProgrammingLanguage::ATTAssembly));
+    // ui->editGASFileTemplate->setSyntaxer(syntaxerManager.getSyntaxer(QSynedit::ProgrammingLanguage::ATTAssembly));
 }
 
 EditorSnippetWidget::~EditorSnippetWidget()
@@ -80,9 +73,12 @@ EditorSnippetWidget::~EditorSnippetWidget()
 void EditorSnippetWidget::doLoad()
 {
     mModel.updateSnippets(pMainWindow->codeSnippetManager()->snippets());
-    ui->editCppFileTemplate->document()->setText(pMainWindow->codeSnippetManager()->newCppFileTemplate());
-    ui->editCFileTemplate->document()->setText(pMainWindow->codeSnippetManager()->newCFileTemplate());
-    ui->editGASFileTemplate->document()->setText(pMainWindow->codeSnippetManager()->newGASFileTemplate());
+    ui->editCppFileTemplate->document()->setText(
+        pMainWindow->codeSnippetManager()->newCppFileTemplate());
+    ui->editCFileTemplate->document()->setText(
+        pMainWindow->codeSnippetManager()->newCFileTemplate());
+    ui->editGASFileTemplate->document()->setText(
+        pMainWindow->codeSnippetManager()->newGASFileTemplate());
 }
 
 void EditorSnippetWidget::doSave()
@@ -96,21 +92,16 @@ void EditorSnippetWidget::doSave()
 
 void EditorSnippetWidget::on_btnAdd_clicked()
 {
-    mModel.addSnippet(QString("").arg(getNewFileNumber()),
-                      "",
-                      "",
-                      "",
-                      -1);
+    mModel.addSnippet(QString("").arg(getNewFileNumber()), "", "", "", -1);
     ui->tblSnippets->setCurrentIndex(mModel.lastSnippetCaption());
     ui->tblSnippets->edit(mModel.lastSnippetCaption());
 }
 
-void EditorSnippetWidget::updateIcons(const QSize &/*size*/)
+void EditorSnippetWidget::updateIcons(const QSize& /*size*/)
 {
-    pIconsManager->setIcon(ui->btnAdd,IconsManager::ACTION_MISC_ADD);
-    pIconsManager->setIcon(ui->btnRemove,IconsManager::ACTION_MISC_REMOVE);
+    pIconsManager->setIcon(ui->btnAdd, IconsManager::ACTION_MISC_ADD);
+    pIconsManager->setIcon(ui->btnRemove, IconsManager::ACTION_MISC_REMOVE);
 }
-
 
 void EditorSnippetWidget::on_btnRemove_clicked()
 {

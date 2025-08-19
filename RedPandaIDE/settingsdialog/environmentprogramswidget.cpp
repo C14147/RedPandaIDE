@@ -27,9 +27,9 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
-EnvironmentProgramsWidget::EnvironmentProgramsWidget(const QString& name, const QString& group, QWidget *parent) :
-    SettingsWidget(name,group,parent),
-    ui(new Ui::EnvironmentProgramsWidget)
+EnvironmentProgramsWidget::EnvironmentProgramsWidget(const QString& name, const QString& group,
+                                                     QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::EnvironmentProgramsWidget)
 {
     ui->setupUi(this);
     ui->labelCmdPreviewResult->setFont(defaultMonoFont());
@@ -43,32 +43,38 @@ EnvironmentProgramsWidget::~EnvironmentProgramsWidget()
     delete ui;
 }
 
-auto EnvironmentProgramsWidget::resolveExecArguments(const QString &terminalPath, const QString &argsPattern)
+auto EnvironmentProgramsWidget::resolveExecArguments(const QString& terminalPath,
+                                                     const QString& argsPattern)
     -> std::tuple<QString, QStringList, PNonExclusiveTemporaryFileOwner>
 {
-    return wrapCommandForTerminalEmulator(terminalPath, argsPattern, platformCommandForTerminalArgsPreview());
+    return wrapCommandForTerminalEmulator(terminalPath, argsPattern,
+                                          platformCommandForTerminalArgsPreview());
 }
 
-void EnvironmentProgramsWidget::updateCommandPreview(const QString &terminalPath, const QString &argsPattern)
+void EnvironmentProgramsWidget::updateCommandPreview(const QString& terminalPath,
+                                                     const QString& argsPattern)
 {
     auto [filename, arguments, fileOwner] = resolveExecArguments(terminalPath, argsPattern);
-    for (auto &arg : arguments)
+    for (auto& arg : arguments)
         arg = escapeArgument(arg, false, platformShellEscapeArgumentRule());
 
-    ui->labelCmdPreviewResult->setPlainText(escapeArgument(filename, true, platformShellEscapeArgumentRule()) + " " + arguments.join(' '));
+    ui->labelCmdPreviewResult->setPlainText(
+        escapeArgument(filename, true, platformShellEscapeArgumentRule()) + " " +
+        arguments.join(' '));
 }
 
-void EnvironmentProgramsWidget::autoDetectAndUpdateArgumentsPattern(const QString &terminalPath)
+void EnvironmentProgramsWidget::autoDetectAndUpdateArgumentsPattern(const QString& terminalPath)
 {
-    const QString &executable = QFileInfo(terminalPath).fileName();
-    const QString &pattern = pSettings->environment().queryPredefinedTerminalArgumentsPattern(executable);
+    const QString& executable = QFileInfo(terminalPath).fileName();
+    const QString& pattern =
+        pSettings->environment().queryPredefinedTerminalArgumentsPattern(executable);
     if (!pattern.isEmpty())
         ui->txtArgsPattern->setText(pattern);
     else
-        QMessageBox::warning(nullptr,
-                             QObject::tr("Auto Detection Failed"),
-                             QObject::tr("Failed to detect terminal arguments pattern for “%1”.").arg(executable),
-                             QMessageBox::Ok);
+        QMessageBox::warning(
+            nullptr, QObject::tr("Auto Detection Failed"),
+            QObject::tr("Failed to detect terminal arguments pattern for “%1”.").arg(executable),
+            QMessageBox::Ok);
 }
 
 void EnvironmentProgramsWidget::doLoad()
@@ -90,48 +96,45 @@ void EnvironmentProgramsWidget::doSave()
     pSettings->environment().save();
 }
 
-void EnvironmentProgramsWidget::updateIcons(const QSize &)
+void EnvironmentProgramsWidget::updateIcons(const QSize&)
 {
-    pIconsManager->setIcon(ui->btnChooseTerminal,IconsManager::ACTION_FILE_OPEN_FOLDER);
-    pIconsManager->setIcon(ui->btnAutoDetectArgsPattern,IconsManager::ACTION_EDIT_SEARCH);
-    pIconsManager->setIcon(ui->btnTest,IconsManager::ACTION_RUN_RUN);
+    pIconsManager->setIcon(ui->btnChooseTerminal, IconsManager::ACTION_FILE_OPEN_FOLDER);
+    pIconsManager->setIcon(ui->btnAutoDetectArgsPattern, IconsManager::ACTION_EDIT_SEARCH);
+    pIconsManager->setIcon(ui->btnTest, IconsManager::ACTION_RUN_RUN);
 }
 
 void EnvironmentProgramsWidget::on_btnChooseTerminal_clicked()
 {
-    QString filename = QFileDialog::getOpenFileName(
-                this,
-                tr("Choose Terminal Program"),
-                QString(),
-                tr("All files (%1)").arg(ALL_FILE_WILDCARD));
-    if (!filename.isEmpty() && fileExists(filename) ) {
+    QString filename = QFileDialog::getOpenFileName(this, tr("Choose Terminal Program"), QString(),
+                                                    tr("All files (%1)").arg(ALL_FILE_WILDCARD));
+    if (!filename.isEmpty() && fileExists(filename)) {
         ui->txtTerminal->setText(filename);
         autoDetectAndUpdateArgumentsPattern(filename);
     }
 }
 
-void EnvironmentProgramsWidget::on_txtTerminal_textChanged(const QString &terminalPath)
+void EnvironmentProgramsWidget::on_txtTerminal_textChanged(const QString& terminalPath)
 {
-    const QString &argsPattern = ui->txtArgsPattern->text();
+    const QString& argsPattern = ui->txtArgsPattern->text();
     updateCommandPreview(terminalPath, argsPattern);
 }
 
-void EnvironmentProgramsWidget::on_txtArgsPattern_textChanged(const QString &argsPattern)
+void EnvironmentProgramsWidget::on_txtArgsPattern_textChanged(const QString& argsPattern)
 {
-    const QString &terminalPath = ui->txtTerminal->text();
+    const QString& terminalPath = ui->txtTerminal->text();
     updateCommandPreview(terminalPath, argsPattern);
 }
 
 void EnvironmentProgramsWidget::on_btnAutoDetectArgsPattern_clicked()
 {
-    const QString &terminalPath = ui->txtTerminal->text();
+    const QString& terminalPath = ui->txtTerminal->text();
     autoDetectAndUpdateArgumentsPattern(terminalPath);
 }
 
 void EnvironmentProgramsWidget::on_btnTest_clicked()
 {
-    const QString &terminalPath = ui->txtTerminal->text();
-    const QString &argsPattern = ui->txtArgsPattern->text();
+    const QString& terminalPath = ui->txtTerminal->text();
+    const QString& argsPattern = ui->txtArgsPattern->text();
     auto [filename, arguments, fileOwner] = resolveExecArguments(terminalPath, argsPattern);
     ExecutableRunner runner(filename, arguments, "", nullptr);
     runner.start();

@@ -36,42 +36,33 @@
 #include <sys/sysinfo.h>
 #endif
 #ifdef ENABLE_LUA_ADDON
-# include "addon/luaexecutor.h"
-# include "addon/luaruntime.h"
+#include "addon/luaexecutor.h"
+#include "addon/luaruntime.h"
 #endif
 
-const char ValueToChar[28] = {'0', '1', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
-                              'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
-                              's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+const char ValueToChar[28] = {'0', '1', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
+                              'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
 
 Settings* pSettings;
 
-Settings::Settings(const QString &filename):
-    mFilename(filename),
-    mSettings(filename,QSettings::IniFormat),
-    mDirs(this),
-    mEditor(this),
-    mEnvironment(this),
-    mCompilerSets(this),
-    mExecutor(this),
-    mDebugger(this),
-    mCodeCompletion(this),
-    mCodeFormatter(this),
-    mUI(this),
+Settings::Settings(const QString& filename)
+    : mFilename(filename), mSettings(filename, QSettings::IniFormat), mDirs(this), mEditor(this),
+      mEnvironment(this), mCompilerSets(this), mExecutor(this), mDebugger(this),
+      mCodeCompletion(this), mCodeFormatter(this), mUI(this),
 #ifdef ENABLE_VCS
-    mVCS(this),
+      mVCS(this),
 #endif
-    mLanguages(this)
+      mLanguages(this)
 {
-    //load();
+    // load();
 }
 
 Settings::~Settings()
 {
-    //mEditor.save();
+    // mEditor.save();
 }
 
-void Settings::beginGroup(const QString &group)
+void Settings::beginGroup(const QString& group)
 {
     mSettings.beginGroup(group);
 }
@@ -81,36 +72,33 @@ void Settings::endGroup()
     mSettings.endGroup();
 }
 
-void Settings::remove(const QString &key)
+void Settings::remove(const QString& key)
 {
     mSettings.remove(key);
 }
 
-void Settings::saveValue(const QString& group, const QString &key, const QVariant &value) {
-    mSettings.beginGroup(group);
-    auto act = finally([this] {
-        this->mSettings.endGroup();
-    });
-    mSettings.setValue(key,value);
-}
-
-void Settings::saveValue(const QString &key, const QVariant &value)
-{
-    mSettings.setValue(key,value);
-}
-
-QVariant Settings::value(const QString &group, const QString &key, const QVariant &defaultValue)
+void Settings::saveValue(const QString& group, const QString& key, const QVariant& value)
 {
     mSettings.beginGroup(group);
-    auto act = finally([this] {
-        this->mSettings.endGroup();
-    });
-    return mSettings.value(key,defaultValue);
+    auto act = finally([this] { this->mSettings.endGroup(); });
+    mSettings.setValue(key, value);
 }
 
-QVariant Settings::value(const QString &key, const QVariant &defaultValue)
+void Settings::saveValue(const QString& key, const QVariant& value)
 {
-    return mSettings.value(key,defaultValue);
+    mSettings.setValue(key, value);
+}
+
+QVariant Settings::value(const QString& group, const QString& key, const QVariant& defaultValue)
+{
+    mSettings.beginGroup(group);
+    auto act = finally([this] { this->mSettings.endGroup(); });
+    return mSettings.value(key, defaultValue);
+}
+
+QVariant Settings::value(const QString& key, const QVariant& defaultValue)
+{
+    return mSettings.value(key, defaultValue);
 }
 
 void Settings::load()
@@ -136,27 +124,27 @@ QSettings::Status Settings::sync()
     return mSettings.status();
 }
 
-Settings::Dirs &Settings::dirs()
+Settings::Dirs& Settings::dirs()
 {
     return mDirs;
 }
 
-Settings::Editor &Settings::editor()
+Settings::Editor& Settings::editor()
 {
     return mEditor;
 }
 
-Settings::CompilerSets &Settings::compilerSets()
+Settings::CompilerSets& Settings::compilerSets()
 {
     return mCompilerSets;
 }
 
-Settings::Environment &Settings::environment()
+Settings::Environment& Settings::environment()
 {
     return mEnvironment;
 }
 
-Settings::Executor &Settings::executor()
+Settings::Executor& Settings::executor()
 {
     return mExecutor;
 }
@@ -166,7 +154,7 @@ QString Settings::filename() const
     return mFilename;
 }
 
-Settings::Languages &Settings::languages()
+Settings::Languages& Settings::languages()
 {
     return mLanguages;
 }
@@ -176,18 +164,18 @@ Settings::CodeCompletion& Settings::codeCompletion()
     return mCodeCompletion;
 }
 
-Settings::CodeFormatter &Settings::codeFormatter()
+Settings::CodeFormatter& Settings::codeFormatter()
 {
     return mCodeFormatter;
 }
 
-Settings::UI &Settings::ui()
+Settings::UI& Settings::ui()
 {
     return mUI;
 }
 
 #ifdef ENABLE_VCS
-Settings::VCS &Settings::vcs()
+Settings::VCS& Settings::vcs()
 {
     return mVCS;
 }
@@ -198,8 +186,7 @@ Settings::Debugger& Settings::debugger()
     return mDebugger;
 }
 
-Settings::Dirs::Dirs(Settings *settings):
-    _Base(settings, SETTING_DIRS)
+Settings::Dirs::Dirs(Settings* settings) : _Base(settings, SETTING_DIRS)
 {
 }
 
@@ -213,7 +200,7 @@ QString Settings::Dirs::appResourceDir() const
 #ifdef Q_OS_WIN
     return appDir();
 #elif defined(Q_OS_MACOS)
-//    return QApplication::instance()->applicationDirPath();
+    //    return QApplication::instance()->applicationDirPath();
     return "";
 #else // XDG desktop
     // in AppImage or tarball PREFIX is not true, resolve from relative path
@@ -221,7 +208,6 @@ QString Settings::Dirs::appResourceDir() const
     return absoluteResourceDir;
 #endif
 }
-
 
 QString Settings::Dirs::appLibexecDir() const
 {
@@ -254,7 +240,7 @@ QString Settings::Dirs::data(Settings::Dirs::DataType dataType) const
     case DataType::Theme:
         return ":/resources/themes";
     case DataType::Template:
-        return getFilePath(appResourceDir(),"templates");
+        return getFilePath(appResourceDir(), "templates");
     }
     return "";
 }
@@ -282,13 +268,13 @@ QString Settings::Dirs::config(Settings::Dirs::DataType dataType) const
 QString Settings::Dirs::executable() const
 {
     QString s = QApplication::instance()->applicationFilePath();
-    s.replace("/",QDir::separator());
+    s.replace("/", QDir::separator());
     return s;
 }
 
 void Settings::Dirs::doSave()
 {
-    saveValue("projectDir",mProjectDir);
+    saveValue("projectDir", mProjectDir);
 }
 
 void Settings::Dirs::doLoad()
@@ -297,24 +283,21 @@ void Settings::Dirs::doLoad()
     if (isGreenEdition()) {
         defaultProjectDir = getFilePath(appDir(), "projects");
     } else {
-        QStringList docLocations = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
-        defaultProjectDir = getFilePath(
-                                docLocations.first(),
-                                "projects");
+        QStringList docLocations =
+            QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
+        defaultProjectDir = getFilePath(docLocations.first(), "projects");
     }
-    mProjectDir = stringValue("projectDir",defaultProjectDir);
+    mProjectDir = stringValue("projectDir", defaultProjectDir);
 }
 
-void Settings::Dirs::setProjectDir(const QString &newProjectDir)
+void Settings::Dirs::setProjectDir(const QString& newProjectDir)
 {
     mProjectDir = newProjectDir;
 }
 
-Settings::_Base::_Base(Settings *settings, const QString &groupName):
-    mSettings(settings),
-    mGroup(groupName)
+Settings::_Base::_Base(Settings* settings, const QString& groupName)
+    : mSettings(settings), mGroup(groupName)
 {
-
 }
 
 void Settings::_Base::beginGroup()
@@ -327,77 +310,77 @@ void Settings::_Base::endGroup()
     mSettings->endGroup();
 }
 
-void Settings::_Base::remove(const QString &key)
+void Settings::_Base::remove(const QString& key)
 {
     mSettings->remove(key);
 }
 
-void Settings::_Base::saveValue(const QString &key, const QVariant &value)
+void Settings::_Base::saveValue(const QString& key, const QVariant& value)
 {
-    mSettings->saveValue(key,value);
+    mSettings->saveValue(key, value);
 }
 
-void Settings::_Base::saveValue(const QString &key, const QSet<QString> &set)
+void Settings::_Base::saveValue(const QString& key, const QSet<QString>& set)
 {
     QStringList val;
-    foreach(const QString& s,set) {
+    foreach (const QString& s, set) {
         val.append(s);
     }
-    mSettings->saveValue(key,val);
+    mSettings->saveValue(key, val);
 }
 
-QVariant Settings::_Base::value(const QString &key, const QVariant &defaultValue)
+QVariant Settings::_Base::value(const QString& key, const QVariant& defaultValue)
 {
-    return mSettings->value(key,defaultValue);
+    return mSettings->value(key, defaultValue);
 }
 
-bool Settings::_Base::boolValue(const QString &key, bool defaultValue)
+bool Settings::_Base::boolValue(const QString& key, bool defaultValue)
 {
-    return value(key,defaultValue).toBool();
+    return value(key, defaultValue).toBool();
 }
 
-QSize Settings::_Base::sizeValue(const QString &key, const QSize& size)
+QSize Settings::_Base::sizeValue(const QString& key, const QSize& size)
 {
-    return value(key,size).toSize();
+    return value(key, size).toSize();
 }
 
-int Settings::_Base::intValue(const QString &key, int defaultValue)
+int Settings::_Base::intValue(const QString& key, int defaultValue)
 {
-    return value(key,defaultValue).toInt();
+    return value(key, defaultValue).toInt();
 }
 
-double Settings::_Base::doubleValue(const QString &key, double defaultValue)
+double Settings::_Base::doubleValue(const QString& key, double defaultValue)
 {
-    return value(key,defaultValue).toDouble();
+    return value(key, defaultValue).toDouble();
 }
 
-unsigned int Settings::_Base::uintValue(const QString &key, unsigned int defaultValue)
+unsigned int Settings::_Base::uintValue(const QString& key, unsigned int defaultValue)
 {
-    return value(key,defaultValue).toUInt();
+    return value(key, defaultValue).toUInt();
 }
 
-QStringList Settings::_Base::stringListValue(const QString &key, const QStringList &defaultValue)
+QStringList Settings::_Base::stringListValue(const QString& key, const QStringList& defaultValue)
 {
-    return value(key,defaultValue).toStringList();
+    return value(key, defaultValue).toStringList();
 }
 
-QSet<QString> Settings::_Base::stringSetValue(const QString &key)
+QSet<QString> Settings::_Base::stringSetValue(const QString& key)
 {
-    QStringList lst=value(key,QStringList()).toStringList();
+    QStringList lst = value(key, QStringList()).toStringList();
     QSet<QString> result;
-    foreach(const QString& s, lst)
+    foreach (const QString& s, lst)
         result.insert(s);
     return result;
 }
 
-QColor Settings::_Base::colorValue(const QString &key, const QColor& defaultValue)
+QColor Settings::_Base::colorValue(const QString& key, const QColor& defaultValue)
 {
-    return value(key,defaultValue).value<QColor>();
+    return value(key, defaultValue).value<QColor>();
 }
 
-QString Settings::_Base::stringValue(const QString &key, const QString& defaultValue)
+QString Settings::_Base::stringValue(const QString& key, const QString& defaultValue)
 {
-    return value(key,defaultValue).toString();
+    return value(key, defaultValue).toString();
 }
 
 void Settings::_Base::save()
@@ -414,9 +397,8 @@ void Settings::_Base::load()
     endGroup();
 }
 
-Settings::Editor::Editor(Settings *settings): _Base(settings, SETTING_EDITOR)
+Settings::Editor::Editor(Settings* settings) : _Base(settings, SETTING_EDITOR)
 {
-
 }
 
 QByteArray Settings::Editor::defaultEncoding()
@@ -424,7 +406,7 @@ QByteArray Settings::Editor::defaultEncoding()
     return mDefaultEncoding;
 }
 
-void Settings::Editor::setDefaultEncoding(const QByteArray &value)
+void Settings::Editor::setDefaultEncoding(const QByteArray& value)
 {
     mDefaultEncoding = value;
 }
@@ -444,7 +426,7 @@ QColor Settings::Editor::caretColor() const
     return mCaretColor;
 }
 
-void Settings::Editor::setCaretColor(const QColor &caretColor)
+void Settings::Editor::setCaretColor(const QColor& caretColor)
 {
     mCaretColor = caretColor;
 }
@@ -504,7 +486,7 @@ QString Settings::Editor::colorScheme() const
     return mColorScheme;
 }
 
-void Settings::Editor::setColorScheme(const QString &colorScheme)
+void Settings::Editor::setColorScheme(const QString& colorScheme)
 {
     mColorScheme = colorScheme;
 }
@@ -599,12 +581,12 @@ void Settings::Editor::setEnableAutolink(bool newEnableAutolink)
     mEnableAutolink = newEnableAutolink;
 }
 
-const QColor &Settings::Editor::rightEdgeLineColor() const
+const QColor& Settings::Editor::rightEdgeLineColor() const
 {
     return mRightEdgeLineColor;
 }
 
-void Settings::Editor::setRightEdgeLineColor(const QColor &newRightMarginLineColor)
+void Settings::Editor::setRightEdgeLineColor(const QColor& newRightMarginLineColor)
 {
     mRightEdgeLineColor = newRightMarginLineColor;
 }
@@ -684,7 +666,7 @@ QStringList Settings::Editor::fontFamilies() const
     return mFontFamilies;
 }
 
-void Settings::Editor::setFontFamilies(const QStringList &newFontFamilies)
+void Settings::Editor::setFontFamilies(const QStringList& newFontFamilies)
 {
     mFontFamilies = newFontFamilies;
 }
@@ -734,12 +716,12 @@ void Settings::Editor::setParseTodos(bool newParseTodos)
     mParseTodos = newParseTodos;
 }
 
-const QStringList &Settings::Editor::customCTypeKeywords() const
+const QStringList& Settings::Editor::customCTypeKeywords() const
 {
     return mCustomCTypeKeywords;
 }
 
-void Settings::Editor::setCustomCTypeKeywords(const QStringList &newCustomTypeKeywords)
+void Settings::Editor::setCustomCTypeKeywords(const QStringList& newCustomTypeKeywords)
 {
     mCustomCTypeKeywords = newCustomTypeKeywords;
 }
@@ -1099,7 +1081,7 @@ QString Settings::Editor::copyHTMLColorScheme() const
     return mCopyHTMLColorScheme;
 }
 
-void Settings::Editor::setCopyHTMLColorScheme(const QString &copyHTMLColorScheme)
+void Settings::Editor::setCopyHTMLColorScheme(const QString& copyHTMLColorScheme)
 {
     mCopyHTMLColorScheme = copyHTMLColorScheme;
 }
@@ -1129,7 +1111,7 @@ QString Settings::Editor::copyRTFColorScheme() const
     return mCopyRTFColorScheme;
 }
 
-void Settings::Editor::setCopyRTFColorScheme(const QString &copyRTFColorScheme)
+void Settings::Editor::setCopyRTFColorScheme(const QString& copyRTFColorScheme)
 {
     mCopyRTFColorScheme = copyRTFColorScheme;
 }
@@ -1179,7 +1161,7 @@ QString Settings::Editor::gutterFontName() const
     return mGutterFontName;
 }
 
-void Settings::Editor::setGutterFontName(const QString &gutterFontName)
+void Settings::Editor::setGutterFontName(const QString& gutterFontName)
 {
     mGutterFontName = gutterFontName;
 }
@@ -1301,48 +1283,46 @@ void Settings::Editor::setAutoHideScrollbar(bool autoHideScrollbar)
 
 void Settings::Editor::doSave()
 {
-
     // indents
     saveValue("auto_indent", mAutoIndent);
     saveValue("tab_to_spaces", mTabToSpaces);
     saveValue("tab_width", mTabWidth);
     saveValue("show_indent_lines", mShowIndentLines);
-    saveValue("fill_indents",mFillIndents);
-    saveValue("rainbow_indent_guides",mRainbowIndentGuides);
-    saveValue("rainbow_indents",mRainbowIndents);
-
+    saveValue("fill_indents", mFillIndents);
+    saveValue("rainbow_indent_guides", mRainbowIndentGuides);
+    saveValue("rainbow_indents", mRainbowIndents);
 
     // caret
-    saveValue("enhance_home_key",mEnhanceHomeKey);
-    saveValue("enhance_end_key",mEnhanceEndKey);
-    saveValue("keep_caret_x",mKeepCaretX);
-    saveValue("caret_for_insert",static_cast<int>(mCaretForInsert));
-    saveValue("caret_for_overwrite",static_cast<int>(mCaretForOverwrite));
-    saveValue("caret_use_text_color",mCaretUseTextColor);
-    saveValue("caret_color",mCaretColor);
+    saveValue("enhance_home_key", mEnhanceHomeKey);
+    saveValue("enhance_end_key", mEnhanceEndKey);
+    saveValue("keep_caret_x", mKeepCaretX);
+    saveValue("caret_for_insert", static_cast<int>(mCaretForInsert));
+    saveValue("caret_for_overwrite", static_cast<int>(mCaretForOverwrite));
+    saveValue("caret_use_text_color", mCaretUseTextColor);
+    saveValue("caret_color", mCaretColor);
 
-    //highlight
-    saveValue("highlight_matching_braces",mHighlightMathingBraces);
-    saveValue("highlight_current_word",mHighlightCurrentWord);
+    // highlight
+    saveValue("highlight_matching_braces", mHighlightMathingBraces);
+    saveValue("highlight_current_word", mHighlightCurrentWord);
 
-    //scroll
+    // scroll
     saveValue("auto_hide_scroll_bar", mAutoHideScrollbar);
     saveValue("scroll_past_eof", mScrollPastEof);
     saveValue("scroll_past_eol", mScrollPastEol);
     saveValue("half_page_scroll", mHalfPageScroll);
     saveValue("mouse_wheel_scroll_speed", mMouseWheelScrollSpeed);
-    saveValue("mouse_drag_scroll_speed",mMouseSelectionScrollSpeed);
+    saveValue("mouse_drag_scroll_speed", mMouseSelectionScrollSpeed);
 
-    //right edge
-    saveValue("show_right_edge_line",mShowRightEdgeLine);
-    saveValue("right_edge_width",mRightEdgeWidth);
-    saveValue("right_edge_line_color",mRightEdgeLineColor);
+    // right edge
+    saveValue("show_right_edge_line", mShowRightEdgeLine);
+    saveValue("right_edge_width", mRightEdgeWidth);
+    saveValue("right_edge_line_color", mRightEdgeLineColor);
 
-    //Font
-    //font
+    // Font
+    // font
     saveValue("font_families", mFontFamilies);
     saveValue("font_size", mFontSize);
-    saveValue("line_spacing",mLineSpacing);
+    saveValue("line_spacing", mLineSpacing);
     saveValue("enable_ligatures_support", mEnableLigaturesSupport);
     saveValue("force_fixed_font_width", mForceFixedFontWidth);
 
@@ -1351,37 +1331,37 @@ void Settings::Editor::doSave()
     saveValue("show_inner_spaces", mShowInnerSpaces);
     saveValue("show_line_breaks", mShowLineBreaks);
 
-    //gutter
+    // gutter
     saveValue("gutter_visible", mGutterVisible);
     saveValue("gutter_auto_size", mGutterAutoSize);
-    saveValue("gutter_left_offset",mGutterLeftOffset);
-    saveValue("gutter_right_offset2",mGutterRightOffset);
+    saveValue("gutter_left_offset", mGutterLeftOffset);
+    saveValue("gutter_right_offset2", mGutterRightOffset);
     saveValue("gutter_digits_count", mGutterDigitsCount);
-    saveValue("gutter_show_line_numbers",mGutterShowLineNumbers);
-    saveValue("gutter_add_leading_zero",mGutterAddLeadingZero);
-    saveValue("gutter_line_numbers_start_zero",mGutterLineNumbersStartZero);
-    saveValue("gutter_use_custom_font",mGutterUseCustomFont);
-    saveValue("gutter_font_name",mGutterFontName);
-    saveValue("gutter_font_size",mGutterFontSize);
-    saveValue("gutter_font_only_monospaced",mGutterFontOnlyMonospaced);
+    saveValue("gutter_show_line_numbers", mGutterShowLineNumbers);
+    saveValue("gutter_add_leading_zero", mGutterAddLeadingZero);
+    saveValue("gutter_line_numbers_start_zero", mGutterLineNumbersStartZero);
+    saveValue("gutter_use_custom_font", mGutterUseCustomFont);
+    saveValue("gutter_font_name", mGutterFontName);
+    saveValue("gutter_font_size", mGutterFontSize);
+    saveValue("gutter_font_only_monospaced", mGutterFontOnlyMonospaced);
 
-    //copy
-    saveValue("copy_with_format_as",mCopyWithFormatAs);
-    saveValue("copy_rtf_use_background",mCopyRTFUseBackground);
-    saveValue("copy_rtf_use_editor_color_scheme",mCopyRTFUseEditorColor);
-    saveValue("copy_rtf_color_scheme",mCopyRTFColorScheme);
-    saveValue("copy_html_use_background",mCopyHTMLUseBackground);
-    saveValue("copy_html_use_editor_color_scheme",mCopyHTMLUseEditorColor);
-    saveValue("copy_html_with_line_number",mCopyHTMLWithLineNumber);
-    saveValue("copy_html_recalc_line_number",mCopyHTMLRecalcLineNumber);
+    // copy
+    saveValue("copy_with_format_as", mCopyWithFormatAs);
+    saveValue("copy_rtf_use_background", mCopyRTFUseBackground);
+    saveValue("copy_rtf_use_editor_color_scheme", mCopyRTFUseEditorColor);
+    saveValue("copy_rtf_color_scheme", mCopyRTFColorScheme);
+    saveValue("copy_html_use_background", mCopyHTMLUseBackground);
+    saveValue("copy_html_use_editor_color_scheme", mCopyHTMLUseEditorColor);
+    saveValue("copy_html_with_line_number", mCopyHTMLWithLineNumber);
+    saveValue("copy_html_recalc_line_number", mCopyHTMLRecalcLineNumber);
 
     saveValue("copy_html_color_scheme", mCopyHTMLColorScheme);
 
-    //color scheme
+    // color scheme
     saveValue("color_scheme", mColorScheme);
-    saveValue("rainbow_parenthesis",mRainbowParenthesis);
+    saveValue("rainbow_parenthesis", mRainbowParenthesis);
 
-    //Symbol Completion
+    // Symbol Completion
     saveValue("complete_symbols", mCompleteSymbols);
     saveValue("complete_parenthese", mCompleteParenthese);
     saveValue("complete_bracket", mCompleteBracket);
@@ -1391,87 +1371,87 @@ void Settings::Editor::doSave()
     saveValue("complete_double_quote", mCompleteDoubleQuote);
     saveValue("complete_global_include", mCompleteGlobalInclude);
     saveValue("overwrite_symbols", mOverwriteSymbols);
-    saveValue("remove_symbol_pairs",mRemoveSymbolPairs);
+    saveValue("remove_symbol_pairs", mRemoveSymbolPairs);
 
-    //Auto Syntax Check
-    saveValue("check_syntax",mSyntaxCheck);
-    saveValue("check_syntax_when_save",mSyntaxCheckWhenSave);
-    saveValue("check_syntax_when_line_changed",mSyntaxCheckWhenLineChanged);
+    // Auto Syntax Check
+    saveValue("check_syntax", mSyntaxCheck);
+    saveValue("check_syntax_when_save", mSyntaxCheckWhenSave);
+    saveValue("check_syntax_when_line_changed", mSyntaxCheckWhenLineChanged);
 
-    //auto save
-    saveValue("enable_edit_temp_backup",mEnableEditTempBackup);
-    saveValue("enable_auto_save",mEnableAutoSave);
-    saveValue("auto_save_interal",mAutoSaveInterval);
-    saveValue("auto_save_target",mAutoSaveTarget);
-    saveValue("auto_save_strategy",mAutoSaveStrategy);
+    // auto save
+    saveValue("enable_edit_temp_backup", mEnableEditTempBackup);
+    saveValue("enable_auto_save", mEnableAutoSave);
+    saveValue("auto_save_interal", mAutoSaveInterval);
+    saveValue("auto_save_target", mAutoSaveTarget);
+    saveValue("auto_save_strategy", mAutoSaveStrategy);
 
-    //auto link
-    saveValue("enable_autolink",mEnableAutolink);
+    // auto link
+    saveValue("enable_autolink", mEnableAutolink);
 
-    //misc
-    saveValue("default_encoding",mDefaultEncoding);
-    saveValue("create_file_after_startup",mCreateFileAfterStartup);
-    saveValue("readonly_system_header",mReadOnlySytemHeader);
-    saveValue("auto_load_last_files",mAutoLoadLastFiles);
-    saveValue("default_file_cpp",mDefaultFileCpp);
-    saveValue("auto_detect_file_encoding",mAutoDetectFileEncoding);
+    // misc
+    saveValue("default_encoding", mDefaultEncoding);
+    saveValue("create_file_after_startup", mCreateFileAfterStartup);
+    saveValue("readonly_system_header", mReadOnlySytemHeader);
+    saveValue("auto_load_last_files", mAutoLoadLastFiles);
+    saveValue("default_file_cpp", mDefaultFileCpp);
+    saveValue("auto_detect_file_encoding", mAutoDetectFileEncoding);
     saveValue("auto_format_when_saved", mAutoFormatWhenSaved);
-    saveValue("remove_trailing_spaces_when_saved",mRemoveTrailingSpacesWhenSaved);
-    saveValue("parse_todos",mParseTodos);
+    saveValue("remove_trailing_spaces_when_saved", mRemoveTrailingSpacesWhenSaved);
+    saveValue("parse_todos", mParseTodos);
 
     saveValue("custom_c_type_keywords", mCustomCTypeKeywords);
-    saveValue("enable_custom_c_type_keywords",mEnableCustomCTypeKeywords);
+    saveValue("enable_custom_c_type_keywords", mEnableCustomCTypeKeywords);
 
-    //tooltips
-    saveValue("enable_tooltips",mEnableTooltips);
-    saveValue("enable_debug_tooltips",mEnableDebugTooltips);
-    saveValue("enable_identifier_tooltips",mEnableIdentifierToolTips);
-    saveValue("enable_header_tooltips",mEnableHeaderToolTips);
-    saveValue("enable_issue_tooltips",mEnableIssueToolTips);
-    saveValue("show_function_tips",mShowFunctionTips);
-    saveValue("tips_delay",mTipsDelay);
+    // tooltips
+    saveValue("enable_tooltips", mEnableTooltips);
+    saveValue("enable_debug_tooltips", mEnableDebugTooltips);
+    saveValue("enable_identifier_tooltips", mEnableIdentifierToolTips);
+    saveValue("enable_header_tooltips", mEnableHeaderToolTips);
+    saveValue("enable_issue_tooltips", mEnableIssueToolTips);
+    saveValue("show_function_tips", mShowFunctionTips);
+    saveValue("tips_delay", mTipsDelay);
 }
 
 void Settings::Editor::doLoad()
 {
-
     // indents
     mAutoIndent = boolValue("auto_indent", true);
-    mTabToSpaces = boolValue("tab_to_spaces",false);
-    mTabWidth = intValue("tab_width",4);
-    mShowIndentLines = boolValue("show_indent_lines",true);
+    mTabToSpaces = boolValue("tab_to_spaces", false);
+    mTabWidth = intValue("tab_width", 4);
+    mShowIndentLines = boolValue("show_indent_lines", true);
     mFillIndents = boolValue("fill_indents", false);
     mRainbowIndentGuides = boolValue("rainbow_indent_guides", true);
     mRainbowIndents = boolValue("rainbow_indents", true);
 
     // caret
     mEnhanceHomeKey = boolValue("enhance_home_key", true);
-    mEnhanceEndKey = boolValue("enhance_end_key",true);
-    mKeepCaretX = boolValue("keep_caret_x",true);
-    mCaretForInsert = static_cast<QSynedit::EditCaretType>( intValue("caret_for_insert",static_cast<int>(QSynedit::EditCaretType::VerticalLine)));
-    mCaretForOverwrite = static_cast<QSynedit::EditCaretType>( intValue("caret_for_overwrite",static_cast<int>(QSynedit::EditCaretType::Block)));
-    mCaretUseTextColor = boolValue("caret_use_text_color",true);
-    mCaretColor = colorValue("caret_color",Qt::yellow);
+    mEnhanceEndKey = boolValue("enhance_end_key", true);
+    mKeepCaretX = boolValue("keep_caret_x", true);
+    mCaretForInsert = static_cast<QSynedit::EditCaretType>(
+        intValue("caret_for_insert", static_cast<int>(QSynedit::EditCaretType::VerticalLine)));
+    mCaretForOverwrite = static_cast<QSynedit::EditCaretType>(
+        intValue("caret_for_overwrite", static_cast<int>(QSynedit::EditCaretType::Block)));
+    mCaretUseTextColor = boolValue("caret_use_text_color", true);
+    mCaretColor = colorValue("caret_color", Qt::yellow);
 
-    //highlight
-    mHighlightMathingBraces = boolValue("highlight_matching_braces",true);
-    mHighlightCurrentWord = boolValue("highlight_current_word",true);
+    // highlight
+    mHighlightMathingBraces = boolValue("highlight_matching_braces", true);
+    mHighlightCurrentWord = boolValue("highlight_current_word", true);
 
-    //scroll
+    // scroll
     mAutoHideScrollbar = boolValue("auto_hide_scroll_bar", false);
     mScrollPastEof = boolValue("scroll_past_eof", true);
     mScrollPastEol = boolValue("scroll_past_eol", false);
-    mHalfPageScroll = boolValue("half_page_scroll",false);
+    mHalfPageScroll = boolValue("half_page_scroll", false);
     mMouseWheelScrollSpeed = intValue("mouse_wheel_scroll_speed", 3);
-    mMouseSelectionScrollSpeed = intValue("mouse_drag_scroll_speed",10);
+    mMouseSelectionScrollSpeed = intValue("mouse_drag_scroll_speed", 10);
 
+    // right edge
+    mShowRightEdgeLine = boolValue("show_right_edge_line", false);
+    mRightEdgeWidth = intValue("right_edge_width", 80);
+    mRightEdgeLineColor = colorValue("right_edge_line_color", Qt::yellow);
 
-    //right edge
-    mShowRightEdgeLine = boolValue("show_right_edge_line",false);
-    mRightEdgeWidth = intValue("right_edge_width",80);
-    mRightEdgeLineColor = colorValue("right_edge_line_color",Qt::yellow);
-
-    //Editor font
+    // Editor font
     QStringList fontFamilies = stringListValue("font_families", QStringList());
     if (fontFamilies.empty()) {
         // backward compatibility: try old font settings
@@ -1485,8 +1465,8 @@ void Settings::Editor::doLoad()
     } else {
         mFontFamilies = fontFamilies;
     }
-    mFontSize = intValue("font_size",12);
-    mLineSpacing = doubleValue("line_spacing",1.1);
+    mFontSize = intValue("font_size", 12);
+    mLineSpacing = doubleValue("line_spacing", 1.1);
     mForceFixedFontWidth = boolValue("force_fixed_font_width", isCjk());
     // if (mForceFixedFontWidth)
     //     mEnableLigaturesSupport = false;
@@ -1494,106 +1474,105 @@ void Settings::Editor::doLoad()
     //     mEnableLigaturesSupport = boolValue("enable_ligatures_support", !isZhJa);
     mEnableLigaturesSupport = boolValue("enable_ligatures_support", false);
 
-
     mShowLeadingSpaces = boolValue("show_leading_spaces", false);
     mShowTrailingSpaces = boolValue("show_trailing_spaces", false);
     mShowInnerSpaces = boolValue("show_inner_spaces", false);
     mShowLineBreaks = boolValue("show_line_breaks", false);
 
-    //gutter
-    mGutterVisible = boolValue("gutter_visible",true);
-    mGutterAutoSize = boolValue("gutter_auto_size",true);
-    mGutterLeftOffset = intValue("gutter_left_offset",6);
-    mGutterRightOffset = intValue("gutter_right_offset",-1);
-    if (mGutterRightOffset>0)
-        mGutterRightOffset = std::max(0, mGutterRightOffset-20);
+    // gutter
+    mGutterVisible = boolValue("gutter_visible", true);
+    mGutterAutoSize = boolValue("gutter_auto_size", true);
+    mGutterLeftOffset = intValue("gutter_left_offset", 6);
+    mGutterRightOffset = intValue("gutter_right_offset", -1);
+    if (mGutterRightOffset > 0)
+        mGutterRightOffset = std::max(0, mGutterRightOffset - 20);
     else
-        mGutterRightOffset = intValue("gutter_right_offset2",4);
-    mGutterDigitsCount = intValue("gutter_digits_count",1);
-    mGutterShowLineNumbers = boolValue("gutter_show_line_numbers",true);
-    mGutterAddLeadingZero = boolValue("gutter_add_leading_zero",false);
-    mGutterLineNumbersStartZero = boolValue("gutter_line_numbers_start_zero",false);
-    mGutterUseCustomFont = boolValue("gutter_use_custom_font",false);
+        mGutterRightOffset = intValue("gutter_right_offset2", 4);
+    mGutterDigitsCount = intValue("gutter_digits_count", 1);
+    mGutterShowLineNumbers = boolValue("gutter_show_line_numbers", true);
+    mGutterAddLeadingZero = boolValue("gutter_add_leading_zero", false);
+    mGutterLineNumbersStartZero = boolValue("gutter_line_numbers_start_zero", false);
+    mGutterUseCustomFont = boolValue("gutter_use_custom_font", false);
 
     mGutterFontName = stringValue("gutter_font_name", defaultMonoFont());
-    mGutterFontSize = intValue("gutter_font_size",12);
-    mGutterFontOnlyMonospaced = boolValue("gutter_font_only_monospaced",true);
+    mGutterFontSize = intValue("gutter_font_size", 12);
+    mGutterFontOnlyMonospaced = boolValue("gutter_font_only_monospaced", true);
 
-    //copy
+    // copy
 #ifdef Q_OS_WIN
-    mCopyWithFormatAs = intValue("copy_with_format_as",1); //html
+    mCopyWithFormatAs = intValue("copy_with_format_as", 1); // html
 #else
-    mCopyWithFormatAs = intValue("copy_with_format_as",0); //none
+    mCopyWithFormatAs = intValue("copy_with_format_as", 0); // none
 #endif
-    mCopyRTFUseBackground = boolValue("copy_rtf_use_background",false);
-    mCopyRTFUseEditorColor = boolValue("copy_rtf_use_editor_color_scheme",false);
-    mCopyRTFColorScheme = stringValue("copy_rtf_color_scheme","Intellij Classic");
-    mCopyHTMLUseBackground = boolValue("copy_html_use_background",false);
-    mCopyHTMLUseEditorColor = boolValue("copy_html_use_editor_color_scheme",false);
+    mCopyRTFUseBackground = boolValue("copy_rtf_use_background", false);
+    mCopyRTFUseEditorColor = boolValue("copy_rtf_use_editor_color_scheme", false);
+    mCopyRTFColorScheme = stringValue("copy_rtf_color_scheme", "Intellij Classic");
+    mCopyHTMLUseBackground = boolValue("copy_html_use_background", false);
+    mCopyHTMLUseEditorColor = boolValue("copy_html_use_editor_color_scheme", false);
     mCopyHTMLWithLineNumber = boolValue("copy_html_with_line_number", false);
     mCopyHTMLRecalcLineNumber = boolValue("copy_html_recalc_line_number", true);
 
-    mCopyHTMLColorScheme = stringValue("copy_html_color_scheme","Intellij Classic");
+    mCopyHTMLColorScheme = stringValue("copy_html_color_scheme", "Intellij Classic");
 
-    //color
+    // color
     mColorScheme = stringValue("color_scheme", "VS Code");
     mRainbowParenthesis = boolValue("rainbow_parenthesis", true);
 
-    //Symbol Completion
-    mCompleteSymbols = boolValue("complete_symbols",true);
-    mCompleteParenthese = boolValue("complete_parenthese",true);
-    mCompleteBracket = boolValue("complete_bracket",true);
-    mCompleteBrace = boolValue("complete_brace",true);
-    mCompleteComment = boolValue("complete_comment",true);
-    mCompleteSingleQuote = boolValue("complete_single_quote",true);
-    mCompleteDoubleQuote = boolValue("complete_double_quote",true);
-    mCompleteGlobalInclude = boolValue("complete_global_include",true);
-    mOverwriteSymbols = boolValue("overwrite_symbols",true);
-    mRemoveSymbolPairs = boolValue("remove_symbol_pairs",true);
+    // Symbol Completion
+    mCompleteSymbols = boolValue("complete_symbols", true);
+    mCompleteParenthese = boolValue("complete_parenthese", true);
+    mCompleteBracket = boolValue("complete_bracket", true);
+    mCompleteBrace = boolValue("complete_brace", true);
+    mCompleteComment = boolValue("complete_comment", true);
+    mCompleteSingleQuote = boolValue("complete_single_quote", true);
+    mCompleteDoubleQuote = boolValue("complete_double_quote", true);
+    mCompleteGlobalInclude = boolValue("complete_global_include", true);
+    mOverwriteSymbols = boolValue("overwrite_symbols", true);
+    mRemoveSymbolPairs = boolValue("remove_symbol_pairs", true);
 
-    //Auto Syntax Check
-    mSyntaxCheck = boolValue("check_syntax",true);
-    mSyntaxCheckWhenSave = boolValue("check_syntax_when_save",true);
-    mSyntaxCheckWhenLineChanged = boolValue("check_syntax_when_line_changed",true);
+    // Auto Syntax Check
+    mSyntaxCheck = boolValue("check_syntax", true);
+    mSyntaxCheckWhenSave = boolValue("check_syntax_when_save", true);
+    mSyntaxCheckWhenLineChanged = boolValue("check_syntax_when_line_changed", true);
 
-    //auto save
+    // auto save
     mEnableEditTempBackup = boolValue("enable_edit_temp_backup", false);
-    mEnableAutoSave = boolValue("enable_auto_save",false);
-    mAutoSaveInterval = intValue("auto_save_interal",10);
+    mEnableAutoSave = boolValue("enable_auto_save", false);
+    mAutoSaveInterval = intValue("auto_save_interal", 10);
     mAutoSaveTarget = static_cast<enum AutoSaveTarget>(
-                intValue("auto_save_target",AutoSaveTarget::astCurrentFile));
+        intValue("auto_save_target", AutoSaveTarget::astCurrentFile));
     mAutoSaveStrategy = static_cast<enum AutoSaveStrategy>(
-                intValue("auto_save_strategy",AutoSaveStrategy::assOverwrite));
+        intValue("auto_save_strategy", AutoSaveStrategy::assOverwrite));
 
-    //auto link
-    mEnableAutolink = boolValue("enable_autolink",true);
+    // auto link
+    mEnableAutolink = boolValue("enable_autolink", true);
 
-    //misc
+    // misc
     mCreateFileAfterStartup = boolValue("create_file_after_startup", true);
-    mReadOnlySytemHeader = boolValue("readonly_system_header",true);
-    mAutoLoadLastFiles = boolValue("auto_load_last_files",true);
-    mDefaultFileCpp = boolValue("default_file_cpp",true);
-    bool useUTF8ByDefault = boolValue("use_utf8_by_default",false);
+    mReadOnlySytemHeader = boolValue("readonly_system_header", true);
+    mAutoLoadLastFiles = boolValue("auto_load_last_files", true);
+    mDefaultFileCpp = boolValue("default_file_cpp", true);
+    bool useUTF8ByDefault = boolValue("use_utf8_by_default", false);
     if (useUTF8ByDefault)
         mDefaultEncoding = ENCODING_UTF8;
     else
         mDefaultEncoding = value("default_encoding", ENCODING_UTF8).toByteArray();
-    mAutoDetectFileEncoding = boolValue("auto_detect_file_encoding",true);
+    mAutoDetectFileEncoding = boolValue("auto_detect_file_encoding", true);
     mAutoFormatWhenSaved = boolValue("auto_format_when_saved", false);
-    mRemoveTrailingSpacesWhenSaved = boolValue("remove_trailing_spaces_when_saved",false);
-    mParseTodos = boolValue("parse_todos",true);
+    mRemoveTrailingSpacesWhenSaved = boolValue("remove_trailing_spaces_when_saved", false);
+    mParseTodos = boolValue("parse_todos", true);
 
     mCustomCTypeKeywords = stringListValue("custom_c_type_keywords");
-    mEnableCustomCTypeKeywords = boolValue("enable_custom_c_type_keywords",false);
+    mEnableCustomCTypeKeywords = boolValue("enable_custom_c_type_keywords", false);
 
-    //tooltips
-    mEnableTooltips = boolValue("enable_tooltips",true);
-    mEnableDebugTooltips = boolValue("enable_debug_tooltips",true);
-    mEnableIdentifierToolTips = boolValue("enable_identifier_tooltips",true);
+    // tooltips
+    mEnableTooltips = boolValue("enable_tooltips", true);
+    mEnableDebugTooltips = boolValue("enable_debug_tooltips", true);
+    mEnableIdentifierToolTips = boolValue("enable_identifier_tooltips", true);
     mEnableHeaderToolTips = boolValue("enable_header_tooltips", true);
     mEnableIssueToolTips = boolValue("enable_issue_tooltips", true);
-    mShowFunctionTips = boolValue("show_function_tips",true);
-    mTipsDelay = intValue("tips_delay",500);
+    mShowFunctionTips = boolValue("show_function_tips", true);
+    mTipsDelay = intValue("tips_delay", 500);
 }
 
 QSynedit::EditCaretType Settings::Editor::caretForOverwrite() const
@@ -1601,7 +1580,7 @@ QSynedit::EditCaretType Settings::Editor::caretForOverwrite() const
     return mCaretForOverwrite;
 }
 
-void Settings::Editor::setCaretForOverwrite(const QSynedit::EditCaretType &caretForOverwrite)
+void Settings::Editor::setCaretForOverwrite(const QSynedit::EditCaretType& caretForOverwrite)
 {
     mCaretForOverwrite = caretForOverwrite;
 }
@@ -1611,7 +1590,7 @@ QSynedit::EditCaretType Settings::Editor::caretForInsert() const
     return mCaretForInsert;
 }
 
-void Settings::Editor::setCaretForInsert(const QSynedit::EditCaretType &caretForInsert)
+void Settings::Editor::setCaretForInsert(const QSynedit::EditCaretType& caretForInsert)
 {
     mCaretForInsert = caretForInsert;
 }
@@ -1666,57 +1645,42 @@ void Settings::Editor::setTabToSpaces(bool tabToSpaces)
     mTabToSpaces = tabToSpaces;
 }
 
-Settings::CompilerSet::CompilerSet():
-    mFullLoaded{false},
-    mCompilerType{CompilerType::Unknown},
-    mAutoAddCharsetParams{false},
-    mExecCharset{ENCODING_SYSTEM_DEFAULT},
-    mStaticLink{false},
-    mPersistInAutoFind{false},
-    mForceEnglishOutput{false},
-    mPreprocessingSuffix{DEFAULT_PREPROCESSING_SUFFIX},
-    mCompilationProperSuffix{DEFAULT_COMPILATION_SUFFIX},
-    mAssemblingSuffix{DEFAULT_ASSEMBLING_SUFFIX},
-    mExecutableSuffix{DEFAULT_EXECUTABLE_SUFFIX},
-    mGccSupportNLS{false},
-    mGccSupportNLSInitialized{false}
+Settings::CompilerSet::CompilerSet()
+    : mFullLoaded{false}, mCompilerType{CompilerType::Unknown}, mAutoAddCharsetParams{false},
+      mExecCharset{ENCODING_SYSTEM_DEFAULT}, mStaticLink{false}, mPersistInAutoFind{false},
+      mForceEnglishOutput{false}, mPreprocessingSuffix{DEFAULT_PREPROCESSING_SUFFIX},
+      mCompilationProperSuffix{DEFAULT_COMPILATION_SUFFIX},
+      mAssemblingSuffix{DEFAULT_ASSEMBLING_SUFFIX}, mExecutableSuffix{DEFAULT_EXECUTABLE_SUFFIX},
+      mGccSupportNLS{false}, mGccSupportNLSInitialized{false}
 #ifdef Q_OS_WINDOWS
-    , mGccIsUtf8Initialized{false}
-    , mGccSupportConvertingCharsetInitialized{false}
+      ,
+      mGccIsUtf8Initialized{false}, mGccSupportConvertingCharsetInitialized{false}
 #endif
 {
-
 }
 
-
-Settings::CompilerSet::CompilerSet(const QString& compilerFolder, const QString& c_prog):
-    mAutoAddCharsetParams{true},
-    mExecCharset{ENCODING_SYSTEM_DEFAULT},
-    mStaticLink{true},
-    mPersistInAutoFind{false},
-    mForceEnglishOutput{false},
-    mPreprocessingSuffix{DEFAULT_PREPROCESSING_SUFFIX},
-    mCompilationProperSuffix{DEFAULT_COMPILATION_SUFFIX},
-    mAssemblingSuffix{DEFAULT_ASSEMBLING_SUFFIX},
-    mExecutableSuffix{DEFAULT_EXECUTABLE_SUFFIX},
-    mGccSupportNLS{false},
-    mGccSupportNLSInitialized{false}
+Settings::CompilerSet::CompilerSet(const QString& compilerFolder, const QString& c_prog)
+    : mAutoAddCharsetParams{true}, mExecCharset{ENCODING_SYSTEM_DEFAULT}, mStaticLink{true},
+      mPersistInAutoFind{false}, mForceEnglishOutput{false},
+      mPreprocessingSuffix{DEFAULT_PREPROCESSING_SUFFIX},
+      mCompilationProperSuffix{DEFAULT_COMPILATION_SUFFIX},
+      mAssemblingSuffix{DEFAULT_ASSEMBLING_SUFFIX}, mExecutableSuffix{DEFAULT_EXECUTABLE_SUFFIX},
+      mGccSupportNLS{false}, mGccSupportNLSInitialized{false}
 #ifdef Q_OS_WINDOWS
-    , mGccIsUtf8Initialized(false)
-    , mGccSupportConvertingCharsetInitialized(false)
+      ,
+      mGccIsUtf8Initialized(false), mGccSupportConvertingCharsetInitialized(false)
 #endif
 {
     QDir dir(compilerFolder);
     if (dir.exists(c_prog)) {
-
-        setProperties(compilerFolder,c_prog);
+        setProperties(compilerFolder, c_prog);
 
         if (mName.isEmpty()) {
             mFullLoaded = false;
             return;
         }
 
-        //manually set the directories
+        // manually set the directories
         setDirectories(compilerFolder);
 
         setExecutables();
@@ -1734,115 +1698,90 @@ Settings::CompilerSet::CompilerSet(const QString& compilerFolder, const QString&
     }
 }
 
-Settings::CompilerSet::CompilerSet(const Settings::CompilerSet &set):
-    mFullLoaded{set.mFullLoaded},
-    mCCompiler{set.mCCompiler},
-    mCppCompiler{set.mCppCompiler},
-    mMake{set.mMake},
-    mDebugger{set.mDebugger},
-    mResourceCompiler{set.mResourceCompiler},
-    mDebugServer{set.mDebugServer},
+Settings::CompilerSet::CompilerSet(const Settings::CompilerSet& set)
+    : mFullLoaded{set.mFullLoaded}, mCCompiler{set.mCCompiler}, mCppCompiler{set.mCppCompiler},
+      mMake{set.mMake}, mDebugger{set.mDebugger}, mResourceCompiler{set.mResourceCompiler},
+      mDebugServer{set.mDebugServer},
 
-    mBinDirs{set.mBinDirs},
-    mCIncludeDirs{set.mCIncludeDirs},
-    mCppIncludeDirs{set.mCppIncludeDirs},
-    mLibDirs{set.mLibDirs},
-    mDefaultLibDirs{set.mDefaultLibDirs},
-    mDefaultCIncludeDirs{set.mDefaultCIncludeDirs},
-    mDefaultCppIncludeDirs{set.mDefaultCppIncludeDirs},
+      mBinDirs{set.mBinDirs}, mCIncludeDirs{set.mCIncludeDirs},
+      mCppIncludeDirs{set.mCppIncludeDirs}, mLibDirs{set.mLibDirs},
+      mDefaultLibDirs{set.mDefaultLibDirs}, mDefaultCIncludeDirs{set.mDefaultCIncludeDirs},
+      mDefaultCppIncludeDirs{set.mDefaultCppIncludeDirs},
 
-    mDumpMachine{set.mDumpMachine},
-    mVersion{set.mVersion},
-    mName{set.mName},
-    mTarget{set.mTarget},
-    mCompilerType{set.mCompilerType},
+      mDumpMachine{set.mDumpMachine}, mVersion{set.mVersion}, mName{set.mName},
+      mTarget{set.mTarget}, mCompilerType{set.mCompilerType},
 
+      mUseCustomCompileParams{set.mUseCustomCompileParams},
+      mUseCustomLinkParams{set.mUseCustomLinkParams},
+      mCustomCompileParams{set.mCustomCompileParams}, mCustomLinkParams{set.mCustomLinkParams},
+      mAutoAddCharsetParams{set.mAutoAddCharsetParams}, mExecCharset{set.mExecCharset},
+      mStaticLink{set.mStaticLink}, mPersistInAutoFind{set.mPersistInAutoFind},
+      mForceEnglishOutput{set.mForceEnglishOutput},
 
-    mUseCustomCompileParams{set.mUseCustomCompileParams},
-    mUseCustomLinkParams{set.mUseCustomLinkParams},
-    mCustomCompileParams{set.mCustomCompileParams},
-    mCustomLinkParams{set.mCustomLinkParams},
-    mAutoAddCharsetParams{set.mAutoAddCharsetParams},
-    mExecCharset{set.mExecCharset},
-    mStaticLink{set.mStaticLink},
-    mPersistInAutoFind{set.mPersistInAutoFind},
-    mForceEnglishOutput{set.mForceEnglishOutput},
-
-    mPreprocessingSuffix{set.mPreprocessingSuffix},
-    mCompilationProperSuffix{set.mCompilationProperSuffix},
-    mAssemblingSuffix{set.mAssemblingSuffix},
-    mExecutableSuffix{set.mExecutableSuffix},
-    mCompileOptions{set.mCompileOptions},
-    mGccSupportNLS{set.mGccSupportNLS},
-    mGccSupportNLSInitialized{set.mGccSupportNLSInitialized}
+      mPreprocessingSuffix{set.mPreprocessingSuffix},
+      mCompilationProperSuffix{set.mCompilationProperSuffix},
+      mAssemblingSuffix{set.mAssemblingSuffix}, mExecutableSuffix{set.mExecutableSuffix},
+      mCompileOptions{set.mCompileOptions}, mGccSupportNLS{set.mGccSupportNLS},
+      mGccSupportNLSInitialized{set.mGccSupportNLSInitialized}
 #ifdef Q_OS_WINDOWS
-    , mGccIsUtf8(set.mGccIsUtf8)
-    , mGccIsUtf8Initialized(set.mGccIsUtf8Initialized)
-    , mGccSupportConvertingCharset(set.mGccSupportConvertingCharset)
-    , mGccSupportConvertingCharsetInitialized(set.mGccSupportConvertingCharsetInitialized)
+      ,
+      mGccIsUtf8(set.mGccIsUtf8), mGccIsUtf8Initialized(set.mGccIsUtf8Initialized),
+      mGccSupportConvertingCharset(set.mGccSupportConvertingCharset),
+      mGccSupportConvertingCharsetInitialized(set.mGccSupportConvertingCharsetInitialized)
 #endif
 {
-
 }
 
-Settings::CompilerSet::CompilerSet(const QJsonObject &set) :
-    mFullLoaded{true},
-    mCCompiler{set["cCompiler"].toString()},
-    mCppCompiler{set["cxxCompiler"].toString()},
-    mMake{set["make"].toString()},
-    mDebugger{set["debugger"].toString()},
-    mResourceCompiler{set["resourceCompiler"].toString()},
-    mDebugServer{set["debugServer"].toString()},
+Settings::CompilerSet::CompilerSet(const QJsonObject& set)
+    : mFullLoaded{true}, mCCompiler{set["cCompiler"].toString()},
+      mCppCompiler{set["cxxCompiler"].toString()}, mMake{set["make"].toString()},
+      mDebugger{set["debugger"].toString()}, mResourceCompiler{set["resourceCompiler"].toString()},
+      mDebugServer{set["debugServer"].toString()},
 
-    mBinDirs{},               // handle later
-    mCIncludeDirs{},          // handle later
-    mCppIncludeDirs{},        // handle later
-    mLibDirs{},               // handle later
-    mDefaultLibDirs{},        // handle later
-    mDefaultCIncludeDirs{},   // handle later
-    mDefaultCppIncludeDirs{}, // handle later
+      mBinDirs{},               // handle later
+      mCIncludeDirs{},          // handle later
+      mCppIncludeDirs{},        // handle later
+      mLibDirs{},               // handle later
+      mDefaultLibDirs{},        // handle later
+      mDefaultCIncludeDirs{},   // handle later
+      mDefaultCppIncludeDirs{}, // handle later
 
-    mDumpMachine{set["dumpMachine"].toString()},
-    mVersion{set["version"].toString()},
-    mName{set["name"].toString()},
-    mTarget{set["target"].toString()},
-    mCompilerType{}, // handle later
+      mDumpMachine{set["dumpMachine"].toString()}, mVersion{set["version"].toString()},
+      mName{set["name"].toString()}, mTarget{set["target"].toString()},
+      mCompilerType{}, // handle later
 
-    mUseCustomCompileParams{!set["customCompileParams"].toArray().isEmpty()},
-    mUseCustomLinkParams{!set["customLinkParams"].toArray().isEmpty()},
-    mCustomCompileParams{}, // handle later
-    mCustomLinkParams{},    // handle later
-    mAutoAddCharsetParams{!set["execCharset"].toString().isEmpty()},
-    mExecCharset{}, // handle later
-    mStaticLink{set["staticLink"].toBool()},
-    mPersistInAutoFind{false},
-    mForceEnglishOutput{false},
+      mUseCustomCompileParams{!set["customCompileParams"].toArray().isEmpty()},
+      mUseCustomLinkParams{!set["customLinkParams"].toArray().isEmpty()},
+      mCustomCompileParams{}, // handle later
+      mCustomLinkParams{},    // handle later
+      mAutoAddCharsetParams{!set["execCharset"].toString().isEmpty()},
+      mExecCharset{}, // handle later
+      mStaticLink{set["staticLink"].toBool()}, mPersistInAutoFind{false},
+      mForceEnglishOutput{false},
 
-    mPreprocessingSuffix{set["preprocessingSuffix"].toString()},
-    mCompilationProperSuffix{set["compilationProperSuffix"].toString()},
-    mAssemblingSuffix{set["assemblingSuffix"].toString()},
-    mExecutableSuffix{set["executableSuffix"].toString()},
-    mCompileOptions{}, // handle later
-    mGccSupportNLS{false},
-    mGccSupportNLSInitialized{false}
+      mPreprocessingSuffix{set["preprocessingSuffix"].toString()},
+      mCompilationProperSuffix{set["compilationProperSuffix"].toString()},
+      mAssemblingSuffix{set["assemblingSuffix"].toString()},
+      mExecutableSuffix{set["executableSuffix"].toString()}, mCompileOptions{}, // handle later
+      mGccSupportNLS{false}, mGccSupportNLSInitialized{false}
 #ifdef Q_OS_WINDOWS
-    , mGccIsUtf8Initialized(false)
-    , mGccSupportConvertingCharsetInitialized(false)
+      ,
+      mGccIsUtf8Initialized(false), mGccSupportConvertingCharsetInitialized(false)
 #endif
 {
-    foreach (const QJsonValue &dir, set["binDirs"].toArray())
+    foreach (const QJsonValue& dir, set["binDirs"].toArray())
         mBinDirs.append(dir.toString());
-    foreach (const QJsonValue &dir, set["cIncludeDirs"].toArray())
+    foreach (const QJsonValue& dir, set["cIncludeDirs"].toArray())
         mCIncludeDirs.append(dir.toString());
-    foreach (const QJsonValue &dir, set["cxxIncludeDirs"].toArray())
+    foreach (const QJsonValue& dir, set["cxxIncludeDirs"].toArray())
         mCppIncludeDirs.append(dir.toString());
-    foreach (const QJsonValue &dir, set["libDirs"].toArray())
+    foreach (const QJsonValue& dir, set["libDirs"].toArray())
         mLibDirs.append(dir.toString());
-    foreach (const QJsonValue &dir, set["defaultLibDirs"].toArray())
+    foreach (const QJsonValue& dir, set["defaultLibDirs"].toArray())
         mDefaultLibDirs.append(dir.toString());
-    foreach (const QJsonValue &dir, set["defaultCIncludeDirs"].toArray())
+    foreach (const QJsonValue& dir, set["defaultCIncludeDirs"].toArray())
         mDefaultCIncludeDirs.append(dir.toString());
-    foreach (const QJsonValue &dir, set["defaultCxxIncludeDirs"].toArray())
+    foreach (const QJsonValue& dir, set["defaultCxxIncludeDirs"].toArray())
         mDefaultCppIncludeDirs.append(dir.toString());
 
     QString compilerType = set["compilerType"].toString();
@@ -1864,11 +1803,11 @@ Settings::CompilerSet::CompilerSet(const QJsonObject &set) :
     }
 
     QStringList compileParams;
-    foreach (const QJsonValue &param, set["customCompileParams"].toArray())
+    foreach (const QJsonValue& param, set["customCompileParams"].toArray())
         compileParams << param.toString();
     mCustomCompileParams = escapeArgumentsForInputField(compileParams);
     QStringList linkParams;
-    foreach (const QJsonValue &param, set["customLinkParams"].toArray())
+    foreach (const QJsonValue& param, set["customLinkParams"].toArray())
         linkParams << param.toString();
     mCustomLinkParams = escapeArgumentsForInputField(linkParams);
 
@@ -1878,34 +1817,34 @@ Settings::CompilerSet::CompilerSet(const QJsonObject &set) :
         mExecCharset = set["execCharset"].toString();
 
     const static QMap<QString, QString> optionMap = {
-                                                     {CC_CMD_OPT_OPTIMIZE, "ccCmdOptOptimize"},
-                                                     {CC_CMD_OPT_STD, "ccCmdOptStd"},
-                                                     {C_CMD_OPT_STD, "cCmdOptStd"},
-                                                     {CC_CMD_OPT_INSTRUCTION, "ccCmdOptInstruction"},
+        {CC_CMD_OPT_OPTIMIZE, "ccCmdOptOptimize"},
+        {CC_CMD_OPT_STD, "ccCmdOptStd"},
+        {C_CMD_OPT_STD, "cCmdOptStd"},
+        {CC_CMD_OPT_INSTRUCTION, "ccCmdOptInstruction"},
 
-                                                     {CC_CMD_OPT_POINTER_SIZE, "ccCmdOptPointerSize"},
+        {CC_CMD_OPT_POINTER_SIZE, "ccCmdOptPointerSize"},
 
-                                                     {CC_CMD_OPT_DEBUG_INFO, "ccCmdOptDebugInfo"},
-                                                     {CC_CMD_OPT_PROFILE_INFO, "ccCmdOptProfileInfo"},
-                                                     {CC_CMD_OPT_SYNTAX_ONLY, "ccCmdOptSyntaxOnly"},
-                                                     {CC_CMD_OPT_ENABLE_GCC_IMPORT_STD, "ccCmdOptEnableGccImportStd"},
+        {CC_CMD_OPT_DEBUG_INFO, "ccCmdOptDebugInfo"},
+        {CC_CMD_OPT_PROFILE_INFO, "ccCmdOptProfileInfo"},
+        {CC_CMD_OPT_SYNTAX_ONLY, "ccCmdOptSyntaxOnly"},
+        {CC_CMD_OPT_ENABLE_GCC_IMPORT_STD, "ccCmdOptEnableGccImportStd"},
 
-                                                     {CC_CMD_OPT_INHIBIT_ALL_WARNING, "ccCmdOptInhibitAllWarning"},
-                                                     {CC_CMD_OPT_WARNING_ALL, "ccCmdOptWarningAll"},
-                                                     {CC_CMD_OPT_WARNING_EXTRA, "ccCmdOptWarningExtra"},
-                                                     {CC_CMD_OPT_CHECK_ISO_CONFORMANCE, "ccCmdOptCheckIsoConformance"},
-                                                     {CC_CMD_OPT_WARNING_AS_ERROR, "ccCmdOptWarningAsError"},
-                                                     {CC_CMD_OPT_ABORT_ON_ERROR, "ccCmdOptAbortOnError"},
-                                                     {CC_CMD_OPT_STACK_PROTECTOR, "ccCmdOptStackProtector"},
-                                                     {CC_CMD_OPT_ADDRESS_SANITIZER, "ccCmdOptAddressSanitizer"},
+        {CC_CMD_OPT_INHIBIT_ALL_WARNING, "ccCmdOptInhibitAllWarning"},
+        {CC_CMD_OPT_WARNING_ALL, "ccCmdOptWarningAll"},
+        {CC_CMD_OPT_WARNING_EXTRA, "ccCmdOptWarningExtra"},
+        {CC_CMD_OPT_CHECK_ISO_CONFORMANCE, "ccCmdOptCheckIsoConformance"},
+        {CC_CMD_OPT_WARNING_AS_ERROR, "ccCmdOptWarningAsError"},
+        {CC_CMD_OPT_ABORT_ON_ERROR, "ccCmdOptAbortOnError"},
+        {CC_CMD_OPT_STACK_PROTECTOR, "ccCmdOptStackProtector"},
+        {CC_CMD_OPT_ADDRESS_SANITIZER, "ccCmdOptAddressSanitizer"},
 
-                                                     {CC_CMD_OPT_USE_PIPE, "ccCmdOptUsePipe"},
-                                                     {LINK_CMD_OPT_NO_LINK_STDLIB, "linkCmdOptNoLinkStdlib"},
-                                                     {LINK_CMD_OPT_NO_CONSOLE, "linkCmdOptNoConsole"},
-                                                     {LINK_CMD_OPT_STRIP_EXE, "linkCmdOptStripExe"},
-                                                     };
-    foreach (const QString &key, optionMap.keys()) {
-        const QString &jsonKey = optionMap[key];
+        {CC_CMD_OPT_USE_PIPE, "ccCmdOptUsePipe"},
+        {LINK_CMD_OPT_NO_LINK_STDLIB, "linkCmdOptNoLinkStdlib"},
+        {LINK_CMD_OPT_NO_CONSOLE, "linkCmdOptNoConsole"},
+        {LINK_CMD_OPT_STRIP_EXE, "linkCmdOptStripExe"},
+    };
+    foreach (const QString& key, optionMap.keys()) {
+        const QString& jsonKey = optionMap[key];
         QString value = set[jsonKey].toString();
         if (!value.isEmpty())
             setCompileOption(key, value);
@@ -1914,22 +1853,22 @@ Settings::CompilerSet::CompilerSet(const QJsonObject &set) :
 
 void Settings::CompilerSet::resetCompileOptionts()
 {
-      mCompileOptions.clear();
+    mCompileOptions.clear();
 }
 
-bool Settings::CompilerSet::setCompileOption(const QString &key, int valIndex)
+bool Settings::CompilerSet::setCompileOption(const QString& key, int valIndex)
 {
     PCompilerOption op = CompilerInfoManager::getCompilerOption(mCompilerType, key);
     if (!op)
         return false;
     if (op->choices.isEmpty()) {
-        if (valIndex==1)
-            mCompileOptions.insert(key,COMPILER_OPTION_ON);
+        if (valIndex == 1)
+            mCompileOptions.insert(key, COMPILER_OPTION_ON);
         else
             mCompileOptions.remove(key);
         return true;
-    } else if (valIndex>0 && valIndex <= op->choices.length()) {
-        mCompileOptions.insert(key,op->choices[valIndex-1].second);
+    } else if (valIndex > 0 && valIndex <= op->choices.length()) {
+        mCompileOptions.insert(key, op->choices[valIndex - 1].second);
         return true;
     } else {
         mCompileOptions.remove(key);
@@ -1938,33 +1877,33 @@ bool Settings::CompilerSet::setCompileOption(const QString &key, int valIndex)
     return false;
 }
 
-bool Settings::CompilerSet::setCompileOption(const QString &key, const QString &value)
+bool Settings::CompilerSet::setCompileOption(const QString& key, const QString& value)
 {
-    PCompilerOption op = CompilerInfoManager::getCompilerOption(mCompilerType,key);
+    PCompilerOption op = CompilerInfoManager::getCompilerOption(mCompilerType, key);
     if (!op)
         return false;
-    mCompileOptions.insert(key,value);
+    mCompileOptions.insert(key, value);
     return true;
 }
 
-void Settings::CompilerSet::unsetCompileOption(const QString &key)
+void Settings::CompilerSet::unsetCompileOption(const QString& key)
 {
     mCompileOptions.remove(key);
 }
 
 void Settings::CompilerSet::setCompileOptions(const QMap<QString, QString> options)
 {
-    mCompileOptions=options;
+    mCompileOptions = options;
 }
 
-QString Settings::CompilerSet::getCompileOptionValue(const QString &key) const
+QString Settings::CompilerSet::getCompileOptionValue(const QString& key) const
 {
-    return mCompileOptions.value(key,QString());
+    return mCompileOptions.value(key, QString());
 }
 
-//static void checkDirs(const QStringList& dirlist, QString& gooddirs, QString& baddirs) {
-//    gooddirs = "";
-//    baddirs = "";
+// static void checkDirs(const QStringList& dirlist, QString& gooddirs, QString& baddirs) {
+//     gooddirs = "";
+//     baddirs = "";
 
 //    for (int i=0; i<dirlist.count();i++) {
 //        QDir dir(dirlist[i]);
@@ -1984,11 +1923,10 @@ QString Settings::CompilerSet::getCompileOptionValue(const QString &key) const
 //    }
 //}
 
-
-//bool Settings::CompilerSet::dirsValid(QString &msg)
+// bool Settings::CompilerSet::dirsValid(QString &msg)
 //{
-//    QString goodbin, badbin, goodlib, badlib, goodinc, badinc, goodinccpp, badinccpp;
-//    msg = "";
+//     QString goodbin, badbin, goodlib, badlib, goodinc, badinc, goodinccpp, badinccpp;
+//     msg = "";
 
 //    if (mBinDirs.count()>0) {// we need some bin dir, so treat count=0 as an error too
 //        checkDirs(mBinDirs,goodbin,badbin);
@@ -2052,49 +1990,49 @@ QString Settings::CompilerSet::getCompileOptionValue(const QString &key) const
 //        return true;
 //}
 
-//bool Settings::CompilerSet::validateExes(QString &msg)
+// bool Settings::CompilerSet::validateExes(QString &msg)
 //{
-//    msg ="";
-//    if (!fileExists(mCCompiler)) {
-//        msg += QObject::tr("Cannot find the %1 \"%2\"")
-//                .arg(QObject::tr("C Compiler"))
-//                .arg(mCCompiler);
-//    }
-//    if (!fileExists(mCppCompiler)) {
-//        msg += QObject::tr("Cannot find the %1 \"%2\"")
-//                .arg(QObject::tr("C++ Compiler"))
-//                .arg(mCppCompiler);
-//    }
-//    if (!mMake.isEmpty() && !fileExists(mMake)) {
-//        msg += QObject::tr("Cannot find the %1 \"%2\"")
-//                .arg(QObject::tr("Maker"))
-//                .arg(mMake);
-//    }
-//    if (!fileExists(mDebugger)) {
-//        msg += QObject::tr("Cannot find the %1 \"%2\"")
-//                .arg(QObject::tr("Debugger"))
-//                .arg(mDebugger);
-//    }
-//    if (!msg.isEmpty())
-//        return false;
-//    else
-//        return true;
-//}
+//     msg ="";
+//     if (!fileExists(mCCompiler)) {
+//         msg += QObject::tr("Cannot find the %1 \"%2\"")
+//                 .arg(QObject::tr("C Compiler"))
+//                 .arg(mCCompiler);
+//     }
+//     if (!fileExists(mCppCompiler)) {
+//         msg += QObject::tr("Cannot find the %1 \"%2\"")
+//                 .arg(QObject::tr("C++ Compiler"))
+//                 .arg(mCppCompiler);
+//     }
+//     if (!mMake.isEmpty() && !fileExists(mMake)) {
+//         msg += QObject::tr("Cannot find the %1 \"%2\"")
+//                 .arg(QObject::tr("Maker"))
+//                 .arg(mMake);
+//     }
+//     if (!fileExists(mDebugger)) {
+//         msg += QObject::tr("Cannot find the %1 \"%2\"")
+//                 .arg(QObject::tr("Debugger"))
+//                 .arg(mDebugger);
+//     }
+//     if (!msg.isEmpty())
+//         return false;
+//     else
+//         return true;
+// }
 
-const QString &Settings::CompilerSet::CCompiler() const
+const QString& Settings::CompilerSet::CCompiler() const
 {
     return mCCompiler;
 }
 
-void Settings::CompilerSet::setCCompiler(const QString &name)
+void Settings::CompilerSet::setCCompiler(const QString& name)
 {
-    if (mCCompiler!=name) {
+    if (mCCompiler != name) {
 #ifdef Q_OS_WIN
         mGccIsUtf8Initialized = false;
 #endif
         mCCompiler = name;
         if (mCompilerType == CompilerType::Unknown) {
-            QString temp=extractFileName(mCCompiler);
+            QString temp = extractFileName(mCCompiler);
             if (temp == CLANG_PROGRAM) {
                 setCompilerType(CompilerType::Clang);
             } else if (temp == GCC_PROGRAM) {
@@ -2104,129 +2042,129 @@ void Settings::CompilerSet::setCCompiler(const QString &name)
     }
 }
 
-const QString &Settings::CompilerSet::cppCompiler() const
+const QString& Settings::CompilerSet::cppCompiler() const
 {
     return mCppCompiler;
 }
 
-void Settings::CompilerSet::setCppCompiler(const QString &name)
+void Settings::CompilerSet::setCppCompiler(const QString& name)
 {
     mCppCompiler = name;
 }
 
-const QString &Settings::CompilerSet::make() const
+const QString& Settings::CompilerSet::make() const
 {
     return mMake;
 }
 
-void Settings::CompilerSet::setMake(const QString &name)
+void Settings::CompilerSet::setMake(const QString& name)
 {
     mMake = name;
 }
 
-const QString &Settings::CompilerSet::debugger() const
+const QString& Settings::CompilerSet::debugger() const
 {
     return mDebugger;
 }
 
-void Settings::CompilerSet::setDebugger(const QString &name)
+void Settings::CompilerSet::setDebugger(const QString& name)
 {
     mDebugger = name;
 }
 
-const QString &Settings::CompilerSet::resourceCompiler() const
+const QString& Settings::CompilerSet::resourceCompiler() const
 {
     return mResourceCompiler;
 }
 
-void Settings::CompilerSet::setResourceCompiler(const QString &name)
+void Settings::CompilerSet::setResourceCompiler(const QString& name)
 {
     mResourceCompiler = name;
 }
 
-QStringList &Settings::CompilerSet::binDirs()
+QStringList& Settings::CompilerSet::binDirs()
 {
     return mBinDirs;
 }
 
-QStringList &Settings::CompilerSet::CIncludeDirs()
+QStringList& Settings::CompilerSet::CIncludeDirs()
 {
     return mCIncludeDirs;
 }
 
-QStringList &Settings::CompilerSet::CppIncludeDirs()
+QStringList& Settings::CompilerSet::CppIncludeDirs()
 {
     return mCppIncludeDirs;
 }
 
-QStringList &Settings::CompilerSet::libDirs()
+QStringList& Settings::CompilerSet::libDirs()
 {
     return mLibDirs;
 }
 
-QStringList &Settings::CompilerSet::defaultCIncludeDirs()
+QStringList& Settings::CompilerSet::defaultCIncludeDirs()
 {
     if (!mFullLoaded && !binDirs().isEmpty()) {
-        mFullLoaded=true;
+        mFullLoaded = true;
         setDirectories(binDirs()[0]);
     }
     return mDefaultCIncludeDirs;
 }
 
-QStringList &Settings::CompilerSet::defaultCppIncludeDirs()
+QStringList& Settings::CompilerSet::defaultCppIncludeDirs()
 {
     if (!mFullLoaded && !binDirs().isEmpty()) {
-        mFullLoaded=true;
+        mFullLoaded = true;
         setDirectories(binDirs()[0]);
     }
     return mDefaultCppIncludeDirs;
 }
 
-QStringList &Settings::CompilerSet::defaultLibDirs()
+QStringList& Settings::CompilerSet::defaultLibDirs()
 {
     if (!mFullLoaded && !binDirs().isEmpty()) {
-        mFullLoaded=true;
+        mFullLoaded = true;
         setDirectories(binDirs()[0]);
     }
     return mLibDirs;
 }
 
-const QString &Settings::CompilerSet::dumpMachine() const
+const QString& Settings::CompilerSet::dumpMachine() const
 {
     return mDumpMachine;
 }
 
-void Settings::CompilerSet::setDumpMachine(const QString &value)
+void Settings::CompilerSet::setDumpMachine(const QString& value)
 {
     mDumpMachine = value;
 }
 
-const QString &Settings::CompilerSet::version() const
+const QString& Settings::CompilerSet::version() const
 {
     return mVersion;
 }
 
-void Settings::CompilerSet::setVersion(const QString &value)
+void Settings::CompilerSet::setVersion(const QString& value)
 {
     mVersion = value;
 }
 
-const QString &Settings::CompilerSet::name() const
+const QString& Settings::CompilerSet::name() const
 {
     return mName;
 }
 
-void Settings::CompilerSet::setName(const QString &value)
+void Settings::CompilerSet::setName(const QString& value)
 {
     mName = value;
 }
 
-const QString &Settings::CompilerSet::target() const
+const QString& Settings::CompilerSet::target() const
 {
     return mTarget;
 }
 
-void Settings::CompilerSet::setTarget(const QString &value)
+void Settings::CompilerSet::setTarget(const QString& value)
 {
     mTarget = value;
 }
@@ -2246,22 +2184,22 @@ void Settings::CompilerSet::setUseCustomLinkParams(bool value)
     mUseCustomLinkParams = value;
 }
 
-const QString &Settings::CompilerSet::customCompileParams() const
+const QString& Settings::CompilerSet::customCompileParams() const
 {
     return mCustomCompileParams;
 }
 
-void Settings::CompilerSet::setCustomCompileParams(const QString &value)
+void Settings::CompilerSet::setCustomCompileParams(const QString& value)
 {
     mCustomCompileParams = value;
 }
 
-const QString &Settings::CompilerSet::customLinkParams() const
+const QString& Settings::CompilerSet::customLinkParams() const
 {
     return mCustomLinkParams;
 }
 
-void Settings::CompilerSet::setCustomLinkParams(const QString &value)
+void Settings::CompilerSet::setCustomLinkParams(const QString& value)
 {
     mCustomLinkParams = value;
 }
@@ -2280,8 +2218,8 @@ int Settings::CompilerSet::charToValue(char valueChar)
 {
     if (valueChar == '1') {
         return 1;
-    } else if ( (valueChar>='a') && (valueChar<='z')) {
-        return (valueChar-'a')+2;
+    } else if ((valueChar >= 'a') && (valueChar <= 'z')) {
+        return (valueChar - 'a') + 2;
     } else {
         return 0;
     }
@@ -2292,7 +2230,8 @@ char Settings::CompilerSet::valueToChar(int val)
     return ValueToChar[val];
 }
 
-static void addExistingDirectory(QStringList& dirs, const QString& directory) {
+static void addExistingDirectory(QStringList& dirs, const QString& directory)
+{
     if (!directoryExists(directory))
         return;
     QFileInfo dirInfo(directory);
@@ -2306,11 +2245,11 @@ void Settings::CompilerSet::setProperties(const QString& binDir, const QString& 
 {
 #ifdef ENABLE_SDCC
     if (c_prog == SDCC_PROGRAM) {
-        setSDCCProperties(binDir,c_prog);
+        setSDCCProperties(binDir, c_prog);
     } else {
 #endif
 
-        setGCCProperties(binDir,c_prog);
+        setGCCProperties(binDir, c_prog);
 #ifdef ENABLE_SDCC
     }
 #endif
@@ -2319,8 +2258,8 @@ void Settings::CompilerSet::setProperties(const QString& binDir, const QString& 
 void Settings::CompilerSet::setGCCProperties(const QString& binDir, const QString& c_prog)
 {
     // We have tested before the call
-//    if (!fileExists(c_prog))
-//        return;
+    //    if (!fileExists(c_prog))
+    //        return;
 
     // Obtain basic info
     QByteArray dumpMachine = getCompilerOutput(binDir, c_prog, {"-dumpmachine"});
@@ -2400,7 +2339,7 @@ void Settings::CompilerSet::setGCCProperties(const QString& binDir, const QStrin
     QString folder = tmpDir.path();
 
     // Add the default directories
-    addExistingDirectory(mBinDirs, getFilePath(folder,"bin"));
+    addExistingDirectory(mBinDirs, getFilePath(folder, "bin"));
     // if (!mDumpMachine.isEmpty()) {
     //     //mingw-w64 bin folder
     //     addExistingDirectory(mBinDirs,
@@ -2414,21 +2353,21 @@ void Settings::CompilerSet::setGCCProperties(const QString& binDir, const QStrin
 void Settings::CompilerSet::setSDCCProperties(const QString& binDir, const QString& c_prog)
 {
     // We have tested before the call
-//    if (!fileExists(c_prog))
-//        return;
+    //    if (!fileExists(c_prog))
+    //        return;
     // Obtain version number and compiler distro etc
     QStringList arguments;
     arguments.append("-v");
-    QByteArray output = getCompilerOutput(binDir, c_prog,arguments);
+    QByteArray output = getCompilerOutput(binDir, c_prog, arguments);
 
     if (!output.startsWith("SDCC"))
         return;
 
-    //Target
+    // Target
     int delimPos = 0;
-    while (delimPos<output.length() && (output[delimPos]>=((char)32)))
+    while (delimPos < output.length() && (output[delimPos] >= ((char)32)))
         delimPos++;
-    QString triplet = output.mid(0,delimPos);
+    QString triplet = output.mid(0, delimPos);
 
     QRegularExpression re("\\s+(\\d+\\.\\d+\\.\\d+)\\s+");
     QRegularExpressionMatch match = re.match(triplet);
@@ -2437,23 +2376,24 @@ void Settings::CompilerSet::setSDCCProperties(const QString& binDir, const QStri
     if (mVersion.isEmpty())
         mName = "SDCC";
     else
-        mName = "SDCC "+mVersion;
-    mCompilerType=CompilerType::SDCC;
+        mName = "SDCC " + mVersion;
+    mCompilerType = CompilerType::SDCC;
 
     addExistingDirectory(mBinDirs, binDir);
 }
 #endif
 
-QStringList Settings::CompilerSet::x86MultilibList(const QString &folder, const QString &c_prog) const
+QStringList Settings::CompilerSet::x86MultilibList(const QString& folder,
+                                                   const QString& c_prog) const
 {
     QByteArray multilibOutput = getCompilerOutput(folder, c_prog, {"-print-multi-lib"});
     QStringList result;
     foreach (const QByteArray& rawLine, multilibOutput.split('\n')) {
         // man gcc:
         //   -print-multi-lib
-        //     Print the mapping from multilib directory names to compiler switches that enable them.
-        //     The directory name is separated from the switches by `;`, and each switch starts with
-        //     an `@` instead of the `-`, without spaces between multiple switches.
+        //     Print the mapping from multilib directory names to compiler switches that enable
+        //     them. The directory name is separated from the switches by `;`, and each switch
+        //     starts with an `@` instead of the `-`, without spaces between multiple switches.
 
         // Example 1 (GCC):
         //   .;
@@ -2476,7 +2416,7 @@ QStringList Settings::CompilerSet::x86MultilibList(const QString &folder, const 
         if (dir == ".")
             // native ABI
             continue;
-        QString switches = line.mid(sep+1);
+        QString switches = line.mid(sep + 1);
         if (switches == "@m32")
             result.append("32");
         else if (switches == "@mx32")
@@ -2488,7 +2428,8 @@ QStringList Settings::CompilerSet::x86MultilibList(const QString &folder, const 
     return result;
 }
 
-QStringList Settings::CompilerSet::defines(bool isCpp) {
+QStringList Settings::CompilerSet::defines(bool isCpp)
+{
     // get default defines
     QStringList arguments;
     arguments.append("-dM");
@@ -2496,18 +2437,18 @@ QStringList Settings::CompilerSet::defines(bool isCpp) {
     arguments.append("-x");
     QString key;
 #ifdef ENABLE_SDCC
-    if (mCompilerType==CompilerType::SDCC) {
+    if (mCompilerType == CompilerType::SDCC) {
         arguments.append("c");
         arguments.append("-V");
-        key=SDCC_CMD_OPT_PROCESSOR;
-        //language standard
+        key = SDCC_CMD_OPT_PROCESSOR;
+        // language standard
         PCompilerOption pOption = CompilerInfoManager::getCompilerOption(compilerType(), key);
         if (pOption) {
             if (!mCompileOptions[key].isEmpty())
                 arguments.append(pOption->setting + mCompileOptions[key]);
         }
-        key=SDCC_CMD_OPT_STD;
-        //language standard
+        key = SDCC_CMD_OPT_STD;
+        // language standard
         pOption = CompilerInfoManager::getCompilerOption(compilerType(), key);
         if (pOption) {
             if (!mCompileOptions[key].isEmpty())
@@ -2517,18 +2458,19 @@ QStringList Settings::CompilerSet::defines(bool isCpp) {
 #endif
         if (isCpp) {
             arguments.append("c++");
-            key=CC_CMD_OPT_STD;
+            key = CC_CMD_OPT_STD;
         } else {
             arguments.append("c");
-            key=C_CMD_OPT_STD;
+            key = C_CMD_OPT_STD;
         }
-        //language standard
+        // language standard
         PCompilerOption pOption = CompilerInfoManager::getCompilerOption(compilerType(), key);
         if (pOption) {
             if (!mCompileOptions[key].isEmpty())
                 arguments.append(pOption->setting + mCompileOptions[key]);
         }
-        pOption = CompilerInfoManager::getCompilerOption(compilerType(), CC_CMD_OPT_ENABLE_GCC_IMPORT_STD);
+        pOption = CompilerInfoManager::getCompilerOption(compilerType(),
+                                                         CC_CMD_OPT_ENABLE_GCC_IMPORT_STD);
         if (pOption && mCompileOptions.contains(CC_CMD_OPT_ENABLE_GCC_IMPORT_STD)) {
             arguments.append(pOption->setting);
         }
@@ -2549,15 +2491,16 @@ QStringList Settings::CompilerSet::defines(bool isCpp) {
     arguments.append(NULL_FILE);
 
     QFileInfo ccompiler(mCCompiler);
-    QByteArray output = getCompilerOutput(ccompiler.absolutePath(),ccompiler.fileName(),arguments);
+    QByteArray output =
+        getCompilerOutput(ccompiler.absolutePath(), ccompiler.fileName(), arguments);
     // 'cpp.exe -dM -E -x c++ -std=c++17 NUL'
-//    qDebug()<<"------------------";
+    //    qDebug()<<"------------------";
     QStringList result;
 #ifdef ENABLE_SDCC
-    if (mCompilerType==CompilerType::SDCC) {
+    if (mCompilerType == CompilerType::SDCC) {
         QList<QByteArray> lines = output.split('\n');
         QByteArray currentLine;
-        for (QByteArray& line:lines) {
+        for (QByteArray& line : lines) {
             QByteArray trimmedLine = line.trimmed();
             if (trimmedLine.startsWith("+")) {
                 currentLine = line;
@@ -2565,15 +2508,16 @@ QStringList Settings::CompilerSet::defines(bool isCpp) {
             }
         }
         lines = currentLine.split(' ');
-        for (QByteArray& line:lines) {
+        for (QByteArray& line : lines) {
             QByteArray trimmedLine = line.trimmed();
             if (trimmedLine.startsWith("-D")) {
                 trimmedLine = trimmedLine.mid(2);
                 if (trimmedLine.contains("=")) {
-                    QList<QByteArray> items=trimmedLine.split('=');
-                    result.append(QString("#define %1 %2").arg(QString(items[0]),QString(items[1])));
+                    QList<QByteArray> items = trimmedLine.split('=');
+                    result.append(
+                        QString("#define %1 %2").arg(QString(items[0]), QString(items[1])));
                 } else {
-                    result.append("#define "+trimmedLine);
+                    result.append("#define " + trimmedLine);
                 }
             }
         }
@@ -2582,7 +2526,7 @@ QStringList Settings::CompilerSet::defines(bool isCpp) {
     {
 #endif
         QList<QByteArray> lines = output.split('\n');
-        for (QByteArray& line:lines) {
+        for (QByteArray& line : lines) {
             QByteArray trimmedLine = line.trimmed();
             if (!trimmedLine.isEmpty()) {
                 result.append(trimmedLine);
@@ -2595,7 +2539,7 @@ QStringList Settings::CompilerSet::defines(bool isCpp) {
 void Settings::CompilerSet::setExecutables()
 {
     if (mCompilerType == CompilerType::Clang) {
-        mCCompiler =  findProgramInBinDirs(CLANG_PROGRAM);
+        mCCompiler = findProgramInBinDirs(CLANG_PROGRAM);
         mCppCompiler = findProgramInBinDirs(CLANG_CPP_PROGRAM);
         mDebugger = findProgramInBinDirs(GDB_PROGRAM);
         if (mDebugger.isEmpty()) {
@@ -2605,17 +2549,17 @@ void Settings::CompilerSet::setExecutables()
             mDebugServer = findProgramInBinDirs(GDB_SERVER_PROGRAM);
         }
         if (mCCompiler.isEmpty())
-            mCCompiler =  findProgramInBinDirs(GCC_PROGRAM);
+            mCCompiler = findProgramInBinDirs(GCC_PROGRAM);
         if (mCppCompiler.isEmpty())
             mCppCompiler = findProgramInBinDirs(GPP_PROGRAM);
 #ifdef ENABLE_SDCC
     } else if (mCompilerType == CompilerType::SDCC) {
-        mCCompiler =  findProgramInBinDirs(SDCC_PROGRAM);
+        mCCompiler = findProgramInBinDirs(SDCC_PROGRAM);
         if (mCCompiler.isEmpty())
-            mCCompiler =  findProgramInBinDirs(SDCC_PROGRAM);
+            mCCompiler = findProgramInBinDirs(SDCC_PROGRAM);
 #endif
     } else {
-        mCCompiler =  findProgramInBinDirs(GCC_PROGRAM);
+        mCCompiler = findProgramInBinDirs(GCC_PROGRAM);
         mCppCompiler = findProgramInBinDirs(GPP_PROGRAM);
         mDebugger = findProgramInBinDirs(GDB_PROGRAM);
         mDebugServer = findProgramInBinDirs(GDB_SERVER_PROGRAM);
@@ -2642,7 +2586,7 @@ void Settings::CompilerSet::setDirectories(const QString& binDir)
 void Settings::CompilerSet::setGCCDirectories(const QString& binDir)
 {
     QString c_prog;
-    if (mCompilerType==CompilerType::Clang)
+    if (mCompilerType == CompilerType::Clang)
         c_prog = CLANG_PROGRAM;
     else
         c_prog = GCC_PROGRAM;
@@ -2654,17 +2598,17 @@ void Settings::CompilerSet::setGCCDirectories(const QString& binDir)
     arguments.append("-v");
     arguments.append("-E");
     arguments.append(NULL_FILE);
-    QByteArray output = getCompilerOutput(binDir,c_prog,arguments);
+    QByteArray output = getCompilerOutput(binDir, c_prog, arguments);
 
     int delimPos1 = output.indexOf("#include <...> search starts here:");
     int delimPos2 = output.indexOf("End of search list.");
-    if (delimPos1 >0 && delimPos2>0 ) {
+    if (delimPos1 > 0 && delimPos2 > 0) {
         delimPos1 += QByteArray("#include <...> search starts here:").length();
-        QList<QByteArray> lines = output.mid(delimPos1, delimPos2-delimPos1).split('\n');
-        for (QByteArray& line:lines) {
+        QList<QByteArray> lines = output.mid(delimPos1, delimPos2 - delimPos1).split('\n');
+        for (QByteArray& line : lines) {
             QByteArray trimmedLine = line.trimmed();
             if (!trimmedLine.isEmpty()) {
-                addExistingDirectory(mDefaultCIncludeDirs,trimmedLine);
+                addExistingDirectory(mDefaultCIncludeDirs, trimmedLine);
             }
         }
     }
@@ -2676,18 +2620,18 @@ void Settings::CompilerSet::setGCCDirectories(const QString& binDir)
     arguments.append("-E");
     arguments.append("-v");
     arguments.append(NULL_FILE);
-    output = getCompilerOutput(binDir,c_prog,arguments);
-    //gcc -xc++ -E -v NUL
+    output = getCompilerOutput(binDir, c_prog, arguments);
+    // gcc -xc++ -E -v NUL
 
     delimPos1 = output.indexOf("#include <...> search starts here:");
     delimPos2 = output.indexOf("End of search list.");
-    if (delimPos1 >0 && delimPos2>0 ) {
+    if (delimPos1 > 0 && delimPos2 > 0) {
         delimPos1 += QByteArray("#include <...> search starts here:").length();
-        QList<QByteArray> lines = output.mid(delimPos1, delimPos2-delimPos1).split('\n');
-        for (QByteArray& line:lines) {
+        QList<QByteArray> lines = output.mid(delimPos1, delimPos2 - delimPos1).split('\n');
+        for (QByteArray& line : lines) {
             QByteArray trimmedLine = line.trimmed();
             if (!trimmedLine.isEmpty()) {
-                addExistingDirectory(mDefaultCppIncludeDirs,trimmedLine);
+                addExistingDirectory(mDefaultCppIncludeDirs, trimmedLine);
             }
         }
     }
@@ -2696,35 +2640,35 @@ void Settings::CompilerSet::setGCCDirectories(const QString& binDir)
     arguments.clear();
     arguments.append("-print-search-dirs");
     arguments.append(NULL_FILE);
-    output = getCompilerOutput(binDir,c_prog,arguments);
+    output = getCompilerOutput(binDir, c_prog, arguments);
     // bin dirs
     QByteArray targetStr = QByteArray("programs: =");
     delimPos1 = output.indexOf(targetStr);
-    if (delimPos1>=0) {
-        delimPos1+=targetStr.length();
+    if (delimPos1 >= 0) {
+        delimPos1 += targetStr.length();
         delimPos2 = delimPos1;
-        while (delimPos2 < output.length() && output[delimPos2]!='\n')
-            delimPos2+=1;
-        QList<QByteArray> lines = output.mid(delimPos1,delimPos2-delimPos1).split(';');
-        for (QByteArray& line:lines) {
+        while (delimPos2 < output.length() && output[delimPos2] != '\n')
+            delimPos2 += 1;
+        QList<QByteArray> lines = output.mid(delimPos1, delimPos2 - delimPos1).split(';');
+        for (QByteArray& line : lines) {
             QByteArray trimmedLine = line.trimmed();
             if (!trimmedLine.isEmpty())
-                addExistingDirectory(mBinDirs,trimmedLine);
+                addExistingDirectory(mBinDirs, trimmedLine);
         }
     }
     // lib dirs
     targetStr = QByteArray("libraries: =");
     delimPos1 = output.indexOf(targetStr);
-    if (delimPos1>=0) {
-        delimPos1+=targetStr.length();
+    if (delimPos1 >= 0) {
+        delimPos1 += targetStr.length();
         delimPos2 = delimPos1;
-        while (delimPos2 < output.length() && output[delimPos2]!='\n')
-            delimPos2+=1;
-        QList<QByteArray> lines = output.mid(delimPos1,delimPos2-delimPos1).split(';');
-        for (QByteArray& line:lines) {
+        while (delimPos2 < output.length() && output[delimPos2] != '\n')
+            delimPos2 += 1;
+        QList<QByteArray> lines = output.mid(delimPos1, delimPos2 - delimPos1).split(';');
+        for (QByteArray& line : lines) {
             QByteArray trimmedLine = line.trimmed();
             if (!trimmedLine.isEmpty())
-                addExistingDirectory(mDefaultLibDirs,trimmedLine);
+                addExistingDirectory(mDefaultLibDirs, trimmedLine);
         }
     }
 }
@@ -2744,19 +2688,19 @@ void Settings::CompilerSet::setSDCCDirectories(const QString& binDir)
         if (!mCompileOptions[key].isEmpty())
             arguments.append(pOption->setting + mCompileOptions[key]);
     }
-    QByteArray output = getCompilerOutput(binDir,c_prog,arguments);
+    QByteArray output = getCompilerOutput(binDir, c_prog, arguments);
 
-    //bindirs
+    // bindirs
     QByteArray targetStr = QByteArray("programs:");
     int delimPos1 = output.indexOf(targetStr);
     int delimPos2 = output.indexOf("datadir:");
-    if (delimPos1 >0 && delimPos2>delimPos1 ) {
+    if (delimPos1 > 0 && delimPos2 > delimPos1) {
         delimPos1 += targetStr.length();
-        QList<QByteArray> lines = output.mid(delimPos1, delimPos2-delimPos1).split('\n');
-        for (QByteArray& line:lines) {
+        QList<QByteArray> lines = output.mid(delimPos1, delimPos2 - delimPos1).split('\n');
+        for (QByteArray& line : lines) {
             QByteArray trimmedLine = line.trimmed();
             if (!trimmedLine.isEmpty()) {
-                addExistingDirectory(mBinDirs,trimmedLine);
+                addExistingDirectory(mBinDirs, trimmedLine);
             }
         }
     }
@@ -2764,13 +2708,13 @@ void Settings::CompilerSet::setSDCCDirectories(const QString& binDir)
     targetStr = QByteArray("includedir:");
     delimPos1 = output.indexOf(targetStr);
     delimPos2 = output.indexOf("libdir:");
-    if (delimPos1 >0 && delimPos2>delimPos1 ) {
+    if (delimPos1 > 0 && delimPos2 > delimPos1) {
         delimPos1 += targetStr.length();
-        QList<QByteArray> lines = output.mid(delimPos1, delimPos2-delimPos1).split('\n');
-        for (QByteArray& line:lines) {
+        QList<QByteArray> lines = output.mid(delimPos1, delimPos2 - delimPos1).split('\n');
+        for (QByteArray& line : lines) {
             QByteArray trimmedLine = line.trimmed();
             if (!trimmedLine.isEmpty()) {
-                addExistingDirectory(mDefaultCIncludeDirs,trimmedLine);
+                addExistingDirectory(mDefaultCIncludeDirs, trimmedLine);
             }
         }
     }
@@ -2778,17 +2722,16 @@ void Settings::CompilerSet::setSDCCDirectories(const QString& binDir)
     targetStr = QByteArray("libdir:");
     delimPos1 = output.indexOf(targetStr);
     delimPos2 = output.indexOf("libpath:");
-    if (delimPos1 >0 && delimPos2>delimPos1 ) {
+    if (delimPos1 > 0 && delimPos2 > delimPos1) {
         delimPos1 += targetStr.length();
-        QList<QByteArray> lines = output.mid(delimPos1, delimPos2-delimPos1).split('\n');
-        for (QByteArray& line:lines) {
+        QList<QByteArray> lines = output.mid(delimPos1, delimPos2 - delimPos1).split('\n');
+        for (QByteArray& line : lines) {
             QByteArray trimmedLine = line.trimmed();
             if (!trimmedLine.isEmpty()) {
-                addExistingDirectory(mDefaultLibDirs,trimmedLine);
+                addExistingDirectory(mDefaultLibDirs, trimmedLine);
             }
         }
     }
-
 }
 #endif
 
@@ -2813,7 +2756,7 @@ bool Settings::CompilerSet::canCompileC() const
 bool Settings::CompilerSet::canCompileCPP() const
 {
 #ifdef ENABLE_SDCC
-    if (mCompilerType==CompilerType::SDCC)
+    if (mCompilerType == CompilerType::SDCC)
         return false;
 #endif
     return fileExists(mCppCompiler);
@@ -2827,7 +2770,7 @@ bool Settings::CompilerSet::canMake() const
 bool Settings::CompilerSet::canDebug() const
 {
 #ifdef ENABLE_SDCC
-    if (mCompilerType==CompilerType::SDCC)
+    if (mCompilerType == CompilerType::SDCC)
         return false;
 #endif
     return fileExists(mDebugger);
@@ -2838,7 +2781,7 @@ void Settings::CompilerSet::setUserInput()
     mUseCustomCompileParams = false;
     mUseCustomLinkParams = false;
 #ifdef ENABLE_SDCC
-    if (mCompilerType==CompilerType::SDCC) {
+    if (mCompilerType == CompilerType::SDCC) {
         mAutoAddCharsetParams = false;
         mStaticLink = false;
     } else {
@@ -2849,7 +2792,6 @@ void Settings::CompilerSet::setUserInput()
         mStaticLink = true;
     }
 }
-
 
 QString Settings::CompilerSet::findProgramInBinDirs(const QString name) const
 {
@@ -2862,31 +2804,26 @@ QString Settings::CompilerSet::findProgramInBinDirs(const QString name) const
     return QString();
 }
 
-void Settings::CompilerSet::setIniOptions(const QByteArray &value)
+void Settings::CompilerSet::setIniOptions(const QByteArray& value)
 {
-   if (value.isEmpty())
-       return;
-   mCompileOptions.clear();
-   for (int i=0;i<value.length();i++) {
-       QString key = pSettings->compilerSets().getKeyFromCompilerCompatibleIndex(i);
-       setCompileOption(key,charToValue(value[i]));
-   }
+    if (value.isEmpty())
+        return;
+    mCompileOptions.clear();
+    for (int i = 0; i < value.length(); i++) {
+        QString key = pSettings->compilerSets().getKeyFromCompilerCompatibleIndex(i);
+        setCompileOption(key, charToValue(value[i]));
+    }
 }
 
-QByteArray Settings::CompilerSet::getCompilerOutput(const QString &binDir, const QString &binFile, const QStringList &arguments) const
+QByteArray Settings::CompilerSet::getCompilerOutput(const QString& binDir, const QString& binFile,
+                                                    const QStringList& arguments) const
 {
     QProcessEnvironment env;
-    env.insert("LANG","en");
+    env.insert("LANG", "en");
     QString path = binDir;
-    env.insert("PATH",path);
-    auto [result, _, errorMessage] = runAndGetOutput(
-                getFilePath(binDir, binFile),
-                binDir,
-                arguments,
-                QByteArray(),
-                false,
-                false,
-                env);
+    env.insert("PATH", path);
+    auto [result, _, errorMessage] = runAndGetOutput(getFilePath(binDir, binFile), binDir,
+                                                     arguments, QByteArray(), false, false, env);
     return result.trimmed();
 }
 
@@ -2910,14 +2847,15 @@ void Settings::CompilerSet::setPersistInAutoFind(bool newPersistInAutoFind)
     mPersistInAutoFind = newPersistInAutoFind;
 }
 
-QString Settings::CompilerSet::getOutputFilename(const QString &sourceFilename)
+QString Settings::CompilerSet::getOutputFilename(const QString& sourceFilename)
 {
     return getOutputFilename(sourceFilename, CompilationStage::GenerateExecutable);
 }
 
-QString Settings::CompilerSet::getOutputFilename(const QString &sourceFilename, CompilationStage stage)
+QString Settings::CompilerSet::getOutputFilename(const QString& sourceFilename,
+                                                 CompilationStage stage)
 {
-    switch(stage) {
+    switch (stage) {
     case Settings::CompilerSet::CompilationStage::PreprocessingOnly:
         return changeFileExt(sourceFilename, preprocessingSuffix());
     case Settings::CompilerSet::CompilationStage::CompilationProperOnly:
@@ -2929,7 +2867,7 @@ QString Settings::CompilerSet::getOutputFilename(const QString &sourceFilename, 
     case Settings::CompilerSet::CompilationStage::GenerateExecutable:
         return changeFileExt(sourceFilename, executableSuffix());
     }
-    return changeFileExt(sourceFilename,DEFAULT_EXECUTABLE_SUFFIX);
+    return changeFileExt(sourceFilename, DEFAULT_EXECUTABLE_SUFFIX);
 }
 
 bool Settings::CompilerSet::isOutputExecutable()
@@ -2945,7 +2883,7 @@ bool Settings::CompilerSet::isOutputExecutable(CompilationStage stage)
 #ifdef Q_OS_WINDOWS
 bool Settings::CompilerSet::isDebugInfoUsingUTF8()
 {
-    switch(mCompilerType) {
+    switch (mCompilerType) {
     case CompilerType::Clang:
     case CompilerType::GCC_UTF8:
         return true;
@@ -2977,8 +2915,9 @@ bool Settings::CompilerSet::supportConvertingCharset()
     if (mCompilerType != CompilerType::GCC && mCompilerType != CompilerType::GCC_UTF8)
         return false;
     if (!mGccSupportConvertingCharsetInitialized) {
-        mGccSupportConvertingCharset = [this] () {
-            QByteArray verboseOut = getCompilerOutput(QFileInfo(mCCompiler).dir().path(), mCCompiler, {"-v"});
+        mGccSupportConvertingCharset = [this]() {
+            QByteArray verboseOut =
+                getCompilerOutput(QFileInfo(mCCompiler).dir().path(), mCCompiler, {"-v"});
             QByteArray targetStr = "Configured with: ";
             int configurationPos = verboseOut.indexOf(targetStr);
             if (configurationPos < 0)
@@ -2986,9 +2925,11 @@ bool Settings::CompilerSet::supportConvertingCharset()
             int endPos = verboseOut.indexOf('\n', configurationPos);
             if (endPos < 0)
                 return false;
-            QByteArray configuration = verboseOut.mid(configurationPos + targetStr.size(), endPos - configurationPos - targetStr.size());
-            return configuration.contains("--with-libiconv") && !configuration.contains("--with-libiconv=no");
-        } ();
+            QByteArray configuration = verboseOut.mid(configurationPos + targetStr.size(),
+                                                      endPos - configurationPos - targetStr.size());
+            return configuration.contains("--with-libiconv") &&
+                   !configuration.contains("--with-libiconv=no");
+        }();
         mGccSupportConvertingCharsetInitialized = true;
     }
     return mGccSupportConvertingCharset;
@@ -3003,8 +2944,9 @@ bool Settings::CompilerSet::supportNLS()
     if (mCompilerType != CompilerType::GCC && mCompilerType != CompilerType::GCC_UTF8)
         return false;
     if (!mGccSupportNLSInitialized) {
-        mGccSupportNLS = [this] () {
-            QByteArray verboseOut = getCompilerOutput(QFileInfo(mCCompiler).dir().path(), mCCompiler, {"-v"});
+        mGccSupportNLS = [this]() {
+            QByteArray verboseOut =
+                getCompilerOutput(QFileInfo(mCCompiler).dir().path(), mCCompiler, {"-v"});
             QByteArray targetStr = "Configured with: ";
             int configurationPos = verboseOut.indexOf(targetStr);
             if (configurationPos < 0)
@@ -3012,76 +2954,77 @@ bool Settings::CompilerSet::supportNLS()
             int endPos = verboseOut.indexOf('\n', configurationPos);
             if (endPos < 0)
                 return false;
-            QByteArray configuration = verboseOut.mid(configurationPos + targetStr.size(), endPos - configurationPos - targetStr.size());
-            return configuration.contains("--enable-nls") && !configuration.contains("--disable-nls");
-        } ();
+            QByteArray configuration = verboseOut.mid(configurationPos + targetStr.size(),
+                                                      endPos - configurationPos - targetStr.size());
+            return configuration.contains("--enable-nls") &&
+                   !configuration.contains("--disable-nls");
+        }();
         mGccSupportNLSInitialized = true;
     }
     return mGccSupportNLS;
-
 }
 
-const QString &Settings::CompilerSet::assemblingSuffix() const
+const QString& Settings::CompilerSet::assemblingSuffix() const
 {
     return mAssemblingSuffix;
 }
 
-void Settings::CompilerSet::setAssemblingSuffix(const QString &newAssemblingSuffix)
+void Settings::CompilerSet::setAssemblingSuffix(const QString& newAssemblingSuffix)
 {
     mAssemblingSuffix = newAssemblingSuffix;
 }
 
-const QString &Settings::CompilerSet::compilationProperSuffix() const
+const QString& Settings::CompilerSet::compilationProperSuffix() const
 {
     return mCompilationProperSuffix;
 }
 
-void Settings::CompilerSet::setCompilationProperSuffix(const QString &newCompilationProperSuffix)
+void Settings::CompilerSet::setCompilationProperSuffix(const QString& newCompilationProperSuffix)
 {
     mCompilationProperSuffix = newCompilationProperSuffix;
 }
 
-const QString &Settings::CompilerSet::preprocessingSuffix() const
+const QString& Settings::CompilerSet::preprocessingSuffix() const
 {
     return mPreprocessingSuffix;
 }
 
-void Settings::CompilerSet::setPreprocessingSuffix(const QString &newPreprocessingSuffix)
+void Settings::CompilerSet::setPreprocessingSuffix(const QString& newPreprocessingSuffix)
 {
     mPreprocessingSuffix = newPreprocessingSuffix;
 }
 
-const QString &Settings::CompilerSet::executableSuffix() const
+const QString& Settings::CompilerSet::executableSuffix() const
 {
     return mExecutableSuffix;
 }
 
-void Settings::CompilerSet::setExecutableSuffix(const QString &newExecutableSuffix)
+void Settings::CompilerSet::setExecutableSuffix(const QString& newExecutableSuffix)
 {
     mExecutableSuffix = newExecutableSuffix;
 }
 
-const QMap<QString, QString> &Settings::CompilerSet::compileOptions() const
+const QMap<QString, QString>& Settings::CompilerSet::compileOptions() const
 {
     return mCompileOptions;
 }
 
-const QString &Settings::CompilerSet::execCharset() const
+const QString& Settings::CompilerSet::execCharset() const
 {
     return mExecCharset;
 }
 
-void Settings::CompilerSet::setExecCharset(const QString &newExecCharset)
+void Settings::CompilerSet::setExecCharset(const QString& newExecCharset)
 {
     mExecCharset = newExecCharset;
 }
 
-const QString &Settings::CompilerSet::debugServer() const
+const QString& Settings::CompilerSet::debugServer() const
 {
     return mDebugServer;
 }
 
-void Settings::CompilerSet::setDebugServer(const QString &newDebugServer)
+void Settings::CompilerSet::setDebugServer(const QString& newDebugServer)
 {
     mDebugServer = newDebugServer;
 }
@@ -3129,59 +3072,60 @@ bool Settings::CompilerSet::useCustomCompileParams() const
     return mUseCustomCompileParams;
 }
 
-Settings::CompilerSets::CompilerSets(Settings *settings):
-    mDefaultIndex(-1),
-    mSettings(settings)
+Settings::CompilerSets::CompilerSets(Settings* settings) : mDefaultIndex(-1), mSettings(settings)
 {
     prepareCompatibleIndex();
 }
 
 Settings::PCompilerSet Settings::CompilerSets::addSet()
 {
-    PCompilerSet p=std::make_shared<CompilerSet>();
+    PCompilerSet p = std::make_shared<CompilerSet>();
     mList.push_back(p);
     return p;
 }
 
-Settings::PCompilerSet Settings::CompilerSets::addSet(const QString &folder, const QString& c_prog)
+Settings::PCompilerSet Settings::CompilerSets::addSet(const QString& folder, const QString& c_prog)
 {
-    PCompilerSet p=std::make_shared<CompilerSet>(folder,c_prog);
-    if (c_prog==GCC_PROGRAM && p->compilerType()==CompilerType::Clang)
+    PCompilerSet p = std::make_shared<CompilerSet>(folder, c_prog);
+    if (c_prog == GCC_PROGRAM && p->compilerType() == CompilerType::Clang)
         return PCompilerSet();
     mList.push_back(p);
     return p;
 }
 
-Settings::PCompilerSet Settings::CompilerSets::addSet(const PCompilerSet &pSet)
+Settings::PCompilerSet Settings::CompilerSets::addSet(const PCompilerSet& pSet)
 {
-    PCompilerSet p=std::make_shared<CompilerSet>(*pSet);
+    PCompilerSet p = std::make_shared<CompilerSet>(*pSet);
     mList.push_back(p);
     return p;
 }
 
-Settings::PCompilerSet Settings::CompilerSets::addSet(const QJsonObject &set)
+Settings::PCompilerSet Settings::CompilerSets::addSet(const QJsonObject& set)
 {
     PCompilerSet p = std::make_shared<CompilerSet>(set);
     mList.push_back(p);
     return p;
 }
 
-static void setX86MultilibOptions(Settings::PCompilerSet pSet, const QString &value) {
+static void setX86MultilibOptions(Settings::PCompilerSet pSet, const QString& value)
+{
     pSet->setCompileOption(CC_CMD_OPT_POINTER_SIZE, value);
 }
 
-static void setReleaseOptions(Settings::PCompilerSet pSet) {
-    pSet->setCompileOption(CC_CMD_OPT_OPTIMIZE,"2");
+static void setReleaseOptions(Settings::PCompilerSet pSet)
+{
+    pSet->setCompileOption(CC_CMD_OPT_OPTIMIZE, "2");
     pSet->setCompileOption(LINK_CMD_OPT_STRIP_EXE, COMPILER_OPTION_ON);
     pSet->setCompileOption(CC_CMD_OPT_USE_PIPE, COMPILER_OPTION_ON);
     pSet->setStaticLink(true);
 }
 
-static void setDebugOptions(Settings::PCompilerSet pSet, bool enableAsan = false) {
-    //pSet->setCompileOption(CC_CMD_OPT_OPTIMIZE,"g");
+static void setDebugOptions(Settings::PCompilerSet pSet, bool enableAsan = false)
+{
+    // pSet->setCompileOption(CC_CMD_OPT_OPTIMIZE,"g");
     pSet->setCompileOption(CC_CMD_OPT_DEBUG_INFO, COMPILER_OPTION_ON);
     pSet->setCompileOption(CC_CMD_OPT_WARNING_ALL, COMPILER_OPTION_ON);
-    //pSet->setCompileOption(CC_CMD_OPT_WARNING_EXTRA, COMPILER_OPTION_ON);
+    // pSet->setCompileOption(CC_CMD_OPT_WARNING_EXTRA, COMPILER_OPTION_ON);
     pSet->setCompileOption(CC_CMD_OPT_USE_PIPE, COMPILER_OPTION_ON);
 
     if (enableAsan) {
@@ -3191,24 +3135,24 @@ static void setDebugOptions(Settings::PCompilerSet pSet, bool enableAsan = false
         pSet->setCompileOption(CC_CMD_OPT_ADDRESS_SANITIZER, "address");
 #endif
     }
-    //Some windows gcc don't correctly support this
-    //pSet->setCompileOption(CC_CMD_OPT_STACK_PROTECTOR, "-strong");
+    // Some windows gcc don't correctly support this
+    // pSet->setCompileOption(CC_CMD_OPT_STACK_PROTECTOR, "-strong");
     pSet->setStaticLink(false);
-
 }
 
-bool Settings::CompilerSets::addSets(const QString &folder, const QString& c_prog) {
-    for (const PCompilerSet& set:mList) {
-        if (set->binDirs().contains(folder) && extractFileName(set->CCompiler())==c_prog)
+bool Settings::CompilerSets::addSets(const QString& folder, const QString& c_prog)
+{
+    for (const PCompilerSet& set : mList) {
+        if (set->binDirs().contains(folder) && extractFileName(set->CCompiler()) == c_prog)
             return false;
     }
     // Default, release profile
-    PCompilerSet baseSet = addSet(folder,c_prog);
+    PCompilerSet baseSet = addSet(folder, c_prog);
     if (!baseSet || baseSet->name().isEmpty())
         return false;
 #if ENABLE_SDCC
     if (c_prog == SDCC_PROGRAM) {
-        baseSet->setCompileOption(SDCC_OPT_NOSTARTUP,COMPILER_OPTION_ON);
+        baseSet->setCompileOption(SDCC_OPT_NOSTARTUP, COMPILER_OPTION_ON);
     } else {
 #else
     {
@@ -3224,8 +3168,8 @@ bool Settings::CompilerSets::addSets(const QString &folder, const QString& c_pro
         // handling x86 multilib
         if (baseSet->target() == "x86_64") {
             auto multilibs = baseSet->x86MultilibList(folder, c_prog);
-            for (const QString &value : multilibs) {
-                PCompilerSet set= addSet(baseSet);
+            for (const QString& value : multilibs) {
+                PCompilerSet set = addSet(baseSet);
                 set->setName(baseName + " multilib " + value + " Release");
                 setX86MultilibOptions(set, value);
                 setReleaseOptions(set);
@@ -3236,7 +3180,6 @@ bool Settings::CompilerSets::addSets(const QString &folder, const QString& c_pro
                 setDebugOptions(set);
             }
         }
-
 
         PCompilerSet debugSet = addSet(baseSet);
         debugSet->setName(baseName + " " + platformName + " Debug");
@@ -3254,37 +3197,38 @@ bool Settings::CompilerSets::addSets(const QString &folder, const QString& c_pro
     }
 
 #ifdef Q_OS_LINUX
-# if defined(__x86_64__) || defined(__aarch64__) || __SIZEOF_POINTER__ == 4
-    mDefaultIndex = (int)mList.size() - 1; // x86-64, AArch64 Linux or 32-bit Unix, default to "debug with ASan"
-# else
-    mDefaultIndex = (int)mList.size() - 2; // other Unix, where ASan can be very slow, default to "debug"
-# endif
+#if defined(__x86_64__) || defined(__aarch64__) || __SIZEOF_POINTER__ == 4
+    mDefaultIndex =
+        (int)mList.size() - 1; // x86-64, AArch64 Linux or 32-bit Unix, default to "debug with ASan"
+#else
+    mDefaultIndex =
+        (int)mList.size() - 2; // other Unix, where ASan can be very slow, default to "debug"
+#endif
 #else
     mDefaultIndex = (int)mList.size() - 1;
 #endif
 
     return true;
-
 }
 
-bool Settings::CompilerSets::addSets(const QString &folder)
+bool Settings::CompilerSets::addSets(const QString& folder)
 {
     bool found = false;
     if (!directoryExists(folder))
         return found;
     if (fileExists(folder, GCC_PROGRAM)) {
-        addSets(folder,GCC_PROGRAM);
-        found=true;
+        addSets(folder, GCC_PROGRAM);
+        found = true;
     }
     if (fileExists(folder, CLANG_PROGRAM)) {
-        addSets(folder,CLANG_PROGRAM);
-        found=true;
+        addSets(folder, CLANG_PROGRAM);
+        found = true;
     }
 #ifdef ENABLE_SDCC
-    //qDebug()<<folder;
+    // qDebug()<<folder;
     if (fileExists(folder, SDCC_PROGRAM)) {
-        addSets(folder,SDCC_PROGRAM);
-        found=true;
+        addSets(folder, SDCC_PROGRAM);
+        found = true;
     }
 #endif
     return found;
@@ -3293,7 +3237,7 @@ bool Settings::CompilerSets::addSets(const QString &folder)
 Settings::CompilerSetList Settings::CompilerSets::clearSets()
 {
     CompilerSetList persisted;
-    for (size_t i=0;i<mList.size();i++) {
+    for (size_t i = 0; i < mList.size(); i++) {
         mSettings->mSettings.beginGroup(QString(SETTING_COMPILTER_SET).arg(i));
         mSettings->mSettings.remove("");
         mSettings->mSettings.endGroup();
@@ -3314,26 +3258,23 @@ void Settings::CompilerSets::findSets()
 
 #ifdef ENABLE_LUA_ADDON
     QJsonObject compilerHint;
-    if (
-        QFile scriptFile(pSettings->dirs().appLibexecDir() + "/compiler_hint.lua");
-        scriptFile.exists() && scriptFile.open(QFile::ReadOnly)
-    ) {
+    if (QFile scriptFile(pSettings->dirs().appLibexecDir() + "/compiler_hint.lua");
+        scriptFile.exists() && scriptFile.open(QFile::ReadOnly)) {
         QByteArray script = scriptFile.readAll();
         try {
             compilerHint = AddOn::Lua::CompilerHintExecutor{}(script);
-        } catch (const AddOn::LuaError &e) {
-            QMessageBox::critical(nullptr,
-                                  QObject::tr("Error executing platform compiler hint add-on"),
-                                  e.reason());
+        } catch (const AddOn::LuaError& e) {
+            QMessageBox::critical(
+                nullptr, QObject::tr("Error executing platform compiler hint add-on"), e.reason());
         }
         if (!compilerHint.empty()) {
             QJsonArray compilerList = compilerHint["compilerList"].toArray();
-            for (const QJsonValue &value : compilerList) {
+            for (const QJsonValue& value : compilerList) {
                 addSet(value.toObject());
             }
             QJsonArray noSearch = compilerHint["noSearch"].toArray();
             QString canonicalPath;
-            for (const QJsonValue &value : noSearch) {
+            for (const QJsonValue& value : noSearch) {
                 canonicalPath = QDir(value.toString()).canonicalPath();
                 if (!canonicalPath.isEmpty())
                     searched.insert(canonicalPath);
@@ -3346,19 +3287,21 @@ void Settings::CompilerSets::findSets()
     QString path = env.value("PATH");
     QStringList pathList = path.split(PATH_SEPARATOR);
 #ifdef Q_OS_WIN
-    pathList = QStringList{
-        mSettings->dirs().appDir() + "/clang64/bin",
-        mSettings->dirs().appDir() + "/mingw64/bin",
-        mSettings->dirs().appDir() + "/mingw32/bin",
+    pathList =
+        QStringList{
+            mSettings->dirs().appDir() + "/clang64/bin",
+            mSettings->dirs().appDir() + "/mingw64/bin",
+            mSettings->dirs().appDir() + "/mingw32/bin",
 
-        // cross toolchain targeting Linux
-        // directory names follow dynamic linker (ld-linux-x86-64.so -> gcc-linux-x86-64)
-        mSettings->dirs().appDir() + "/gcc-linux-x86-64/bin",
-        mSettings->dirs().appDir() + "/gcc-linux-aarch64/bin",
-    } + pathList;
+            // cross toolchain targeting Linux
+            // directory names follow dynamic linker (ld-linux-x86-64.so -> gcc-linux-x86-64)
+            mSettings->dirs().appDir() + "/gcc-linux-x86-64/bin",
+            mSettings->dirs().appDir() + "/gcc-linux-aarch64/bin",
+        } +
+        pathList;
 #endif
     QString folder, canonicalFolder;
-    for (int i=pathList.count()-1;i>=0;i--) {
+    for (int i = pathList.count() - 1; i >= 0; i--) {
         folder = QDir(pathList[i]).absolutePath();
         canonicalFolder = QDir(pathList[i]).canonicalPath();
         if (canonicalFolder.isEmpty())
@@ -3378,28 +3321,28 @@ void Settings::CompilerSets::findSets()
     if (
         // note that array index starts from 1 in Lua
         int preferCompilerInLua = compilerHint["preferCompiler"].toInt();
-        preferCompilerInLua >= 1 && preferCompilerInLua <= (int)mList.size()
-    ) {
+        preferCompilerInLua >= 1 && preferCompilerInLua <= (int)mList.size()) {
         mDefaultIndex = preferCompilerInLua - 1;
     }
 #endif
 
-    for (PCompilerSet &set: persisted)
+    for (PCompilerSet& set : persisted)
         addSet(set);
 }
 
 void Settings::CompilerSets::saveSets()
 {
-    for (size_t i=0;i<mList.size();i++) {
+    for (size_t i = 0; i < mList.size(); i++) {
         saveSet(i);
     }
-    if (mDefaultIndex>=(int)mList.size()) {
-        setDefaultIndex( mList.size()-1 );
+    if (mDefaultIndex >= (int)mList.size()) {
+        setDefaultIndex(mList.size() - 1);
     }
     mSettings->mSettings.beginGroup(SETTING_COMPILTER_SETS);
-    mSettings->mSettings.setValue(SETTING_COMPILTER_SETS_DEFAULT_INDEX,mDefaultIndex);
-    mSettings->mSettings.setValue(SETTING_COMPILTER_SETS_DEFAULT_INDEX_TIMESTAMP,mDefaultIndexTimeStamp);
-    mSettings->mSettings.setValue(SETTING_COMPILTER_SETS_COUNT,(int)mList.size());
+    mSettings->mSettings.setValue(SETTING_COMPILTER_SETS_DEFAULT_INDEX, mDefaultIndex);
+    mSettings->mSettings.setValue(SETTING_COMPILTER_SETS_DEFAULT_INDEX_TIMESTAMP,
+                                  mDefaultIndexTimeStamp);
+    mSettings->mSettings.setValue(SETTING_COMPILTER_SETS_COUNT, (int)mList.size());
 
     mSettings->mSettings.endGroup();
 }
@@ -3408,16 +3351,17 @@ void Settings::CompilerSets::loadSets()
 {
     mList.clear();
     mSettings->mSettings.beginGroup(SETTING_COMPILTER_SETS);
-    mDefaultIndex = mSettings->mSettings.value(SETTING_COMPILTER_SETS_DEFAULT_INDEX,-1).toInt();
-    mDefaultIndexTimeStamp = mSettings->mSettings.value(SETTING_COMPILTER_SETS_DEFAULT_INDEX_TIMESTAMP,0).toLongLong();
-    //fix error time
+    mDefaultIndex = mSettings->mSettings.value(SETTING_COMPILTER_SETS_DEFAULT_INDEX, -1).toInt();
+    mDefaultIndexTimeStamp =
+        mSettings->mSettings.value(SETTING_COMPILTER_SETS_DEFAULT_INDEX_TIMESTAMP, 0).toLongLong();
+    // fix error time
     if (mDefaultIndexTimeStamp > QDateTime::currentMSecsSinceEpoch())
         mDefaultIndexTimeStamp = QDateTime::currentMSecsSinceEpoch();
-    int listSize = mSettings->mSettings.value(SETTING_COMPILTER_SETS_COUNT,0).toInt();
+    int listSize = mSettings->mSettings.value(SETTING_COMPILTER_SETS_COUNT, 0).toInt();
     mSettings->mSettings.endGroup();
     bool loadError = false;
-    for (int i=0;i<listSize;i++) {
-        PCompilerSet pSet=loadSet(i);
+    for (int i = 0; i < listSize; i++) {
+        PCompilerSet pSet = loadSet(i);
         if (!pSet) {
             loadError = true;
             break;
@@ -3430,61 +3374,62 @@ void Settings::CompilerSets::loadSets()
     }
     PCompilerSet pCurrentSet = defaultSet();
     if (pCurrentSet) {
-//        if (!pCurrentSet->dirsValid(msg)) {
-//            if (QMessageBox::warning(nullptr,QObject::tr("Confirm"),
-//                       QObject::tr("The following problems were found during validation of compiler set \"%1\":")
-//                                     .arg(pCurrentSet->name())
-//                                     +"<br /><br />"
-//                                     +msg
-//                                     +"<br /><br />"
-//                                     +QObject::tr("Leaving those directories will lead to problems during compilation.")
-//                                     +"<br /><br />"
-//                                     +QObject::tr("Would you like RedPandaIDE to remove them for you and add the default paths to the valid paths?")
-//                                     ,
-//                                     QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes) {
-//                return;
-//            }
-//            findSets();
-//            if ( (int)mList.size() <= mDefaultIndex)
-//                mDefaultIndex =  mList.size()-1;
-//            pCurrentSet = defaultSet();
-//            if (!pCurrentSet) {
-//                mList.clear();
-//                mDefaultIndex = -1;
-//                saveSets();
-//                return;
-//            }
-//            saveSets();
-//            pCurrentSet->setProperties(pCurrentSet->CCompiler());
-//        } else {
-//            return;
-//        }
+        //        if (!pCurrentSet->dirsValid(msg)) {
+        //            if (QMessageBox::warning(nullptr,QObject::tr("Confirm"),
+        //                       QObject::tr("The following problems were found during validation of
+        //                       compiler set \"%1\":")
+        //                                     .arg(pCurrentSet->name())
+        //                                     +"<br /><br />"
+        //                                     +msg
+        //                                     +"<br /><br />"
+        //                                     +QObject::tr("Leaving those directories will lead to
+        //                                     problems during compilation.")
+        //                                     +"<br /><br />"
+        //                                     +QObject::tr("Would you like RedPandaIDE to remove
+        //                                     them for you and add the default paths to the valid
+        //                                     paths?")
+        //                                     ,
+        //                                     QMessageBox::Yes | QMessageBox::No) !=
+        //                                     QMessageBox::Yes) {
+        //                return;
+        //            }
+        //            findSets();
+        //            if ( (int)mList.size() <= mDefaultIndex)
+        //                mDefaultIndex =  mList.size()-1;
+        //            pCurrentSet = defaultSet();
+        //            if (!pCurrentSet) {
+        //                mList.clear();
+        //                mDefaultIndex = -1;
+        //                saveSets();
+        //                return;
+        //            }
+        //            saveSets();
+        //            pCurrentSet->setProperties(pCurrentSet->CCompiler());
+        //        } else {
+        //            return;
+        //        }
         return;
     } else {
 #ifdef Q_OS_WIN
-        QString msg = QObject::tr("Compiler set not configuared.")
-                +"<br /><br />"
-                +QObject::tr("Would you like RedPandaIDE to search for compilers in the following locations: <BR />'%1'<BR />'%2'? ")
-                .arg(getFilePath(pSettings->dirs().appDir(), "mingw32"))
-                .arg(getFilePath(pSettings->dirs().appDir(), + "mingw64"));
+        QString msg = QObject::tr("Compiler set not configuared.") + "<br /><br />" +
+                      QObject::tr("Would you like RedPandaIDE to search for compilers in the "
+                                  "following locations: <BR />'%1'<BR />'%2'? ")
+                          .arg(getFilePath(pSettings->dirs().appDir(), "mingw32"))
+                          .arg(getFilePath(pSettings->dirs().appDir(), +"mingw64"));
 #else
-        QString msg = QObject::tr("Compiler set not configuared.")
-                +"<br /><br />"
-                +QObject::tr("Would you like RedPandaIDE to search for compilers in PATH?");
+        QString msg = QObject::tr("Compiler set not configuared.") + "<br /><br />" +
+                      QObject::tr("Would you like RedPandaIDE to search for compilers in PATH?");
 #endif
-        if (QMessageBox::warning(nullptr,QObject::tr("Confirm"),
-                   msg,
+        if (QMessageBox::warning(nullptr, QObject::tr("Confirm"), msg,
                                  QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes) {
             return;
         }
         findSets();
-        if (size()==0) {
+        if (size() == 0) {
             QMessageBox::warning(
-                nullptr,
-                QObject::tr("No Compiler Set"),
-                QObject::tr("Can't find a C/C++ compiler.")
-                    +"<br/>"
-                    +QObject::tr("You must have a compiler to compile and execute C/C++ files."));
+                nullptr, QObject::tr("No Compiler Set"),
+                QObject::tr("Can't find a C/C++ compiler.") + "<br/>" +
+                    QObject::tr("You must have a compiler to compile and execute C/C++ files."));
         }
         pCurrentSet = defaultSet();
         if (!pCurrentSet) {
@@ -3494,28 +3439,27 @@ void Settings::CompilerSets::loadSets()
             return;
         }
         saveSets();
-
     }
-
 }
 
 void Settings::CompilerSets::saveDefaultIndex()
 {
     mSettings->mSettings.beginGroup(SETTING_COMPILTER_SETS);
-    mSettings->mSettings.setValue(SETTING_COMPILTER_SETS_DEFAULT_INDEX,mDefaultIndex);
-    mSettings->mSettings.setValue(SETTING_COMPILTER_SETS_DEFAULT_INDEX_TIMESTAMP,mDefaultIndexTimeStamp);
+    mSettings->mSettings.setValue(SETTING_COMPILTER_SETS_DEFAULT_INDEX, mDefaultIndex);
+    mSettings->mSettings.setValue(SETTING_COMPILTER_SETS_DEFAULT_INDEX_TIMESTAMP,
+                                  mDefaultIndexTimeStamp);
     mSettings->mSettings.endGroup();
 }
 
 void Settings::CompilerSets::deleteSet(int index)
 {
     // Erase all sections at and above from disk
-    for (size_t i=index;i<mList.size();i++) {
+    for (size_t i = index; i < mList.size(); i++) {
         mSettings->mSettings.beginGroup(QString(SETTING_COMPILTER_SET).arg(i));
         mSettings->mSettings.remove("");
         mSettings->mSettings.endGroup();
     }
-    mList.erase(std::begin(mList)+index);
+    mList.erase(std::begin(mList) + index);
     saveSets();
 }
 
@@ -3547,13 +3491,14 @@ Settings::PCompilerSet Settings::CompilerSets::defaultSet()
 
 Settings::PCompilerSet Settings::CompilerSets::getSet(int index)
 {
-    if (index>=0 && index<(int)mList.size()) {
+    if (index >= 0 && index < (int)mList.size()) {
         return mList[index];
     }
     return PCompilerSet();
 }
 
-void Settings::CompilerSets::savePath(const QString& name, const QString& path) {
+void Settings::CompilerSets::savePath(const QString& name, const QString& path)
+{
     if (!isGreenEdition()) {
         mSettings->mSettings.setValue(name, path);
         return;
@@ -3563,36 +3508,38 @@ void Settings::CompilerSets::savePath(const QString& name, const QString& path) 
     QString prefix1 = excludeTrailingPathDelimiter(mSettings->mDirs.appDir()) + "/";
     QString prefix2 = excludeTrailingPathDelimiter(mSettings->mDirs.appDir()) + QDir::separator();
     if (path.startsWith(prefix1, PATH_SENSITIVITY)) {
-        s = "%AppPath%/"+ path.mid(prefix1.length());
+        s = "%AppPath%/" + path.mid(prefix1.length());
     } else if (path.startsWith(prefix2, PATH_SENSITIVITY)) {
-        s = "%AppPath%/"+ path.mid(prefix2.length());
+        s = "%AppPath%/" + path.mid(prefix2.length());
     } else {
-        s= path;
+        s = path;
     }
-    mSettings->mSettings.setValue(name,s);
+    mSettings->mSettings.setValue(name, s);
 }
 
-void Settings::CompilerSets::savePathList(const QString& name, const QStringList& pathList) {
+void Settings::CompilerSets::savePathList(const QString& name, const QStringList& pathList)
+{
     if (!isGreenEdition()) {
         mSettings->mSettings.setValue(name, pathList);
         return;
     }
 
     QStringList sl;
-    for (const QString& path: pathList) {
+    for (const QString& path : pathList) {
         QString s;
         QString prefix1 = excludeTrailingPathDelimiter(mSettings->mDirs.appDir()) + "/";
-        QString prefix2 = excludeTrailingPathDelimiter(mSettings->mDirs.appDir()) + QDir::separator();
+        QString prefix2 =
+            excludeTrailingPathDelimiter(mSettings->mDirs.appDir()) + QDir::separator();
         if (path.startsWith(prefix1, PATH_SENSITIVITY)) {
-            s = "%AppPath%/"+ path.mid(prefix1.length());
+            s = "%AppPath%/" + path.mid(prefix1.length());
         } else if (path.startsWith(prefix2, PATH_SENSITIVITY)) {
             s = "%AppPath%/" + path.mid(prefix2.length());
         } else {
-            s= path;
+            s = path;
         }
         sl.append(s);
     }
-    mSettings->mSettings.setValue(name,sl);
+    mSettings->mSettings.setValue(name, sl);
 }
 
 void Settings::CompilerSets::saveSet(int index)
@@ -3608,7 +3555,8 @@ void Settings::CompilerSets::saveSet(int index)
     savePath("windres", pSet->resourceCompiler());
 
     mSettings->mSettings.remove("Options");
-    foreach(const PCompilerOption& option, CompilerInfoManager::getInstance()->getCompilerOptions(pSet->compilerType())) {
+    foreach (const PCompilerOption& option,
+             CompilerInfoManager::getInstance()->getCompilerOptions(pSet->compilerType())) {
         mSettings->mSettings.remove(option->key);
     }
     // Save option string
@@ -3640,17 +3588,17 @@ void Settings::CompilerSets::saveSet(int index)
     mSettings->mSettings.setValue("CompilerType", (int)pSet->compilerType());
 
     // Paths
-    savePathList("Bins",pSet->binDirs());
-    savePathList("C",pSet->CIncludeDirs());
-    savePathList("Cpp",pSet->CppIncludeDirs());
-    savePathList("Libs",pSet->libDirs());
+    savePathList("Bins", pSet->binDirs());
+    savePathList("C", pSet->CIncludeDirs());
+    savePathList("Cpp", pSet->CppIncludeDirs());
+    savePathList("Libs", pSet->libDirs());
 
     mSettings->mSettings.endGroup();
 }
 
-QString Settings::CompilerSets::loadPath(const QString &name)
+QString Settings::CompilerSets::loadPath(const QString& name)
 {
-    QString s =  mSettings->mSettings.value(name).toString();
+    QString s = mSettings->mSettings.value(name).toString();
     // replace libexec dir for forward compatibility
     QString prefix = "%*APP_LIBEXEC_DIR*%/";
     if (s.startsWith(prefix)) {
@@ -3663,14 +3611,14 @@ QString Settings::CompilerSets::loadPath(const QString &name)
     return QFileInfo(s).absoluteFilePath();
 }
 
-void Settings::CompilerSets::loadPathList(const QString &name, QStringList& list)
+void Settings::CompilerSets::loadPathList(const QString& name, QStringList& list)
 {
     list.clear();
     QStringList sl = mSettings->mSettings.value(name).toStringList();
     // replace libexec dir for forward compatibility
     QString prefix1 = "%*APP_LIBEXEC_DIR*%/";
     QString prefix2 = "%AppPath%/";
-    for (QString& s:sl) {
+    for (QString& s : sl) {
         if (s.startsWith(prefix1)) {
             s = getFilePath(mSettings->mDirs.appLibexecDir(), s.mid(prefix1.length()));
         } else if (s.startsWith(prefix2)) {
@@ -3696,16 +3644,16 @@ Settings::PCompilerSet Settings::CompilerSets::loadSet(int index)
     pSet->setVersion(mSettings->mSettings.value("Version").toString());
     pSet->setName(mSettings->mSettings.value("Name").toString());
     pSet->setTarget(mSettings->mSettings.value("Target").toString());
-    //compatibility
+    // compatibility
     QString temp = mSettings->mSettings.value("CompilerType").toString();
-    if (temp==COMPILER_CLANG) {
+    if (temp == COMPILER_CLANG) {
         pSet->setCompilerType(CompilerType::Clang);
-    } else if (temp==COMPILER_GCC) {
+    } else if (temp == COMPILER_GCC) {
         pSet->setCompilerType(CompilerType::GCC);
-    } else if (temp==COMPILER_GCC_UTF8) {
+    } else if (temp == COMPILER_GCC_UTF8) {
         pSet->setCompilerType(CompilerType::GCC_UTF8);
 #ifdef ENABLE_SDCC
-    } else if (temp==COMPILER_SDCC) {
+    } else if (temp == COMPILER_SDCC) {
         pSet->setCompilerType(CompilerType::SDCC);
 #endif
     } else {
@@ -3713,55 +3661,62 @@ Settings::PCompilerSet Settings::CompilerSets::loadSet(int index)
     }
 
     // Load extra 'general' options
-    pSet->setUseCustomCompileParams(mSettings->mSettings.value("useCustomCompileParams", false).toBool());
+    pSet->setUseCustomCompileParams(
+        mSettings->mSettings.value("useCustomCompileParams", false).toBool());
     pSet->setCustomCompileParams(mSettings->mSettings.value("customCompileParams").toString());
     pSet->setUseCustomLinkParams(mSettings->mSettings.value("useCustomLinkParams", false).toBool());
     pSet->setCustomLinkParams(mSettings->mSettings.value("customLinkParams").toString());
     pSet->setAutoAddCharsetParams(mSettings->mSettings.value("AddCharset", true).toBool());
     pSet->setStaticLink(mSettings->mSettings.value("StaticLink", false).toBool());
     pSet->setPersistInAutoFind(mSettings->mSettings.value("PersistInAutoFind", false).toBool());
-    bool forceEnglishOutput=QLocale::system().name().startsWith("zh")?false:true;
-    pSet->setForceEnglishOutput(mSettings->mSettings.value("forceEnglishOutput", forceEnglishOutput).toBool());
+    bool forceEnglishOutput = QLocale::system().name().startsWith("zh") ? false : true;
+    pSet->setForceEnglishOutput(
+        mSettings->mSettings.value("forceEnglishOutput", forceEnglishOutput).toBool());
 
-    pSet->setExecCharset(mSettings->mSettings.value("ExecCharset", ENCODING_SYSTEM_DEFAULT).toString());
+    pSet->setExecCharset(
+        mSettings->mSettings.value("ExecCharset", ENCODING_SYSTEM_DEFAULT).toString());
     if (pSet->execCharset().isEmpty()) {
         pSet->setExecCharset(ENCODING_SYSTEM_DEFAULT);
     }
-    pSet->setPreprocessingSuffix(mSettings->mSettings.value("preprocessingSuffix", DEFAULT_PREPROCESSING_SUFFIX).toString());
-    pSet->setCompilationProperSuffix(mSettings->mSettings.value("compilationProperSuffix",DEFAULT_COMPILATION_SUFFIX).toString());
-    pSet->setAssemblingSuffix(mSettings->mSettings.value("assemblingSuffix", DEFAULT_ASSEMBLING_SUFFIX).toString());
-    pSet->setExecutableSuffix(mSettings->mSettings.value("executableSuffix", DEFAULT_EXECUTABLE_SUFFIX).toString());
+    pSet->setPreprocessingSuffix(
+        mSettings->mSettings.value("preprocessingSuffix", DEFAULT_PREPROCESSING_SUFFIX).toString());
+    pSet->setCompilationProperSuffix(
+        mSettings->mSettings.value("compilationProperSuffix", DEFAULT_COMPILATION_SUFFIX)
+            .toString());
+    pSet->setAssemblingSuffix(
+        mSettings->mSettings.value("assemblingSuffix", DEFAULT_ASSEMBLING_SUFFIX).toString());
+    pSet->setExecutableSuffix(
+        mSettings->mSettings.value("executableSuffix", DEFAULT_EXECUTABLE_SUFFIX).toString());
 
     // Load options
-    QByteArray iniOptions = mSettings->mSettings.value("Options","").toByteArray();
+    QByteArray iniOptions = mSettings->mSettings.value("Options", "").toByteArray();
     if (!iniOptions.isEmpty())
         pSet->setIniOptions(iniOptions);
     else {
-        foreach (const QString &optionKey, mSettings->mSettings.allKeys()) {
-            if (CompilerInfoManager::hasCompilerOption(pSet->compilerType(),optionKey)) {
+        foreach (const QString& optionKey, mSettings->mSettings.allKeys()) {
+            if (CompilerInfoManager::hasCompilerOption(pSet->compilerType(), optionKey)) {
                 pSet->setCompileOption(optionKey, mSettings->mSettings.value(optionKey).toString());
             }
         }
     }
 
     // Paths
-    loadPathList("Bins",pSet->binDirs());
-    loadPathList("C",pSet->CIncludeDirs());
-    loadPathList("Cpp",pSet->CppIncludeDirs());
-    loadPathList("Libs",pSet->libDirs());
+    loadPathList("Bins", pSet->binDirs());
+    loadPathList("C", pSet->CIncludeDirs());
+    loadPathList("Cpp", pSet->CppIncludeDirs());
+    loadPathList("Libs", pSet->libDirs());
 
     mSettings->mSettings.endGroup();
 
-//    if (pSet->binDirs().isEmpty())
-//        return PCompilerSet();
+    //    if (pSet->binDirs().isEmpty())
+    //        return PCompilerSet();
 
     return pSet;
 }
 
 void Settings::CompilerSets::prepareCompatibleIndex()
 {
-
-    //old settings compatibility, don't reorder, add or remove items
+    // old settings compatibility, don't reorder, add or remove items
     mCompilerCompatibleIndex.append(CC_CMD_OPT_ANSI);
     mCompilerCompatibleIndex.append(CC_CMD_OPT_NO_ASM);
     mCompilerCompatibleIndex.append(CC_CMD_OPT_TRADITIONAL_CPP);
@@ -3797,12 +3752,12 @@ void Settings::CompilerSets::prepareCompatibleIndex()
 
 QString Settings::CompilerSets::getKeyFromCompilerCompatibleIndex(int idx) const
 {
-    if (idx<0 || idx >= mCompilerCompatibleIndex.length())
+    if (idx < 0 || idx >= mCompilerCompatibleIndex.length())
         return QString();
     return mCompilerCompatibleIndex[idx];
 }
 
-bool Settings::CompilerSets::isTarget64Bit(const QString &target)
+bool Settings::CompilerSets::isTarget64Bit(const QString& target)
 {
     /* Fetched from LLVM 15.0.6's arch parser,
      *   `Triple::ArchType parseArch(StringRef ArchName)`
@@ -3810,29 +3765,48 @@ bool Settings::CompilerSets::isTarget64Bit(const QString &target)
      * The following non-CPU targets are not included:
      *   nvptx64, le64, amdil64, hsail64, spir64, spirv64, renderscript64.
      */
-    QSet<QString> targets {
+    QSet<QString> targets{
         // x86_64
-        "amd64", "x86_64", "x86_64h",
+        "amd64",
+        "x86_64",
+        "x86_64h",
         // ppc64
-        "powerpc64", "ppu", "ppc64",
+        "powerpc64",
+        "ppu",
+        "ppc64",
         // ppc64le
-        "powerpc64le", "ppc64le",
+        "powerpc64le",
+        "ppc64le",
         // aarch64
-        "aarch64", "arm64", "arm64e",
+        "aarch64",
+        "arm64",
+        "arm64e",
         // aarch64_be
         "aarch64_be",
         // aarch64_32
-        "aarch64_32", "arm64_32",
+        "aarch64_32",
+        "arm64_32",
         // mips64
-        "mips64", "mips64eb", "mipsn32", "mipsisa64r6", "mips64r6", "mipsn32r6",
+        "mips64",
+        "mips64eb",
+        "mipsn32",
+        "mipsisa64r6",
+        "mips64r6",
+        "mipsn32r6",
         // mips64el
-        "mips64el", "mipsn32el", "mipsisa64r6el", "mips64r6el", "mipsn32r6el",
+        "mips64el",
+        "mipsn32el",
+        "mipsisa64r6el",
+        "mips64r6el",
+        "mipsn32r6el",
         // riscv64
         "riscv64",
         // systemz
-        "s390x", "systemz",
+        "s390x",
+        "systemz",
         // sparcv9
-        "sparcv9", "sparc64",
+        "sparcv9",
+        "sparc64",
         // wasm64
         "wasm64",
         // loongarch64
@@ -3841,39 +3815,38 @@ bool Settings::CompilerSets::isTarget64Bit(const QString &target)
     return targets.contains(target);
 }
 
-Settings::Environment::Environment(Settings *settings):_Base(settings, SETTING_ENVIRONMENT)
+Settings::Environment::Environment(Settings* settings) : _Base(settings, SETTING_ENVIRONMENT)
 {
-
 }
 
 void Settings::Environment::doLoad()
 {
-    //Appearance
-    mTheme = stringValue("theme","dark");
+    // Appearance
+    mTheme = stringValue("theme", "dark");
     mInterfaceFont = stringValue("interface_font", defaultUiFont());
-    mInterfaceFontSize = intValue("interface_font_size",11);
-    mIconZoomFactor = doubleValue("icon_zoom_factor",1.0);
+    mInterfaceFontSize = intValue("interface_font_size", 11);
+    mIconZoomFactor = doubleValue("icon_zoom_factor", 1.0);
     mLanguage = stringValue("language", QLocale::system().name());
-    mIconSet = stringValue("icon_set","contrast");
-    mUseCustomIconSet = boolValue("use_custom_icon_set", false);    
+    mIconSet = stringValue("icon_set", "contrast");
+    mUseCustomIconSet = boolValue("use_custom_icon_set", false);
     mComboboxWheel = boolValue("enable_combobox_wheel", false);
 
-    mCurrentFolder = stringValue("current_folder",QDir::currentPath());
+    mCurrentFolder = stringValue("current_folder", QDir::currentPath());
     if (!fileExists(mCurrentFolder)) {
         mCurrentFolder = QDir::currentPath();
     }
-    mDefaultOpenFolder = stringValue("default_open_folder",QDir::currentPath());
+    mDefaultOpenFolder = stringValue("default_open_folder", QDir::currentPath());
     if (!fileExists(mDefaultOpenFolder)) {
         mDefaultOpenFolder = QDir::currentPath();
     }
 
 #ifdef Q_OS_WINDOWS
-# ifdef WINDOWS_PREFER_OPENCONSOLE
+#ifdef WINDOWS_PREFER_OPENCONSOLE
     // prefer UTF-8 compatible OpenConsole.exe
     mUseCustomTerminal = boolValue("use_custom_terminal", true);
-# else
+#else
     mUseCustomTerminal = boolValue("use_custom_terminal", false);
-# endif
+#endif
 #else // UNIX
     mUseCustomTerminal = true;
 #endif
@@ -3881,24 +3854,26 @@ void Settings::Environment::doLoad()
     // check saved terminal path
     mTerminalPath = stringValue("terminal_path", "");
     // replace libexec dir for forward compatibility
-    mTerminalPath = replacePrefix(mTerminalPath, "%*APP_LIBEXEC_DIR*%", pSettings->dirs().appLibexecDir());
+    mTerminalPath =
+        replacePrefix(mTerminalPath, "%*APP_LIBEXEC_DIR*%", pSettings->dirs().appLibexecDir());
     mTerminalPath = replacePrefix(mTerminalPath, "%*APP_DIR*%", pSettings->dirs().appDir());
     mTerminalArgumentsPattern = stringValue("terminal_arguments_pattern", "");
 
     checkAndSetTerminal();
 
-    mAStylePath = stringValue("astyle_path","");
+    mAStylePath = stringValue("astyle_path", "");
     if (mAStylePath.isEmpty()
-            /* compatibily for old configuration */
-        || ( mAStylePath == getFilePath(pSettings->dirs().appLibexecDir(), "astyle"))
-            ) {
+        /* compatibily for old configuration */
+        || (mAStylePath == getFilePath(pSettings->dirs().appLibexecDir(), "astyle"))) {
         QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
         QString path = env.value("PATH");
         QStringList pathList = path.split(PATH_SEPARATOR);
-        pathList = QStringList{
-            mSettings->dirs().appDir(),
-            mSettings->dirs().appLibexecDir(),
-        } + pathList;
+        pathList =
+            QStringList{
+                mSettings->dirs().appDir(),
+                mSettings->dirs().appLibexecDir(),
+            } +
+            pathList;
 
         foreach (const QString& folder, pathList) {
             QDir dir{folder};
@@ -3908,11 +3883,11 @@ void Settings::Environment::doLoad()
                 break;
             }
         }
-        mAStylePath = replacePrefix(mAStylePath, pSettings->dirs().appDir() , "%*APP_DIR*%");
+        mAStylePath = replacePrefix(mAStylePath, pSettings->dirs().appDir(), "%*APP_DIR*%");
     }
 
-    mHideNonSupportFilesInFileView=boolValue("hide_non_support_files_file_view",true);
-    mOpenFilesInSingleInstance = boolValue("open_files_in_single_instance",false);
+    mHideNonSupportFilesInFileView = boolValue("hide_non_support_files_file_view", true);
+    mOpenFilesInSingleInstance = boolValue("open_files_in_single_instance", false);
 }
 
 int Settings::Environment::interfaceFontSize() const
@@ -3930,37 +3905,37 @@ QString Settings::Environment::language() const
     return mLanguage;
 }
 
-void Settings::Environment::setLanguage(const QString &language)
+void Settings::Environment::setLanguage(const QString& language)
 {
     mLanguage = language;
 }
 
-const QString &Settings::Environment::currentFolder() const
+const QString& Settings::Environment::currentFolder() const
 {
     return mCurrentFolder;
 }
 
-void Settings::Environment::setCurrentFolder(const QString &newCurrentFolder)
+void Settings::Environment::setCurrentFolder(const QString& newCurrentFolder)
 {
     mCurrentFolder = newCurrentFolder;
 }
 
-const QString &Settings::Environment::defaultOpenFolder() const
+const QString& Settings::Environment::defaultOpenFolder() const
 {
     return mDefaultOpenFolder;
 }
 
-void Settings::Environment::setDefaultOpenFolder(const QString &newDefaultOpenFolder)
+void Settings::Environment::setDefaultOpenFolder(const QString& newDefaultOpenFolder)
 {
     mDefaultOpenFolder = newDefaultOpenFolder;
 }
 
-const QString &Settings::Environment::iconSet() const
+const QString& Settings::Environment::iconSet() const
 {
     return mIconSet;
 }
 
-void Settings::Environment::setIconSet(const QString &newIconSet)
+void Settings::Environment::setIconSet(const QString& newIconSet)
 {
     mIconSet = newIconSet;
 }
@@ -3970,7 +3945,7 @@ QString Settings::Environment::terminalPath() const
     return mTerminalPath;
 }
 
-void Settings::Environment::setTerminalPath(const QString &terminalPath)
+void Settings::Environment::setTerminalPath(const QString& terminalPath)
 {
     mTerminalPath = terminalPath;
 }
@@ -3979,7 +3954,7 @@ QString Settings::Environment::AStylePath() const
 {
     QString path = mAStylePath;
     if (path.isEmpty())
-        path = getFilePath(pSettings->dirs().appLibexecDir(),ASTYLE_PROGRAM);
+        path = getFilePath(pSettings->dirs().appLibexecDir(), ASTYLE_PROGRAM);
     else {
         // replace libexec dir for forward compatibility
         path = replacePrefix(path, "%*APP_LIBEXEC_DIR*%", pSettings->dirs().appLibexecDir());
@@ -3988,10 +3963,10 @@ QString Settings::Environment::AStylePath() const
     return path;
 }
 
-void Settings::Environment::setAStylePath(const QString &aStylePath)
+void Settings::Environment::setAStylePath(const QString& aStylePath)
 {
     mAStylePath = aStylePath;
-    mAStylePath = replacePrefix(mAStylePath, pSettings->dirs().appDir() , "%*APP_DIR*%");
+    mAStylePath = replacePrefix(mAStylePath, pSettings->dirs().appDir(), "%*APP_DIR*%");
 }
 
 QString Settings::Environment::terminalArgumentsPattern() const
@@ -3999,7 +3974,7 @@ QString Settings::Environment::terminalArgumentsPattern() const
     return mTerminalArgumentsPattern;
 }
 
-void Settings::Environment::setTerminalArgumentsPattern(const QString &argsPattern)
+void Settings::Environment::setTerminalArgumentsPattern(const QString& argsPattern)
 {
     mTerminalArgumentsPattern = argsPattern;
 }
@@ -4044,12 +4019,14 @@ void Settings::Environment::setIconZoomFactor(double newIconZoomFactor)
     mIconZoomFactor = newIconZoomFactor;
 }
 
-QString Settings::Environment::queryPredefinedTerminalArgumentsPattern(const QString &executable) const
+QString
+Settings::Environment::queryPredefinedTerminalArgumentsPattern(const QString& executable) const
 {
     QString execName = extractFileName(executable);
     foreach (const TerminalItem& item, loadTerminalList()) {
         QString termName = extractFileName(item.terminal);
-        if (termName.compare(execName,PATH_SENSITIVITY)==0) return item.param;
+        if (termName.compare(execName, PATH_SENSITIVITY) == 0)
+            return item.param;
     }
     return QString();
 }
@@ -4066,27 +4043,28 @@ void Settings::Environment::setUseCustomTerminal(bool newUseCustomTerminal)
 
 void Settings::Environment::checkAndSetTerminal()
 {
-    if (isTerminalValid()) return;
+    if (isTerminalValid())
+        return;
 
     QStringList pathList = getExecutableSearchPaths();
     QList<TerminalItem> terminalList = loadTerminalList();
-    for (const TerminalItem& termItem:terminalList) {
-        QString term=termItem.terminal;
+    for (const TerminalItem& termItem : terminalList) {
+        QString term = termItem.terminal;
         term = replacePrefix(term, "%*APP_DIR*%", pSettings->dirs().appDir());
         QFileInfo info{term};
         QString absoluteTerminalPath;
         if (info.isAbsolute()) {
             absoluteTerminalPath = info.absoluteFilePath();
-            if(fileExists(absoluteTerminalPath)) {
+            if (fileExists(absoluteTerminalPath)) {
                 mTerminalPath = absoluteTerminalPath;
                 mTerminalArgumentsPattern = termItem.param;
                 return;
             }
         } else {
-            for (const QString &dirPath: pathList) {
+            for (const QString& dirPath : pathList) {
                 QDir dir{dirPath};
                 absoluteTerminalPath = dir.absoluteFilePath(termItem.terminal);
-                if(fileExists(absoluteTerminalPath)) {
+                if (fileExists(absoluteTerminalPath)) {
                     mTerminalPath = absoluteTerminalPath;
                     mTerminalArgumentsPattern = termItem.param;
                     return;
@@ -4094,11 +4072,9 @@ void Settings::Environment::checkAndSetTerminal()
             }
         }
     }
-    //Can't Find a term
-    QMessageBox::critical(
-                nullptr,
-                QCoreApplication::translate("Settings","Error"),
-                QCoreApplication::translate("Settings","Can't find terminal program!"));
+    // Can't Find a term
+    QMessageBox::critical(nullptr, QCoreApplication::translate("Settings", "Error"),
+                          QCoreApplication::translate("Settings", "Can't find terminal program!"));
 }
 
 QMap<QString, QString> Settings::Environment::terminalArgsPatternMagicVariables()
@@ -4113,7 +4089,7 @@ bool Settings::Environment::comboboxWheel() const
 
 void Settings::Environment::setComboboxWheel(bool newComboboxWheel)
 {
-    mComboboxWheel=newComboboxWheel;
+    mComboboxWheel = newComboboxWheel;
 }
 
 QList<Settings::Environment::TerminalItem> Settings::Environment::loadTerminalList() const
@@ -4125,16 +4101,15 @@ QList<Settings::Environment::TerminalItem> Settings::Environment::loadTerminalLi
 #endif
     QFile terminalListFile(terminalListFilename);
     if (!terminalListFile.open(QFile::ReadOnly))
-        throw FileError(QObject::tr("Can't open file '%1' for read.")
-                            .arg(terminalListFilename));
+        throw FileError(QObject::tr("Can't open file '%1' for read.").arg(terminalListFilename));
     QByteArray terminalListContent = terminalListFile.readAll();
     QJsonDocument terminalListDocument(QJsonDocument::fromJson(terminalListContent));
 
     QList<Settings::Environment::TerminalItem> result;
     // determing terminal (if not set yet) and build predefined arguments pattern map from our list
-    foreach (const auto &terminalGroup, terminalListDocument.array()) {
-        const QJsonArray &terminals = terminalGroup.toObject()["terminals"].toArray();
-        foreach (const auto &terminal_, terminals) {
+    foreach (const auto& terminalGroup, terminalListDocument.array()) {
+        const QJsonArray& terminals = terminalGroup.toObject()["terminals"].toArray();
+        foreach (const auto& terminal_, terminals) {
             const QJsonObject& terminal = terminal_.toObject();
             QString path = terminal["path"].toString();
             QString termExecutable = QFileInfo(path).fileName();
@@ -4152,15 +4127,17 @@ QList<Settings::Environment::TerminalItem> Settings::Environment::loadTerminalLi
 bool Settings::Environment::isTerminalValid()
 {
     // don't use custom terminal
-    if (!mUseCustomTerminal) return true;
+    if (!mUseCustomTerminal)
+        return true;
     // terminal patter is empty
-    if (mTerminalArgumentsPattern.isEmpty()) return false;
+    if (mTerminalArgumentsPattern.isEmpty())
+        return false;
 
-    QStringList patternItems = parseArguments(mTerminalArgumentsPattern, mTerminalArgsPatternMagicVariables, false);
+    QStringList patternItems =
+        parseArguments(mTerminalArgumentsPattern, mTerminalArgsPatternMagicVariables, false);
 
-    if (!(patternItems.contains("$argv")
-          || patternItems.contains("$command")
-          || patternItems.contains("$tmpfile"))) {
+    if (!(patternItems.contains("$argv") || patternItems.contains("$command") ||
+          patternItems.contains("$tmpfile"))) {
         // program not referenced
         return false;
     }
@@ -4169,11 +4146,12 @@ bool Settings::Environment::isTerminalValid()
         return termPathInfo.exists();
     } else {
         QStringList pathList = getExecutableSearchPaths();
-        for (const QString &dirName: pathList) {
+        for (const QString& dirName : pathList) {
             QDir dir{dirName};
             QString absoluteTerminalPath = dir.absoluteFilePath(mTerminalPath);
             QFileInfo absTermPathInfo(absoluteTerminalPath);
-            if (absTermPathInfo.exists()) return true;
+            if (absTermPathInfo.exists())
+                return true;
         }
     }
     return false;
@@ -4181,37 +4159,36 @@ bool Settings::Environment::isTerminalValid()
 
 void Settings::Environment::doSave()
 {
-    //Appearance
+    // Appearance
     saveValue("theme", mTheme);
     saveValue("interface_font", mInterfaceFont);
     saveValue("interface_font_size", mInterfaceFontSize);
-    saveValue("icon_zoom_factor",mIconZoomFactor);
+    saveValue("icon_zoom_factor", mIconZoomFactor);
     saveValue("language", mLanguage);
-    saveValue("icon_set",mIconSet);
+    saveValue("icon_set", mIconSet);
     saveValue("use_custom_icon_set", mUseCustomIconSet);
     saveValue("use_custom_theme", mUseCustomTheme);
     saveValue("enable_combobox_wheel", mComboboxWheel);
 
-    saveValue("current_folder",mCurrentFolder);
-    saveValue("default_open_folder",mDefaultOpenFolder);
+    saveValue("current_folder", mCurrentFolder);
+    saveValue("default_open_folder", mDefaultOpenFolder);
     QString terminalPath = mTerminalPath;
-    if (isGreenEdition())
-    {
+    if (isGreenEdition()) {
         // APP_DIR trick for windows portable app
         // For non-portable app (other platform or Windows installer), multiple instances
         // share the same configuration and thus the trick may break terminal path
         terminalPath = replacePrefix(terminalPath, pSettings->dirs().appDir(), "%*APP_DIR*%");
     }
 
-    saveValue("terminal_path",terminalPath);
-    saveValue("terminal_arguments_pattern",mTerminalArgumentsPattern);
+    saveValue("terminal_path", terminalPath);
+    saveValue("terminal_arguments_pattern", mTerminalArgumentsPattern);
 #ifdef Q_OS_WINDOWS
-    saveValue("use_custom_terminal",mUseCustomTerminal);
+    saveValue("use_custom_terminal", mUseCustomTerminal);
 #endif
-    saveValue("astyle_path",mAStylePath);
+    saveValue("astyle_path", mAStylePath);
 
-    saveValue("hide_non_support_files_file_view",mHideNonSupportFilesInFileView);
-    saveValue("open_files_in_single_instance",mOpenFilesInSingleInstance);
+    saveValue("hide_non_support_files_file_view", mHideNonSupportFilesInFileView);
+    saveValue("open_files_in_single_instance", mOpenFilesInSingleInstance);
 }
 
 QString Settings::Environment::interfaceFont() const
@@ -4219,7 +4196,7 @@ QString Settings::Environment::interfaceFont() const
     return mInterfaceFont;
 }
 
-void Settings::Environment::setInterfaceFont(const QString &interfaceFont)
+void Settings::Environment::setInterfaceFont(const QString& interfaceFont)
 {
     mInterfaceFont = interfaceFont;
 }
@@ -4229,7 +4206,7 @@ QString Settings::Environment::theme() const
     return mTheme;
 }
 
-void Settings::Environment::setTheme(const QString &theme)
+void Settings::Environment::setTheme(const QString& theme)
 {
     mTheme = theme;
 }
@@ -4246,9 +4223,8 @@ const QMap<QString, QString> Settings::Environment::mTerminalArgsPatternMagicVar
     {"sequential_app_id", "$sequential_app_id"},
 };
 
-Settings::Executor::Executor(Settings *settings):_Base(settings, SETTING_EXECUTOR)
+Settings::Executor::Executor(Settings* settings) : _Base(settings, SETTING_EXECUTOR)
 {
-
 }
 
 bool Settings::Executor::minimizeOnRun() const
@@ -4271,12 +4247,12 @@ void Settings::Executor::setUseParams(bool newUseParams)
     mUseParams = newUseParams;
 }
 
-const QString &Settings::Executor::params() const
+const QString& Settings::Executor::params() const
 {
     return mParams;
 }
 
-void Settings::Executor::setParams(const QString &newParams)
+void Settings::Executor::setParams(const QString& newParams)
 {
     mParams = newParams;
 }
@@ -4291,12 +4267,12 @@ void Settings::Executor::setRedirectInput(bool newRedirectInput)
     mRedirectInput = newRedirectInput;
 }
 
-const QString &Settings::Executor::inputFilename() const
+const QString& Settings::Executor::inputFilename() const
 {
     return mInputFilename;
 }
 
-void Settings::Executor::setInputFilename(const QString &newInputFilename)
+void Settings::Executor::setInputFilename(const QString& newInputFilename)
 {
     mInputFilename = newInputFilename;
 }
@@ -4366,7 +4342,8 @@ ProblemCaseValidateType Settings::Executor::problemCaseValidateType() const
     return mProblemCaseValidateType;
 }
 
-void Settings::Executor::setProblemCaseValidateType(ProblemCaseValidateType newProblemCaseValidateType)
+void Settings::Executor::setProblemCaseValidateType(
+    ProblemCaseValidateType newProblemCaseValidateType)
 {
     mProblemCaseValidateType = newProblemCaseValidateType;
 }
@@ -4421,12 +4398,12 @@ void Settings::Executor::setCaseEditorFontSize(int newCaseEditorFontSize)
     mCaseEditorFontSize = newCaseEditorFontSize;
 }
 
-const QString &Settings::Executor::caseEditorFontName() const
+const QString& Settings::Executor::caseEditorFontName() const
 {
     return mCaseEditorFontName;
 }
 
-void Settings::Executor::setCaseEditorFontName(const QString &newCaseEditorFontName)
+void Settings::Executor::setCaseEditorFontName(const QString& newCaseEditorFontName)
 {
     mCaseEditorFontName = newCaseEditorFontName;
 }
@@ -4458,11 +4435,11 @@ void Settings::Executor::doSave()
     saveValue("enable_virtual_terminal_sequence", mEnableVirualTerminalSequence);
 #endif
     saveValue("minimize_on_run", mMinimizeOnRun);
-    saveValue("use_params",mUseParams);
-    saveValue("params",mParams);
-    saveValue("redirect_input",mRedirectInput);
-    saveValue("input_filename",mInputFilename);
-    //problem set
+    saveValue("use_params", mUseParams);
+    saveValue("params", mParams);
+    saveValue("redirect_input", mRedirectInput);
+    saveValue("input_filename", mInputFilename);
+    // problem set
     saveValue("enable_proble_set", mEnableProblemSet);
     saveValue("enable_competivie_companion", mEnableCompetitiveCompanion);
     saveValue("competitive_companion_port", mCompetivieCompanionPort);
@@ -4470,14 +4447,14 @@ void Settings::Executor::doSave()
     saveValue("expected_convert_html", mConvertHTMLToTextForExpected);
     saveValue("problem_case_validate_type", (int)mProblemCaseValidateType);
     saveValue("redirect_stderr_to_toollog", mRedirectStderrToToolLog);
-    saveValue("case_editor_font_name",mCaseEditorFontName);
-    saveValue("case_editor_font_size",mCaseEditorFontSize);
-    saveValue("case_editor_font_only_monospaced",mCaseEditorFontOnlyMonospaced);
+    saveValue("case_editor_font_name", mCaseEditorFontName);
+    saveValue("case_editor_font_size", mCaseEditorFontSize);
+    saveValue("case_editor_font_only_monospaced", mCaseEditorFontOnlyMonospaced);
     saveValue("case_timeout_ms", mCaseTimeout);
-    saveValue("case_memory_limit",mCaseMemoryLimit);
+    saveValue("case_memory_limit", mCaseMemoryLimit);
     remove("case_timeout");
     saveValue("enable_case_limit", mEnableCaseLimit);
-    saveValue("case_max_input_file_size",mMaxCaseInputFileSize);
+    saveValue("case_max_input_file_size", mMaxCaseInputFileSize);
 }
 
 bool Settings::Executor::pauseConsole() const
@@ -4492,43 +4469,42 @@ void Settings::Executor::setPauseConsole(bool pauseConsole)
 
 void Settings::Executor::doLoad()
 {
-    mPauseConsole = boolValue("pause_console",true);
+    mPauseConsole = boolValue("pause_console", true);
 #ifdef Q_OS_WIN
     mEnableVirualTerminalSequence = boolValue("enable_virtual_terminal_sequence", true);
 #endif
-    mMinimizeOnRun = boolValue("minimize_on_run",false);
-    mUseParams = boolValue("use_params",false);
+    mMinimizeOnRun = boolValue("minimize_on_run", false);
+    mUseParams = boolValue("use_params", false);
     mParams = stringValue("params", "");
-    mRedirectInput = boolValue("redirect_input",false);
-    mInputFilename = stringValue("input_filename","");
+    mRedirectInput = boolValue("redirect_input", false);
+    mInputFilename = stringValue("input_filename", "");
 
-    mEnableProblemSet = boolValue("enable_proble_set",true);
-    mEnableCompetitiveCompanion = boolValue("enable_competivie_companion",true);
-    mCompetivieCompanionPort = intValue("competitive_companion_port",10045);
+    mEnableProblemSet = boolValue("enable_proble_set", true);
+    mEnableCompetitiveCompanion = boolValue("enable_competivie_companion", true);
+    mCompetivieCompanionPort = intValue("competitive_companion_port", 10045);
     mConvertHTMLToTextForInput = boolValue("input_convert_html", false);
     mConvertHTMLToTextForExpected = boolValue("expected_convert_html", false);
-    mProblemCaseValidateType =(ProblemCaseValidateType)intValue("problem_case_validate_type", (int)ProblemCaseValidateType::Exact);
+    mProblemCaseValidateType = (ProblemCaseValidateType)intValue(
+        "problem_case_validate_type", (int)ProblemCaseValidateType::Exact);
     mRedirectStderrToToolLog = boolValue("redirect_stderr_to_toollog", false);
 
     mCaseEditorFontName = stringValue("case_editor_font_name", defaultMonoFont());
-    mCaseEditorFontSize = intValue("case_editor_font_size",11);
-    mCaseEditorFontOnlyMonospaced = boolValue("case_editor_font_only_monospaced",true);
+    mCaseEditorFontSize = intValue("case_editor_font_size", 11);
+    mCaseEditorFontOnlyMonospaced = boolValue("case_editor_font_only_monospaced", true);
     int case_timeout = intValue("case_timeout", -1);
-    if (case_timeout>0)
-        mCaseTimeout = case_timeout*1000;
+    if (case_timeout > 0)
+        mCaseTimeout = case_timeout * 1000;
     else
-        mCaseTimeout = uintValue("case_timeout_ms", 2000); //2000ms
-    mCaseMemoryLimit = uintValue("case_memory_limit",0); // kb
+        mCaseTimeout = uintValue("case_timeout_ms", 2000); // 2000ms
+    mCaseMemoryLimit = uintValue("case_memory_limit", 0);  // kb
 
     mEnableCaseLimit = boolValue("enable_case_limit", true);
 
-    mMaxCaseInputFileSize = uintValue("case_max_input_file_size", 4); //4mb
+    mMaxCaseInputFileSize = uintValue("case_max_input_file_size", 4); // 4mb
 }
 
-
-Settings::Debugger::Debugger(Settings *settings):_Base(settings, SETTING_DEBUGGER)
+Settings::Debugger::Debugger(Settings* settings) : _Base(settings, SETTING_DEBUGGER)
 {
-
 }
 
 bool Settings::Debugger::enableDebugConsole() const
@@ -4556,7 +4532,7 @@ QString Settings::Debugger::fontName() const
     return mFontName;
 }
 
-void Settings::Debugger::setFontName(const QString &fontName)
+void Settings::Debugger::setFontName(const QString& fontName)
 {
     mFontName = fontName;
 }
@@ -4715,53 +4691,53 @@ void Settings::Debugger::doSave()
 {
     saveValue("enable_debug_console", mEnableDebugConsole);
     saveValue("show_detail_log", mShowDetailLog);
-    saveValue("font_name",mFontName);
-    saveValue("only_show_mono",mOnlyShowMono);
-    saveValue("font_size",mFontSize);
-    saveValue("use_intel_style",mUseIntelStyle);
-    saveValue("blend_mode",mBlendMode);
+    saveValue("font_name", mFontName);
+    saveValue("only_show_mono", mOnlyShowMono);
+    saveValue("font_size", mFontSize);
+    saveValue("use_intel_style", mUseIntelStyle);
+    saveValue("blend_mode", mBlendMode);
     saveValue("skip_system_lib", mSkipSystemLibraries);
     saveValue("skip_project_lib", mSkipProjectLibraries);
     saveValue("skip_custom_lib", mSkipCustomLibraries);
-    saveValue("autosave",mAutosave);
-    saveValue("open_cpu_info_when_signaled",mOpenCPUInfoWhenSignaled);
+    saveValue("autosave", mAutosave);
+    saveValue("open_cpu_info_when_signaled", mOpenCPUInfoWhenSignaled);
     saveValue("use_gdb_server", mUseGDBServer);
-    saveValue("gdb_server_port",mGDBServerPort);
-    saveValue("memory_view_rows",mMemoryViewRows);
-    saveValue("memory_view_columns",mMemoryViewColumns);
-    saveValue("array_elements",mArrayElements);
-    saveValue("string_characters",mCharacters);
+    saveValue("gdb_server_port", mGDBServerPort);
+    saveValue("memory_view_rows", mMemoryViewRows);
+    saveValue("memory_view_columns", mMemoryViewColumns);
+    saveValue("array_elements", mArrayElements);
+    saveValue("string_characters", mCharacters);
 }
 
 void Settings::Debugger::doLoad()
 {
-    mEnableDebugConsole = boolValue("enable_debug_console",true);
-    mShowDetailLog = boolValue("show_detail_log",false);
+    mEnableDebugConsole = boolValue("enable_debug_console", true);
+    mShowDetailLog = boolValue("show_detail_log", false);
     mFontName = stringValue("font_name", defaultMonoFont());
-    mOnlyShowMono = boolValue("only_show_mono",true);
-    mFontSize = intValue("font_size",14);
-    mUseIntelStyle = boolValue("use_intel_style",false);
-    mBlendMode = boolValue("blend_mode",true);
-    mSkipSystemLibraries = boolValue("skip_system_lib",true);
-    mSkipProjectLibraries = boolValue("skip_project_lib",true);
-    mSkipCustomLibraries = boolValue("skip_custom_lib",false);
-    mAutosave = boolValue("autosave",true);
-    mOpenCPUInfoWhenSignaled = boolValue("open_cpu_info_when_signaled",true);
+    mOnlyShowMono = boolValue("only_show_mono", true);
+    mFontSize = intValue("font_size", 14);
+    mUseIntelStyle = boolValue("use_intel_style", false);
+    mBlendMode = boolValue("blend_mode", true);
+    mSkipSystemLibraries = boolValue("skip_system_lib", true);
+    mSkipProjectLibraries = boolValue("skip_project_lib", true);
+    mSkipCustomLibraries = boolValue("skip_custom_lib", false);
+    mAutosave = boolValue("autosave", true);
+    mOpenCPUInfoWhenSignaled = boolValue("open_cpu_info_when_signaled", true);
 #ifdef Q_OS_WIN
     mUseGDBServer = boolValue("use_gdb_server", false);
 #else
     mUseGDBServer = true;
 #endif
-    mGDBServerPort = intValue("gdb_server_port",41234);
-    mMemoryViewRows = intValue("memory_view_rows",16);
-    mMemoryViewColumns = intValue("memory_view_columns",16);
-    mArrayElements = intValue("array_elements",100);
-    mCharacters = intValue("string_characters",300);
+    mGDBServerPort = intValue("gdb_server_port", 41234);
+    mMemoryViewRows = intValue("memory_view_rows", 16);
+    mMemoryViewColumns = intValue("memory_view_columns", 16);
+    mArrayElements = intValue("array_elements", 100);
+    mCharacters = intValue("string_characters", 300);
 }
 
-Settings::CodeCompletion::CodeCompletion(Settings *settings):_Base(settings, SETTING_CODE_COMPLETION)
+Settings::CodeCompletion::CodeCompletion(Settings* settings)
+    : _Base(settings, SETTING_CODE_COMPLETION)
 {
-
 }
 
 bool Settings::CodeCompletion::showCodeIns() const
@@ -4799,7 +4775,8 @@ bool Settings::CodeCompletion::hideSymbolsStartsWithTwoUnderLine() const
     return mHideSymbolsStartsWithTwoUnderLine;
 }
 
-void Settings::CodeCompletion::setHideSymbolsStartsWithTwoUnderLine(bool newHideSymbolsStartsWithTwoUnderLine)
+void Settings::CodeCompletion::setHideSymbolsStartsWithTwoUnderLine(
+    bool newHideSymbolsStartsWithTwoUnderLine)
 {
     mHideSymbolsStartsWithTwoUnderLine = newHideSymbolsStartsWithTwoUnderLine;
 }
@@ -4819,7 +4796,8 @@ bool Settings::CodeCompletion::hideSymbolsStartsWithUnderLine() const
     return mHideSymbolsStartsWithUnderLine;
 }
 
-void Settings::CodeCompletion::setHideSymbolsStartsWithUnderLine(bool newHideSymbolsStartsWithOneUnderLine)
+void Settings::CodeCompletion::setHideSymbolsStartsWithUnderLine(
+    bool newHideSymbolsStartsWithOneUnderLine)
 {
     mHideSymbolsStartsWithUnderLine = newHideSymbolsStartsWithOneUnderLine;
 }
@@ -4936,62 +4914,59 @@ void Settings::CodeCompletion::setWidthInColumns(int newWidth)
 
 void Settings::CodeCompletion::doSave()
 {
-    saveValue("widthInColumns",mWidthInColumns);
-    saveValue("heightInLines",mHeightInLines);
-    saveValue("enabled",mEnabled);
-    saveValue("parse_local_headers",mParseLocalHeaders);
-    saveValue("parse_global_headers",mParseGlobalHeaders);
-    saveValue("show_completion_while_input",mShowCompletionWhileInput);
-    saveValue("record_usage",mRecordUsage);
-    saveValue("sort_by_scope",mSortByScope);
-    saveValue("show_keywords",mShowKeywords);
-    saveValue("ignore_case",mIgnoreCase);
-    saveValue("append_func",mAppendFunc);
-    saveValue("show_code_ins",mShowCodeIns);
-    saveValue("clear_when_editor_hidden",mClearWhenEditorHidden);
-    saveValue("min_char_required",mMinCharRequired);
+    saveValue("widthInColumns", mWidthInColumns);
+    saveValue("heightInLines", mHeightInLines);
+    saveValue("enabled", mEnabled);
+    saveValue("parse_local_headers", mParseLocalHeaders);
+    saveValue("parse_global_headers", mParseGlobalHeaders);
+    saveValue("show_completion_while_input", mShowCompletionWhileInput);
+    saveValue("record_usage", mRecordUsage);
+    saveValue("sort_by_scope", mSortByScope);
+    saveValue("show_keywords", mShowKeywords);
+    saveValue("ignore_case", mIgnoreCase);
+    saveValue("append_func", mAppendFunc);
+    saveValue("show_code_ins", mShowCodeIns);
+    saveValue("clear_when_editor_hidden", mClearWhenEditorHidden);
+    saveValue("min_char_required", mMinCharRequired);
     saveValue("hide_symbols_start_with_two_underline", mHideSymbolsStartsWithTwoUnderLine);
     saveValue("hide_symbols_start_with_underline", mHideSymbolsStartsWithUnderLine);
-    saveValue("share_parser",mShareParser);
+    saveValue("share_parser", mShareParser);
 }
-
 
 void Settings::CodeCompletion::doLoad()
 {
-    //Appearance
-    mWidthInColumns = intValue("widthInColumns",30);
-    mHeightInLines = intValue("heightInLines",8);
-    mEnabled = boolValue("enabled",true);
-    mParseLocalHeaders = boolValue("parse_local_headers",true);
-    mParseGlobalHeaders = boolValue("parse_global_headers",true);
-    mShowCompletionWhileInput = boolValue("show_completion_while_input",true);
-    mRecordUsage = boolValue("record_usage",true);
-    mSortByScope = boolValue("sort_by_scope",true);
-    mShowKeywords = boolValue("show_keywords",true);
-    mIgnoreCase = boolValue("ignore_case",true);
-    mAppendFunc = boolValue("append_func",true);
-    mShowCodeIns = boolValue("show_code_ins",true);
-    mMinCharRequired = intValue("min_char_required",1);
+    // Appearance
+    mWidthInColumns = intValue("widthInColumns", 30);
+    mHeightInLines = intValue("heightInLines", 8);
+    mEnabled = boolValue("enabled", true);
+    mParseLocalHeaders = boolValue("parse_local_headers", true);
+    mParseGlobalHeaders = boolValue("parse_global_headers", true);
+    mShowCompletionWhileInput = boolValue("show_completion_while_input", true);
+    mRecordUsage = boolValue("record_usage", true);
+    mSortByScope = boolValue("sort_by_scope", true);
+    mShowKeywords = boolValue("show_keywords", true);
+    mIgnoreCase = boolValue("ignore_case", true);
+    mAppendFunc = boolValue("append_func", true);
+    mShowCodeIns = boolValue("show_code_ins", true);
+    mMinCharRequired = intValue("min_char_required", 1);
     mHideSymbolsStartsWithTwoUnderLine = boolValue("hide_symbols_start_with_two_underline", true);
     mHideSymbolsStartsWithUnderLine = boolValue("hide_symbols_start_with_underline", true);
 
-    bool shouldShare= true;
-    mShareParser = boolValue("share_parser",shouldShare);
+    bool shouldShare = true;
+    mShareParser = boolValue("share_parser", shouldShare);
     mClearWhenEditorHidden = boolValue("clear_when_editor_hidden", mShareParser);
 }
 
-Settings::CodeFormatter::CodeFormatter(Settings *settings):
-    _Base(settings,SETTING_CODE_FORMATTER)
+Settings::CodeFormatter::CodeFormatter(Settings* settings) : _Base(settings, SETTING_CODE_FORMATTER)
 {
-
 }
 
 QStringList Settings::CodeFormatter::getArguments()
 {
     QStringList result;
-    //force use english language
+    // force use english language
     result.append("-I");
-    switch(mBraceStyle) {
+    switch (mBraceStyle) {
     case FormatterBraceStyle::fbsDefault:
         break;
     case FormatterBraceStyle::fbsAllman:
@@ -5043,7 +5018,7 @@ QStringList Settings::CodeFormatter::getArguments()
         result.append("--style=lisp");
         break;
     };
-    switch(mIndentStyle) {
+    switch (mIndentStyle) {
     case FormatterIndentType::fitTab:
         result.append(QString("--indent=tab=%1").arg(mTabWidth));
         break;
@@ -5073,7 +5048,7 @@ QStringList Settings::CodeFormatter::getArguments()
         result.append("--indent-namespaces");
     if (mIndentAfterParens)
         result.append("--indent-after-parens");
-    if (mIndentContinuation!=1)
+    if (mIndentContinuation != 1)
         result.append(QString("--indent-continuation=%1").arg(mIndentContinuation));
     if (mIndentLabels)
         result.append("--indent-labels");
@@ -5085,9 +5060,9 @@ QStringList Settings::CodeFormatter::getArguments()
         result.append("--indent-preproc-define");
     if (mIndentCol1Comments)
         result.append("--indent-col1-comments");
-    if (mMinConditionalIndent!=2)
+    if (mMinConditionalIndent != 2)
         result.append(QString("--min-conditional-indent=%1").arg(mMinConditionalIndent));
-    if (mMaxContinuationIndent!=40)
+    if (mMaxContinuationIndent != 40)
         result.append(QString("--max-continuation-indent=%1").arg(mMaxContinuationIndent));
     if (mBreakBlocks)
         result.append("--break-blocks");
@@ -5117,7 +5092,7 @@ QStringList Settings::CodeFormatter::getArguments()
         result.append(QString("--squeeze-lines=%1").arg(mSqueezeLinesNumber));
     if (mSqueezeWhitespace)
         result.append(QString("--squeeze-ws").arg(mSqueezeLinesNumber));
-    switch(mAlignPointerStyle) {
+    switch (mAlignPointerStyle) {
     case FormatterOperatorAlign::foaNone:
         break;
     case FormatterOperatorAlign::foaType:
@@ -5130,7 +5105,7 @@ QStringList Settings::CodeFormatter::getArguments()
         result.append("--align-pointer=name");
         break;
     }
-    switch(mAlignReferenceStyle) {
+    switch (mAlignReferenceStyle) {
     case FormatterOperatorAlign::foaNone:
         break;
     case FormatterOperatorAlign::foaType:
@@ -5744,126 +5719,126 @@ void Settings::CodeFormatter::setIndentSwitches(bool newIndentSwitches)
 
 void Settings::CodeFormatter::doSave()
 {
-    saveValue("brace_style",mBraceStyle);
-    saveValue("indent_style",mIndentStyle);
-    saveValue("tab_width",mTabWidth);
-    saveValue("attach_namespaces",mAttachNamespaces);
-    saveValue("attach_classes",mAttachClasses);
-    saveValue("attach_inlines",mAttachInlines);
-    saveValue("attach_extern_c",mAttachExternC);
-    saveValue("attach_closing_while",mAttachClosingWhile);
-    saveValue("indent_classes",mIndentClasses);
-    saveValue("indent_modifiers",mIndentModifiers);
-    saveValue("indent_switches",mIndentSwitches);
-    saveValue("indent_cases",mIndentCases);
-    saveValue("indent_namespaces",mIndentNamespaces);
-    saveValue("indent_after_parents",mIndentAfterParens);
-    saveValue("indent_continuation",mIndentContinuation);
-    saveValue("indent_labels",mIndentLabels);
-    saveValue("indent_preproc_block",mIndentPreprocBlock);
-    saveValue("indent_preproc_cond",mIndentPreprocCond);
-    saveValue("indent_preproc_define",mIndentPreprocDefine);
-    saveValue("indent_col1_comments",mIndentCol1Comments);
-    saveValue("min_conditional_indent",mMinConditionalIndent);
-    saveValue("max_continuation_indent",mMaxContinuationIndent);
-    saveValue("break_blocks",mBreakBlocks);
-    saveValue("break_blocks_all",mBreakBlocksAll);
-    saveValue("pad_oper",mPadOper);
-    saveValue("pad_comma",mPadComma);
-    saveValue("pad_paren",mPadParen);
-    saveValue("pad_paren_out",mPadParenOut);
-    saveValue("pad_first_paren_out",mPadFirstParenOut);
-    saveValue("pad_parent_in",mPadParenIn);
-    saveValue("pad_header",mPadHeader);
-    saveValue("unpad_paren",mUnpadParen);
-    saveValue("delete_empty_lines",mDeleteEmptyLines);
-    saveValue("fill_empty_lines",mFillEmptyLines);
+    saveValue("brace_style", mBraceStyle);
+    saveValue("indent_style", mIndentStyle);
+    saveValue("tab_width", mTabWidth);
+    saveValue("attach_namespaces", mAttachNamespaces);
+    saveValue("attach_classes", mAttachClasses);
+    saveValue("attach_inlines", mAttachInlines);
+    saveValue("attach_extern_c", mAttachExternC);
+    saveValue("attach_closing_while", mAttachClosingWhile);
+    saveValue("indent_classes", mIndentClasses);
+    saveValue("indent_modifiers", mIndentModifiers);
+    saveValue("indent_switches", mIndentSwitches);
+    saveValue("indent_cases", mIndentCases);
+    saveValue("indent_namespaces", mIndentNamespaces);
+    saveValue("indent_after_parents", mIndentAfterParens);
+    saveValue("indent_continuation", mIndentContinuation);
+    saveValue("indent_labels", mIndentLabels);
+    saveValue("indent_preproc_block", mIndentPreprocBlock);
+    saveValue("indent_preproc_cond", mIndentPreprocCond);
+    saveValue("indent_preproc_define", mIndentPreprocDefine);
+    saveValue("indent_col1_comments", mIndentCol1Comments);
+    saveValue("min_conditional_indent", mMinConditionalIndent);
+    saveValue("max_continuation_indent", mMaxContinuationIndent);
+    saveValue("break_blocks", mBreakBlocks);
+    saveValue("break_blocks_all", mBreakBlocksAll);
+    saveValue("pad_oper", mPadOper);
+    saveValue("pad_comma", mPadComma);
+    saveValue("pad_paren", mPadParen);
+    saveValue("pad_paren_out", mPadParenOut);
+    saveValue("pad_first_paren_out", mPadFirstParenOut);
+    saveValue("pad_parent_in", mPadParenIn);
+    saveValue("pad_header", mPadHeader);
+    saveValue("unpad_paren", mUnpadParen);
+    saveValue("delete_empty_lines", mDeleteEmptyLines);
+    saveValue("fill_empty_lines", mFillEmptyLines);
     saveValue("squeeze_lines", mSqueezeLines);
     saveValue("squeeze_line_number", mSqueezeLinesNumber);
     saveValue("squeeze_whitespace", mSqueezeWhitespace);
 
-    saveValue("align_pointer_style",mAlignPointerStyle);
-    saveValue("align_reference_style",mAlignReferenceStyle);
-    saveValue("break_closing_braces",mBreakClosingBraces);
-    saveValue("break_else_if",mBreakElseIf);
-    saveValue("break_one_line_headers",mBreakOneLineHeaders);
-    saveValue("add_braces",mAddBraces);
-    saveValue("add_one_line_braces",mAddOneLineBraces);
-    saveValue("remove_braces",mRemoveBraces);
-    saveValue("break_return_type",mBreakReturnType);
-    saveValue("break_return_type_decl",mBreakReturnTypeDecl);
-    saveValue("attach_return_type",mAttachReturnType);
-    saveValue("attach_return_type_decl",mAttachReturnTypeDecl);
-    saveValue("keep_one_line_blocks",mKeepOneLineBlocks);
-    saveValue("keep_one_line_statements",mKeepOneLineStatements);
-    saveValue("convert_tabs",mConvertTabs);
-    saveValue("close_templates",mCloseTemplates);
-    saveValue("remove_comment_prefix",mRemoveCommentPrefix);
-    saveValue("break_max_code_length",mBreakMaxCodeLength);
-    saveValue("max_code_length",mMaxCodeLength);
-    saveValue("break_after_logical",mBreakAfterLogical);
+    saveValue("align_pointer_style", mAlignPointerStyle);
+    saveValue("align_reference_style", mAlignReferenceStyle);
+    saveValue("break_closing_braces", mBreakClosingBraces);
+    saveValue("break_else_if", mBreakElseIf);
+    saveValue("break_one_line_headers", mBreakOneLineHeaders);
+    saveValue("add_braces", mAddBraces);
+    saveValue("add_one_line_braces", mAddOneLineBraces);
+    saveValue("remove_braces", mRemoveBraces);
+    saveValue("break_return_type", mBreakReturnType);
+    saveValue("break_return_type_decl", mBreakReturnTypeDecl);
+    saveValue("attach_return_type", mAttachReturnType);
+    saveValue("attach_return_type_decl", mAttachReturnTypeDecl);
+    saveValue("keep_one_line_blocks", mKeepOneLineBlocks);
+    saveValue("keep_one_line_statements", mKeepOneLineStatements);
+    saveValue("convert_tabs", mConvertTabs);
+    saveValue("close_templates", mCloseTemplates);
+    saveValue("remove_comment_prefix", mRemoveCommentPrefix);
+    saveValue("break_max_code_length", mBreakMaxCodeLength);
+    saveValue("max_code_length", mMaxCodeLength);
+    saveValue("break_after_logical", mBreakAfterLogical);
 }
 
 void Settings::CodeFormatter::doLoad()
 {
     mBraceStyle = intValue("brace_style", FormatterBraceStyle::fbsJava);
-    mIndentStyle = intValue("indent_style",FormatterIndentType::fitTab); // 0 isspaces, 1 is tab
-    mTabWidth = intValue("tab_width",4);
-    mAttachNamespaces = boolValue("attach_namespaces",false);
-    mAttachClasses = boolValue("attach_classes",false);
-    mAttachInlines = boolValue("attach_inlines",false);
-    mAttachExternC = boolValue("attach_extern_c",false);
-    mAttachClosingWhile = boolValue("attach_closing_while",false);
-    mIndentClasses = boolValue("indent_classes",false);
-    mIndentModifiers = boolValue("indent_modifiers",false);
-    mIndentSwitches = boolValue("indent_switches",true);
-    mIndentCases = boolValue("indent_cases",false);
-    mIndentNamespaces = boolValue("indent_namespaces",true);
-    mIndentAfterParens = boolValue("indent_after_parents",false);
-    mIndentContinuation = intValue("indent_continuation",1);
-    mIndentLabels = boolValue("indent_labels",false);
-    mIndentPreprocBlock = boolValue("indent_preproc_block",true);
-    mIndentPreprocCond = boolValue("indent_preproc_cond",false);
-    mIndentPreprocDefine = boolValue("indent_preproc_define",false);
-    mIndentCol1Comments = boolValue("indent_col1_comments",false);
-    mMinConditionalIndent = intValue("min_conditional_indent",1);
-    mMaxContinuationIndent = intValue("max_continuation_indent",40);
-    mBreakBlocks = boolValue("break_blocks",false);
-    mBreakBlocksAll = boolValue("break_blocks_all",false);
-    mPadOper = boolValue("pad_oper",true);
-    mPadComma = boolValue("pad_comma",true);
-    mPadParen = boolValue("pad_paren",false);
-    mPadParenOut = boolValue("pad_paren_out",false);
-    mPadFirstParenOut = boolValue("pad_first_paren_out",false);
-    mPadParenIn = boolValue("pad_parent_in",false);
-    mPadHeader = boolValue("pad_header",true);
-    mUnpadParen = boolValue("unpad_paren",false);
-    mDeleteEmptyLines = boolValue("delete_empty_lines",false);
-    mFillEmptyLines = boolValue("fill_empty_lines",false);
+    mIndentStyle = intValue("indent_style", FormatterIndentType::fitTab); // 0 isspaces, 1 is tab
+    mTabWidth = intValue("tab_width", 4);
+    mAttachNamespaces = boolValue("attach_namespaces", false);
+    mAttachClasses = boolValue("attach_classes", false);
+    mAttachInlines = boolValue("attach_inlines", false);
+    mAttachExternC = boolValue("attach_extern_c", false);
+    mAttachClosingWhile = boolValue("attach_closing_while", false);
+    mIndentClasses = boolValue("indent_classes", false);
+    mIndentModifiers = boolValue("indent_modifiers", false);
+    mIndentSwitches = boolValue("indent_switches", true);
+    mIndentCases = boolValue("indent_cases", false);
+    mIndentNamespaces = boolValue("indent_namespaces", true);
+    mIndentAfterParens = boolValue("indent_after_parents", false);
+    mIndentContinuation = intValue("indent_continuation", 1);
+    mIndentLabels = boolValue("indent_labels", false);
+    mIndentPreprocBlock = boolValue("indent_preproc_block", true);
+    mIndentPreprocCond = boolValue("indent_preproc_cond", false);
+    mIndentPreprocDefine = boolValue("indent_preproc_define", false);
+    mIndentCol1Comments = boolValue("indent_col1_comments", false);
+    mMinConditionalIndent = intValue("min_conditional_indent", 1);
+    mMaxContinuationIndent = intValue("max_continuation_indent", 40);
+    mBreakBlocks = boolValue("break_blocks", false);
+    mBreakBlocksAll = boolValue("break_blocks_all", false);
+    mPadOper = boolValue("pad_oper", true);
+    mPadComma = boolValue("pad_comma", true);
+    mPadParen = boolValue("pad_paren", false);
+    mPadParenOut = boolValue("pad_paren_out", false);
+    mPadFirstParenOut = boolValue("pad_first_paren_out", false);
+    mPadParenIn = boolValue("pad_parent_in", false);
+    mPadHeader = boolValue("pad_header", true);
+    mUnpadParen = boolValue("unpad_paren", false);
+    mDeleteEmptyLines = boolValue("delete_empty_lines", false);
+    mFillEmptyLines = boolValue("fill_empty_lines", false);
 
     mSqueezeLines = boolValue("squeeze_lines", false);
     mSqueezeLinesNumber = intValue("squeeze_line_number", 1);
     mSqueezeWhitespace = boolValue("squeeze_whitespace", false);
     mAlignPointerStyle = intValue("align_pointer_style", FormatterOperatorAlign::foaNone);
     mAlignReferenceStyle = intValue("align_reference_style", FormatterOperatorAlign::foaNone);
-    mBreakClosingBraces = boolValue("break_closing_braces",false);
-    mBreakElseIf = boolValue("break_else_if",false);
-    mBreakOneLineHeaders = boolValue("break_one_line_headers",false);
-    mAddBraces = boolValue("add_braces",false);
-    mAddOneLineBraces = boolValue("add_one_line_braces",false);
-    mRemoveBraces = boolValue("remove_braces",false);
-    mBreakReturnType = boolValue("break_return_type",false);
-    mBreakReturnTypeDecl = boolValue("break_return_type_decl",false);
-    mAttachReturnType = boolValue("attach_return_type",false);
-    mAttachReturnTypeDecl = boolValue("attach_return_type_decl",false);
-    mKeepOneLineBlocks = boolValue("keep_one_line_blocks",false);
-    mKeepOneLineStatements = boolValue("keep_one_line_statements",false);
-    mConvertTabs = boolValue("convert_tabs",false);
-    mCloseTemplates = boolValue("close_templates",false);
-    mRemoveCommentPrefix = boolValue("remove_comment_prefix",false);
-    mBreakMaxCodeLength = boolValue("break_max_code_length",false);
-    mMaxCodeLength = intValue("max_code_length",80);
-    mBreakAfterLogical = boolValue("break_after_logical",false);
+    mBreakClosingBraces = boolValue("break_closing_braces", false);
+    mBreakElseIf = boolValue("break_else_if", false);
+    mBreakOneLineHeaders = boolValue("break_one_line_headers", false);
+    mAddBraces = boolValue("add_braces", false);
+    mAddOneLineBraces = boolValue("add_one_line_braces", false);
+    mRemoveBraces = boolValue("remove_braces", false);
+    mBreakReturnType = boolValue("break_return_type", false);
+    mBreakReturnTypeDecl = boolValue("break_return_type_decl", false);
+    mAttachReturnType = boolValue("attach_return_type", false);
+    mAttachReturnTypeDecl = boolValue("attach_return_type_decl", false);
+    mKeepOneLineBlocks = boolValue("keep_one_line_blocks", false);
+    mKeepOneLineStatements = boolValue("keep_one_line_statements", false);
+    mConvertTabs = boolValue("convert_tabs", false);
+    mCloseTemplates = boolValue("close_templates", false);
+    mRemoveCommentPrefix = boolValue("remove_comment_prefix", false);
+    mBreakMaxCodeLength = boolValue("break_max_code_length", false);
+    mMaxCodeLength = intValue("max_code_length", 80);
+    mBreakAfterLogical = boolValue("break_after_logical", false);
 }
 
 int Settings::CodeFormatter::braceStyle() const
@@ -5876,17 +5851,16 @@ void Settings::CodeFormatter::setBraceStyle(int newBraceStyle)
     mBraceStyle = newBraceStyle;
 }
 
-Settings::UI::UI(Settings *settings):_Base(settings,SETTING_UI)
+Settings::UI::UI(Settings* settings) : _Base(settings, SETTING_UI)
 {
-
 }
 
-const QByteArray &Settings::UI::mainWindowGeometry() const
+const QByteArray& Settings::UI::mainWindowGeometry() const
 {
     return mMainWindowGeometry;
 }
 
-void Settings::UI::setMainWindowGeometry(const QByteArray &newMainWindowGeometry)
+void Settings::UI::setMainWindowGeometry(const QByteArray& newMainWindowGeometry)
 {
     mMainWindowGeometry = newMainWindowGeometry;
 }
@@ -5981,22 +5955,22 @@ void Settings::UI::setNewClassDialogHeight(int newNewClassDialogHeight)
     mNewClassDialogHeight = newNewClassDialogHeight;
 }
 
-int  Settings::UI::newHeaderDialogHeight() const
+int Settings::UI::newHeaderDialogHeight() const
 {
     return mNewHeaderDialogHeight;
 }
 
-void  Settings::UI::setNewHeaderDialogHeight(int newNewFileDialogHeight)
+void Settings::UI::setNewHeaderDialogHeight(int newNewFileDialogHeight)
 {
     mNewHeaderDialogHeight = newNewFileDialogHeight;
 }
 
-const QSize &Settings::UI::messagesTabsSize() const
+const QSize& Settings::UI::messagesTabsSize() const
 {
     return mMessagesTabsSize;
 }
 
-void Settings::UI::setMessagesTabsSize(const QSize &newMessagesTabsSize)
+void Settings::UI::setMessagesTabsSize(const QSize& newMessagesTabsSize)
 {
     mMessagesTabsSize = newMessagesTabsSize;
 }
@@ -6141,12 +6115,12 @@ void Settings::UI::setProjectOrder(int newProjectOrder)
     mProjectOrder = newProjectOrder;
 }
 
-const QSize &Settings::UI::explorerTabsSize() const
+const QSize& Settings::UI::explorerTabsSize() const
 {
     return mExplorerTabsSize;
 }
 
-void Settings::UI::setExplorerTabsSize(const QSize &newExplorerTabsSize)
+void Settings::UI::setExplorerTabsSize(const QSize& newExplorerTabsSize)
 {
     mExplorerTabsSize = newExplorerTabsSize;
 }
@@ -6171,12 +6145,12 @@ void Settings::UI::setShrinkExplorerTabs(bool newShrinkExplorerTabs)
     mShrinkExplorerTabs = newShrinkExplorerTabs;
 }
 
-int  Settings::UI::newHeaderDialogWidth() const
+int Settings::UI::newHeaderDialogWidth() const
 {
     return mNewHeaderDialogWidth;
 }
 
-void  Settings::UI::setNewHeaderDialogWidth(int newNewFileDialogWidth)
+void Settings::UI::setNewHeaderDialogWidth(int newNewFileDialogWidth)
 {
     mNewHeaderDialogWidth = newNewFileDialogWidth;
 }
@@ -6391,35 +6365,35 @@ void Settings::UI::setClassBrowserSortAlpha(bool newClassBrowserSortAlpha)
     mClassBrowserSortAlpha = newClassBrowserSortAlpha;
 }
 
-const QByteArray &Settings::UI::mainWindowState() const
+const QByteArray& Settings::UI::mainWindowState() const
 {
     return mMainWindowState;
 }
 
-void Settings::UI::setMainWindowState(const QByteArray &newMainWindowState)
+void Settings::UI::setMainWindowState(const QByteArray& newMainWindowState)
 {
     mMainWindowState = newMainWindowState;
 }
 
 void Settings::UI::doSave()
 {
-    saveValue("open_editor_when_batch_replace",mOpenEditorsWhenReplace);
+    saveValue("open_editor_when_batch_replace", mOpenEditorsWhenReplace);
 
-    saveValue("main_window_state",mMainWindowState);
-    saveValue("main_window_geometry",mMainWindowGeometry);
-    saveValue("bottom_panel_index",mBottomPanelIndex);
-    saveValue("left_panel_index",mLeftPanelIndex);
-    saveValue("debug_panel_index",mDebugPanelIndex);
-    saveValue("class_browser_sort_alphabetically",mClassBrowserSortAlpha);
-    saveValue("class_browser_sort_by_type",mClassBrowserSortType);
-    saveValue("class_browser_show_inherited",mClassBrowserShowInherited);
+    saveValue("main_window_state", mMainWindowState);
+    saveValue("main_window_geometry", mMainWindowGeometry);
+    saveValue("bottom_panel_index", mBottomPanelIndex);
+    saveValue("left_panel_index", mLeftPanelIndex);
+    saveValue("debug_panel_index", mDebugPanelIndex);
+    saveValue("class_browser_sort_alphabetically", mClassBrowserSortAlpha);
+    saveValue("class_browser_sort_by_type", mClassBrowserSortType);
+    saveValue("class_browser_show_inherited", mClassBrowserShowInherited);
 
-    saveValue("shrink_explorer_tabs",mShrinkExplorerTabs);
-    saveValue("shrink_messages_tabs",mShrinkMessagesTabs);
+    saveValue("shrink_explorer_tabs", mShrinkExplorerTabs);
+    saveValue("shrink_messages_tabs", mShrinkMessagesTabs);
     saveValue("explorer_tabs_size", mExplorerTabsSize);
-    saveValue("messages_tabs_size",mMessagesTabsSize);
+    saveValue("messages_tabs_size", mMessagesTabsSize);
 
-    //view
+    // view
     saveValue("show_toolbar", mShowToolbar);
     saveValue("show_statusbar", mShowStatusBar);
     saveValue("show_tool_windowbars", mShowToolWindowBars);
@@ -6451,7 +6425,7 @@ void Settings::UI::doSave()
     saveValue("bookmark_order", mBookmarkOrder);
     saveValue("problem_order", mProblemOrder);
 
-    //dialogs
+    // dialogs
     saveValue("cpu_dialog_width", mCPUDialogWidth);
     saveValue("cpu_dialog_height", mCPUDialogHeight);
     saveValue("cpu_dialog_splitter", mCPUDialogSplitterPos);
@@ -6468,57 +6442,57 @@ void Settings::UI::doSave()
 
 void Settings::UI::doLoad()
 {
-    mOpenEditorsWhenReplace=boolValue("open_editor_when_batch_replace",true);
+    mOpenEditorsWhenReplace = boolValue("open_editor_when_batch_replace", true);
 
-    mMainWindowState = value("main_window_state",QByteArray()).toByteArray();
-    mMainWindowGeometry = value("main_window_geometry",QByteArray()).toByteArray();
-    mBottomPanelIndex = intValue("bottom_panel_index",0);
-    mLeftPanelIndex = intValue("left_panel_index",0);
-    mDebugPanelIndex = intValue("debug_panel_index",0);
+    mMainWindowState = value("main_window_state", QByteArray()).toByteArray();
+    mMainWindowGeometry = value("main_window_geometry", QByteArray()).toByteArray();
+    mBottomPanelIndex = intValue("bottom_panel_index", 0);
+    mLeftPanelIndex = intValue("left_panel_index", 0);
+    mDebugPanelIndex = intValue("debug_panel_index", 0);
 
-    mClassBrowserSortAlpha = boolValue("class_browser_sort_alphabetically",true);
-    mClassBrowserSortType = boolValue("class_browser_sort_by_type",true);
-    mClassBrowserShowInherited = boolValue("class_browser_show_inherited",true);
+    mClassBrowserSortAlpha = boolValue("class_browser_sort_alphabetically", true);
+    mClassBrowserSortType = boolValue("class_browser_sort_by_type", true);
+    mClassBrowserShowInherited = boolValue("class_browser_show_inherited", true);
 
-    mShrinkExplorerTabs = boolValue("shrink_explorer_tabs",false);
-    mShrinkMessagesTabs = boolValue("shrink_messages_tabs",false);
-    mExplorerTabsSize = sizeValue("explorer_tabs_size",QSize(300,600));
-    mMessagesTabsSize = sizeValue("messages_tabs_size",QSize(450,150));
+    mShrinkExplorerTabs = boolValue("shrink_explorer_tabs", false);
+    mShrinkMessagesTabs = boolValue("shrink_messages_tabs", false);
+    mExplorerTabsSize = sizeValue("explorer_tabs_size", QSize(300, 600));
+    mMessagesTabsSize = sizeValue("messages_tabs_size", QSize(450, 150));
 
-    //view
-    mShowToolbar = boolValue("show_toolbar",true);
-    mShowStatusBar = boolValue("show_statusbar",true);
-    mShowToolWindowBars = boolValue("show_tool_windowbars",true);
+    // view
+    mShowToolbar = boolValue("show_toolbar", true);
+    mShowStatusBar = boolValue("show_statusbar", true);
+    mShowToolWindowBars = boolValue("show_tool_windowbars", true);
 
-    mShowProject = boolValue("show_project",true);
-    mShowWatch = boolValue("show_watch",true);
-    mShowStructure = boolValue("show_structure",true);
-    mShowFiles = boolValue("show_file",true);
-    mShowProblemSet = boolValue("show_problem_set",true);
+    mShowProject = boolValue("show_project", true);
+    mShowWatch = boolValue("show_watch", true);
+    mShowStructure = boolValue("show_structure", true);
+    mShowFiles = boolValue("show_file", true);
+    mShowProblemSet = boolValue("show_problem_set", true);
 
-    mShowIssues = boolValue("show_issues",true);
-    mShowCompileLog = boolValue("show_compile_log",true);
-    mShowDebug = boolValue("show_debug",true);
-    mShowSearch = boolValue("show_search",true);
-    mShowTODO = boolValue("show_todo",true);
-    mShowBookmark = boolValue("show_bookmark",true);
-    mShowProblem = boolValue("show_problem",true);
+    mShowIssues = boolValue("show_issues", true);
+    mShowCompileLog = boolValue("show_compile_log", true);
+    mShowDebug = boolValue("show_debug", true);
+    mShowSearch = boolValue("show_search", true);
+    mShowTODO = boolValue("show_todo", true);
+    mShowBookmark = boolValue("show_bookmark", true);
+    mShowProblem = boolValue("show_problem", true);
 
-    mProjectOrder = intValue("project_order",1);
-    mWatchOrder = intValue("watch_order",2);
-    mStructureOrder = intValue("structure_order",3);
-    mFilesOrder = intValue("files_order",0);
-    mProblemSetOrder = intValue("problemset_order",4);
+    mProjectOrder = intValue("project_order", 1);
+    mWatchOrder = intValue("watch_order", 2);
+    mStructureOrder = intValue("structure_order", 3);
+    mFilesOrder = intValue("files_order", 0);
+    mProblemSetOrder = intValue("problemset_order", 4);
 
-    mIssuesOrder = intValue("issues_order",0);
-    mCompileLogOrder = intValue("compilelog_order",1);
-    mDebugOrder = intValue("debug_order",2);
-    mSearchOrder = intValue("search_order",3);
-    mTODOOrder = intValue("todo_order",4);
-    mBookmarkOrder = intValue("bookmark_order",5);
-    mProblemOrder = intValue("problem_order",6);
+    mIssuesOrder = intValue("issues_order", 0);
+    mCompileLogOrder = intValue("compilelog_order", 1);
+    mDebugOrder = intValue("debug_order", 2);
+    mSearchOrder = intValue("search_order", 3);
+    mTODOOrder = intValue("todo_order", 4);
+    mBookmarkOrder = intValue("bookmark_order", 5);
+    mProblemOrder = intValue("problem_order", 6);
 
-    //dialogs
+    // dialogs
     QRect geometry = qApp->primaryScreen()->geometry();
     int width = geometry.width();
     int height = geometry.height();
@@ -6539,14 +6513,13 @@ void Settings::UI::doLoad()
 }
 
 #ifdef ENABLE_VCS
-Settings::VCS::VCS(Settings *settings):_Base(settings,SETTING_VCS),
-    mGitOk(false)
+Settings::VCS::VCS(Settings* settings) : _Base(settings, SETTING_VCS), mGitOk(false)
 {
 }
 
 void Settings::VCS::doSave()
 {
-    saveValue("git_path",mGitPath);
+    saveValue("git_path", mGitPath);
 }
 
 void Settings::VCS::doLoad()
@@ -6554,14 +6527,14 @@ void Settings::VCS::doLoad()
     setGitPath(stringValue("git_path", ""));
 }
 
-const QString &Settings::VCS::gitPath() const
+const QString& Settings::VCS::gitPath() const
 {
     return mGitPath;
 }
 
-void Settings::VCS::setGitPath(const QString &newGitPath)
+void Settings::VCS::setGitPath(const QString& newGitPath)
 {
-    if (mGitPath!=newGitPath) {
+    if (mGitPath != newGitPath) {
         mGitPath = newGitPath;
         validateGit();
     }
@@ -6574,14 +6547,14 @@ void Settings::VCS::validateGit()
     if (!fileInfo.exists()) {
         return;
     }
-    mGitOk=true;
-//    QStringList args;
-//    args.append("--version");
-//    QString output = runAndGetOutput(
-//                fileInfo.fileName(),
-//                fileInfo.absolutePath(),
-//                args);
-//    mGitOk = output.startsWith("git version");
+    mGitOk = true;
+    //    QStringList args;
+    //    args.append("--version");
+    //    QString output = runAndGetOutput(
+    //                fileInfo.fileName(),
+    //                fileInfo.absolutePath(),
+    //                args);
+    //    mGitOk = output.startsWith("git version");
 }
 
 bool Settings::VCS::gitOk() const
@@ -6595,9 +6568,10 @@ void Settings::VCS::detectGitInPath()
     QString path = env.value("PATH");
     QStringList pathList = path.split(PATH_SEPARATOR);
     QSet<QString> searched;
-    foreach (const QString& s, pathList){
+    foreach (const QString& s, pathList) {
         if (searched.contains(s))
-            continue;;
+            continue;
+        ;
         searched.insert(s);
         QDir dir(s);
         if (dir.exists(GIT_PROGRAM)) {
@@ -6611,13 +6585,11 @@ void Settings::VCS::detectGitInPath()
                 mGitPath = oldPath;
             }
         }
-
     }
 }
 #endif
 
-Settings::Languages::Languages(Settings *settings):
-    _Base(settings,SETTING_LANGUAGES)
+Settings::Languages::Languages(Settings* settings) : _Base(settings, SETTING_LANGUAGES)
 {
 }
 
@@ -6646,33 +6618,35 @@ bool Settings::Languages::indentCClassMemberVisibilityKeywords() const
     return mIndentCClassMemberVisibilityKeywords;
 }
 
-void Settings::Languages::setIndentCClassMemberVisibilityKeywords(bool newIndentCClassMemberVisibilityKeywords)
+void Settings::Languages::setIndentCClassMemberVisibilityKeywords(
+    bool newIndentCClassMemberVisibilityKeywords)
 {
     mIndentCClassMemberVisibilityKeywords = newIndentCClassMemberVisibilityKeywords;
 }
 
 void Settings::Languages::doSave()
 {
-    //ASM
-    saveValue("no_debug_directives_when_generate_asm",mNoDebugDirectivesWhenGenerateASM);
-    saveValue("no_seh_directives_when_generate_asm",mNoSEHDirectivesWhenGenerateASM);
-    saveValue("x86_dialect_of_asm_generated",(int)mX86DialectOfASMGenerated);
+    // ASM
+    saveValue("no_debug_directives_when_generate_asm", mNoDebugDirectivesWhenGenerateASM);
+    saveValue("no_seh_directives_when_generate_asm", mNoSEHDirectivesWhenGenerateASM);
+    saveValue("x86_dialect_of_asm_generated", (int)mX86DialectOfASMGenerated);
 
-    //C/C++
-//    saveValue("ident_c_class_member_visibility_keywords",mIndentCClassMemberVisibilityKeywords);
-//    saveValue("ident_c_switch_case_keywords",mIndentCSwitchCaseKeywords);
+    // C/C++
+    //    saveValue("ident_c_class_member_visibility_keywords",mIndentCClassMemberVisibilityKeywords);
+    //    saveValue("ident_c_switch_case_keywords",mIndentCSwitchCaseKeywords);
 }
 
 void Settings::Languages::doLoad()
 {
-    mNoDebugDirectivesWhenGenerateASM = boolValue("no_debug_directives_when_generate_asm",true);
-    mNoSEHDirectivesWhenGenerateASM = boolValue("no_seh_directives_when_generate_asm",true);
-    mX86DialectOfASMGenerated = (X86ASMDialect)intValue("x86_dialect_of_asm_generated",(int)X86ASMDialect::ATT);
+    mNoDebugDirectivesWhenGenerateASM = boolValue("no_debug_directives_when_generate_asm", true);
+    mNoSEHDirectivesWhenGenerateASM = boolValue("no_seh_directives_when_generate_asm", true);
+    mX86DialectOfASMGenerated =
+        (X86ASMDialect)intValue("x86_dialect_of_asm_generated", (int)X86ASMDialect::ATT);
 
-
-    //C/C++
-//    mIndentCClassMemberVisibilityKeywords = boolValue("ident_c_class_member_visibility_keywords",false);
-//    mIndentCSwitchCaseKeywords = boolValue("ident_c_switch_case_keywords",false);
+    // C/C++
+    //    mIndentCClassMemberVisibilityKeywords =
+    //    boolValue("ident_c_class_member_visibility_keywords",false); mIndentCSwitchCaseKeywords =
+    //    boolValue("ident_c_switch_case_keywords",false);
 }
 
 bool Settings::Languages::noSEHDirectivesWhenGenerateASM() const
@@ -6690,7 +6664,8 @@ bool Settings::Languages::noDebugDirectivesWhenGenerateASM() const
     return mNoDebugDirectivesWhenGenerateASM;
 }
 
-void Settings::Languages::setNoDebugDirectivesWhenGenerateASM(bool newNoDebugDirectivesWhenGenerateASM)
+void Settings::Languages::setNoDebugDirectivesWhenGenerateASM(
+    bool newNoDebugDirectivesWhenGenerateASM)
 {
     mNoDebugDirectivesWhenGenerateASM = newNoDebugDirectivesWhenGenerateASM;
 }

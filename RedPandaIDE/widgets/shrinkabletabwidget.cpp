@@ -19,12 +19,10 @@
 #include <QDebug>
 #include <QResizeEvent>
 
-QHash<const ShrinkableTabWidget*,QSize> ShrinkableTabWidget::BeforeShrinkSizes;
+QHash<const ShrinkableTabWidget*, QSize> ShrinkableTabWidget::BeforeShrinkSizes;
 
-ShrinkableTabWidget::ShrinkableTabWidget(QWidget *parent):QTabWidget(parent),
-    mShrinked(false)
+ShrinkableTabWidget::ShrinkableTabWidget(QWidget* parent) : QTabWidget(parent), mShrinked(false)
 {
-
 }
 
 void ShrinkableTabWidget::setShrinkedFlag(bool shrinked)
@@ -38,7 +36,7 @@ void ShrinkableTabWidget::setShrinked(bool shrinked)
         setBeforeShrinkSize(size());
     }
     mShrinked = shrinked;
-    switch(this->tabPosition()) {
+    switch (this->tabPosition()) {
     case QTabWidget::East:
     case QTabWidget::West:
         if (mShrinked) {
@@ -67,14 +65,14 @@ void ShrinkableTabWidget::toggleShrined()
     setShrinked(!mShrinked);
 }
 
-void ShrinkableTabWidget::setBeforeShrinkSize(const QSize &size)
+void ShrinkableTabWidget::setBeforeShrinkSize(const QSize& size)
 {
-    BeforeShrinkSizes.insert(this,size);
+    BeforeShrinkSizes.insert(this, size);
 }
 
 QSize ShrinkableTabWidget::beforeShrinkSize() const
 {
-    QSize size = BeforeShrinkSizes.value(this,QSize());
+    QSize size = BeforeShrinkSizes.value(this, QSize());
     if (!size.isValid() || size.isNull()) {
         size = QTabWidget::size();
     }
@@ -91,7 +89,7 @@ QSize ShrinkableTabWidget::currentSize() const
 
 int ShrinkableTabWidget::beforeShrinkWidthOrHeight() const
 {
-    if (shrinkOrientation()==Qt::Vertical)
+    if (shrinkOrientation() == Qt::Vertical)
         return beforeShrinkSize().height();
     else
         return beforeShrinkSize().width();
@@ -99,7 +97,7 @@ int ShrinkableTabWidget::beforeShrinkWidthOrHeight() const
 
 Qt::Orientation ShrinkableTabWidget::shrinkOrientation() const
 {
-    switch(this->tabPosition()) {
+    switch (this->tabPosition()) {
     case QTabWidget::East:
     case QTabWidget::West:
         return Qt::Horizontal;
@@ -115,26 +113,26 @@ QSize ShrinkableTabWidget::sizeHint() const
 
 QSize ShrinkableTabWidget::minimumSizeHint() const
 {
-    QSize size=QTabWidget::minimumSizeHint();
-    switch(this->tabPosition()) {
+    QSize size = QTabWidget::minimumSizeHint();
+    switch (this->tabPosition()) {
     case QTabWidget::East:
     case QTabWidget::West:
         if (isShrinked())
             size.setWidth(tabBar()->width());
         else
-            size.setWidth(tabBar()->width()*2);
+            size.setWidth(tabBar()->width() * 2);
         break;
     case QTabWidget::North:
     case QTabWidget::South:
         if (isShrinked())
             size.setHeight(tabBar()->height());
         else
-            size.setHeight(tabBar()->height()*2);
+            size.setHeight(tabBar()->height() * 2);
     }
     return size;
 }
 
-void ShrinkableTabWidget::resizeEvent(QResizeEvent *event)
+void ShrinkableTabWidget::resizeEvent(QResizeEvent* event)
 {
     QTabWidget::resizeEvent(event);
     if (!isVisible())

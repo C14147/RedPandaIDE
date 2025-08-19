@@ -30,27 +30,28 @@ class EnvironmentProgramsWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit EnvironmentProgramsWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit EnvironmentProgramsWidget(const QString& name, const QString& group,
+                                       QWidget* parent = nullptr);
     ~EnvironmentProgramsWidget();
 
 private:
-    auto resolveExecArguments(const QString &terminalPath, const QString &argsPatter)
+    auto resolveExecArguments(const QString& terminalPath, const QString& argsPatter)
         -> std::tuple<QString, QStringList, PNonExclusiveTemporaryFileOwner>;
-    void updateCommandPreview(const QString &terminalPath, const QString &argsPatter);
-    void autoDetectAndUpdateArgumentsPattern(const QString &terminalPath);
+    void updateCommandPreview(const QString& terminalPath, const QString& argsPatter);
+    void autoDetectAndUpdateArgumentsPattern(const QString& terminalPath);
 
 private:
-    Ui::EnvironmentProgramsWidget *ui;
+    Ui::EnvironmentProgramsWidget* ui;
 
     // SettingsWidget interface
 protected:
     void doLoad() override;
     void doSave() override;
-    void updateIcons(const QSize &size) override;
+    void updateIcons(const QSize& size) override;
 private slots:
     void on_btnChooseTerminal_clicked();
-    void on_txtTerminal_textChanged(const QString &terminalPath);
-    void on_txtArgsPattern_textChanged(const QString &argsPattern);
+    void on_txtTerminal_textChanged(const QString& terminalPath);
+    void on_txtArgsPattern_textChanged(const QString& argsPattern);
     void on_btnAutoDetectArgsPattern_clicked();
     void on_btnTest_clicked();
 };

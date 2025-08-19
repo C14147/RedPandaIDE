@@ -20,7 +20,8 @@
 #include <QString>
 #include <QMap>
 
-QStringList parseArguments(const QString &command, const QMap<QString, QString> &variables, bool enableDevCppVariableExpansion);
-QStringList parseArgumentsWithoutVariables(const QString &command);
+QStringList parseArguments(const QString& command, const QMap<QString, QString>& variables,
+                           bool enableDevCppVariableExpansion);
+QStringList parseArgumentsWithoutVariables(const QString& command);
 
 #endif // PARSEARG_H

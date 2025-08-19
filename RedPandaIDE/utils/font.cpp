@@ -75,14 +75,14 @@ QString defaultUiFont()
     QLocale::Script defaultScript = QLocale::system().script();
     if (uiFontsByLocale.contains(defaultLocaleName)) {
         QStringList fonts = uiFontsByLocale[defaultLocaleName];
-        for (const QString &font : fonts) {
+        for (const QString& font : fonts) {
             if (QFont(font).exactMatch())
                 return font;
         }
     }
     if (uiFontsByScript.contains(defaultScript)) {
         QStringList fonts = uiFontsByScript[defaultScript];
-        for (const QString &font : fonts) {
+        for (const QString& font : fonts) {
             if (QFont(font).exactMatch())
                 return font;
         }
@@ -128,19 +128,18 @@ QString defaultEmojiFont()
 #endif
 }
 
-bool isCjk(const QString &locale)
+bool isCjk(const QString& locale)
 {
-    return locale.startsWith("zh_") || locale == "zh" ||
-           locale.startsWith("ja_") || locale == "ja" ||
-           locale.startsWith("ko_") || locale == "ko";
+    return locale.startsWith("zh_") || locale == "zh" || locale.startsWith("ja_") ||
+           locale == "ja" || locale.startsWith("ko_") || locale == "ko";
 }
 
-QStringList defaultCjkEditorFonts(const QString &locale)
+QStringList defaultCjkEditorFonts(const QString& locale)
 {
 #if defined(Q_OS_WIN)
     QVersionNumber currentVersion = QVersionNumber::fromString(QSysInfo::kernelVersion());
     const QVersionNumber vista(6, 0);
-    if (locale == "zh_TW" || locale == "zh_HK"){
+    if (locale == "zh_TW" || locale == "zh_HK") {
         if (currentVersion >= vista)
             return {"Microsoft JhengHei"};
         else

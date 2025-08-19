@@ -25,9 +25,9 @@
 #include <QMessageBox>
 #include <QUrl>
 
-EnvironmentFoldersWidget::EnvironmentFoldersWidget(const QString& name, const QString& group, QWidget *parent) :
-    SettingsWidget(name,group,parent),
-    ui(new Ui::EnvironmentFoldersWidget)
+EnvironmentFoldersWidget::EnvironmentFoldersWidget(const QString& name, const QString& group,
+                                                   QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::EnvironmentFoldersWidget)
 {
     ui->setupUi(this);
 }
@@ -54,54 +54,47 @@ void EnvironmentFoldersWidget::doSave()
 
 void EnvironmentFoldersWidget::on_btnOpenConfigFolderInBrowser_clicked()
 {
-    QDesktopServices::openUrl(
-                QUrl("file:///"+
-                     includeTrailingPathDelimiter(pSettings->dirs().config()),QUrl::TolerantMode));
-
+    QDesktopServices::openUrl(QUrl(
+        "file:///" + includeTrailingPathDelimiter(pSettings->dirs().config()), QUrl::TolerantMode));
 }
-
 
 void EnvironmentFoldersWidget::on_btnResetDefault_clicked()
 {
-    if (QMessageBox::question(this,tr("Confirm"),
-                          tr("Do you really want to delete all custom settings?"),
-                          QMessageBox::Yes|QMessageBox::No,
-                          QMessageBox::No)!=QMessageBox::Yes)
+    if (QMessageBox::question(
+            this, tr("Confirm"), tr("Do you really want to delete all custom settings?"),
+            QMessageBox::Yes | QMessageBox::No, QMessageBox::No) != QMessageBox::Yes)
         return;
     QDir dir(pSettings->dirs().config());
     if (!dir.removeRecursively()) {
-        QMessageBox::critical(this,tr("Error"),
-                              tr("Failed to delete custom settings."));
+        QMessageBox::critical(this, tr("Error"), tr("Failed to delete custom settings."));
         return;
     }
     emit shouldQuitApp();
 }
 
-void EnvironmentFoldersWidget::updateIcons(const QSize &/*size*/)
+void EnvironmentFoldersWidget::updateIcons(const QSize& /*size*/)
 {
-    pIconsManager->setIcon(ui->btnOpenConfigFolderInBrowser,IconsManager::ACTION_FILE_OPEN_FOLDER);
-    pIconsManager->setIcon(ui->btnOpenThemeFolderInFileBrowser,IconsManager::ACTION_FILE_OPEN_FOLDER);
-    pIconsManager->setIcon(ui->btnOpenIconSetFolderInFileBrowser,IconsManager::ACTION_FILE_OPEN_FOLDER);
+    pIconsManager->setIcon(ui->btnOpenConfigFolderInBrowser, IconsManager::ACTION_FILE_OPEN_FOLDER);
+    pIconsManager->setIcon(ui->btnOpenThemeFolderInFileBrowser,
+                           IconsManager::ACTION_FILE_OPEN_FOLDER);
+    pIconsManager->setIcon(ui->btnOpenIconSetFolderInFileBrowser,
+                           IconsManager::ACTION_FILE_OPEN_FOLDER);
 }
-
 
 void EnvironmentFoldersWidget::on_btnOpenIconSetFolderInFileBrowser_clicked()
 {
     QDesktopServices::openUrl(
-                QUrl("file:///"+
-                     includeTrailingPathDelimiter(pSettings->dirs().config(Settings::Dirs::DataType::IconSet)),QUrl::TolerantMode));
-
+        QUrl("file:///" + includeTrailingPathDelimiter(
+                              pSettings->dirs().config(Settings::Dirs::DataType::IconSet)),
+             QUrl::TolerantMode));
 }
-
 
 void EnvironmentFoldersWidget::on_btnOpenThemeFolderInFileBrowser_clicked()
 {
     QString folderName = pSettings->dirs().config(Settings::Dirs::DataType::Theme);
-    QDir folder=QDir{folderName};
+    QDir folder = QDir{folderName};
     if (!folder.exists())
         folder.mkpath(folderName);
     QDesktopServices::openUrl(
-                QUrl("file:///"+
-                     includeTrailingPathDelimiter(folderName),QUrl::TolerantMode));
+        QUrl("file:///" + includeTrailingPathDelimiter(folderName), QUrl::TolerantMode));
 }
-

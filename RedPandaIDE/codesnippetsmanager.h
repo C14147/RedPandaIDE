@@ -21,28 +21,25 @@
 #include "parser/parserutils.h"
 #include <QAbstractListModel>
 
-class CodeSnippetsModel: public QAbstractListModel {
+class CodeSnippetsModel : public QAbstractListModel
+{
     Q_OBJECT
 public:
-    void addSnippet(
-            const QString& caption,
-            const QString& prefix,
-            const QString& code,
-            const QString& description,
-            int menuSection);
+    void addSnippet(const QString& caption, const QString& prefix, const QString& code,
+                    const QString& description, int menuSection);
     void remove(int index);
     void clear();
     QModelIndex lastSnippetCaption();
 
     // QAbstractItemModel interface
 public:
-    int rowCount(const QModelIndex &parent) const override;
-    int columnCount(const QModelIndex &parent) const override;
-    QVariant data(const QModelIndex &index, int role) const override;
-    bool setData(const QModelIndex &index, const QVariant &value, int role) override;
+    int rowCount(const QModelIndex& parent) const override;
+    int columnCount(const QModelIndex& parent) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
+    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-    Qt::ItemFlags flags(const QModelIndex &index) const override;
-    const QList<PCodeSnippet> &snippets() const;
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
+    const QList<PCodeSnippet>& snippets() const;
     void updateSnippets(const QList<PCodeSnippet>& snippets);
 
 private:
@@ -53,34 +50,34 @@ class CodeSnippetsManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit CodeSnippetsManager(QObject *parent = nullptr);
+    explicit CodeSnippetsManager(QObject* parent = nullptr);
 
     void load();
     void save();
 
-    const QList<PCodeSnippet> &snippets() const;
+    const QList<PCodeSnippet>& snippets() const;
 
-    void setSnippets(const QList<PCodeSnippet> &newSnippets);
+    void setSnippets(const QList<PCodeSnippet>& newSnippets);
 
-    const QString &newCppFileTemplate() const;
-    void setNewCppFileTemplate(const QString &newContent);
+    const QString& newCppFileTemplate() const;
+    void setNewCppFileTemplate(const QString& newContent);
 
     QString newCFileTemplate() const;
-    void setNewCFileTemplate(const QString &newContent);
+    void setNewCFileTemplate(const QString& newContent);
 
     QString newGASFileTemplate() const;
-    void setNewGASFileTemplate(const QString &newContent);
+    void setNewGASFileTemplate(const QString& newContent);
 
 private:
     void loadSnippets();
     void saveSnippets();
-    QString loadNewFileTemplate(const QString &filename);
+    QString loadNewFileTemplate(const QString& filename);
 
-    void saveNewFileTemplate(const QString &filename, const QString &templateContent);
+    void saveNewFileTemplate(const QString& filename, const QString& templateContent);
 
 private:
     QList<PCodeSnippet> mSnippets;
-    QString mNewCppFileTemplate; //C++ file template
+    QString mNewCppFileTemplate; // C++ file template
     QString mNewCFileTemplate;
     QString mNewGASFileTemplate;
 };

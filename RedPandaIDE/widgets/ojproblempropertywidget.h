@@ -31,7 +31,7 @@ class OJProblemPropertyWidget : public QDialog
     Q_OBJECT
 
 public:
-    explicit OJProblemPropertyWidget(QWidget *parent = nullptr);
+    explicit OJProblemPropertyWidget(QWidget* parent = nullptr);
     ~OJProblemPropertyWidget();
     void loadFromProblem(POJProblem problem);
     void saveToProblem(POJProblem problem);
@@ -42,7 +42,7 @@ private slots:
     void on_btnCancel_clicked();
 
 private:
-    Ui::OJProblemPropertyWidget *ui;
+    Ui::OJProblemPropertyWidget* ui;
 };
 
 #endif // OJPROBLEMPROPERTYWIDGET_H

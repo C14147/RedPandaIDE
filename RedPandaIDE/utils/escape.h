@@ -27,22 +27,22 @@ enum class EscapeArgumentRule {
     WindowsCommandPrompt,
 };
 
-QString escapeArgument(const QString &arg, bool isFirstArg, EscapeArgumentRule rule);
+QString escapeArgument(const QString& arg, bool isFirstArg, EscapeArgumentRule rule);
 
 EscapeArgumentRule platformShellEscapeArgumentRule();
-QString escapeArgumentForPlatformShell(const QString &arg, bool isFirstArg);
-QString escapeCommandForPlatformShell(const QString &prog, const QStringList &args);
+QString escapeArgumentForPlatformShell(const QString& arg, bool isFirstArg);
+QString escapeCommandForPlatformShell(const QString& prog, const QStringList& args);
 
 EscapeArgumentRule makefileRecipeEscapeArgumentRule();
-QString escapeArgumentForMakefileVariableValue(const QString &arg, bool isFirstArg);
-QString escapeArgumentsForMakefileVariableValue(const QStringList &args);
-QString escapeFilenameForMakefileInclude(const QString &filename);
-QString escapeFilenameForMakefileTarget(const QString &filename);
-QString escapeFilenameForMakefilePrerequisite(const QString &filename);
-QString escapeFilenamesForMakefilePrerequisite(const QStringList &filenames);
-QString escapeArgumentForMakefileRecipe(const QString &arg, bool isFirstArg);
+QString escapeArgumentForMakefileVariableValue(const QString& arg, bool isFirstArg);
+QString escapeArgumentsForMakefileVariableValue(const QStringList& args);
+QString escapeFilenameForMakefileInclude(const QString& filename);
+QString escapeFilenameForMakefileTarget(const QString& filename);
+QString escapeFilenameForMakefilePrerequisite(const QString& filename);
+QString escapeFilenamesForMakefilePrerequisite(const QStringList& filenames);
+QString escapeArgumentForMakefileRecipe(const QString& arg, bool isFirstArg);
 
-QString escapeArgumentForInputField(const QString &arg, bool isFirstArg);
-QString escapeArgumentsForInputField(const QStringList &args);
+QString escapeArgumentForInputField(const QString& arg, bool isFirstArg);
+QString escapeArgumentsForInputField(const QStringList& args);
 
 #endif // ESCAPE_H

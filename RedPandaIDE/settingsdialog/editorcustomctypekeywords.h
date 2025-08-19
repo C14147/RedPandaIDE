@@ -14,11 +14,12 @@ class EditorCustomCTypeKeywordsWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit EditorCustomCTypeKeywordsWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit EditorCustomCTypeKeywordsWidget(const QString& name, const QString& group,
+                                             QWidget* parent = nullptr);
     ~EditorCustomCTypeKeywordsWidget();
 
 private:
-    Ui::editorcustomctypekeywords *ui;
+    Ui::editorcustomctypekeywords* ui;
 
     // SettingsWidget interface
 protected:
@@ -27,8 +28,8 @@ protected:
 
     // SettingsWidget interface
 protected:
-    void updateIcons(const QSize &size) override;
-    QListWidgetItem * addKeyword(const QString& keyword) ;
+    void updateIcons(const QSize& size) override;
+    QListWidgetItem* addKeyword(const QString& keyword);
 
 private slots:
     void on_btnAdd_clicked();

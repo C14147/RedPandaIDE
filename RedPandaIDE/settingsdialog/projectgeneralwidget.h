@@ -29,12 +29,14 @@ class ProjectGeneralWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit ProjectGeneralWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit ProjectGeneralWidget(const QString& name, const QString& group,
+                                  QWidget* parent = nullptr);
     ~ProjectGeneralWidget();
 
 private:
-    Ui::ProjectGeneralWidget *ui;
+    Ui::ProjectGeneralWidget* ui;
     QString mIconPath;
+
 private:
     void refreshIcon();
     // SettingsWidget interface
@@ -44,7 +46,7 @@ protected:
 private slots:
     void on_btnBrowse_clicked();
     void on_btnRemove_clicked();
-    void on_cbEncoding_currentTextChanged(const QString &arg1);
+    void on_cbEncoding_currentTextChanged(const QString& arg1);
 
     // SettingsWidget interface
     void on_cbType_currentIndexChanged(int index);
@@ -54,7 +56,7 @@ public:
 
     // SettingsWidget interface
 protected:
-    void updateIcons(const QSize &size) override;
+    void updateIcons(const QSize& size) override;
 };
 
 #endif // PROJECTGENERALWIDGET_H

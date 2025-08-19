@@ -19,15 +19,14 @@
 #include "../settings.h"
 #include "../mainwindow.h"
 
-ExecutorProblemSetWidget::ExecutorProblemSetWidget(const QString& name, const QString& group, QWidget *parent):
-    SettingsWidget(name,group,parent),
-    ui(new Ui::ExecutorProblemSetWidget)
+ExecutorProblemSetWidget::ExecutorProblemSetWidget(const QString& name, const QString& group,
+                                                   QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::ExecutorProblemSetWidget)
 {
     ui->setupUi(this);
     ui->cbProblemCaseValidateType->addItem(tr("Exact"));
     ui->cbProblemCaseValidateType->addItem(tr("Ignore leading/trailing spaces"));
     ui->cbProblemCaseValidateType->addItem(tr("Ignore spaces"));
-
 }
 
 ExecutorProblemSetWidget::~ExecutorProblemSetWidget()
@@ -43,7 +42,8 @@ void ExecutorProblemSetWidget::doLoad()
     ui->chkConvertInputHTML->setChecked(pSettings->executor().convertHTMLToTextForInput());
     ui->chkConvertExpectedHTML->setChecked(pSettings->executor().convertHTMLToTextForExpected());
 
-    ui->cbProblemCaseValidateType->setCurrentIndex((int)(pSettings->executor().problemCaseValidateType()));
+    ui->cbProblemCaseValidateType->setCurrentIndex(
+        (int)(pSettings->executor().problemCaseValidateType()));
     ui->chkRedirectStderr->setChecked(pSettings->executor().redirectStderrToToolLog());
 
     ui->cbFont->setCurrentFont(QFont(pSettings->executor().caseEditorFontName()));
@@ -63,7 +63,8 @@ void ExecutorProblemSetWidget::doSave()
     pSettings->executor().setCompetivieCompanionPort(ui->spinPortNumber->value());
     pSettings->executor().setConvertHTMLToTextForInput(ui->chkConvertInputHTML->isChecked());
     pSettings->executor().setConvertHTMLToTextForExpected(ui->chkConvertExpectedHTML->isChecked());
-    pSettings->executor().setProblemCaseValidateType((ProblemCaseValidateType)(ui->cbProblemCaseValidateType->currentIndex()));
+    pSettings->executor().setProblemCaseValidateType(
+        (ProblemCaseValidateType)(ui->cbProblemCaseValidateType->currentIndex()));
     pSettings->executor().setRedirectStderrToToolLog(ui->chkRedirectStderr->isChecked());
     pSettings->executor().setCaseEditorFontName(ui->cbFont->currentFont().family());
     pSettings->executor().setCaseEditorFontOnlyMonospaced(ui->chkOnlyMonospaced->isChecked());
@@ -76,7 +77,7 @@ void ExecutorProblemSetWidget::doSave()
     pMainWindow->applySettings();
 }
 
-void ExecutorProblemSetWidget::on_chkOnlyMonospaced_stateChanged(int )
+void ExecutorProblemSetWidget::on_chkOnlyMonospaced_stateChanged(int)
 {
     if (ui->chkOnlyMonospaced->isChecked()) {
         ui->cbFont->setFontFilters(QFontComboBox::FontFilter::MonospacedFonts);

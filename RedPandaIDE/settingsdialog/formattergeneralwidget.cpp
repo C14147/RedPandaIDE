@@ -19,26 +19,25 @@
 #include "ui_formattergeneralwidget.h"
 #include "../settings.h"
 
-FormatterGeneralWidget::FormatterGeneralWidget(const QString& name, const QString& group, QWidget *parent):
-    SettingsWidget(name,group,parent),
-    ui(new Ui::FormatterGeneralWidget)
+FormatterGeneralWidget::FormatterGeneralWidget(const QString& name, const QString& group,
+                                               QWidget* parent)
+    : SettingsWidget(name, group, parent), ui(new Ui::FormatterGeneralWidget)
 {
     ui->setupUi(this);
     ui->cbBraceStyle->setModel(&mStylesModel);
-    connect(ui->cbBraceStyle, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &FormatterGeneralWidget::onBraceStyleChanged);
+    connect(ui->cbBraceStyle, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+            &FormatterGeneralWidget::onBraceStyleChanged);
     ui->editDemo->setReadOnly(true);
     ui->editDemo->setFileType(FileType::CppSource);
-    connect(this, &SettingsWidget::settingsChanged,
-               this, &FormatterGeneralWidget::updateDemo);
+    connect(this, &SettingsWidget::settingsChanged, this, &FormatterGeneralWidget::updateDemo);
 
-    connect(ui->chkSqueezeEmptyLines, &QCheckBox::toggled,
-            ui->spinSqueezeEmptyLines, &QSpinBox::setEnabled);
+    connect(ui->chkSqueezeEmptyLines, &QCheckBox::toggled, ui->spinSqueezeEmptyLines,
+            &QSpinBox::setEnabled);
 
-    ui->cbMinConditionalIndent->addItem(tr("No minimal indent"),0);
-    ui->cbMinConditionalIndent->addItem(tr("Indent at least one additional indent"),1);
-    ui->cbMinConditionalIndent->addItem(tr("Indent at least two additional indents"),2);
-    ui->cbMinConditionalIndent->addItem(tr("Indent at least one-half an additional indent."),3);
+    ui->cbMinConditionalIndent->addItem(tr("No minimal indent"), 0);
+    ui->cbMinConditionalIndent->addItem(tr("Indent at least one additional indent"), 1);
+    ui->cbMinConditionalIndent->addItem(tr("Indent at least two additional indents"), 2);
+    ui->cbMinConditionalIndent->addItem(tr("Indent at least one-half an additional indent."), 3);
 }
 
 FormatterGeneralWidget::~FormatterGeneralWidget()
@@ -57,7 +56,7 @@ void FormatterGeneralWidget::onBraceStyleChanged()
 void FormatterGeneralWidget::doLoad()
 {
     Settings::CodeFormatter& format = pSettings->codeFormatter();
-    for (int i=0;i<mStylesModel.rowCount(QModelIndex());i++) {
+    for (int i = 0; i < mStylesModel.rowCount(QModelIndex()); i++) {
         PFormatterStyleItem item = mStylesModel.getStyle(i);
         if (item->style == format.braceStyle()) {
             ui->cbBraceStyle->setCurrentIndex(i);
@@ -87,7 +86,7 @@ void FormatterGeneralWidget::doLoad()
     ui->chkIndentPreprocCond->setChecked(format.indentPreprocCond());
     ui->chkIndentPreprocDefine->setChecked(format.indentPreprocDefine());
     ui->chkIndentCol1Comments->setChecked(format.indentCol1Comments());
-    int index=ui->cbMinConditionalIndent->findData(format.minConditionalIndent());
+    int index = ui->cbMinConditionalIndent->findData(format.minConditionalIndent());
     ui->cbMinConditionalIndent->setCurrentIndex(index);
     ui->spinMaxContinuationIndent->setValue(format.maxContinuationIndent());
     ui->chkBreakBlocks->setChecked(format.breakBlocks());
@@ -106,7 +105,7 @@ void FormatterGeneralWidget::doLoad()
     ui->spinSqueezeEmptyLines->setEnabled(format.squeezeLines());
     ui->spinSqueezeEmptyLines->setValue(format.squeezeLinesNumber());
     ui->chkSqueezeWhitespace->setChecked(format.squeezeWhitespace());
-    switch(format.alignPointerStyle()) {
+    switch (format.alignPointerStyle()) {
     case FormatterOperatorAlign::foaNone:
         ui->rbAlignPointNone->setChecked(true);
         break;
@@ -120,7 +119,7 @@ void FormatterGeneralWidget::doLoad()
         ui->rbAlignPointerName->setChecked(true);
         break;
     }
-    switch(format.alignReferenceStyle()) {
+    switch (format.alignReferenceStyle()) {
     case FormatterOperatorAlign::foaNone:
         ui->rbAlignReferenceNone->setChecked(true);
         break;
@@ -162,129 +161,76 @@ void FormatterGeneralWidget::doSave()
     format.save();
 }
 
-FormatterStyleModel::FormatterStyleModel(QObject *parent):QAbstractListModel(parent)
+FormatterStyleModel::FormatterStyleModel(QObject* parent) : QAbstractListModel(parent)
 {
+    mStyles.append(std::make_shared<FormatterStyleItem>(
+        tr("Default"),
+        tr("The opening braces will not be changed and closing braces will be broken from the "
+           "preceding line."),
+        FormatterBraceStyle::fbsDefault));
+    mStyles.append(std::make_shared<FormatterStyleItem>(tr("Allman"), tr("Broken braces."),
+                                                        FormatterBraceStyle::fbsAllman));
+    mStyles.append(std::make_shared<FormatterStyleItem>(tr("Java"), tr("Attached braces."),
+                                                        FormatterBraceStyle::fbsJava));
+    mStyles.append(std::make_shared<FormatterStyleItem>(tr("K&R"), tr("Linux braces."),
+                                                        FormatterBraceStyle::fbsKR));
+    mStyles.append(std::make_shared<FormatterStyleItem>(
+        tr("Stroustrup"), tr("Linux braces, with broken closing headers."),
+        FormatterBraceStyle::fbsStroustrup));
+    mStyles.append(std::make_shared<FormatterStyleItem>(
+        tr("Whitesmith"),
+        tr("Broken, indented braces.") + " " + tr("Indented class blocks and switch blocks."),
+        FormatterBraceStyle::fbsWitesmith));
+    mStyles.append(std::make_shared<FormatterStyleItem>(
+        tr("VTK"), tr("Broken, indented braces except for the opening braces."),
+        FormatterBraceStyle::fbsVtk));
+    mStyles.append(std::make_shared<FormatterStyleItem>(
+        tr("Ratliff"), tr("Attached, indented braces."), FormatterBraceStyle::fbsRatliff));
+    mStyles.append(std::make_shared<FormatterStyleItem>(
+        tr("GNU"), tr("Broken braces, indented blocks."), FormatterBraceStyle::fbsGNU));
+    mStyles.append(std::make_shared<FormatterStyleItem>(
+        tr("Linux"), tr("Linux braces, minimum conditional indent is one-half indent."),
+        FormatterBraceStyle::fbsLinux));
+    mStyles.append(std::make_shared<FormatterStyleItem>(tr("Horstmann"),
+                                                        tr("Run-in braces, indented switches."),
+                                                        FormatterBraceStyle::fbsHorstmann));
+    mStyles.append(std::make_shared<FormatterStyleItem>(
+        tr("One True Brace"), tr("Linux braces, add braces to all conditionals."),
+        FormatterBraceStyle::fbs1TBS));
+    mStyles.append(std::make_shared<FormatterStyleItem>(
+        tr("Google"), tr("Attached braces, indented class modifiers."),
+        FormatterBraceStyle::fbsGoogle));
     mStyles.append(
-                std::make_shared<FormatterStyleItem>(
-                    tr("Default"),
-                    tr("The opening braces will not be changed and closing braces will be broken from the preceding line."),
-                    FormatterBraceStyle::fbsDefault)
-                );
-    mStyles.append(
-                std::make_shared<FormatterStyleItem>(
-                    tr("Allman"),
-                    tr("Broken braces."),
-                    FormatterBraceStyle::fbsAllman)
-                );
-    mStyles.append(
-                std::make_shared<FormatterStyleItem>(
-                    tr("Java"),
-                    tr("Attached braces."),
-                    FormatterBraceStyle::fbsJava)
-                );
-    mStyles.append(
-                std::make_shared<FormatterStyleItem>(
-                    tr("K&R"),
-                    tr("Linux braces."),
-                    FormatterBraceStyle::fbsKR)
-                );
-    mStyles.append(
-                std::make_shared<FormatterStyleItem>(
-                    tr("Stroustrup"),
-                    tr("Linux braces, with broken closing headers."),
-                    FormatterBraceStyle::fbsStroustrup)
-                );
-    mStyles.append(
-                std::make_shared<FormatterStyleItem>(
-                    tr("Whitesmith"),
-                    tr("Broken, indented braces.")
-                    + " "
-                    +tr("Indented class blocks and switch blocks."),
-                    FormatterBraceStyle::fbsWitesmith)
-                );
-    mStyles.append(
-                std::make_shared<FormatterStyleItem>(
-                    tr("VTK"),
-                    tr("Broken, indented braces except for the opening braces."),
-                    FormatterBraceStyle::fbsVtk)
-                );
-    mStyles.append(
-                std::make_shared<FormatterStyleItem>(
-                    tr("Ratliff"),
-                    tr("Attached, indented braces."),
-                    FormatterBraceStyle::fbsRatliff)
-                );
-    mStyles.append(
-                std::make_shared<FormatterStyleItem>(
-                    tr("GNU"),
-                    tr("Broken braces, indented blocks."),
-                    FormatterBraceStyle::fbsGNU)
-                );
-    mStyles.append(
-                std::make_shared<FormatterStyleItem>(
-                    tr("Linux"),
-                    tr("Linux braces, minimum conditional indent is one-half indent."),
-                    FormatterBraceStyle::fbsLinux)
-                );
-    mStyles.append(
-                std::make_shared<FormatterStyleItem>(
-                    tr("Horstmann"),
-                    tr("Run-in braces, indented switches."),
-                    FormatterBraceStyle::fbsHorstmann)
-                );
-    mStyles.append(
-                std::make_shared<FormatterStyleItem>(
-                    tr("One True Brace"),
-                    tr("Linux braces, add braces to all conditionals."),
-                    FormatterBraceStyle::fbs1TBS)
-                );
-    mStyles.append(
-                std::make_shared<FormatterStyleItem>(
-                    tr("Google"),
-                    tr("Attached braces, indented class modifiers."),
-                    FormatterBraceStyle::fbsGoogle)
-                );
-    mStyles.append(
-                std::make_shared<FormatterStyleItem>(
-                    tr("Mozilla"),
-                    tr("Linux braces, with broken braces for structs and enums, and attached braces for namespaces."),
-                    FormatterBraceStyle::fbsMozilla)
-                );
-    mStyles.append(
-                std::make_shared<FormatterStyleItem>(
-                    tr("Webkit"),
-                    tr("Linux braces, with attached closing headers."),
-                    FormatterBraceStyle::fbsWebkit)
-                );
-    mStyles.append(
-                std::make_shared<FormatterStyleItem>(
-                    tr("Pico"),
-                    tr("Run-in opening braces and attached closing braces.")
-                    +" "+
-                    tr("Uses keep one line blocks and keep one line statements."),
-                    FormatterBraceStyle::fbsPico)
-                );
-    mStyles.append(
-                std::make_shared<FormatterStyleItem>(
-                    tr("Lisp"),
-                    tr("Attached opening braces and attached closing braces.")
-                    +" "+
-                    tr("Uses keep one line statements."),
-                    FormatterBraceStyle::fbsLisp)
-                );
+        std::make_shared<FormatterStyleItem>(tr("Mozilla"),
+                                             tr("Linux braces, with broken braces for structs and "
+                                                "enums, and attached braces for namespaces."),
+                                             FormatterBraceStyle::fbsMozilla));
+    mStyles.append(std::make_shared<FormatterStyleItem>(
+        tr("Webkit"), tr("Linux braces, with attached closing headers."),
+        FormatterBraceStyle::fbsWebkit));
+    mStyles.append(std::make_shared<FormatterStyleItem>(
+        tr("Pico"),
+        tr("Run-in opening braces and attached closing braces.") + " " +
+            tr("Uses keep one line blocks and keep one line statements."),
+        FormatterBraceStyle::fbsPico));
+    mStyles.append(std::make_shared<FormatterStyleItem>(
+        tr("Lisp"),
+        tr("Attached opening braces and attached closing braces.") + " " +
+            tr("Uses keep one line statements."),
+        FormatterBraceStyle::fbsLisp));
 }
 
-int FormatterStyleModel::rowCount(const QModelIndex &) const
+int FormatterStyleModel::rowCount(const QModelIndex&) const
 {
     return mStyles.count();
 }
 
-QVariant FormatterStyleModel::data(const QModelIndex &index, int role) const
+QVariant FormatterStyleModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid())
         return QVariant();
     int row = index.row();
-    if (row<0 || row>=mStyles.count())
+    if (row < 0 || row >= mStyles.count())
         return QVariant();
     PFormatterStyleItem item = mStyles[row];
     switch (role) {
@@ -296,7 +242,7 @@ QVariant FormatterStyleModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-PFormatterStyleItem FormatterStyleModel::getStyle(const QModelIndex &index)
+PFormatterStyleItem FormatterStyleModel::getStyle(const QModelIndex& index)
 {
     if (index.isValid()) {
         return getStyle(index.row());
@@ -307,12 +253,13 @@ PFormatterStyleItem FormatterStyleModel::getStyle(const QModelIndex &index)
 
 PFormatterStyleItem FormatterStyleModel::getStyle(int index)
 {
-    if (index<0 || index>=mStyles.count())
+    if (index < 0 || index >= mStyles.count())
         return PFormatterStyleItem();
     return mStyles[index];
 }
 
-FormatterStyleItem::FormatterStyleItem(const QString &name, const QString &description, FormatterBraceStyle style)
+FormatterStyleItem::FormatterStyleItem(const QString& name, const QString& description,
+                                       FormatterBraceStyle style)
 {
     this->name = name;
     this->description = description;
@@ -327,7 +274,7 @@ void FormatterGeneralWidget::on_chkBreakMaxCodeLength_stateChanged(int)
 
 void FormatterGeneralWidget::updateDemo()
 {
-    const QString &astyle = pSettings->environment().AStylePath();
+    const QString& astyle = pSettings->environment().AStylePath();
     if (!fileExists(astyle)) {
         ui->editDemo->document()->setText(Editor::tr("Can't find astyle in \"%1\".").arg(astyle));
         return;
@@ -355,7 +302,7 @@ void FormatterGeneralWidget::updateDemo()
     ui->editDemo->document()->setText(display);
 }
 
-void FormatterGeneralWidget::updateCodeFormatter(Settings::CodeFormatter &format)
+void FormatterGeneralWidget::updateCodeFormatter(Settings::CodeFormatter& format)
 {
     PFormatterStyleItem item = mStylesModel.getStyle(ui->cbBraceStyle->currentIndex());
     if (item)
@@ -438,4 +385,3 @@ void FormatterGeneralWidget::updateCodeFormatter(Settings::CodeFormatter &format
     format.setMaxCodeLength(ui->spinMaxCodeLength->value());
     format.setBreakAfterLogical(ui->chkBreakAfterLogical->isChecked());
 }
-

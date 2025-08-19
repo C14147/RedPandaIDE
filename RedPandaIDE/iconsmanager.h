@@ -99,7 +99,6 @@ public:
         FILESYSTEM_HEADERS_FOLDER,
         FILESYSTEM_SOURCES_FOLDER,
 
-
         ACTION_MISC_BACK,
         ACTION_MISC_FORWARD,
         ACTION_MISC_ADD,
@@ -196,7 +195,7 @@ public:
         ACTION_PROBLEM_FALIED,
         ACTION_PROBLEM_TESTING
     };
-    explicit IconsManager(QObject *parent = nullptr);
+    explicit IconsManager(QObject* parent = nullptr);
 
     void updateEditorGutterIcons(const QString& iconSet, int size);
     void updateParserIcons(const QString& iconSet, int size);
@@ -211,29 +210,30 @@ public:
     void setIcon(QPushButton* btn, IconName iconName) const;
 
     PPixmap createSVGIcon(const QString& filename, int width, int height);
-    const QSize &actionIconSize() const;
+    const QSize& actionIconSize() const;
 
-    void prepareCustomIconSet(const QString &customIconSet);
+    void prepareCustomIconSet(const QString& customIconSet);
 
     QPixmap getPixmapForStatement(PStatement statement);
     QPixmap getPixmapForStatement(PStatement statement, int size);
 
     const QString iconSetsFolder() const;
-    void setIconSetsFolder(const QString &newIconSetsFolder);
+    void setIconSetsFolder(const QString& newIconSetsFolder);
 
     QList<PIconSet> listIconSets();
     QString iconSet() const;
-    void setIconSet(const QString &newIconSet);
+    void setIconSet(const QString& newIconSet);
 
 private:
     void updateMakeDisabledIconDarker(const QString& iconset);
-    void updateParserIcons(QMap<IconName,PPixmap> &iconPixmaps, const QString& iconSet, int size);
-    QPixmap getPixmapForStatement(const QMap<IconName,PPixmap> &iconPixmaps, PStatement statement);
-    PPixmap getPixmap(const QMap<IconName,PPixmap> &iconPixmaps, IconName iconName) const;
+    void updateParserIcons(QMap<IconName, PPixmap>& iconPixmaps, const QString& iconSet, int size);
+    QPixmap getPixmapForStatement(const QMap<IconName, PPixmap>& iconPixmaps, PStatement statement);
+    PPixmap getPixmap(const QMap<IconName, PPixmap>& iconPixmaps, IconName iconName) const;
 signals:
     void actionIconsUpdated();
+
 private:
-    QMap<IconName,PPixmap> mIconPixmaps;
+    QMap<IconName, PPixmap> mIconPixmaps;
     PPixmap mDefaultIconPixmap;
     QSize mActionIconSize;
     QString mIconSetTemplate;
@@ -242,7 +242,7 @@ private:
     int mParserIconSize;
     QString mCachedParserIconSet;
     int mCachedParserIconSize;
-    QMap<IconName,PPixmap> mCachedParserIconPixmaps;
+    QMap<IconName, PPixmap> mCachedParserIconPixmaps;
 
     bool mMakeDisabledIconDarker;
 };

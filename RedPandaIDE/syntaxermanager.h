@@ -26,11 +26,13 @@ public:
     SyntaxerManager();
 
     QSynedit::PSyntaxer getSyntaxer(QSynedit::ProgrammingLanguage language) const;
-    QSynedit::PSyntaxer getSyntaxer(FileType fileType) const {
+    QSynedit::PSyntaxer getSyntaxer(FileType fileType) const
+    {
         return getSyntaxer(getLanguage(fileType));
     }
     QSynedit::PFormatter getFormatter(QSynedit::ProgrammingLanguage language) const;
-    QSynedit::PFormatter getFormatter(FileType fileType) const {
+    QSynedit::PFormatter getFormatter(FileType fileType) const
+    {
         return getFormatter(getLanguage(fileType));
     }
     QSynedit::ProgrammingLanguage getLanguage(FileType fileType) const;

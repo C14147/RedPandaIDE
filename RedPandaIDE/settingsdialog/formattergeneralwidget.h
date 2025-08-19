@@ -31,32 +31,33 @@ struct FormatterStyleItem {
     QString name;
     QString description;
     FormatterBraceStyle style;
-    explicit FormatterStyleItem(const QString& name,
-                                const QString& description,
+    explicit FormatterStyleItem(const QString& name, const QString& description,
                                 FormatterBraceStyle style);
 };
 using PFormatterStyleItem = std::shared_ptr<FormatterStyleItem>;
 
-class FormatterStyleModel : public QAbstractListModel{
+class FormatterStyleModel : public QAbstractListModel
+{
     Q_OBJECT
     // QAbstractItemModel interface
 public:
-    explicit FormatterStyleModel(QObject *parent=nullptr);
-    int rowCount(const QModelIndex &parent) const override;
-    QVariant data(const QModelIndex &index, int role) const override;
-    PFormatterStyleItem getStyle(const QModelIndex &index);
+    explicit FormatterStyleModel(QObject* parent = nullptr);
+    int rowCount(const QModelIndex& parent) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
+    PFormatterStyleItem getStyle(const QModelIndex& index);
     PFormatterStyleItem getStyle(int index);
+
 private:
     QList<PFormatterStyleItem> mStyles;
 };
-
 
 class FormatterGeneralWidget : public SettingsWidget
 {
     Q_OBJECT
 
 public:
-    explicit FormatterGeneralWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit FormatterGeneralWidget(const QString& name, const QString& group,
+                                    QWidget* parent = nullptr);
     ~FormatterGeneralWidget();
 private slots:
     void onBraceStyleChanged();
@@ -64,11 +65,12 @@ private slots:
     void on_chkBreakMaxCodeLength_stateChanged(int arg1);
 
     void updateDemo();
+
 private:
     void updateCodeFormatter(Settings::CodeFormatter& format);
 
 private:
-    Ui::FormatterGeneralWidget *ui;
+    Ui::FormatterGeneralWidget* ui;
     FormatterStyleModel mStylesModel;
 
     // SettingsWidget interface

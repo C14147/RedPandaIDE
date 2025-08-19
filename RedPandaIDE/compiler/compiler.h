@@ -27,22 +27,16 @@ class Compiler : public QThread
 {
     Q_OBJECT
 public:
-    enum class TargetType {
-        Invalid,
-        cttNone,
-        File,
-        Project,
-        StdIn
-    };
+    enum class TargetType { Invalid, cttNone, File, Project, StdIn };
     Compiler(const QString& filename, bool onlyCheckSyntax);
-    Compiler(const Compiler&)=delete;
-    Compiler& operator=(const Compiler&)=delete;
+    Compiler(const Compiler&) = delete;
+    Compiler& operator=(const Compiler&) = delete;
 
     bool isRebuild() const;
     void setRebuild(bool isRebuild);
 
-    const std::shared_ptr<Project> &project() const;
-    void setProject(const std::shared_ptr<Project> &newProject);
+    const std::shared_ptr<Project>& project() const;
+    void setProject(const std::shared_ptr<Project>& newProject);
 
     PCppParser parser() const;
 
@@ -59,10 +53,10 @@ protected:
     void run() override;
     void processOutput(QString& line);
     void getParserForFile(const QString& filename);
-    virtual QString getFileNameFromOutputLine(QString &line);
-    virtual int getLineNumberFromOutputLine(QString &line);
-    virtual int getColunmnFromOutputLine(QString &line);
-    virtual CompileIssueType getIssueTypeFromOutputLine(QString &line);
+    virtual QString getFileNameFromOutputLine(QString& line);
+    virtual int getLineNumberFromOutputLine(QString& line);
+    virtual int getColunmnFromOutputLine(QString& line);
+    virtual CompileIssueType getIssueTypeFromOutputLine(QString& line);
 
 protected:
     virtual Settings::PCompilerSet compilerSet();
@@ -70,7 +64,8 @@ protected:
     virtual QByteArray pipedText();
     virtual bool prepareForRebuild() = 0;
     virtual bool beforeRunExtraCommand(int idx);
-    virtual QStringList getCharsetArgument(const QByteArray& encoding, FileType fileType, bool onlyCheckSyntax);
+    virtual QStringList getCharsetArgument(const QByteArray& encoding, FileType fileType,
+                                           bool onlyCheckSyntax);
     virtual QStringList getCppGccImportStdSources(bool checkSyntax);
     virtual QStringList getCCompileArguments(bool checkSyntax);
     virtual QStringList getCppCompileArguments(bool checkSyntax);
@@ -78,16 +73,15 @@ protected:
     virtual QStringList getProjectIncludeArguments();
     virtual QStringList getCppIncludeArguments();
     virtual QStringList getLibraryArguments(FileType fileType);
-    virtual QStringList parseFileIncludesForAutolink(
-            const QString& filename,
-            QSet<QString>& parsedFiles);
-    virtual bool parseForceUTF8ForAutolink(
-            const QString& filename,
-            QSet<QString>& parsedFiles);
+    virtual QStringList parseFileIncludesForAutolink(const QString& filename,
+                                                     QSet<QString>& parsedFiles);
+    virtual bool parseForceUTF8ForAutolink(const QString& filename, QSet<QString>& parsedFiles);
     void log(const QString& msg);
     void error(const QString& msg);
-    void runCommand(const QString& cmd, const QStringList& arguments, const QString& workingDir, const QByteArray& inputText=QByteArray(), const QString& outputFile=QString());
-    QString escapeCommandForLog(const QString &cmd, const QStringList &arguments);
+    void runCommand(const QString& cmd, const QStringList& arguments, const QString& workingDir,
+                    const QByteArray& inputText = QByteArray(),
+                    const QString& outputFile = QString());
+    QString escapeCommandForLog(const QString& cmd, const QStringList& arguments);
 
 protected:
     bool mOnlyCheckSyntax;
@@ -111,6 +105,5 @@ protected:
 private:
     bool mStop;
 };
-
 
 #endif // COMPILER_H

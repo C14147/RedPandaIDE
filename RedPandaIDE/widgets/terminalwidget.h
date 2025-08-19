@@ -8,10 +8,11 @@
 #include <QVBoxLayout>
 #include <QKeyEvent>
 
-class TerminalWidget : public QWidget {
+class TerminalWidget : public QWidget
+{
     Q_OBJECT
 public:
-    explicit TerminalWidget(QWidget *parent = nullptr);
+    explicit TerminalWidget(QWidget* parent = nullptr);
     ~TerminalWidget();
 
 private slots:
@@ -19,12 +20,12 @@ private slots:
     void onCommandEntered();
 
 protected:
-    void keyPressEvent(QKeyEvent *event) override;
+    void keyPressEvent(QKeyEvent* event) override;
 
 private:
-    QPlainTextEdit *output;
-    QLineEdit *input;
-    QProcess *process;
+    QPlainTextEdit* output;
+    QLineEdit* input;
+    QProcess* process;
     QString shell;
     void startShell();
 };

@@ -29,11 +29,11 @@ class EditorMiscWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit EditorMiscWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit EditorMiscWidget(const QString& name, const QString& group, QWidget* parent = nullptr);
     ~EditorMiscWidget();
 
 private:
-    Ui::EditorMiscWidget *ui;
+    Ui::EditorMiscWidget* ui;
 
     // SettingsWidget interface
 protected:
@@ -44,7 +44,7 @@ protected:
 public:
     void init() override;
 private slots:
-    void on_cbEncoding_currentTextChanged(const QString &arg1);
+    void on_cbEncoding_currentTextChanged(const QString& arg1);
 };
 
 #endif // EDITORMISCWIDGET_H

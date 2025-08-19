@@ -11,10 +11,12 @@ DownloadTool::DownloadTool(const QString& downloadUrl, const QString& savePath, 
     : QObject(parent)
 {
     m_downloadUrl = downloadUrl;
-    m_savePath    = savePath;
+    m_savePath = savePath;
 }
 
-DownloadTool::~DownloadTool() {}
+DownloadTool::~DownloadTool()
+{
+}
 
 void DownloadTool::startDownload()
 {
@@ -29,17 +31,23 @@ void DownloadTool::startDownload()
 
     fileName = newUrl.fileName();
 
-    if (fileName.isEmpty()) fileName = defaultFileName;
-    if (m_savePath.isEmpty()) { m_savePath = QApplication::applicationDirPath() + "/tmp"; }
+    if (fileName.isEmpty())
+        fileName = defaultFileName;
+    if (m_savePath.isEmpty()) {
+        m_savePath = QApplication::applicationDirPath() + "/tmp";
+    }
     if (!QFileInfo(m_savePath).isDir()) {
         QDir dir;
         dir.mkpath(m_savePath);
     }
 
     fileName.prepend(m_savePath + '/');
-    if (QFile::exists(fileName)) { QFile::remove(fileName); }
+    if (QFile::exists(fileName)) {
+        QFile::remove(fileName);
+    }
     file = openFileForWrite(fileName);
-    if (!file) return;
+    if (!file)
+        return;
 
     startRequest(newUrl);
 }
@@ -50,7 +58,8 @@ void DownloadTool::startDownload(QString itype)
     startDownload();
 }
 
-QString DownloadTool::getFileType(){
+QString DownloadTool::getFileType()
+{
     return type;
 }
 
@@ -81,12 +90,15 @@ void DownloadTool::httpFinished()
         return;
     }
 
-    const QVariant redirectionTarget = reply->attribute(QNetworkRequest::RedirectionTargetAttribute);
+    const QVariant redirectionTarget =
+        reply->attribute(QNetworkRequest::RedirectionTargetAttribute);
 
     if (!redirectionTarget.isNull()) {
         const QUrl redirectedUrl = url.resolved(redirectionTarget.toUrl());
         file = openFileForWrite(fi.absoluteFilePath());
-        if (!file) { return; }
+        if (!file) {
+            return;
+        }
         startRequest(redirectedUrl);
         return;
     }
@@ -95,14 +107,16 @@ void DownloadTool::httpFinished()
 
 #ifdef DOWNLOAD_DEBUG
     qDebug() << QString(tr("Downloaded %1 bytes to %2 in %3")
-                            .arg(fi.size()).arg(fi.fileName(), QDir::toNativeSeparators(fi.absolutePath())));
+                            .arg(fi.size())
+                            .arg(fi.fileName(), QDir::toNativeSeparators(fi.absolutePath())));
     qDebug() << "Finished";
 #endif // DOWNLOAD_DEBUG
 }
 
 void DownloadTool::httpReadyRead()
 {
-    if (file) file->write(reply->readAll());
+    if (file)
+        file->write(reply->readAll());
 }
 
 void DownloadTool::networkReplyProgress(qint64 bytesRead, qint64 totalBytes)
@@ -111,8 +125,9 @@ void DownloadTool::networkReplyProgress(qint64 bytesRead, qint64 totalBytes)
     Q_EMIT sigProgress(bytesRead, totalBytes, progress);
 
 #ifdef DOWNLOAD_DEBUG
-    qDebug() << QString::number(progress * 100, 'f', 2) << "%    "
-             << bytesRead / (1024 * 1024) << "MB" << "/" << totalBytes / (1024 * 1024) << "MB";
+    qDebug() << QString::number(progress * 100, 'f', 2) << "%    " << bytesRead / (1024 * 1024)
+             << "MB"
+             << "/" << totalBytes / (1024 * 1024) << "MB";
 #endif // DOWNLOAD_DEBUG
 }
 

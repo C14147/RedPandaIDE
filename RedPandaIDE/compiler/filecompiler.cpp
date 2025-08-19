@@ -24,31 +24,28 @@
 #include <QFileInfo>
 #include <QMessageBox>
 
-
-FileCompiler::FileCompiler(const QString &filename, const QByteArray &encoding,
-                           CppCompileType compileType, bool onlyCheckSyntax):
-    Compiler(filename, onlyCheckSyntax),
-    mEncoding(encoding),
-    mCompileType(compileType)
+FileCompiler::FileCompiler(const QString& filename, const QByteArray& encoding,
+                           CppCompileType compileType, bool onlyCheckSyntax)
+    : Compiler(filename, onlyCheckSyntax), mEncoding(encoding), mCompileType(compileType)
 {
-
 }
 
 bool FileCompiler::prepareForCompile()
 {
     QString oldDebugOptionValue = compilerSet()->getCompileOptionValue(CC_CMD_OPT_DEBUG_INFO);
-    auto action = finally([this, oldDebugOptionValue]{
-       compilerSet()->setCompileOption(CC_CMD_OPT_DEBUG_INFO,oldDebugOptionValue);
+    auto action = finally([this, oldDebugOptionValue] {
+        compilerSet()->setCompileOption(CC_CMD_OPT_DEBUG_INFO, oldDebugOptionValue);
     });
-    Settings::CompilerSet::CompilationStage stage = Settings::CompilerSet::CompilationStage::GenerateExecutable;
-    switch(mCompileType) {
+    Settings::CompilerSet::CompilationStage stage =
+        Settings::CompilerSet::CompilationStage::GenerateExecutable;
+    switch (mCompileType) {
     case CppCompileType::PreprocessOnly:
         stage = Settings::CompilerSet::CompilationStage::PreprocessingOnly;
         break;
     case CppCompileType::GenerateAssemblyOnly:
         stage = Settings::CompilerSet::CompilationStage::CompilationProperOnly;
         if (pSettings->languages().noDebugDirectivesWhenGenerateASM())
-            compilerSet()->setCompileOption(CC_CMD_OPT_DEBUG_INFO,COMPILER_OPTION_OFF);
+            compilerSet()->setCompileOption(CC_CMD_OPT_DEBUG_INFO, COMPILER_OPTION_OFF);
         break;
     case CppCompileType::GenerateGimpleOnly:
         stage = Settings::CompilerSet::CompilationStage::GenerateGimple;
@@ -77,45 +74,46 @@ bool FileCompiler::prepareForCompile()
 
     mArguments += QStringList{localizePath(mFilename)};
     if (!mOnlyCheckSyntax) {
-        switch(stage) {
+        switch (stage) {
         case Settings::CompilerSet::CompilationStage::PreprocessingOnly:
-            mOutputFile=changeFileExt(mFilename,compilerSet()->preprocessingSuffix());
+            mOutputFile = changeFileExt(mFilename, compilerSet()->preprocessingSuffix());
             mArguments << "-E";
             break;
         case Settings::CompilerSet::CompilationStage::CompilationProperOnly:
-            mOutputFile=changeFileExt(mFilename,compilerSet()->compilationProperSuffix());
+            mOutputFile = changeFileExt(mFilename, compilerSet()->compilationProperSuffix());
             mArguments += {"-S", "-fverbose-asm"};
             break;
         case Settings::CompilerSet::CompilationStage::GenerateGimple:
-            mOutputFile=changeFileExt(mFilename,compilerSet()->compilationProperSuffix());
-            mArguments += {"-S", QString("-fdump-tree-gimple=%1").arg(localizePath(changeFileExt(mFilename,"gimple")))};
+            mOutputFile = changeFileExt(mFilename, compilerSet()->compilationProperSuffix());
+            mArguments += {"-S", QString("-fdump-tree-gimple=%1")
+                                     .arg(localizePath(changeFileExt(mFilename, "gimple")))};
             break;
         case Settings::CompilerSet::CompilationStage::AssemblingOnly:
-            mOutputFile=changeFileExt(mFilename,compilerSet()->assemblingSuffix());
+            mOutputFile = changeFileExt(mFilename, compilerSet()->assemblingSuffix());
             mArguments << "-c";
             break;
         case Settings::CompilerSet::CompilationStage::GenerateExecutable:
-            mOutputFile = changeFileExt(mFilename,compilerSet()->executableSuffix());
+            mOutputFile = changeFileExt(mFilename, compilerSet()->executableSuffix());
         }
 #ifdef ENABLE_SDCC
-        if (compilerSet()->compilerType()==CompilerType::SDCC) {
-            if (compilerSet()->executableSuffix()==SDCC_IHX_SUFFIX) {
-
+        if (compilerSet()->compilerType() == CompilerType::SDCC) {
+            if (compilerSet()->executableSuffix() == SDCC_IHX_SUFFIX) {
             }
         }
 #endif
         mOutputFile = localizePath(mOutputFile);
-        mArguments += {"-o",  mOutputFile};
+        mArguments += {"-o", mOutputFile};
 
 #if defined(ARCH_X86_64) || defined(ARCH_X86)
         if (mCompileType == CppCompileType::GenerateAssemblyOnly) {
             if (pSettings->languages().noSEHDirectivesWhenGenerateASM())
                 mArguments << "-fno-asynchronous-unwind-tables";
-            if (pSettings->languages().x86DialectOfASMGenerated()==Settings::Languages::X86ASMDialect::Intel)
+            if (pSettings->languages().x86DialectOfASMGenerated() ==
+                Settings::Languages::X86ASMDialect::Intel)
                 mArguments << "-masm=intel";
         }
 #endif
-        //remove the old file if it exists
+        // remove the old file if it exists
         QFile outputFile(mOutputFile);
         if (outputFile.exists()) {
             if (!outputFile.remove()) {
@@ -127,7 +125,7 @@ bool FileCompiler::prepareForCompile()
 
     mArguments += getCharsetArgument(mEncoding, fileType, mOnlyCheckSyntax);
     QString strFileType;
-    switch(fileType) {
+    switch (fileType) {
     case FileType::ATTASM:
     case FileType::INTELASM:
         mArguments += getCCompileArguments(mOnlyCheckSyntax);
@@ -157,28 +155,28 @@ bool FileCompiler::prepareForCompile()
         mArguments += getLibraryArguments(fileType);
 
     if (isASMSourceFile(fileType)) {
-        bool hasStart=false;
-        QStringList lines=readFileToLines(mFilename);
+        bool hasStart = false;
+        QStringList lines = readFileToLines(mFilename);
         QSynedit::ASMSyntaxer syntaxer;
         syntaxer.resetState();
         QString lastToken;
         QString token;
         QSynedit::PTokenAttribute attr;
-        for (int i=0;i<lines.count();i++) {
-            QString line=lines[i];
-            syntaxer.setLine(line,i+1);
-            lastToken="";
-            while(!syntaxer.eol()) {
-                token=syntaxer.getToken();
-                if (token==":" && lastToken=="_start") {
-                    hasStart=true;
+        for (int i = 0; i < lines.count(); i++) {
+            QString line = lines[i];
+            syntaxer.setLine(line, i + 1);
+            lastToken = "";
+            while (!syntaxer.eol()) {
+                token = syntaxer.getToken();
+                if (token == ":" && lastToken == "_start") {
+                    hasStart = true;
                     break;
                 }
                 attr = syntaxer.getTokenAttribute();
-                if (attr->tokenType() != QSynedit::TokenType::Space
-                        && attr->tokenType()!=QSynedit::TokenType::String
-                        && attr->tokenType()!=QSynedit::TokenType::Character)
-                    lastToken=token;
+                if (attr->tokenType() != QSynedit::TokenType::Space &&
+                    attr->tokenType() != QSynedit::TokenType::String &&
+                    attr->tokenType() != QSynedit::TokenType::Character)
+                    lastToken = token;
                 syntaxer.next();
             }
             if (hasStart)
@@ -190,15 +188,13 @@ bool FileCompiler::prepareForCompile()
     }
 
     if (!fileExists(mCompiler)) {
-        throw CompileError(
-                    tr("The Compiler '%1' doesn't exists!").arg(mCompiler)
-                    +"<br />"
-                    +tr("Please check the \"program\" page of compiler settings."));
+        throw CompileError(tr("The Compiler '%1' doesn't exists!").arg(mCompiler) + "<br />" +
+                           tr("Please check the \"program\" page of compiler settings."));
     }
 
     log(tr("Processing %1 source file:").arg(strFileType));
     log("------------------");
-    log(tr("%1 Compiler: %2").arg(strFileType,mCompiler));
+    log(tr("%1 Compiler: %2").arg(strFileType, mCompiler));
     QString command = escapeCommandForLog(mCompiler, mArguments);
     log(tr("Command: %1").arg(command));
     mDirectory = extractFileDir(mFilename);
@@ -207,13 +203,14 @@ bool FileCompiler::prepareForCompile()
 
 bool FileCompiler::prepareForRebuild()
 {
-    QString exeName=compilerSet()->getOutputFilename(mFilename);
+    QString exeName = compilerSet()->getOutputFilename(mFilename);
 
     QFile file(exeName);
 
     if (file.exists() && !file.remove()) {
         QFileInfo info(exeName);
-        throw CompileError(tr("Can't delete the old executable file \"%1\".\n").arg(info.absoluteFilePath()));
+        throw CompileError(
+            tr("Can't delete the old executable file \"%1\".\n").arg(info.absoluteFilePath()));
     }
     return true;
 }

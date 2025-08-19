@@ -29,11 +29,12 @@ class ProjectDLLHostWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit ProjectDLLHostWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit ProjectDLLHostWidget(const QString& name, const QString& group,
+                                  QWidget* parent = nullptr);
     ~ProjectDLLHostWidget();
 
 private:
-    Ui::ProjectDLLHostWidget *ui;
+    Ui::ProjectDLLHostWidget* ui;
 
     // SettingsWidget interface
 protected:
@@ -44,7 +45,7 @@ private slots:
 
     // SettingsWidget interface
 protected:
-    void updateIcons(const QSize &size) override;
+    void updateIcons(const QSize& size) override;
 };
 
 #endif // PROJECTDLLHOSTWIDGET_H

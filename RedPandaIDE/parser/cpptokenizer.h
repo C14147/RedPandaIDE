@@ -20,7 +20,6 @@
 #include <QObject>
 #include "parserutils.h"
 
-
 /**
  * @class CppTokenizer
  * @brief Specialized lexical analyzer for C++ source code parsing
@@ -30,13 +29,16 @@
  *          with handling for C++ syntax nuances, language features, and standards compliance.
  *
  * Core functionalities:
- * - Recognizes C++ keywords (e.g., `constexpr`, `namespace`, `concept`, `co_await`) across standards (C++11 to C++23)
- * - Parses C++-specific literals: raw strings (`R"(...)"`), user-defined literals (`123u`), and numeric suffixes
+ * - Recognizes C++ keywords (e.g., `constexpr`, `namespace`, `concept`, `co_await`) across
+ * standards (C++11 to C++23)
+ * - Parses C++-specific literals: raw strings (`R"(...)"`), user-defined literals (`123u`), and
+ * numeric suffixes
  * - Processes preprocessor directives (`#include`, `#define`, `#ifdef`) and their associated tokens
  * - Handles context-dependent syntax:
  *   - Template angle brackets (`<>`) vs. comparison operators
  *   - Lambda introducers (`[]`), captures, and parameter lists
- *   - Multi-line comments (`/*...*\/`), single-line comments (`//`), and attribute syntax (`[[...]]`)
+ *   - Multi-line comments (`/*...*\/`), single-line comments (`//`), and attribute syntax
+ * (`[[...]]`)
  *   - String/character literals with escape sequences (e.g., `\n`, `\"`)
  * - Identifies C++ operators (e.g., `::`, `->*`, `<<=`, `co_yield`) and delimiters
  * - Tracks precise source positions (line/column) for error reporting and navigation features
@@ -45,7 +47,8 @@
  * Output token streams support downstream IDE features: syntax highlighting, code completion,
  * basic syntax validation, and source navigation.
  *
- * @note Designed to adapt to C++ standard revisions, with conditional handling of version-specific features.
+ * @note Designed to adapt to C++ standard revisions, with conditional handling of version-specific
+ * features.
  */
 
 class CppTokenizer
@@ -66,46 +69,75 @@ class CppTokenizer
 
 public:
     struct Token {
-      QString text;
-      int line;
-      int matchIndex;
+        QString text;
+        int line;
+        int matchIndex;
     };
     using PToken = std::shared_ptr<Token>;
     using TokenList = QVector<PToken>;
     explicit CppTokenizer();
-    CppTokenizer(const CppTokenizer&)=delete;
-    CppTokenizer& operator=(const CppTokenizer&)=delete;
+    CppTokenizer(const CppTokenizer&) = delete;
+    CppTokenizer& operator=(const CppTokenizer&) = delete;
 
     void clear();
     void tokenize(const QStringList& buffer);
     void dumpTokens(const QString& fileName);
-    const PToken& operator[](int i) const { return mTokenList[i]; }
-    int tokenCount() const { return mTokenList.count(); }
-    static bool isIdentChar(const QChar& ch) { return ch=='_' || ch.isLetter(); }
-    int lambdasCount() const { return mLambdas.count(); }
+    const PToken& operator[](int i) const
+    {
+        return mTokenList[i];
+    }
+    int tokenCount() const
+    {
+        return mTokenList.count();
+    }
+    static bool isIdentChar(const QChar& ch)
+    {
+        return ch == '_' || ch.isLetter();
+    }
+    int lambdasCount() const
+    {
+        return mLambdas.count();
+    }
 
-    int indexOfFirstLambda() const { return mLambdas.front(); }
-    void removeFirstLambda() { mLambdas.pop_front(); }
+    int indexOfFirstLambda() const
+    {
+        return mLambdas.front();
+    }
+    void removeFirstLambda()
+    {
+        mLambdas.pop_front();
+    }
 
 private:
     void addToken(const QString& sText, int iLine, TokenType tokenType);
     void advance();
     void countLines();
 
-//    QString getForInit();
-    QString getNextToken(
-            TokenType *pTokenType);
+    //    QString getForInit();
+    QString getNextToken(TokenType* pTokenType);
     QString getNumber();
     QString getPreprocessor();
     QString getWord();
-    bool isArguments() { return *mCurrent == '('; }
-//    bool isForInit();
-    bool isNumber() { return isDigitChar(*mCurrent); }
-    bool isPreprocessor() { return *mCurrent=='#'; }
-    bool isWord() { return isIdentChar(*mCurrent) && (*(mCurrent+1) != '"') && (*(mCurrent+1) != '\''); }
+    bool isArguments()
+    {
+        return *mCurrent == '(';
+    }
+    //    bool isForInit();
+    bool isNumber()
+    {
+        return isDigitChar(*mCurrent);
+    }
+    bool isPreprocessor()
+    {
+        return *mCurrent == '#';
+    }
+    bool isWord()
+    {
+        return isIdentChar(*mCurrent) && (*(mCurrent + 1) != '"') && (*(mCurrent + 1) != '\'');
+    }
     void simplify(QString& output);
     void simplifyArgs(QString& output);
-//    void skipAssignment();
+    //    void skipAssignment();
     void skipDoubleQuotes();
     void skipPair(const QChar& cStart, const QChar cEnd);
     void skipParenthesis();
@@ -117,59 +149,59 @@ private:
     void skipToEOL();
     void skipToNextToken();
     bool openFile(const QString& fileName);
-    static bool isLetterChar(const QChar& ch) {
-        return isIdentChar(ch)
-                    || ch == '_'
-                    || ch == '*'
-                    || ch == '&'
-                    || ch == '~';
+    static bool isLetterChar(const QChar& ch)
+    {
+        return isIdentChar(ch) || ch == '_' || ch == '*' || ch == '&' || ch == '~';
     }
-    static bool isHexChar(const QChar& ch) {
-        return (ch >= 'A' && ch<='F')
-                || (ch>='a' && ch<='f')
-                || ch == 'x'
-                || ch == 'L';
+    static bool isHexChar(const QChar& ch)
+    {
+        return (ch >= 'A' && ch <= 'F') || (ch >= 'a' && ch <= 'f') || ch == 'x' || ch == 'L';
     }
-    static bool isDigitChar(const QChar& ch) {
-        return (ch>='0' && ch<='9');
+    static bool isDigitChar(const QChar& ch)
+    {
+        return (ch >= '0' && ch <= '9');
     }
 
-    static bool isSpaceChar(const QChar& ch) {
+    static bool isSpaceChar(const QChar& ch)
+    {
         return (ch == ' ' || ch == '\t');
     }
 
-    static bool isLineChar(const QChar& ch) {
-        return (ch=='\n' || ch=='\r');
+    static bool isLineChar(const QChar& ch)
+    {
+        return (ch == '\n' || ch == '\r');
     }
 
-    static bool isBlankChar(const QChar& ch) {
+    static bool isBlankChar(const QChar& ch)
+    {
         return (ch.unicode() <= 32) && (ch.unicode() > 0);
     }
 
-//    static bool isOperatorChar(const QChar& ch) {
-//        switch (ch.unicode()) {
-//        case '+':
-//        case '-':
-//        case '/':
-//        case '*':
-//        case '[':
-//        case ']':
-//        case '=':
-//        case '%':
-//        case '!':
-//        case '&':
-//        case '|':
-//        case '>':
-//        case '<':
-//        case '^':
-//            return true;
-//        default:
-//            return false;
-//        }
-//    }
+    //    static bool isOperatorChar(const QChar& ch) {
+    //        switch (ch.unicode()) {
+    //        case '+':
+    //        case '-':
+    //        case '/':
+    //        case '*':
+    //        case '[':
+    //        case ']':
+    //        case '=':
+    //        case '%':
+    //        case '!':
+    //        case '&':
+    //        case '|':
+    //        case '>':
+    //        case '<':
+    //        case '^':
+    //            return true;
+    //        default:
+    //            return false;
+    //        }
+    //    }
 
-    static bool currentWordEquals(QChar* wordStart, QChar *wordEnd, const QString& text) {
-        QString currentWord(wordStart, wordEnd-wordStart);
+    static bool currentWordEquals(QChar* wordStart, QChar* wordEnd, const QString& text)
+    {
+        QString currentWord(wordStart, wordEnd - wordStart);
         return currentWord == text;
     }
 
@@ -184,9 +216,9 @@ private:
     TokenType mLastTokenType;
     TokenList mTokenList;
     QList<int> mLambdas;
-    QVector<int> mUnmatchedBraces; // stack of indices for unmatched '{'
-    QVector<int> mUnmatchedBrackets; // stack of indices for unmatched '['
-    QVector<int> mUnmatchedParenthesis;// stack of indices for unmatched '('
+    QVector<int> mUnmatchedBraces;      // stack of indices for unmatched '{'
+    QVector<int> mUnmatchedBrackets;    // stack of indices for unmatched '['
+    QVector<int> mUnmatchedParenthesis; // stack of indices for unmatched '('
 };
 
 using PCppTokenizer = std::shared_ptr<CppTokenizer>;

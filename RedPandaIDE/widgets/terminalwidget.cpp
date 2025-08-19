@@ -6,12 +6,13 @@ const QString DEFAULT_SHELL = "cmd.exe";
 const QString DEFAULT_SHELL = "/bin/bash";
 #endif
 
-TerminalWidget::TerminalWidget(QWidget *parent) : QWidget(parent) {
+TerminalWidget::TerminalWidget(QWidget* parent) : QWidget(parent)
+{
     output = new QPlainTextEdit(this);
     output->setReadOnly(true);
     input = new QLineEdit(this);
 
-    QVBoxLayout *layout = new QVBoxLayout(this);
+    QVBoxLayout* layout = new QVBoxLayout(this);
     layout->addWidget(output);
     layout->addWidget(input);
     setLayout(layout);
@@ -26,31 +27,36 @@ TerminalWidget::TerminalWidget(QWidget *parent) : QWidget(parent) {
     startShell();
 }
 
-TerminalWidget::~TerminalWidget() {
+TerminalWidget::~TerminalWidget()
+{
     process->close();
 }
 
-void TerminalWidget::startShell() {
+void TerminalWidget::startShell()
+{
     process->start(shell);
     if (!process->waitForStarted(2000)) {
         output->appendPlainText("Launch Terminal Process Failed.");
     }
 }
 
-void TerminalWidget::onReadyRead() {
+void TerminalWidget::onReadyRead()
+{
     QByteArray data = process->readAllStandardOutput() + process->readAllStandardError();
     output->moveCursor(QTextCursor::End);
     output->insertPlainText(QString::fromLocal8Bit(data));
     output->moveCursor(QTextCursor::End);
 }
 
-void TerminalWidget::onCommandEntered() {
+void TerminalWidget::onCommandEntered()
+{
     QString cmd = input->text() + "\n";
     process->write(cmd.toLocal8Bit());
     input->clear();
 }
 
-void TerminalWidget::keyPressEvent(QKeyEvent *event) {
+void TerminalWidget::keyPressEvent(QKeyEvent* event)
+{
     if (event->key() == Qt::Key_Tab) {
         process->write("\t");
     } else {

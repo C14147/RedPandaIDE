@@ -30,13 +30,16 @@ class ProjectCompilerWidget : public SettingsWidget
     Q_OBJECT
 
 public:
-    explicit ProjectCompilerWidget(const QString& name, const QString& group, QWidget *parent = nullptr);
+    explicit ProjectCompilerWidget(const QString& name, const QString& group,
+                                   QWidget* parent = nullptr);
     ~ProjectCompilerWidget();
+
 private:
     void refreshOptions();
+
 private:
-    Ui::ProjectCompilerWidget *ui;
-    QMap<QString,QString> mOptions;
+    Ui::ProjectCompilerWidget* ui;
+    QMap<QString, QString> mOptions;
     bool mStaticLink;
     bool mAddCharset;
     QByteArray mExecCharset;
@@ -51,8 +54,8 @@ public:
     void init() override;
 private slots:
     void on_cbCompilerSet_currentIndexChanged(int index);
-    void on_cbEncoding_currentTextChanged(const QString &arg1);
-    void on_cbEncodingDetails_currentTextChanged(const QString &arg1);
+    void on_cbEncoding_currentTextChanged(const QString& arg1);
+    void on_cbEncodingDetails_currentTextChanged(const QString& arg1);
 };
 
 #endif // PROJECTCOMPILERWIDGET_H
