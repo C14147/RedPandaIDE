@@ -268,16 +268,17 @@ class WaitingWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit WaitingWidget(QWidget *parent = nullptr);
+    QProgressBar* progressBar;
+
+    explicit WaitingWidget(QWidget* parent = nullptr);
     ~WaitingWidget() override;
 
 protected:
     void changeEvent(QEvent *event) override;
 
 private:
-    QVBoxLayout *verticalLayout;
-    QLabel *label;
-    QProgressBar *progressBar;
+    QVBoxLayout* verticalLayout;
+    QLabel* label;
 
     void setupUi();
     void retranslateUi();

@@ -381,16 +381,16 @@ MainWindow::MainWindow(QWidget *parent)
 
     // load plugins from config/plugins folder (non-recursive)
     QString pluginsFolder = includeTrailingPathDelimiter(pSettings->dirs().config()) + "plugins";
-    QMap<QString, QString> faileds = mPluginManager->loadPlugins(pluginsFolder);
-    if(!faileds.empty())
-    {
-        QString errMsg = tr("Failed to load plugins:");
-        errMsg += "\n";
-        foreach(QString plugin, faileds.keys())
-        {
-            errMsg += "File: " + plugin + ", " + faileds[plugin] + "\n";
+    if(QDir(pluginsFolder).exists()) {
+        QMap<QString, QString> faileds = mPluginManager->loadPlugins(pluginsFolder, true);
+        if (!faileds.empty()) {
+            QString errMsg = tr("Failed to load plugins:");
+            errMsg += "\n";
+            foreach (QString plugin, faileds.keys()) {
+                errMsg += "File: " + plugin + ", " + faileds[plugin] + "\n";
+            }
+            QMessageBox::warning(this, tr("Warning"), errMsg);
         }
-        QMessageBox::warning(this, tr("Warning"), errMsg);
     }
 
     mBookmarkModel = new BookmarkModel{this};
@@ -10262,11 +10262,7 @@ void MainWindow::on_actionToggle_Readonly_triggered()
 
 void MainWindow::on_actionSubmit_Issues_triggered()
 {
-    if (pSettings->environment().language()=="zh_CN") {
-        QDesktopServices::openUrl(QUrl("https://gitee.com/royqh1979/RedPanda-CPP/issues"));
-    } else {
-        QDesktopServices::openUrl(QUrl("https://github.com/royqh1979/RedPanda-CPP/issues"));
-    }
+    QDesktopServices::openUrl(QUrl("https://github.com/C14147/RedPandaIDE/issues"));
 }
 
 

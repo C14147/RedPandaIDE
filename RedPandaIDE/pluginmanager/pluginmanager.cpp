@@ -30,28 +30,48 @@ PluginManager::~PluginManager()
     }
 }
 
-QMap<QString, QString> PluginManager::loadPlugins(const QString &folder)
+QMap<QString, QString> PluginManager::loadPlugins(const QString& folder, const bool showUI)
 {
     QMap<QString, QString> failed;
     failed.clear();
 
     QDir dir(folder);
-    if (!dir.exists())
+    if (!dir.exists()) {
         failed[dir.absolutePath()] = "The path doesn't exists.";
-    return failed;
-
-    auto entryList = dir.entryList(QDir::Files);
-    for (const QString &file : entryList)
-    {
-        QString path = dir.absoluteFilePath(file);
-        QString res = loadPlugin(path);
-        if (res != "Success")
-            failed[path] = res;
+        return failed;
     }
 
-    if (!processDepends())
-    {
-        failed[QObject::tr("Can't find depends")] = unprocessedDepends.join(", ");
+    WaitingWidget w;
+    if (showUI)
+        w.show();
+
+    auto entryList = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+
+    if (showUI) {
+        w.progressBar->setMaximum(entryList.size());
+        w.progressBar->setValue(0);
+        w.update();
+    }
+
+    for (const QString& pluginPath : entryList) {
+        QString path = dir.absolutePath() + QDir::separator() + pluginPath;
+        QString res = loadPlugin(path);
+        if (res != "Success")
+            failed[pluginPath] = res;
+
+        if (showUI) {
+            w.progressBar->setValue(w.progressBar->value() + 1);
+            w.update();
+        }
+    }
+
+    if (processDepends()) {
+        failed[QObject::tr("Can't find depends")] = unprocessedDepends.values().join(", ");
+    }
+
+    if (showUI) {
+        w.hide();
+        w.deleteLater();
     }
 
     return failed;
@@ -71,7 +91,32 @@ const QList<IRedPandaPlugin *> &PluginManager::plugins() const
 
 QString PluginManager::loadPlugin(const QString &path)
 {
-    QFileInfo fi(path);
+    QStringList splitedPath = path.split(QDir::separator());
+    QString pluginFolderID = splitedPath[splitedPath.size() - 1];
+
+    // not ours
+    if (!pluginFolderID.startsWith("com.redpandaide."))
+        return "Success";
+
+    PluginRecord rec;
+    rec.path = path;
+    // Try to read metadata file alongside plugin binary: <basename>.json
+    QString metaPath = QDir(path).absoluteFilePath("metadata.json");
+    if (QFileInfo::exists(metaPath))
+        return QObject::tr("Can't find metadata file for plugin %1").arg(pluginFolderID);
+    else {
+        QFile mf(metaPath);
+        if (mf.open(QFile::ReadOnly | QFile::Text)) {
+            QByteArray data = mf.readAll();
+            QJsonDocument doc = QJsonDocument::fromJson(data);
+            if (doc.isObject()) {
+                rec.metadata = doc.object().toVariantMap();
+            }
+            mf.close();
+        }
+    }
+
+    QFileInfo fi(QDir(path).absoluteFilePath(rec.metadata["pluginName"].toString()));
     if (!fi.exists())
         return QObject::tr("The plugin %1 doesn't exists.").arg(fi.fileName());
     // prevent duplicate loads
@@ -86,8 +131,7 @@ QString PluginManager::loadPlugin(const QString &path)
     if (!instance)
     {
         qDebug() << "Plugin load failed:" << path << loader->errorString();
-        delete loader;
-        return QObject::tr("Plugin load failed: %1").arg(loader->errorString());
+        return QString("%1").arg(loader->errorString());
     }
     IRedPandaPlugin *plugin = qobject_cast<IRedPandaPlugin *>(instance);
     if (!plugin)
@@ -95,45 +139,26 @@ QString PluginManager::loadPlugin(const QString &path)
         // not our plugin
         loader->unload();
         delete loader;
-        return "Success";
+        return QObject::tr("Found Disguised Plugin: %1").arg(pluginFolderID);
+    } else {
+        if (plugin->pluginID != pluginFolderID) {
+            loader->unload();
+            delete loader;
+            return QObject::tr("Plugin ID mismatch: installed %1, actual %2")
+                .arg(pluginFolderID)
+                .arg(plugin->pluginID);
+        }
     }
     plugin->initialize(pMainWindow);
-    PluginRecord rec;
-    rec.path = fi.absoluteFilePath();
+
     rec.loader = loader;
     rec.plugin = plugin;
 
-    // Try to read metadata file alongside plugin binary: <basename>.json
-    QString metaPath = fi.absolutePath() + QDir::separator() + fi.completeBaseName() + ".json";
-    if (QFileInfo::exists(metaPath))
-    {
-        // if not, load from class itself
-        rec.metadata["pluginName"] = plugin->pluginName;
-        rec.metadata["pluginVersion"] = plugin->pluginVersion;
-        rec.metadata["ID"] = plugin->pluginID;
-    }
-    else
-    {
-        QFile mf(metaPath);
-        if (mf.open(QFile::ReadOnly | QFile::Text))
-        {
-            QByteArray data = mf.readAll();
-            QJsonDocument doc = QJsonDocument::fromJson(data);
-            if (doc.isObject())
-            {
-                rec.metadata = doc.object().toVariantMap();
-            }
-            mf.close();
-        }
-    }
-
     // check the depends for the plugin later
     QStringList depends = plugin->depends;
-    if (!depends.length())
-    {
-        for (QString &depend : depends)
-        {
-            unprocessedDepends.push_back(depend);
+    if (!depends.length()) {
+        for (QString& depend : depends) {
+            unprocessedDepends.insert(depend);
         }
     }
 
@@ -221,9 +246,9 @@ size_t PluginManager::processDepends() noexcept
     for (QString depend : unprocessedDepends)
     {
         if (findPluginByID(depend) != nullptr)
-            unprocessedDepends.removeOne(depend);
+            unprocessedDepends.remove(depend);
     }
-    return unprocessedDepends.length();
+    return unprocessedDepends.size();
 }
 
 IRedPandaPlugin *PluginManager::findPluginByID(const QString &pluginID) noexcept
