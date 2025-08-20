@@ -1,3 +1,15 @@
+/*
+ * @file pluginmanager.h
+ *
+ * meta data file ({PluginName}.json) template:
+ * {
+ *  "pluginName": "Plugin API",
+ *  "pluginVersion": "1.0.0",
+ *  "introduction": "the core api for all plugin",
+ *  "ID" : "com.redpandaide.apicore.1.0.0"
+ * }
+ */
+
 #ifndef PLUGINMANAGER_H
 #define PLUGINMANAGER_H
 
@@ -10,6 +22,7 @@
 #include <QWidget>
 
 #include "settingsdialog/settingswidget.h"
+#include "../utils.h"
 
 class IRedPandaPlugin;
 class MainWindow;
@@ -22,7 +35,7 @@ public:
     ~PluginManager();
 
     // load all plugins from a folder (non-recursive)
-    QMap<QString, QString> loadPlugins(const QString& folder);
+    QMap<QString, QString> loadPlugins(const QString& folder, const bool showUI = false);
 
     // load a single plugin by absolute path
     QString loadPlugin(const QString& path);
@@ -65,7 +78,7 @@ public:
     };
 
     QList<PluginRecord> mRecords;
-    QStringList unprocessedDepends;
+    QSet<QString> unprocessedDepends;
 };
 
 #endif // PLUGINMANAGER_H
