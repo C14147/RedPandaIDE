@@ -228,11 +228,14 @@ void ExtensionsWidget::on_downloadButton_clicked()
     QDir savePath = QApplication::applicationDirPath();
     savePath = savePath.absoluteFilePath(".");
     savePath = QDir::cleanPath(savePath.path()) + QDir::separator();
+    QStringList urlList = downloadUrl.split("/");
 
     if (extInfo.value("type").toString() == "theme") {
         savePath = QDir(savePath.path() + "/config/themes/");
     } else if (extInfo.value("type").toString() == "colorScheme") {
         savePath = QDir(savePath.path() + "/config/scheme/");
+    } else if (extInfo.value("type").toString() == "plugin") {
+        savePath = QDir(savePath.path() + "/config/plugins/" + urlList[urlList.size() - 2]);
     }
 
     // start download
