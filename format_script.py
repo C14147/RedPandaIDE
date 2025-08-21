@@ -36,6 +36,8 @@ def format_files(clang_format_cmd, config_file, files, dry_run=False):
     # 构建格式化命令
     for file_path in files:
         try:
+            if "\\debug\\" in file_path:
+                continue
             print(f"正在处理: {file_path}")
             
             cmd = [

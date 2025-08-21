@@ -27,7 +27,7 @@ RedPandaIDE各个版本所配置的宏：
  - [Enhancement ](Modern Edition) Add complete support for extensions to compressed file types.
  - [Enhancement ] Add environment variables such as compiler path and IDE path when the embedded terminal starts up. (DELAY: CyanHao is Developing)
 4. alpha 3
- - [Enhancement ](Modern Edition) Intelligent recognition of compiler versions and addition of additional compilation options for specific versions of compilers. (e.g. -fmodules-ts for MinGW 11.x, -fmodules for later)
+ - [Enhancement ](Modern Edition) Intelligent recognition of compiler versions and addition of additional compilation options for specific versions of compilers. (e.g. -fmodules-ts for MinGW 11.x, -fmodules for later, REFUSED)
  - [Enhancement ] Optimize code prompt algorithm to improve code parsing speed.
 5. new feature preview 1
  - [Enhancement ](Modern Edition) Add analysis of C/C++ keywords and prompt users to enable C/C++ standard or precompile modules.
