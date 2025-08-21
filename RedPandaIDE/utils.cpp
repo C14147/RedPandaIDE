@@ -974,6 +974,12 @@ void WaitingWidget::changeEvent(QEvent *event)
     QWidget::changeEvent(event);
 }
 
+void WaitingWidget::showEvent(QShowEvent *event)
+{
+    this->setAttribute(Qt::WA_Mapped);
+    QWidget::showEvent(event);
+}
+
 void WaitingWidget::setupUi()
 {
     setObjectName("WaitingWidget");
