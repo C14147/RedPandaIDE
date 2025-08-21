@@ -7,6 +7,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QPluginLoader>
+#include <windows.h>
 
 #include "../mainwindow.h"
 #include "plugininterface.h"
@@ -42,25 +43,24 @@ QMap<QString, QString> PluginManager::loadPlugins(const QString& folder, const b
     WaitingWidget w;
     if (showUI)
         w.show();
+    w.repaint();
 
     auto entryList = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
 
     if (showUI) {
-        w.progressBar->setMaximum(entryList.size());
-        w.progressBar->setValue(0);
-        w.update();
+        w.repaint();
     }
 
     for (const QString& pluginPath : entryList) {
+        if (showUI) {
+            w.label->setText(QObject::tr("Loading Plugin: %1").arg(pluginPath));
+            w.repaint();
+        }
+
         QString path = dir.absolutePath() + QDir::separator() + pluginPath;
         QString res = loadPlugin(path);
         if (res != "Success")
             failed[pluginPath] = res;
-
-        if (showUI) {
-            w.progressBar->setValue(w.progressBar->value() + 1);
-            w.update();
-        }
     }
 
     if (processDepends()) {
@@ -99,7 +99,7 @@ QString PluginManager::loadPlugin(const QString& path)
     rec.path = path;
     // Try to read metadata file alongside plugin binary: <basename>.json
     QString metaPath = QDir(path).absoluteFilePath("metadata.json");
-    if (QFileInfo::exists(metaPath))
+    if (!QFileInfo::exists(metaPath))
         return QObject::tr("Can't find metadata file for plugin %1").arg(pluginFolderID);
     else {
         QFile mf(metaPath);
