@@ -673,6 +673,10 @@ PStatement CppParser::doFindAliasedStatement(const PStatement& statement,
 {
     if (!statement)
         return PStatement();
+    // Prevent infinite recursion
+    static const int kMaxAliasDepth = 200;
+    if (foundSet.size() > kMaxAliasDepth)
+        return PStatement();
     int pos = statement->type.lastIndexOf("::");
     if (pos < 0)
         return PStatement();
@@ -4187,48 +4191,17 @@ void CppParser::internalParse(const QString& fileName)
     mPreprocessor.preprocess(fileName);
 
     QStringList preprocessResult = mPreprocessor.result();
-#ifdef QT_DEBUG
-    // stringsToFile(mPreprocessor.result(),QString("r:\\preprocess-%1.txt").arg(extractFileName(fileName)));
-    // mPreprocessor.dumpDefinesTo("z:\\defines.txt");
-    // mPreprocessor.dumpIncludesListTo("z:\\includes.txt");
-#endif
-    // qDebug()<<"preprocess"<<timer.elapsed();
-    // reduce memory usage
-    // timer.restart();
     mPreprocessor.clearTempResults();
-    // qDebug()<<"preprocess clean"<<timer.elapsed();
-
-    // timer.restart();
-    //  Tokenize the preprocessed buffer file
     mTokenizer.tokenize(preprocessResult);
-    // reduce memory usage
     preprocessResult.clear();
-    // qDebug()<<"tokenize"<<timer.elapsed();
     if (mTokenizer.tokenCount() == 0)
         return;
-#ifdef QT_DEBUG
-        // mTokenizer.dumpTokens(QString("r:\\tokens-%1.txt").arg(extractFileName(fileName)));
-#endif
-#ifdef QT_DEBUG
-    mLastIndex = -1;
-#endif
-    //    timer.restart();
-    // Process the token list
     int endIndex = mTokenizer.tokenCount();
     while (true) {
         if (!handleStatement(endIndex))
             break;
     }
-#ifdef QT_DEBUG
-    // mTokenizer.dumpTokens(QString("r:\\tokens-after-%1.txt").arg(extractFileName(fileName)));
-#endif
     handleInheritances();
-    //    qDebug()<<"parse"<<timer.elapsed();
-#ifdef QT_DEBUG
-    // mStatementList.dumpAll(QString("r:\\all-stats-%1.txt").arg(extractFileName(fileName)));
-    // mStatementList.dump(QString("r:\\stats-%1.txt").arg(extractFileName(fileName)));
-#endif
-    // reduce memory usage
     internalClear();
 }
 
@@ -4325,21 +4298,18 @@ PStatement CppParser::findMemberOfStatement(const QString& phrase,
         return PStatement();
 
     QString s = phrase;
-    // remove []
-    int p = phrase.indexOf('[');
-    if (p >= 0)
-        s.truncate(p);
-    // remove ()
-    p = phrase.indexOf('(');
-    if (p >= 0)
-        s.truncate(p);
-
-    // remove <>
+    // Remove array, function, and template params efficiently
+    int p = s.indexOf('[');
+    if (p >= 0) s.truncate(p);
+    p = s.indexOf('(');
+    if (p >= 0) s.truncate(p);
     p = s.indexOf('<');
-    if (p >= 0)
-        s.truncate(p);
-
-    return statementMap.value(s, PStatement());
+    if (p >= 0) s.truncate(p);
+    // Fast hash lookup
+    auto it = statementMap.find(s);
+    if (it != statementMap.end())
+        return it.value();
+    return PStatement();
 }
 
 PStatement CppParser::findMemberOfStatement(const QString& filename, const QString& phrase,
@@ -4350,33 +4320,29 @@ PStatement CppParser::findMemberOfStatement(const QString& filename, const QStri
         return PStatement();
 
     QString s = phrase;
-    // remove []
-    int p = phrase.indexOf('[');
-    if (p >= 0)
-        s.truncate(p);
-    // remove ()
-    p = phrase.indexOf('(');
-    if (p >= 0)
-        s.truncate(p);
-
-    // remove <>
+    int p = s.indexOf('[');
+    if (p >= 0) s.truncate(p);
+    p = s.indexOf('(');
+    if (p >= 0) s.truncate(p);
     p = s.indexOf('<');
-    if (p >= 0)
-        s.truncate(p);
+    if (p >= 0) s.truncate(p);
     if (scopeStatement) {
-        return statementMap.value(s, PStatement());
+        auto it = statementMap.find(s);
+        if (it != statementMap.end())
+            return it.value();
+        return PStatement();
     } else {
         QList<PStatement> stats = statementMap.values(s);
         PParsedFileInfo fileInfo = mPreprocessor.findFileInfo(filename);
-        foreach (const PStatement& s, stats) {
-            if (s->line == -1) {
-                return s; // hard defines
+        for (const PStatement& st : stats) {
+            if (st->line == -1) {
+                return st; // hard defines
             }
-            if (s->fileName == filename || s->definitionFileName == filename) {
-                return s;
-            } else if (fileInfo && (fileInfo->including(s->fileName) ||
-                                    fileInfo->including(s->definitionFileName))) {
-                return s;
+            if (st->fileName == filename || st->definitionFileName == filename) {
+                return st;
+            } else if (fileInfo && (fileInfo->including(st->fileName) ||
+                                    fileInfo->including(st->definitionFileName))) {
+                return st;
             }
         }
         return PStatement();
