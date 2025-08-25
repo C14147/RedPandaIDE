@@ -156,6 +156,7 @@ SOURCES += \
     parser/parserutils.cpp \
     parser/statementmodel.cpp \
     pluginmanager/pluginmanager.cpp \
+    pluginmanager/pluginutil.cpp \
     problems/competitivecompenionhandler.cpp \
     problems/freeprojectsetformat.cpp \
     problems/ojproblemset.cpp \
@@ -297,6 +298,7 @@ HEADERS += \
     parser/statementmodel.h \
     pluginmanager/plugininterface.h \
     pluginmanager/pluginmanager.h \
+    pluginmanager/pluginutil.h \
     problems/competitivecompenionhandler.h \
     problems/freeprojectsetformat.h \
     problems/ojproblemset.h \
