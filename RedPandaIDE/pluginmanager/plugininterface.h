@@ -43,6 +43,6 @@ public:
     virtual QList<QPair<QString, QWidget*>> messagesTabs() = 0;
 };
 
-Q_DECLARE_INTERFACE(IRedPandaPlugin, "com.redpandaide.PluginInterface/1.0")
+Q_DECLARE_INTERFACE(IRedPandaPlugin, "com.redpandaide.PluginInterface.1.0.0")
 
 #endif // PLUGININTERFACE_H
