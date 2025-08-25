@@ -700,6 +700,10 @@ PStatement CppParser::doFindAliasedStatement(const PStatement &statement, QSet<S
 {
     if (!statement)
         return PStatement();
+    // Prevent infinite recursion
+    static const int kMaxAliasDepth = 200;
+    if (foundSet.size() > kMaxAliasDepth)
+        return PStatement();
     int pos = statement->type.lastIndexOf("::");
     if (pos<0)
         return PStatement();
@@ -4594,9 +4598,6 @@ void CppParser::internalParse(const QString &fileName)
         if (!handleStatement(endIndex))
             break;
     }
-#ifdef QT_DEBUG
-    // mTokenizer.dumpTokens(QString("r:\\tokens-after-%1.txt").arg(extractFileName(fileName)));
-#endif
     handleInheritances();
     //    qDebug()<<"parse"<<timer.elapsed();
 #ifdef QT_DEBUG
