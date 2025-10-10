@@ -1397,6 +1397,7 @@ public:
         bool canCompileCPP() const;
         bool canMake() const;
         bool canDebug() const;
+        bool NASMExists() const;
 //        bool dirsValid(QString& msg);
 //        bool validateExes(QString& msg);
         //properties
@@ -1412,6 +1413,9 @@ public:
         void setResourceCompiler(const QString& name);
         const QString &debugServer() const;
         void setDebugServer(const QString &newDebugServer);
+        const QString &NASM() const;
+        void setNASM(const QString &newNASM);
+
 
         QStringList findErrors();
 
@@ -1522,6 +1526,7 @@ public:
         QString mDebugger;
         QString mResourceCompiler;
         QString mDebugServer;
+        QString mNASM;
 
         // Directories, mostly hardcoded too
         QStringList mBinDirs;
