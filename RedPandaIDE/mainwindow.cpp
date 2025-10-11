@@ -794,6 +794,7 @@ void MainWindow::updateEditorActions(const Editor *e)
         ui->actionATT_ASM->setEnabled(false);
         ui->actionIntel_ASM->setEnabled(false);
         ui->actionText_File->setEnabled(false);
+        ui->actionNASM->setEnabled(false);
     } else {
         ui->actionCopy->setEnabled(true);
         ui->actionCut->setEnabled(true);
@@ -883,6 +884,7 @@ void MainWindow::updateEditorActions(const Editor *e)
         ui->actionATT_ASM->setEnabled(true);
         ui->actionIntel_ASM->setEnabled(true);
         ui->actionText_File->setEnabled(true);
+        ui->actionNASM->setEnabled(true);
     }
 
     updateFileTypeActions(e);
@@ -963,6 +965,13 @@ void MainWindow::updateCompileActions(const Editor *e)
                     case FileType::INTELASM:
                         if (set->compilerType()==CompilerType::GCC
                                 || set->compilerType()==CompilerType::GCC_UTF8) {
+                            canCompile = true;
+                            canRun = canCompile;
+                            canDebug = set->canDebug();
+                        }
+                        break;
+                    case FileType::NASM:
+                        if (fileExists(pSettings->compile().NASMPath())){
                             canCompile = true;
                             canRun = canCompile;
                             canDebug = set->canDebug();
@@ -1114,6 +1123,8 @@ void MainWindow::updateFileTypeActions(const Editor* e)
     ui->actionATT_ASM->setChecked(false);
     ui->actionIntel_ASM->setChecked(false);
     ui->actionText_File->setChecked(false);
+    ui->actionNASM->setChecked(false);
+
     if (!e)
         return;
     switch(e->fileType()) {
@@ -1130,6 +1141,9 @@ void MainWindow::updateFileTypeActions(const Editor* e)
         ui->actionATT_ASM->setChecked(true);
         break;
     case FileType::INTELASM:
+        ui->actionIntel_ASM->setChecked(true);
+        break;
+    case FileType::NASM:
         ui->actionIntel_ASM->setChecked(true);
         break;
     case FileType::Text:
@@ -2500,7 +2514,7 @@ bool MainWindow::compile(bool rebuild, CppCompileType compileType)
             }
             stretchMessagesPanel(true);
             ui->tabMessages->setCurrentWidget(ui->tabToolsOutput);
-            mCompilerManager->compile(editor->filename(),editor->fileEncoding(),rebuild,compileType);
+            mCompilerManager->compile(editor->filename(), editor->fileType(), editor->fileEncoding(),rebuild,compileType);
             updateCompileActions();
             updateAppTitle();
         }
@@ -2783,7 +2797,7 @@ void MainWindow::debug()
             // Check if we enabled proper options
             debugEnabled = compilerSet->getCompileOptionValue(CC_CMD_OPT_DEBUG_INFO) == COMPILER_OPTION_ON;
             stripEnabled = compilerSet->getCompileOptionValue(LINK_CMD_OPT_STRIP_EXE) == COMPILER_OPTION_ON;
-            if (stripEnabled && !debugEnabled) {
+            if (stripEnabled || !debugEnabled) {
                 if (QMessageBox::question(this,
                                       tr("Correct compile settings for debug"),
                                           tr("The generated executable won't have debug symbol infos, and can't be debugged.")
@@ -10043,7 +10057,19 @@ void MainWindow::on_actionEncode_in_UTF_8_BOM_triggered()
 void MainWindow::on_actionCompiler_Options_triggered()
 {
     Editor * editor = mEditorList->getEditor();
-    if (!mProject || (editor && !editor->inProject())) {
+    if (editor && editor->fileType() == FileType::NASM) {
+        changeOptions(
+                   SettingsDialog::tr("NASM"),
+                   SettingsDialog::tr("Compiler")
+                   );
+    } else if (editor && (editor->fileType() == FileType::ATTASM
+                          || editor->fileType() == FileType::INTELASM)
+               ) {
+            changeOptions(
+                       SettingsDialog::tr("GNU Assembler"),
+                       SettingsDialog::tr("Compiler")
+                       );
+    } else if (!mProject || (editor && !editor->inProject())) {
         changeOptions(
                    SettingsDialog::tr("Compiler Set"),
                    SettingsDialog::tr("Compiler")
