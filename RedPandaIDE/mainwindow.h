@@ -347,6 +347,7 @@ private:
     void validateCompilerSet(int index);
 
     void updateProblemSetName();
+    void saveProblemSet(const QString& filePath);
 
 private slots:
     void setupSlotsForProject();
@@ -657,6 +658,7 @@ private slots:
     void onRemoveProblem();
 
     void onSaveProblemSet();
+    void onSaveProblemSetAs();
 
     void onLoadProblemSet();
 
@@ -1035,6 +1037,7 @@ private:
     QAction * mProblemSet_New;
     QAction * mProblemSet_Rename;
     QAction * mProblemSet_Save;
+    QAction * mProblemSet_SaveAs;
     QAction * mProblemSet_Load;
     QAction * mProblemSet_ImportFPS;
     QAction * mProblemSet_ExportFPS;
