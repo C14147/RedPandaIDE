@@ -47,7 +47,6 @@ enum class FileType{
     None,
     ATTASM, // AT&T assembler source file (.s)
     INTELASM, // Intel assembler source file (.s)
-    NASM,
     LUA, // lua file (.lua)
     CSource, // c source file (.c)
     CppSource, // c++ source file (.cpp)
@@ -62,6 +61,7 @@ enum class FileType{
     ModuleDef, // Windows Module Definition
     MakeFile,
     Other, // any others
+    NASM, // NASM Files
 };
 
 enum class SearchFileScope {
