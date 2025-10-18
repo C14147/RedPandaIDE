@@ -10355,6 +10355,7 @@ void MainWindow::on_actionNew_GAS_File_triggered()
     newEditor("s");
 }
 
+#if defined(ARCH_X86_64) || defined(ARCH_X86)
 void MainWindow::on_actionNew_NASM_File_triggered()
 {
     if (mProject) {
@@ -10369,6 +10370,7 @@ void MainWindow::on_actionNew_NASM_File_triggered()
     }
     newEditor("asm");
 }
+#endif
 
 void MainWindow::on_actionGNU_Assembler_Manual_triggered()
 {
