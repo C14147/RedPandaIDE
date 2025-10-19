@@ -29,6 +29,7 @@ PluginManager::~PluginManager()
         }
         r.plugin = nullptr;
     }
+    mRecords.clear();
 }
 
 QMap<QString, QString> PluginManager::loadPlugins(const QString& folder, const bool showUI)
@@ -98,8 +99,15 @@ QString PluginManager::loadPlugin(const QString &path)
     if (!pluginFolderID.startsWith("com.redpandaide."))
         return "Success";
 
+    // prevent duplicate loads
+    QString absPath = QFileInfo(path).absoluteFilePath();
+    for (const auto& r : mRecords) {
+        if (r.path == absPath)
+            return "Success";
+    }
+
     PluginRecord rec;
-    rec.path = path;
+    rec.path = absPath;
     // Try to read metadata file alongside plugin binary: <basename>.json
     QString metaPath = QDir(path).absoluteFilePath("metadata.json");
     if (!QFileInfo::exists(metaPath))
@@ -131,6 +139,7 @@ QString PluginManager::loadPlugin(const QString &path)
     if (!instance)
     {
         qDebug() << "Plugin load failed:" << path << loader->errorString();
+        delete loader;
         return QString("%1").arg(loader->errorString());
     }
     IRedPandaPlugin *plugin = qobject_cast<IRedPandaPlugin *>(instance);
@@ -156,7 +165,7 @@ QString PluginManager::loadPlugin(const QString &path)
 
     // check the depends for the plugin later
     QStringList depends = plugin->depends;
-    if (!depends.length()) {
+    if (depends.length()) {
         for (QString& depend : depends) {
             unprocessedDepends.insert(depend);
         }
@@ -199,8 +208,6 @@ bool PluginManager::unloadPlugin(const QString &path)
                 delete r.loader;
                 r.loader = nullptr;
                 r.plugin = nullptr;
-                mRecords.removeAt(i);
-                return ok;
             }
             mRecords.removeAt(i);
             return true;

@@ -53,13 +53,13 @@ private:
 
 private:
     QString type;
-    const QString defaultFileName = "tmp";  // 默认下载到tmp文件夹
+    const QString defaultFileName = "tmp"; // 默认文件名
 
     QUrl url;
     QNetworkAccessManager qnam;
     QPointer<QNetworkReply> reply;
     std::unique_ptr<QFile> file;
-    bool httpRequestAborted;
+    bool httpRequestAborted = false; // 初始化为false，避免未定义行为
 };
 
 #endif // DOWNLOADTOOL_H

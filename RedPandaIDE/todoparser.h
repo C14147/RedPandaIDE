@@ -24,11 +24,17 @@
 #include "syntaxermanager.h"
 #include "qsynedit/constants.h"
 
+/**
+ * @brief Represents a TODO item found in source code
+ * 
+ * This structure holds information about a TODO or FIXME comment found
+ * in the source code during parsing, including its location and content.
+ */
 struct TodoItem {
-    QString filename;
-    int lineNo;
-    int ch;
-    QString line;
+    QString filename;  //!< Name of the file containing the TODO item
+    int lineNo;        //!< Line number where the TODO item is located
+    int ch;            //!< Character position of the TODO item in the line
+    QString line;      //!< The full content of the line containing the TODO item
 };
 
 using PTodoItem = std::shared_ptr<TodoItem>;
@@ -40,8 +46,23 @@ public:
     void addItem(const QString& filename, int lineNo,
                  int ch, const QString& line);
     void removeTodosForFile(const QString& filename);
+    
+    /**
+     * @brief Clear all TODO items in the current list (based on isForProject setting)
+     */
     void clear();
+    
+    /**
+     * @brief Clear TODO items in the specified list
+     * @param forProject Whether to clear project TODO items (true) or general TODO items (false)
+     */
     void clear(bool forProject);
+    
+    /**
+     * @brief Get a TODO item at the specified model index
+     * @param index Model index of the item to retrieve
+     * @return Shared pointer to the TODO item, or null if index is invalid
+     */
     PTodoItem getItem(const QModelIndex& index);
 private:
     QList<PTodoItem> &getItems(bool forProject);
@@ -66,16 +87,61 @@ class TodoThread: public QThread
 {
     Q_OBJECT
 public:
+    /**
+     * @brief Constructor for parsing a single file
+     * @param filename Name of the file to parse
+     * @param parent Parent object
+     */
     explicit TodoThread(const QString& filename, QObject* parent = nullptr);
+    
+    /**
+     * @brief Constructor for parsing multiple files
+     * @param files List of filenames to parse
+     * @param parent Parent object
+     */
     explicit TodoThread(const QStringList& files, QObject* parent = nullptr);
+
 signals:
+    /**
+     * @brief Emitted when parsing starts
+     */
     void parseStarted();
+    
+    /**
+     * @brief Emitted when starting to parse a specific file
+     * @param fileName Name of the file being parsed
+     */
     void parsingFile(const QString& fileName);
+    
+    /**
+     * @brief Emitted when a TODO item is found
+     * @param filename Name of the file containing the TODO
+     * @param lineNo Line number where the TODO was found
+     * @param ch Character position of the TODO
+     * @param line Content of the line containing the TODO
+     */
     void todoFound(const QString& filename, int lineNo, int ch, const QString& line);
+    
+    /**
+     * @brief Emitted when parsing is finished
+     */
     void parseFinished();
 private:
+    /**
+     * @brief Parse a single file
+     */
     void parseFile();
+    
+    /**
+     * @brief Parse multiple files
+     */
     void parseFiles();
+    
+    /**
+     * @brief Parse a specific file for TODO items
+     * @param filename Name of the file to parse
+     * @param syntaxer Syntaxer to use for parsing
+     */
     void doParseFile(const QString& filename, QSynedit::PSyntaxer syntaxer);
 private:
     QString mFilename;
@@ -84,11 +150,20 @@ private:
 
     // QThread interface
 protected:
+    /**
+     * @brief Main thread execution function
+     */
     void run() override;
 };
 
 using PTodoThread = std::shared_ptr<TodoThread>;
 
+/**
+ * @brief Main parser class for managing TODO parsing operations
+ * 
+ * This class manages the creation and execution of TodoThread objects
+ * to parse source files for TODO and FIXME comments.
+ */
 class TodoParser : public QObject
 {
     Q_OBJECT
@@ -96,6 +171,11 @@ public:
     explicit TodoParser(QObject *parent = nullptr);
     void parseFile(const QString& filename,bool isForProject);
     void parseFiles(const QStringList& files);
+    
+    /**
+     * @brief Check if a parsing operation is currently in progress
+     * @return True if parsing is in progress, false otherwise
+     */
     bool parsing() const;
 
 private:

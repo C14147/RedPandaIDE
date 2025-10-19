@@ -125,6 +125,10 @@ void TodoThread::doParseFile(const QString &filename, QSynedit::PSyntaxer syntax
     QStringList lines;
     if (!pMainWindow->editorList()->getContentFromOpenedEditor(filename,lines)) {
         lines = readFileToLines(filename);
+        if (lines.isEmpty() && !QFile::exists(filename)) {
+            // File does not exist, return directly
+            return;
+        }
     }
     syntaxer->resetState();
     for (int i =0;i<lines.count();i++) {
@@ -217,11 +221,13 @@ void TodoModel::clear()
 
 void TodoModel::clear(bool forProject)
 {
-    if (mIsForProject == forProject)
+    bool shouldReset = (mIsForProject == forProject);
+    // Only reset the model if mIsForProject matches the forProject parameter
+    if (shouldReset)
         beginResetModel();
     QList<PTodoItem> &items=getItems(forProject);
     items.clear();
-    if (mIsForProject == forProject)
+    if (shouldReset)
         endResetModel();
 }
 

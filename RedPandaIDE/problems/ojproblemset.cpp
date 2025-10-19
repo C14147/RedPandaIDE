@@ -252,7 +252,7 @@ void OJProblem::addCase(POJProblemCase &problemCase)
 
 void OJProblem::removeCase(int idx)
 {
-    if(idx<0 || idx>=mCases.count())
+    if (static_cast<size_t>(idx) >= static_cast<size_t>(mCases.size()) || idx < 0)
         return;
     disconnect(mCases[idx].get());
     mCases.removeAt(idx);
@@ -385,7 +385,7 @@ void OJProblemSet::addProblem(const POJProblem &problem)
 
 void OJProblemSet::removeProblem(int idx)
 {
-    if (idx<0 || idx>=mProblems.count())
+    if (static_cast<size_t>(idx) >= static_cast<size_t>(mProblems.size()) || idx < 0)
         return;
     disconnect(mProblems[idx].get());
     mProblems.removeAt(idx);

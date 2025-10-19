@@ -9,12 +9,20 @@
 
 DownloadTool::DownloadTool(const QString& downloadUrl, const QString& savePath, QObject* parent)
     : QObject(parent)
+    , httpRequestAborted(false)
+    , file(nullptr)
+    , reply(nullptr)
 {
     m_downloadUrl = downloadUrl;
     m_savePath    = savePath;
 }
 
-DownloadTool::~DownloadTool() {}
+DownloadTool::~DownloadTool()
+{
+    if (reply) {
+        reply->deleteLater();
+    }
+}
 
 void DownloadTool::startDownload()
 {
@@ -57,11 +65,16 @@ QString DownloadTool::getFileType(){
 void DownloadTool::cancelDownload()
 {
     httpRequestAborted = true;
-    reply->abort();
+    if (reply) {
+        reply->abort();
+    }
 }
 
 void DownloadTool::httpFinished()
 {
+    QNetworkReply* replyPtr = reply;
+    reply = nullptr;
+    
     QFileInfo fi;
     if (file) {
         fi.setFile(file->fileName());
@@ -70,27 +83,35 @@ void DownloadTool::httpFinished()
     }
 
     if (httpRequestAborted) {
+        replyPtr->deleteLater();
         return;
     }
 
-    if (reply->error()) {
+    if (replyPtr->error()) {
         QFile::remove(fi.absoluteFilePath());
 #ifdef DOWNLOAD_DEBUG
-        qDebug() << QString("Download failed: %1.").arg(reply->errorString());
+        qDebug() << QString("Download failed: %1.").arg(replyPtr->errorString());
 #endif // DOWNLOAD_DEBUG
+        replyPtr->deleteLater();
         return;
     }
 
-    const QVariant redirectionTarget = reply->attribute(QNetworkRequest::RedirectionTargetAttribute);
+    const QVariant redirectionTarget =
+        replyPtr->attribute(QNetworkRequest::RedirectionTargetAttribute);
 
     if (!redirectionTarget.isNull()) {
         const QUrl redirectedUrl = url.resolved(redirectionTarget.toUrl());
         file = openFileForWrite(fi.absoluteFilePath());
-        if (!file) { return; }
+        if (!file) {
+            replyPtr->deleteLater();
+            return;
+        }
+        replyPtr->deleteLater();
         startRequest(redirectedUrl);
         return;
     }
 
+    replyPtr->deleteLater();
     Q_EMIT sigDownloadFinished();
 
 #ifdef DOWNLOAD_DEBUG
@@ -102,11 +123,15 @@ void DownloadTool::httpFinished()
 
 void DownloadTool::httpReadyRead()
 {
-    if (file) file->write(reply->readAll());
+    if (file && reply)
+        file->write(reply->readAll());
 }
 
 void DownloadTool::networkReplyProgress(qint64 bytesRead, qint64 totalBytes)
 {
+    if (httpRequestAborted)
+        return;
+        
     qreal progress = qreal(bytesRead) / qreal(totalBytes);
     Q_EMIT sigProgress(bytesRead, totalBytes, progress);
 
@@ -121,6 +146,10 @@ void DownloadTool::startRequest(const QUrl& requestedUrl)
     url = requestedUrl;
     httpRequestAborted = false;
 
+    if (reply) {
+        reply->deleteLater();
+    }
+    
     reply = qnam.get(QNetworkRequest(url));
     connect(reply, &QNetworkReply::finished, this, &DownloadTool::httpFinished);
     connect(reply, &QIODevice::readyRead, this, &DownloadTool::httpReadyRead);
