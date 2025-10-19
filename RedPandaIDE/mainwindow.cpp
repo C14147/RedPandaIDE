@@ -9018,6 +9018,7 @@ void MainWindow::onAddProblem()
         name = tr("Problem %1").arg(startCount+1);
         if (!mOJProblemSetModel->problemNameUsed(name))
             break;
+        startCount++;
     }
     POJProblem problem = std::make_shared<OJProblem>();
     problem->setName(name);
