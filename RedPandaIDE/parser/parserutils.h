@@ -120,6 +120,7 @@ enum class StatementKind  {
     Parameter,
     Block,
     Lambda,
+    Label,
     UserCodeSnippet,  // user code template
     Keyword, // keywords
     KeywordType, //keywords for type (for color management)
