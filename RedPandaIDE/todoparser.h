@@ -136,13 +136,7 @@ private:
      * @brief Parse multiple files
      */
     void parseFiles();
-    
-    /**
-     * @brief Parse a specific file for TODO items
-     * @param filename Name of the file to parse
-     * @param syntaxer Syntaxer to use for parsing
-     */
-    void doParseFile(const QString& filename, QSynedit::PSyntaxer syntaxer);
+    void doParseFile(const QString& filename);
 private:
     QString mFilename;
     QStringList mFiles;
