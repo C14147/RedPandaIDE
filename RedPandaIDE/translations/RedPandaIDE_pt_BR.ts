@@ -1561,7 +1561,7 @@
         <translation type="vanished">O texto a ser removido excede o limite de caracteres!</translation>
     </message>
     <message>
-        <location line="+2897"/>
+        <location line="+2910"/>
         <source>Print Document</source>
         <translation>Imprimir documento</translation>
     </message>
@@ -1573,7 +1573,7 @@
         <translation>Ctrl+clik para mais informações</translation>
     </message>
     <message>
-        <location line="+1078"/>
+        <location line="+1084"/>
         <source>astyle not found</source>
         <translation>astyle não encontrado</translation>
     </message>
@@ -1614,13 +1614,23 @@
         <translation>Apenas leitura</translation>
     </message>
     <message>
-        <location line="-5567"/>
-        <location line="+428"/>
+        <location line="-5586"/>
+        <location line="+435"/>
         <source>Error Load File</source>
         <translation type="unfinished">Erro ao carregar arquivo</translation>
     </message>
     <message>
-        <location line="+1577"/>
+        <location line="-10"/>
+        <source>Confirm Reload File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>The editing file will be reloaded. &lt;br /&gt;All unsaved modifications will be lost. &lt;br /&gt;Are you sure to continue?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1592"/>
         <source>hex: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3374,7 +3384,7 @@ Context: %1</source>
 <context>
     <name>FileCompiler</name>
     <message>
-        <location filename="../compiler/filecompiler.cpp" line="+59"/>
+        <location filename="../compiler/filecompiler.cpp" line="+64"/>
         <source>Compiling single file...</source>
         <translation>Compilando arquivo único...</translation>
     </message>
@@ -3389,7 +3399,7 @@ Context: %1</source>
         <translation>Compilador: %1</translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+55"/>
         <location line="+98"/>
         <source>Can&apos;t delete the old executable file &quot;%1&quot;.
 </source>
@@ -3425,12 +3435,12 @@ Context: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-140"/>
+        <location line="-139"/>
         <source>Checking single file...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+79"/>
         <source>GNU Assembler</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4760,7 +4770,7 @@ Context: %1</source>
     <name>MainWindow</name>
     <message>
         <location filename="../mainwindow.ui" line="+14"/>
-        <location filename="../mainwindow.cpp" line="+1453"/>
+        <location filename="../mainwindow.cpp" line="+1457"/>
         <source>Red Panda C++</source>
         <translation>Red Panda C++</translation>
     </message>
@@ -4818,21 +4828,21 @@ Context: %1</source>
     <message>
         <location line="+22"/>
         <location filename="../mainwindow.cpp" line="-36"/>
-        <location line="+6025"/>
+        <location line="+6026"/>
         <source>Save Problem Set</source>
         <translation>Salvar conjunto de problemas</translation>
     </message>
     <message>
         <location line="+15"/>
-        <location filename="../mainwindow.cpp" line="-6013"/>
-        <location line="+6041"/>
+        <location filename="../mainwindow.cpp" line="-6014"/>
+        <location line="+6042"/>
         <source>Load Problem Set</source>
         <translation>Carregar conjunto de problemas</translation>
     </message>
     <message>
         <location line="+112"/>
         <location line="+1832"/>
-        <location filename="../mainwindow.cpp" line="-2898"/>
+        <location filename="../mainwindow.cpp" line="-2899"/>
         <location line="+3"/>
         <location line="+4"/>
         <location line="+3"/>
@@ -6088,30 +6098,30 @@ Context: %1</source>
         <translation>Ctrl+Shift+Down</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-8645"/>
-        <location line="+63"/>
+        <location filename="../mainwindow.cpp" line="-8649"/>
+        <location line="+65"/>
         <location line="+9"/>
         <location line="+8"/>
         <location line="+9"/>
         <location line="+72"/>
-        <location line="+1474"/>
+        <location line="+1476"/>
         <location line="+1844"/>
         <location line="+117"/>
         <location line="+1797"/>
         <location line="+150"/>
         <location line="+714"/>
         <location line="+12"/>
-        <location line="+3494"/>
+        <location line="+3495"/>
         <source>Error</source>
         <translation>Erro</translation>
     </message>
     <message>
-        <location line="-9757"/>
+        <location line="-9762"/>
         <source>New</source>
         <translation>Novo</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+16"/>
         <source>Export</source>
         <translation>Exportar</translation>
     </message>
@@ -6132,7 +6142,7 @@ Context: %1</source>
     </message>
     <message>
         <location line="+82"/>
-        <location line="+8555"/>
+        <location line="+8557"/>
         <source>Problem Set %1</source>
         <translation>Conjunto de problemas %1</translation>
     </message>
@@ -6535,20 +6545,20 @@ Context: %1</source>
         <location line="+6"/>
         <location line="+2659"/>
         <location line="+14"/>
-        <location line="+3446"/>
+        <location line="+3447"/>
         <source>Confirm Convertion</source>
         <translation>Confirmar conversão</translation>
     </message>
     <message>
-        <location line="-6118"/>
+        <location line="-6119"/>
         <location line="+2659"/>
         <location line="+14"/>
-        <location line="+3446"/>
+        <location line="+3447"/>
         <source>The editing file will be saved using %1 encoding. &lt;br /&gt;This operation can&apos;t be reverted. &lt;br /&gt;Are you sure to continue?</source>
         <translation>O arquivo editado será salvo usando a codificação %1. &lt;br /&gt; Essa operação não poderá ser revertida. &lt;br /&gt;Quer mesmo continuar?</translation>
     </message>
     <message>
-        <location line="-5998"/>
+        <location line="-5999"/>
         <source>%1 files autosaved</source>
         <translation>Salvamento automático dos arquivos %1</translation>
     </message>
@@ -6602,12 +6612,12 @@ Context: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+985"/>
+        <location line="+986"/>
         <source>Problem Case %1</source>
         <translation>Caso do problema %1</translation>
     </message>
     <message>
-        <location line="-4328"/>
+        <location line="-4329"/>
         <source>New Folder %1</source>
         <translation>Nova pasta %1</translation>
     </message>
@@ -6635,19 +6645,19 @@ Context: %1</source>
     <message>
         <location line="+41"/>
         <location line="+3917"/>
-        <location line="+1740"/>
+        <location line="+1743"/>
         <source>Bookmark Description</source>
         <translation>Marcar descrição</translation>
     </message>
     <message>
-        <location line="-5656"/>
+        <location line="-5659"/>
         <location line="+3917"/>
-        <location line="+1740"/>
+        <location line="+1743"/>
         <source>Description:</source>
         <translation>Descrição:</translation>
     </message>
     <message>
-        <location line="-5405"/>
+        <location line="-5408"/>
         <location line="+3"/>
         <source>New folder</source>
         <translation>Nova pasta</translation>
@@ -6711,22 +6721,22 @@ Context: %1</source>
     </message>
     <message>
         <location line="+86"/>
-        <location line="+4532"/>
-        <location line="+15"/>
-        <location line="+68"/>
+        <location line="+4533"/>
+        <location line="+16"/>
+        <location line="+69"/>
         <source>New Project File?</source>
         <translation>Novo arquivo de projeto?</translation>
     </message>
     <message>
-        <location line="-4614"/>
-        <location line="+4532"/>
-        <location line="+15"/>
-        <location line="+68"/>
+        <location line="-4617"/>
+        <location line="+4533"/>
+        <location line="+16"/>
+        <location line="+69"/>
         <source>Do you want to add the new file to the project?</source>
         <translation>Quer acrescentar novo arquivo ao projeto?</translation>
     </message>
     <message>
-        <location line="-4567"/>
+        <location line="-4570"/>
         <source>Open</source>
         <translation>Abrir</translation>
     </message>
@@ -6970,7 +6980,7 @@ Context: %1</source>
         <translation>Problema %1</translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+58"/>
         <location line="+23"/>
         <source>Problem Set Files (*.pbs)</source>
         <translation>Arquivos do conjunto de problemas (*.pbs)</translation>
@@ -7060,7 +7070,7 @@ Context: %1</source>
         <translation>Escolher arquivo para a saída esperada de dados</translation>
     </message>
     <message>
-        <location line="-6859"/>
+        <location line="-6860"/>
         <location line="+1478"/>
         <source>Batch Set Cases</source>
         <translation>Conjunto de casos em lote</translation>
@@ -7169,7 +7179,7 @@ Context: %1</source>
         <translation>Deslocar para a linha ...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+6812"/>
+        <location filename="../mainwindow.cpp" line="+6813"/>
         <source>Go to Line</source>
         <translation>Deslocar para linha</translation>
     </message>
@@ -7187,7 +7197,7 @@ Context: %1</source>
     <message>
         <location line="+25"/>
         <location line="+3"/>
-        <location filename="../mainwindow.cpp" line="-7051"/>
+        <location filename="../mainwindow.cpp" line="-7052"/>
         <source>Open Anwser Source File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7207,7 +7217,7 @@ Context: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="+7440"/>
+        <location filename="../mainwindow.cpp" line="+7441"/>
         <source>Template Exists</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7217,7 +7227,7 @@ Context: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-7544"/>
+        <location line="-7545"/>
         <location line="+207"/>
         <location line="+3439"/>
         <location line="+7"/>
@@ -7296,12 +7306,12 @@ Context: %1</source>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="-261"/>
-        <location line="+7214"/>
+        <location line="+7215"/>
         <source>Import FPS Problem Set</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-7183"/>
+        <location line="-7184"/>
         <source>Rename Problem</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7311,7 +7321,7 @@ Context: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7179"/>
+        <location line="+7180"/>
         <source>FPS Problem Set Files (*.fps;*.xml)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7321,8 +7331,8 @@ Context: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-7210"/>
-        <location line="+7239"/>
+        <location filename="../mainwindow.cpp" line="-7211"/>
+        <location line="+7240"/>
         <source>Export FPS Problem Set</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7337,7 +7347,7 @@ Context: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-7276"/>
+        <location line="-7277"/>
         <source>Rename Problem Set</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7432,7 +7442,7 @@ Context: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4863"/>
+        <location line="+4866"/>
         <source>Watchpoint variable name</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7442,7 +7452,7 @@ Context: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-4867"/>
+        <location line="-4870"/>
         <source>Watchpoint hitted</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7660,7 +7670,7 @@ Context: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-5272"/>
+        <location filename="../mainwindow.cpp" line="-5276"/>
         <source>Exact</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7675,7 +7685,7 @@ Context: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7147"/>
+        <location line="+7151"/>
         <source>Folder Not Empty</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8189,7 +8199,7 @@ Context: %1</source>
         <translation>Arquivo &apos;%1&apos; existente no projeto</translation>
     </message>
     <message>
-        <location line="+375"/>
+        <location line="+380"/>
         <source>Project Updated</source>
         <translation>Projeto atualizado</translation>
     </message>
@@ -8219,7 +8229,7 @@ Context: %1</source>
         <translation>Outros</translation>
     </message>
     <message>
-        <location line="+220"/>
+        <location line="+221"/>
         <source>Settings need update</source>
         <translation>Necessário atualizar configurações</translation>
     </message>
@@ -8254,7 +8264,7 @@ Context: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1071"/>
+        <location line="-1077"/>
         <location line="+98"/>
         <source>Error</source>
         <translation type="unfinished">Erro</translation>
@@ -8389,7 +8399,7 @@ Context: %1</source>
         <translation>- Arquivo de recursos: %1</translation>
     </message>
     <message>
-        <location line="+366"/>
+        <location line="+375"/>
         <source>Compiling project changes...</source>
         <translation>Compilando alterações em projeto ...</translation>
     </message>
@@ -8817,7 +8827,7 @@ Context: %1</source>
 <context>
     <name>ProjectModel</name>
     <message>
-        <location filename="../project.cpp" line="+1559"/>
+        <location filename="../project.cpp" line="+1565"/>
         <source>File exists</source>
         <translation>Arquivo existente</translation>
     </message>
@@ -9404,7 +9414,7 @@ Context: %1</source>
         <translation type="vanished">sem nome</translation>
     </message>
     <message>
-        <location filename="../editorlist.cpp" line="+179"/>
+        <location filename="../editorlist.cpp" line="+180"/>
         <location filename="../mainwindow.cpp" line="+2038"/>
         <source>Save</source>
         <translation>Salvar</translation>
@@ -9431,17 +9441,7 @@ Context: %1</source>
         <translation>Impossível carregar configurações para autolink</translation>
     </message>
     <message>
-        <location line="+8"/>
-        <source>Creating window...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Preparing Files...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../parser/cppparser.cpp" line="+1313"/>
+        <location filename="../parser/cppparser.cpp" line="+1351"/>
         <source>constructor</source>
         <translation>constructor</translation>
     </message>
@@ -9519,8 +9519,8 @@ Context: %1</source>
         <translation type="vanished">Imitar preprocessores C tradicionais (-traditional-cpp)</translation>
     </message>
     <message>
-        <location filename="../compiler/compilerinfo.cpp" line="+98"/>
-        <location line="+368"/>
+        <location filename="../compiler/compilerinfo.cpp" line="+92"/>
+        <location line="+328"/>
         <source>Code Generation</source>
         <translation>Geração de código</translation>
     </message>
@@ -9533,7 +9533,7 @@ Context: %1</source>
         <translation type="vanished">Otimizar menor, porém mantendo completa compatibilidade (-tune)</translation>
     </message>
     <message>
-        <location line="-271"/>
+        <location line="-236"/>
         <source>Enable use of specific instructions (-mx)</source>
         <translation>Habilitar uso de instruções específicar (-mx)</translation>
     </message>
@@ -9893,7 +9893,7 @@ Context: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+234"/>
+        <location line="+221"/>
         <source>Processor (-m)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9913,7 +9913,7 @@ Context: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-311"/>
+        <location line="-275"/>
         <source>32-bit pointer, 32-bit instruction (-m32)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9938,7 +9938,7 @@ Context: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+249"/>
+        <location line="+236"/>
         <source>Use movc instead of movx to read from external ram</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11046,9 +11046,9 @@ Context: %1</source>
         <translation>Geral</translation>
     </message>
     <message>
-        <location line="+0"/>
-        <location line="+375"/>
-        <location filename="../settingsdialog/settingsdialog.cpp" line="-57"/>
+        <location line="+1"/>
+        <location line="+414"/>
+        <location filename="../settingsdialog/settingsdialog.cpp" line="-42"/>
         <location line="+3"/>
         <source>Program Runner</source>
         <translation>Executar</translation>
@@ -11111,9 +11111,9 @@ Context: %1</source>
         <translation>Desempenho</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-7402"/>
+        <location filename="../mainwindow.cpp" line="-7403"/>
         <location line="+123"/>
-        <location line="+7284"/>
+        <location line="+7285"/>
         <location line="+5"/>
         <location filename="../settingsdialog/settingsdialog.cpp" line="+10"/>
         <location line="+101"/>
@@ -11121,8 +11121,8 @@ Context: %1</source>
         <translation>Compilador</translation>
     </message>
     <message>
-        <location line="-7288"/>
-        <location line="+7273"/>
+        <location line="-7289"/>
+        <location line="+7274"/>
         <location line="+6"/>
         <location line="+5"/>
         <location filename="../settingsdialog/settingsdialog.cpp" line="-101"/>
@@ -11241,8 +11241,8 @@ Context: %1</source>
         <translation>Opções de projeto</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="-7407"/>
-        <location line="+7412"/>
+        <location filename="../mainwindow.cpp" line="-7408"/>
+        <location line="+7413"/>
         <location filename="../settingsdialog/settingsdialog.cpp" line="+2"/>
         <location line="+3"/>
         <location line="+3"/>
@@ -11416,12 +11416,11 @@ Context: %1</source>
         <translation>- Compilador: %1</translation>
     </message>
     <message>
-        <location line="+36"/>
         <source>Can&apos;t find the compiler for file %1</source>
-        <translation>Impossível encontrar compilador para o arquivo %1</translation>
+        <translation type="vanished">Impossível encontrar compilador para o arquivo %1</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+44"/>
         <source>The Compiler &apos;%1&apos; doesn&apos;t exists!</source>
         <translation>Compilador &apos;%1&apos; inexistente!</translation>
     </message>
@@ -11440,12 +11439,12 @@ Context: %1</source>
         <translation type="vanished">Comando: %1 %2</translation>
     </message>
     <message>
-        <location line="-53"/>
+        <location line="-54"/>
         <source>Compiling...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+56"/>
         <source>Command: %1</source>
         <translation type="unfinished">Comando: %1</translation>
     </message>
@@ -11506,7 +11505,7 @@ Context: %1</source>
 <context>
     <name>TodoModel</name>
     <message>
-        <location filename="../todoparser.cpp" line="+289"/>
+        <location filename="../todoparser.cpp" line="+291"/>
         <source>Filename</source>
         <translation>Nome do arquivo</translation>
     </message>
