@@ -60,11 +60,6 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;h1 style=&quot; margin-top:18px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:xx-large; font-weight:600;&quot;&gt;小熊猫C++&lt;/span&gt;&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+6"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:xx-large; font-weight:600;&quot;&gt;RedPanda IDE&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
         <location line="+16"/>
         <source>Based on Qt %1 (%2) running on %3</source>
         <translation>基于 Qt %1 (%2) 运行于 %3</translation>
@@ -77,12 +72,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Copyright(C) 2021-2024 瞿华(royqh1979@gmail.com)</source>
         <translation type="vanished">Copyright(C) 2021-2025 瞿华(royqh1979@gmail.com)</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Copyright(C) 2025 C14147(C14147@github.com)</source>
-        <translatorcomment>Copyright(C) 2025 C14147(C14147@github.com)</translatorcomment>
-        <translation>Copyright(C) 2025 C14147(C14147@github.com)</translation>
     </message>
     <message>
         <source>Copyright(C) 2021-2022 瞿华(royqh1979@gmail.com)</source>

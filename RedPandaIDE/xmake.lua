@@ -76,7 +76,6 @@ target("RedPandaIDE")
         "parser/parserutils.cpp",
         -- problems
         "problems/freeprojectsetformat.cpp",
-        "problems/ojproblemset.cpp",
         "problems/problemcasevalidator.cpp",
         "utils/escape.cpp",
         "utils/font.cpp",
@@ -102,6 +101,7 @@ target("RedPandaIDE")
         "compiler/compilermanager",
         "compiler/executablerunner",
         "compiler/filecompiler",
+        "compiler/nasmfilecompiler",
         "compiler/ojproblemcasesrunner",
         "compiler/projectcompiler",
         "compiler/runner",
@@ -115,6 +115,7 @@ target("RedPandaIDE")
         "parser/statementmodel",
         -- problems
         "problems/competitivecompenionhandler",
+        "problems/ojproblemset",
         -- settings dialog
         "settingsdialog/settingswidget",
         -- widgets
@@ -152,6 +153,8 @@ target("RedPandaIDE")
         "settingsdialog/compilerautolinkwidget",
         "settingsdialog/compilersetdirectorieswidget",
         "settingsdialog/compilersetoptionwidget",
+        "settingsdialog/compilergaswidget",
+        "settingsdialog/compilernasmwidget",
         "settingsdialog/debuggeneralwidget",
         "settingsdialog/editorautosavewidget",
         "settingsdialog/editorclipboardwidget",

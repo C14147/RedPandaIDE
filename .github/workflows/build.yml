@@ -111,6 +111,12 @@ jobs:
         with:
           msystem: ${{ matrix.msystem }}
           update: true
+          pacboy: |
+            cc:p
+            make:p
+            qt5-static:p
+            cmake:p
+            7zip:p
           install: |
             ${{ matrix.packagePrefix }}-cc
             ${{ matrix.packagePrefix }}-make
@@ -132,10 +138,8 @@ jobs:
 
       - name: Build
         run: |
-          ./packages/msys/new-build-mingw.sh \
-            $( [[ ${{ matrix.isUcrt }} -eq 1 ]] && echo --ucrt 22621 )
-          ./packages/msys/new-build-mingw.sh --mingw \
-            $( [[ ${{ matrix.isUcrt }} -eq 1 ]] && echo --ucrt 22621 )
+          ./packages/msys/build-mingw.sh --ucrt x64 --ucrt x86
+          ./packages/msys/build-mingw.sh --mingw --ucrt x64 --ucrt x86
 
       - name: Upload
         uses: actions/upload-artifact@v4

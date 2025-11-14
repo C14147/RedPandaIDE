@@ -27,6 +27,8 @@ target("qsynedit")
         "qsynedit/formatter/formatter.cpp",
         -- syntaxer
         "qsynedit/syntaxer/asm.cpp",
+        "qsynedit/syntaxer/gas.cpp",
+        "qsynedit/syntaxer/nasm.cpp",
         "qsynedit/syntaxer/cpp.cpp",
         "qsynedit/syntaxer/glsl.cpp",
         "qsynedit/syntaxer/lua.cpp",
