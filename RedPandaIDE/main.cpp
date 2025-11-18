@@ -460,10 +460,10 @@ int main(int argc, char* argv[])
         }
 
         mainWindow.show();
-        splashw.finish(pMainWindow);
 
         // reset default open folder
         mainWindow.setFilesViewRoot(pSettings->environment().currentFolder());
+        mainWindow.update();
 
 #ifdef Q_OS_WIN
         WindowLogoutEventFilter filter;
@@ -472,10 +472,13 @@ int main(int argc, char* argv[])
         // Event filter to prevent QCombobox receive wheel event;
         BlockWheelEventFiler* blockWheelFilter = new BlockWheelEventFiler(&app);
         app.installEventFilter(blockWheelFilter);
+        app.processEvents();
 
         if (lockFile.isLocked()) {
             lockFile.unlock();
         }
+
+        splashw->finish(pMainWindow);
 
         int retCode = app.exec();
         if (mainWindow.shouldRemoveAllSettings()) {
