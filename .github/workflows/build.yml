@@ -3,14 +3,12 @@ name: Build
 on:
   push:
     paths-ignore:
-      - ".github/**"
       - ".gitignore"
       - ".gitattributes"
       - "**.md"
       - "LICENSE"
   pull_request:
     paths-ignore:
-      - ".github/**"
       - ".gitignore"
       - ".gitattributes"
       - "**.md"
@@ -266,12 +264,12 @@ jobs:
       - name: Setup
         uses: jurplel/install-qt-action@v3
         with:
-          version: '6.9.0'
+          version: '6.10.0'
           host: windows
           target: desktop
           arch: win64_msvc2022_64
           archives: qtbase qtsvg qttools
-          tools: tools_qtcreator,qt.tools.qtcreator
+          tools: sdktool tools_qtcreator,qt.tools.qtcreator
           modules: qt5compat
 
       - name: Build
@@ -311,6 +309,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Fix script permissions
+        run: |
+          chmod +x ./packages/debian/*.sh
+
       - name: Build
         run: |
           ${{ env.CONTAINER_COMMAND }} ./packages/debian/01-in-docker.sh
@@ -342,6 +344,10 @@ jobs:
           target: desktop
           arch: clang_64
           archives: qtbase qtsvg qttools qttranslations
+
+      - name: Fix script permissions
+        run: |
+          chmod +x ./packages/macos/build.sh
 
       - name: Build
         run: |
