@@ -33,11 +33,7 @@
  * - Recognizes C++ keywords (e.g., `constexpr`, `namespace`, `concept`, `co_await`) across standards (C++11 to C++23)
  * - Parses C++-specific literals: raw strings (`R"(...)"`), user-defined literals (`123u`), and numeric suffixes
  * - Processes preprocessor directives (`#include`, `#define`, `#ifdef`) and their associated tokens
- * - Handles context-dependent syntax:
- *   - Template angle brackets (`<>`) vs. comparison operators
- *   - Lambda introducers (`[]`), captures, and parameter lists
- *   - Multi-line comments (`/*...*\/`), single-line comments (`//`), and attribute syntax (`[[...]]`)
- *   - String/character literals with escape sequences (e.g., `\n`, `\"`)
+ * - Handles context-dependent syntax
  * - Identifies C++ operators (e.g., `::`, `->*`, `<<=`, `co_yield`) and delimiters
  * - Tracks precise source positions (line/column) for error reporting and navigation features
  * - Generates error tokens for invalid syntax (unclosed literals, malformed operators)

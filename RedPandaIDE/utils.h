@@ -274,7 +274,7 @@ public:
 
     explicit WaitingWidget(QWidget* parent = nullptr);
     ~WaitingWidget() override;
-    void showEvent(QShowEvent *event);
+    void showEvent(QShowEvent *event) override;
 
 protected:
     void changeEvent(QEvent *event) override;
