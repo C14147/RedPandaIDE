@@ -236,6 +236,18 @@ void setTheme(const QString& theme) {
     pSettings->environment().save();
 }
 
+QSplashScreen* createSplashScreen(void)
+{
+    QScreen* screen = QGuiApplication::primaryScreen();
+    QRect screenRect = screen->availableGeometry();
+    QPixmap splash = HDPixmap(":/icons/images/SplashScreen.png", (int)screenRect.width() / 2.27,
+                              (int)screenRect.width() / 3.02);
+    QSplashScreen splashw(splash);
+    splashw.show();
+
+    return &splashw;
+}
+
 #ifdef ENABLE_GLIBC_HWCAPS
 extern "C" int Q_DECL_EXPORT RedPandaIDE_main(int argc, char* argv[])
 #else
@@ -271,6 +283,8 @@ int main(int argc, char* argv[])
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif
 
+    QSplashScreen* splashw = createSplashScreen();
+
 #ifdef BUILD_INCLUDE_OPENSSL
 #ifdef Q_OS_WIN
     SSL_library_init();
@@ -281,12 +295,6 @@ int main(int argc, char* argv[])
     OPENSSL_init_crypto(0, NULL);
 #endif
 #endif
-    QScreen* screen = QGuiApplication::primaryScreen();
-    QRect screenRect = screen->availableGeometry();
-    QPixmap splash = HDPixmap(":/icons/images/SplashScreen.png", (int)screenRect.width() / 2.5,
-                              (int)screenRect.width() / 3.33);
-    QSplashScreen splashw(splash);
-    splashw.show();
 
     ExternalResource resource;
 
@@ -326,8 +334,9 @@ int main(int argc, char* argv[])
             }
         }
     }
+
     // Translation must be loaded first
-    splashw.showMessage("Loading translation...");
+    splashw->showMessage("Loading translation...");
     app.processEvents();
     QTranslator trans, transQt, transUtils;
     bool firstRun;
@@ -365,6 +374,7 @@ int main(int argc, char* argv[])
             app.installTranslator(&transQt);
         }
     }
+
     qRegisterMetaType<POJProblem>("POJProblem");
     qRegisterMetaType<PCompileIssue>("PCompileIssue");
     qRegisterMetaType<PCompileIssue>("PCompileIssue&");
@@ -373,7 +383,7 @@ int main(int argc, char* argv[])
 
     initParser();
 
-    splashw.showMessage(QObject::tr("Loading settings..."));
+    splashw->showMessage(QObject::tr("Loading settings..."));
     app.processEvents();
     try {
         SystemConsts systemConsts;
@@ -437,14 +447,14 @@ int main(int argc, char* argv[])
 
         QDir::setCurrent(pSettings->environment().defaultOpenFolder());
 
-        splashw.showMessage(QObject::tr("Creating window..."));
+        splashw->showMessage(QObject::tr("Creating window..."));
         app.processEvents();
         MainWindow mainWindow;
         pMainWindow = &mainWindow;
         if (mainWindow.screen())
             setScreenDPI(mainWindow.screen()->logicalDotsPerInch());
 
-        splashw.showMessage(QObject::tr("Preparing Files..."));
+        splashw->showMessage(QObject::tr("Preparing Files..."));
         QStringList filesToOpen = app.arguments();
         filesToOpen.pop_front();
         if (!filesToOpen.isEmpty()) {
@@ -460,7 +470,7 @@ int main(int argc, char* argv[])
         }
 
         mainWindow.show();
-        splashw.finish(pMainWindow);
+        splashw->finish(pMainWindow);
 
         // reset default open folder
         mainWindow.setFilesViewRoot(pSettings->environment().currentFolder());

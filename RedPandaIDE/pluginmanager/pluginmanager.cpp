@@ -204,7 +204,7 @@ bool PluginManager::unloadPlugin(const QString &path)
 
             if (r.loader)
             {
-                bool ok = r.loader->unload();
+                // bool ok = r.loader->unload();
                 delete r.loader;
                 r.loader = nullptr;
                 r.plugin = nullptr;
