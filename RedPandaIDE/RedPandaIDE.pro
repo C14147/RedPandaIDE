@@ -87,6 +87,17 @@ win32: {
     LIBS += -luser32  # window message APIs
 }
 
+# Optimize Options
+CONFIG(debug, debug|release) {
+    QMAKE_CXXFLAGS += -march=native -mtune=native
+    QMAKE_CFLAGS += -march=native -mtune=native
+} else {
+    QMAKE_CXXFLAGS += -O3
+    QMAKE_CFLAGS += -O3
+
+    QMAKE_CXXFLAGS += -funroll-loops
+}
+
 DEFINES += LIBEXECDIR=\\\"$${LIBEXECDIR}\\\"
 DEFINES += APP_NAME=\\\"$${APP_NAME}\\\"
 
