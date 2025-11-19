@@ -259,10 +259,10 @@ QSplashScreen* createSplashScreen(void)
     QRect screenRect = screen->availableGeometry();
     QPixmap splash = HDPixmap(":/icons/images/SplashScreen.png", (int)screenRect.width() / 2.27,
                               (int)screenRect.width() / 3.02);
-    QSplashScreen splashw(splash);
-    splashw.show();
+    QSplashScreen* splashw = new QSplashScreen(splash);
+    splashw->show();
 
-    return &splashw;
+    return splashw;
 }
 
 #ifdef ENABLE_GLIBC_HWCAPS
@@ -507,14 +507,6 @@ int main(int argc, char* argv[])
             lockFile.unlock();
         }
         QMessageBox::critical(nullptr, QApplication::tr("Error"), e.reason());
-        return -1;
-    } catch (...) {
-        // Catch any other unexpected exceptions
-        if (lockFile.isLocked()) {
-            lockFile.unlock();
-        }
-        QMessageBox::critical(nullptr, QApplication::tr("Error"), 
-                              QObject::tr("An unexpected error occurred."));
         return -1;
     }
 }
