@@ -258,15 +258,15 @@ if [[ ${CHECK_DEPS} -eq 1 ]]; then
   done
 fi
 
-# Check for MinGW32 assets if needed
-if [[ ${COMPILER_MINGW32} -eq 1 && ! -f "${SOURCE_DIR}/assets/${MINGW32_ARCHIVE}" && ! -d "${SOURCE_DIR}/assets/${MINGW32_FOLDER}" ]]; then
-  echo "Missing MinGW archive: assets/${MINGW32_ARCHIVE} or MinGW folder: assets/${MINGW32_FOLDER}"
-  exit 1
-fi
-if [[ ${COMPILER_MINGW64} -eq 1 && ! -f "${SOURCE_DIR}/assets/${MINGW64_ARCHIVE}" && ! -d "${SOURCE_DIR}/assets/${MINGW64_FOLDER}" ]]; then
-  echo "Missing MinGW archive: assets/${MINGW64_ARCHIVE} or MinGW folder: assets/${MINGW64_FOLDER}"
-  exit 1
-fi
+# # Check for MinGW32 assets if needed
+# if [[ ${COMPILER_MINGW32} -eq 1 && ! -f "${SOURCE_DIR}/assets/${MINGW32_ARCHIVE}" && ! -d "${SOURCE_DIR}/assets/${MINGW32_FOLDER}" ]]; then
+#   echo "Missing MinGW archive: assets/${MINGW32_ARCHIVE} or MinGW folder: assets/${MINGW32_FOLDER}"
+#   exit 1
+# fi
+# if [[ ${COMPILER_MINGW64} -eq 1 && ! -f "${SOURCE_DIR}/assets/${MINGW64_ARCHIVE}" && ! -d "${SOURCE_DIR}/assets/${MINGW64_FOLDER}" ]]; then
+#   echo "Missing MinGW archive: assets/${MINGW64_ARCHIVE} or MinGW folder: assets/${MINGW64_FOLDER}"
+#   exit 1
+# fi
 if [[ ${COMPILER_GCC_LINUX_X8664} -eq 1 ]]; then
   if [[ ! -f "${SOURCE_DIR}/assets/${GCC_LINUX_X8664_ARCHIVE}" ]]; then
     echo "Missing GCC archive: assets/${GCC_LINUX_X8664_ARCHIVE}"

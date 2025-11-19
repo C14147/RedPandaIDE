@@ -478,7 +478,7 @@ int main(int argc, char* argv[])
             lockFile.unlock();
         }
 
-        splashw->finish(pMainWindow);
+        splashw.finish(pMainWindow);
 
         int retCode = app.exec();
         if (mainWindow.shouldRemoveAllSettings()) {

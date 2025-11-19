@@ -7,7 +7,9 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QPluginLoader>
+#ifdef Q_OS_WIN
 #include <windows.h>
+#endif
 
 #include "../mainwindow.h"
 #include "plugininterface.h"
