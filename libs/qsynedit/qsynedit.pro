@@ -23,6 +23,17 @@ win32: {
     DEFINES += _WIN32_WINNT=0x0501
 }
 
+# Optimize Options
+CONFIG(debug, debug|release) {
+    QMAKE_CXXFLAGS += -march=native -mtune=native
+    QMAKE_CFLAGS += -march=native -mtune=native
+} else {
+    QMAKE_CXXFLAGS += -O3
+    QMAKE_CFLAGS += -O3
+
+    QMAKE_CXXFLAGS += -funroll-loops
+}
+
 gcc {
     QMAKE_CXXFLAGS_RELEASE += -Werror=return-type
     QMAKE_CXXFLAGS_DEBUG += -Werror=return-type
