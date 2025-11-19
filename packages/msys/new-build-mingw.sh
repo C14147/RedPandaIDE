@@ -4,7 +4,6 @@ set -euxo pipefail
 
 ASTYLE_VERSION_TAG="3.6.9"
 
-# Print help information
 function fn_print_help() {
   echo " Usage:
    packages/msys/build-mingw.sh [-m|--msystem <MSYSTEM>] [-c|--clean] [-nd|--no-deps] [-t|--target-dir <dir>]
@@ -19,22 +18,20 @@ function fn_print_help() {
    --mingw64                Build mingw64 integrated compiler.
    --gcc-linux-x86-64       Build x86_64-linux-gnu integrated compiler.
    --gcc-linux-aarch64      Build aarch64-linux-gnu integrated compiler.
-   --ucrt <build>           Include UCRT in the package. Windows SDK required.
-                            e.g. '--ucrt 22621' for Windows 11 SDK 22H2.
+   --ucrt <arch>            Include UCRT installer (VC_redist) in the package.
+                            <arch> can be x86 or x64.
+                            This option can be specified multiple times.
    -nd, --no-deps           Skip dependency check.
    -t, --target-dir <dir>   Set target directory for the packages."
 }
-
 source version.inc
 [[ -n "${APP_VERSION_SUFFIX}" ]] && APP_VERSION="${APP_VERSION}${APP_VERSION_SUFFIX}"
 
-# Verify script is running in MSYS2 shell
 if [[ ! -v MSYSTEM ]]; then
   echo "This script must be run in MSYS2 shell"
   exit 1
 fi
 
-# Handle MSYSTEM switch if specified
 if [[ $# -gt 1 && ($1 == "-m" || $1 == "--msystem") ]]; then
   msystem=$2
   shift 2
@@ -50,10 +47,9 @@ if [[ $# -gt 1 && ($1 == "-m" || $1 == "--msystem") ]]; then
   esac
 fi
 
-# Set architecture-specific variables based on MSYSTEM
 case "${MSYSTEM}" in
   MINGW32)
-    # No UCRT32 available
+    # there is no UCRT32
     # CLANG32 qt5-static removed since 5.15.15
     # https://github.com/msys2/MINGW-packages/commit/ab062c6e5d6e9fff86ee8f88c1d8e9601ea9ab5b
     NSIS_ARCH=x86
@@ -76,7 +72,6 @@ case "${MSYSTEM}" in
     ;;
 esac
 
-# Initialize variables with default values
 CLEAN=0
 CHECK_DEPS=1
 compilers=()
@@ -87,9 +82,8 @@ COMPILER_GCC_LINUX_AARCH64=0
 REQUIRED_WINDOWS_BUILD=7600
 REQUIRED_WINDOWS_NAME="Windows 7"
 TARGET_DIR="$(pwd)/dist"
-UCRT=""
-
-# Parse command line arguments
+UCRT_X86=0
+UCRT_X64=0
 while [[ $# -gt 0 ]]; do
   case $1 in
     -h|--help)
@@ -159,17 +153,21 @@ while [[ $# -gt 0 ]]; do
       esac
       ;;
     --ucrt)
-      case "${MSYSTEM}" in
-        UCRT64|CLANG64)
-          UCRT="$2"
+      case "$2" in
+        x86)
+          UCRT_X86=1
           shift 2
           ;;
-        MINGW32|MINGW64)
-          echo "Error: Red Panda C++ is not built against UCRT."
+        x64)
+          UCRT_X64=1
+          shift 2
+          ;;
+        arm64)
+          echo "UCRT is always a system component on arm64."
           exit 1
           ;;
-        CLANGARM64)
-          echo "Error: UCRT is a system component on arm64, local deployment is not supported."
+        *)
+          echo "Invalid UCRT architecture: $2"
           exit 1
           ;;
       esac
@@ -189,7 +187,6 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-# Define directory paths
 BUILD_DIR="${TEMP}/redpanda-mingw-${MSYSTEM}-build"
 ASTYLE_BUILD_DIR="${BUILD_DIR}/astyle"
 PACKAGE_DIR="${TEMP}/redpanda-mingw-${MSYSTEM}-pkg"
@@ -197,9 +194,12 @@ QMAKE="${MINGW_PREFIX}/qt6-static/bin/qmake"
 NSIS="/mingw32/bin/makensis"
 SOURCE_DIR="$(pwd)"
 ASSETS_DIR="${SOURCE_DIR}/assets"
-UCRT_DIR="/c/Program Files (x86)/Windows Kits/10/Redist/10.0.${UCRT}.0/ucrt/DLLs/${NSIS_ARCH}"
 
-# Set 7-Zip path based on architecture
+# Visual C++ Redistributable for Visual Studio 2019, version 16.7 (14.27)
+# This is the last version that supports all Windows versions (on which UCRT is supported).
+UCRT_X86_URL="https://download.visualstudio.microsoft.com/download/pr/c168313d-1754-40d4-8928-18632c2e2a71/D305BAA965C9CD1B44EBCD53635EE9ECC6D85B54210E2764C8836F4E9DEFA345/VC_redist.x86.exe"
+UCRT_X64_URL="https://download.visualstudio.microsoft.com/download/pr/722d59e4-0671-477e-b9b1-b8da7d4bd60b/591CBE3A269AFBCC025681B968A29CD191DF3C6204712CBDC9BA1CB632BA6068/VC_redist.x64.exe"
+
 case "${MSYSTEM}" in
   MINGW32)
     # 32-bit 7zip removed since 24.05
@@ -213,27 +213,23 @@ case "${MSYSTEM}" in
     ;;
 esac
 
-# MinGW32 configuration
 MINGW32_FOLDER="mingw32"
 MINGW32_ARCHIVE="mingw32.7z"
 MINGW32_COMPILER_NAME="MinGW-w64 i686 GCC 11.5"
 MINGW32_PACKAGE_SUFFIX="MinGW32_11.5"
 
-# MinGW64 configuration with specified GitHub download link
 MINGW64_FOLDER="mingw64"
 MINGW64_ARCHIVE="x86_64-15.1.0-release-posix-seh-msvcrt-rt_v12-rev0_2.zip"
 MINGW64_URL="https://github.com/C14147/RedPandaIDE-Extensions/releases/download/mingw64-15.1-compilers/${MINGW64_ARCHIVE}"
 MINGW64_COMPILER_NAME="MinGW-w64 X86_64 GCC 15.1"
 MINGW64_PACKAGE_SUFFIX="MinGW64_15.1"
 
-# Linux compiler configurations
 GCC_LINUX_X8664_ARCHIVE="gcc-linux-x86-64.7z"
 ALPINE_X8664_ARCHIVE="alpine-minirootfs-x86_64.tar"
 
 GCC_LINUX_AARCH64_ARCHIVE="gcc-linux-aarch64.7z"
 ALPINE_AARCH64_ARCHIVE="alpine-minirootfs-aarch64.tar"
 
-# Set package base name based on selected compilers
 if [[ ${#compilers[@]} -eq 0 ]]; then
   PACKAGE_BASENAME="${PACKAGE_BASENAME}.NoCompiler"
 else
@@ -242,12 +238,12 @@ else
   [[ ${COMPILER_GCC_LINUX_X8664} -eq 1 || ${COMPILER_GCC_LINUX_AARCH64} -eq 1 ]] && PACKAGE_BASENAME="${PACKAGE_BASENAME}.Linux_GCC"
 fi
 
-# Function to print formatted progress messages
 function fn_print_progress() {
   echo -e "\e[1;32;44m$1\e[0m"
 }
 
-## Dependency check
+## check deps
+
 if [[ ${CHECK_DEPS} -eq 1 ]]; then
   deps=(
     ${MINGW_PACKAGE_PREFIX}-{cc,make,qt6-static,cmake}
@@ -258,7 +254,6 @@ if [[ ${CHECK_DEPS} -eq 1 ]]; then
     curl  # Ensure curl is installed for downloading MinGW64
   )
 
-  # Verify all dependencies are installed
   for dep in ${deps[@]}; do
     pacman -Q ${dep} &>/dev/null || {
       echo "Missing dependency: ${dep}"
@@ -267,13 +262,14 @@ if [[ ${CHECK_DEPS} -eq 1 ]]; then
   done
 fi
 
-# Check for MinGW32 assets if needed
 if [[ ${COMPILER_MINGW32} -eq 1 && ! -f "${SOURCE_DIR}/assets/${MINGW32_ARCHIVE}" && ! -d "${SOURCE_DIR}/assets/${MINGW32_FOLDER}" ]]; then
   echo "Missing MinGW archive: assets/${MINGW32_ARCHIVE} or MinGW folder: assets/${MINGW32_FOLDER}"
   exit 1
 fi
-
-# Check for Linux compiler assets if needed
+if [[ ${COMPILER_MINGW64} -eq 1 && ! -f "${SOURCE_DIR}/assets/${MINGW64_ARCHIVE}" && ! -d "${SOURCE_DIR}/assets/${MINGW64_FOLDER}" ]]; then
+  echo "Missing MinGW archive: assets/${MINGW64_ARCHIVE} or MinGW folder: assets/${MINGW64_FOLDER}"
+  exit 1
+fi
 if [[ ${COMPILER_GCC_LINUX_X8664} -eq 1 ]]; then
   if [[ ! -f "${SOURCE_DIR}/assets/${GCC_LINUX_X8664_ARCHIVE}" ]]; then
     echo "Missing GCC archive: assets/${GCC_LINUX_X8664_ARCHIVE}"
@@ -282,7 +278,6 @@ if [[ ${COMPILER_GCC_LINUX_X8664} -eq 1 ]]; then
     echo "Missing Alpine rootfs: assets/${ALPINE_X8664_ARCHIVE}"
   fi
 fi
-
 if [[ ${COMPILER_GCC_LINUX_AARCH64} -eq 1 ]]; then
   if [[ ! -f "${SOURCE_DIR}/assets/${GCC_LINUX_AARCH64_ARCHIVE}" ]]; then
     echo "Missing GCC archive: assets/${GCC_LINUX_AARCH64_ARCHIVE}"
@@ -292,20 +287,27 @@ if [[ ${COMPILER_GCC_LINUX_AARCH64} -eq 1 ]]; then
   fi
 fi
 
-# Check for UCRT if specified
-if [[ -n "${UCRT}" && ! -f "${UCRT_DIR}/ucrtbase.dll" ]]; then
-  echo "Missing Windows SDK, UCRT cannot be included."
-  exit 1
+if [[ ${UCRT_X86} -eq 1 ]] ; then
+  if [[ ! -f "${SOURCE_DIR}/assets/VC_redist.x86.exe" ]]; then
+    curl -L -o "${SOURCE_DIR}/assets/VC_redist.x86.exe" "${UCRT_X86_URL}"
+  fi
+fi
+if [[ ${UCRT_X64} -eq 1 ]] ; then
+  if [[ ! -f "${SOURCE_DIR}/assets/VC_redist.x64.exe" ]]; then
+    curl -L -o "${SOURCE_DIR}/assets/VC_redist.x64.exe" "${UCRT_X64_URL}"
+  fi
 fi
 
-## Prepare directories
+## prepare dirs
+
 if [[ ${CLEAN} -eq 1 ]]; then
   rm -rf "${BUILD_DIR}"
   rm -rf "${PACKAGE_DIR}"
 fi
 mkdir -p "${BUILD_DIR}" "${PACKAGE_DIR}" "${TARGET_DIR}" "${ASTYLE_BUILD_DIR}" "${ASSETS_DIR}"
 
-## Prepare assets
+## prepare assets
+
 fn_print_progress "Updating astyle repo..."
 if [[ ! -d "${ASSETS_DIR}/astyle" ]]; then
   git clone --bare "https://gitlab.com/saalen/astyle" "${ASSETS_DIR}/astyle"
@@ -335,12 +337,13 @@ pushd .
 cd "${BUILD_DIR}"
 qmake_flags=()
 [[ ${NSIS_ARCH} == x64 ]] && qmake_flags+=("X86_64=ON")
-"$QMAKE" PREFIX="${PACKAGE_DIR}" ${qmake_flags[@]} -o Makefile "${SOURCE_DIR}/Red_Panda_Cpp.pro" -r "DEFINES+=BUILD_INCLUDE_OPENSSL BUILD_MODERN" 
+"$QMAKE" PREFIX="${PACKAGE_DIR}" ${qmake_flags[@]} -o Makefile "${SOURCE_DIR}/Red_Panda_Cpp.pro" -r "DEFINES+=BUILD_INCLUDE_OPENSSL BUILD_MODERN"
 mingw32-make -j$(nproc)
 mingw32-make install
 popd
 
-## Prepare packaging resources
+## prepare packaging resources
+
 pushd .
 cd "${PACKAGE_DIR}"
 
@@ -360,7 +363,8 @@ mkdir -p "${SEVENZIP_DIR}"
 "${_7Z}" x -y "${SEVENZIP_ZIP}" -o"${SEVENZIP_DIR}"
 rm "${SEVENZIP_ZIP}"
 
-## Create package
+## make package
+
 pushd .
 cd "${PACKAGE_DIR}"
 SETUP_NAME="${PACKAGE_BASENAME}.Setup.exe"
@@ -368,7 +372,6 @@ PORTABLE_NAME="${PACKAGE_BASENAME}.Portable.7z"
 
 fn_print_progress "Making installer..."
 
-# NSIS compiler flags
 nsis_flags=(
   -DAPP_VERSION="${APP_VERSION}"
   -DARCH="${NSIS_ARCH}"
@@ -384,8 +387,8 @@ nsis_flags=(
 if [[ ${COMPILER_MINGW32} -eq 1 ]]; then
   nsis_flags+=(-DHAVE_MINGW32)
   if [[ ! -d "mingw32" ]]; then
-	[[ -f "${SOURCE_DIR}/assets/${MINGW32_ARCHIVE}" ]] && "${_7Z}" x "${SOURCE_DIR}/assets/${MINGW32_ARCHIVE}" -o"${PACKAGE_DIR}"
-	[[ -d "${SOURCE_DIR}/assets/${MINGW32_FOLDER}" ]] && cp -a --dereference "${SOURCE_DIR}/assets/${MINGW32_FOLDER}" "${PACKAGE_DIR}"
+    [[ -f "${SOURCE_DIR}/assets/${MINGW32_ARCHIVE}" ]] && "${_7Z}" x "${SOURCE_DIR}/assets/${MINGW32_ARCHIVE}" -o"${PACKAGE_DIR}"
+    [[ -d "${SOURCE_DIR}/assets/${MINGW32_FOLDER}" ]] && cp -a --dereference "${SOURCE_DIR}/assets/${MINGW32_FOLDER}" "${PACKAGE_DIR}"
   fi 
 fi
 
@@ -402,33 +405,29 @@ if [[ ${COMPILER_MINGW64} -eq 1 ]]; then
         exit 1
       fi
     fi
-    
+
     # Extract the downloaded package
     fn_print_progress "Extracting MinGW64 archive..."
     if ! "${_7Z}" x "${BUILD_DIR}/${MINGW64_ARCHIVE}" -o"${PACKAGE_DIR}"; then
       echo "Error: Failed to extract MinGW64 archive"
       exit 1
     fi
-    
-    # Ensure directory is named mingw64
+
+    # Ensure directory is named mingw64 (package may contain a long folder name)
     if [[ -d "${PACKAGE_DIR}/x86_64-15.1.0-release-posix-seh-msvcrt-rt_v12-rev0" && ! -d "mingw64" ]]; then
       mv "${PACKAGE_DIR}/x86_64-15.1.0-release-posix-seh-msvcrt-rt_v12-rev0" "${PACKAGE_DIR}/mingw64"
     fi
   fi
 fi
-
-# Handle Linux x86_64 compiler if selected
 if [[ ${COMPILER_GCC_LINUX_X8664} -eq 1 ]]; then
   nsis_flags+=(-DHAVE_GCC_LINUX_X8664 -DSTRICT_ARCH_CHECK)
-  if [[ ! -d "gcc-linux-x86-64" ]]; then
+  if [[ ! -d "gcc-linux-x86_64" ]]; then
     "${_7Z}" x "${SOURCE_DIR}/assets/${GCC_LINUX_X8664_ARCHIVE}" -o"${PACKAGE_DIR}"
   fi
   if [[ ! -d "alpine-minirootfs.tar" ]]; then
     cp "${SOURCE_DIR}/assets/${ALPINE_X8664_ARCHIVE}" alpine-minirootfs.tar
   fi
 fi
-
-# Handle Linux aarch64 compiler if selected
 if [[ ${COMPILER_GCC_LINUX_AARCH64} -eq 1 ]]; then
   nsis_flags+=(-DHAVE_GCC_LINUX_AARCH64 -DSTRICT_ARCH_CHECK)
   if [[ ! -d "gcc-linux-aarch64" ]]; then
@@ -438,26 +437,21 @@ if [[ ${COMPILER_GCC_LINUX_AARCH64} -eq 1 ]]; then
     cp "${SOURCE_DIR}/assets/${ALPINE_AARCH64_ARCHIVE}" alpine-minirootfs.tar
   fi
 fi
-
-# Handle UCRT if specified
-if [[ -n "${UCRT}" ]]; then
-  nsis_flags+=(-DHAVE_UCRT)
-  if [[ ! -f ucrt/ucrtbase.dll ]]; then
-    mkdir -p ucrt
-    cp "${UCRT_DIR}"/*.dll ucrt
-  fi
+if [[ ${UCRT_X86} -eq 1 ]]; then
+  nsis_flags+=(-DHAVE_UCRT_X86)
+  cp "${SOURCE_DIR}/assets/VC_redist.x86.exe" VC_redist.x86.exe
 fi
-
-# Build installer
+if [[ ${UCRT_X64} -eq 1 ]]; then
+  nsis_flags+=(-DHAVE_UCRT_X64)
+  cp "${SOURCE_DIR}/assets/VC_redist.x64.exe" VC_redist.x64.exe
+fi
 "${NSIS}" "${nsis_flags[@]}" redpanda.nsi
 
-# Create portable package
 fn_print_progress "Making Portable Package..."
 "${_7Z}" x "${SETUP_NAME}" -o"RedPanda-CPP" -xr'!$PLUGINSDIR' -x"!uninstall.exe"
 "${_7Z}" a -mmt -mx9 -ms=on -mqs=on -mf=BCJ2 "${PORTABLE_NAME}" "RedPanda-CPP"
 rm -rf "RedPanda-CPP"
 
-# Move final packages to target directory
 mv "${SETUP_NAME}" "${TARGET_DIR}"
 mv "${PORTABLE_NAME}" "${TARGET_DIR}"
 popd
