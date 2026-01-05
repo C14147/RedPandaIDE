@@ -52,6 +52,7 @@ public:
 
     bool swapEditor(Editor* editor);
     void activeEditor(Editor *e, bool focus);
+    void activeEditorAndSetCaret(Editor *e, QSynedit::CharPos pos);
 
     void saveAll();
     bool saveAllForProject();
@@ -64,7 +65,7 @@ public:
 
     void forceCloseEditor(Editor* editor);
 
-    Editor* getOpenedEditorByFilename(QString filename) const;
+    Editor* getOpenedEditor(const QString &filename) const;
 
     bool getContentFromOpenedEditor(const QString& filename, QStringList& buffer) const;
 
@@ -79,6 +80,7 @@ public:
     void updateEditorBookmarks();
     void updateEditorBreakpoints();
 
+    bool debuggerReadyForEvalTip();
     bool requestEvalTip(Editor *e, const QString& s);
     void onEditorTipEvalValueReady(Editor *e);
 
@@ -92,13 +94,13 @@ public:
     void selectNextPage();
     void selectPreviousPage();
 
-    void showCriticalError(const QString& title, const QString& reason);
-
     Editor* operator[](int index);
 
     QTabWidget *leftPageWidget() const;
 
     QTabWidget *rightPageWidget() const;
+
+    PCppParser sharedParser(ParserLanguage language);
 
 signals:
     void editorClosed();
@@ -122,6 +124,7 @@ private slots:
     void onEditorLinesRemoved(int startLine, int count);
     void onEditorLineMoved(int fromLine, int toLine);
     void onEditorStatusChanged(QSynedit::StatusChanges changes);
+    void onEditorFontSizeChangedByWheel(int newSize);
 private:
     LayoutShowType mLayout;
     QTabWidget *mLeftPageWidget;
@@ -129,6 +132,7 @@ private:
     QSplitter *mSplitter;
     QWidget *mPanel;
     int mUpdateCount;
+    QHash<ParserLanguage,std::weak_ptr<CppParser>> mSharedParsers;
     mutable QRecursiveMutex mMutex;
 };
 

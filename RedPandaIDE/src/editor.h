@@ -19,11 +19,9 @@
 
 #include <QObject>
 #include "utils.h"
-#include <QTabWidget>
 #include "qsynedit/qsynedit.h"
 #include "colorscheme.h"
 #include "common.h"
-#include "parser/cppparser.h"
 #include "widgets/codecompletionpopup.h"
 #include "widgets/headercompletionpopup.h"
 
@@ -32,27 +30,30 @@
 #define USER_CODE_IN_REPL_POS_END "%REPL_END%"
 
 class Project;
-class Debugger;
-class MainWindow;
+class CppParser;
+using PCppParser = std::shared_ptr<CppParser>;
+class QTemporaryFile;
+class QFileSystemWatcher;
+class FunctionTooltipWidget;
+class BreakpointModel;
+class BookmarkModel;
+class Settings;
+class CodeSnippetsManager;
 struct TabStop {
     int x;
     int endX;
     int y;
 };
-
-class QTemporaryFile;
-
-class EditorManager;
-
-class FunctionTooltipWidget;
-
-class BreakpointModel;
-
-class BookmarkModel;
-
-class Settings;
-
 using PTabStop = std::shared_ptr<TabStop>;
+class Editor;
+
+using GetSharedParserrFunc = std::function<PCppParser (ParserLanguage)>;
+using GetOpennedEditorFunc = std::function<Editor *(const QString &)>;
+using GetFileStreamFunc = std::function<bool (const QString&, QStringList&)>;
+using CanShowEvalTipFunc = std::function<bool ()>;
+using RequestEvalTipFunc = std::function<bool (Editor *, const QString &)>;
+using EvalTipReadyCallback = std::function<void (Editor *)>;
+using LoggerFunc = std::function<void (const QString&)>;
 
 class Editor : public QSynedit::QSynEdit
 {
@@ -158,7 +159,6 @@ public:
     bool save(bool force=false, bool reparse=true);
     bool saveAs(const QString& name="", bool fromProject = false);
     void setFilename(const QString& newName);
-    void activate(bool focus=true);
 
     QString caption();
 
@@ -172,7 +172,6 @@ public:
     void copyAsHTML();
 
     void setCaretPosition(const QSynedit::CharPos & pos);
-    void setCaretPositionAndActivate(const QSynedit::CharPos & pos);
 
     void addSyntaxIssues(int line, int startChar, int endChar, CompileIssueType errorType, const QString& hint);
     void clearSyntaxIssues();
@@ -236,8 +235,6 @@ public:
 
     void tab() override;
 
-    static PCppParser sharedParser(ParserLanguage language);
-
     void pageUp() { processCommand(QSynedit::EditCommand::PageUp); }
     void pageDown() { processCommand(QSynedit::EditCommand::PageDown); }
     void gotoLineStart() { processCommand(QSynedit::EditCommand::LineStart); }
@@ -257,8 +254,6 @@ public:
     void selectToFileStart() { processCommand(QSynedit::EditCommand::SelFileStart); }
     void selectToFileEnd() { processCommand(QSynedit::EditCommand::SelFileEnd); }
 
-    bool inTab() { return mEditorManager!=nullptr; }
-
 signals:
     void fileSaving(Editor *e, const QString& filename);
     void fileSaveError(Editor *e, const QString& filename, const QString& reason);
@@ -271,11 +266,13 @@ signals:
     void parseTodoRequested(const QString& filename, bool inProject);
     void updateEncodingInfoRequested(const Editor *e);
     void openFileRequested(const QString& filename, FileType fileType, const QString& contextFile , const QSynedit::CharPos& caretPos);
+    void symbolChoosed(const QString& filename, int usageCount);
 
     void showOccured(Editor *e);
     void focusInOccured(Editor *e);
     void closeOccured(Editor *e);
     void hideOccured(Editor *e);
+    void fontSizeChangedByWheel(int newSize);
 public slots:
     void onTipEvalValueReady(const QString& value);
 
@@ -370,12 +367,13 @@ private:
     QByteArray mFileEncoding; // the real encoding of the file (auto detected)
     QString mFilename;
     //QTabWidget* mParentPageControl;
-    EditorManager *mEditorManager;
-    Debugger *mDebugger;
     Project* mProject;
     Settings* mSettings;
-    MainWindow *mMainWindow;
     bool mIsNew;
+
+    bool mCodeCompletionEnabled;
+
+
     QMap<int,PSyntaxIssueList> mSyntaxIssues;
     QColor mSyntaxErrorColor;
     QColor mSyntaxWarningColor;
@@ -427,7 +425,17 @@ private:
     QMap<QString,StatementKind> mIdCache;
     qint64 mLastFocusOutTime;
 
-    static QHash<ParserLanguage,std::weak_ptr<CppParser>> mSharedParsers;
+    CodeSnippetsManager *mCodeSnippetsManager;
+
+    GetSharedParserrFunc mGetSharedParserFunc;
+    GetOpennedEditorFunc mGetOpennedEditorFunc;
+    GetFileStreamFunc mGetFileStreamFunc;
+    CanShowEvalTipFunc mCanShowEvalTipFunc;
+    RequestEvalTipFunc mRequestEvalTipFunc;
+    EvalTipReadyCallback mEvalTipReadyCallback;
+    LoggerFunc mLoggerFunc;
+
+    QFileSystemWatcher *mFileSystemWatcher;
 
     // SynEdit interface
 protected:
@@ -471,17 +479,38 @@ public:
     CodeCompletionPopup *completionPopup() const;
     void setCompletionPopup(CodeCompletionPopup *newCompletionPopup);
 
-    Debugger *debugger() const;
-    void setDebugger(Debugger *newDebugger);
-
     Settings *settings() const;
     void setSettings(Settings *newSettings);
 
-    MainWindow *mainWindow() const;
-    void setMainWindow(MainWindow *newMainWindow);
+    bool codeCompletionEnabled() const;
+    void setCodeCompletionEnabled(bool newUsingParser);
 
-    EditorManager *editorManager() const;
-    void setEditorManager(EditorManager *newEditorManager);
+    const GetSharedParserrFunc &getSharedParserFunc() const;
+    void setGetSharedParserFunc(const GetSharedParserrFunc &newSharedParserProviderCallBack);
+
+    const GetOpennedEditorFunc &getOpennedEditorFunc() const;
+    void setGetOpennedFunc(const GetOpennedEditorFunc &newOpennedEditorProviderCallBack);
+
+    const GetFileStreamFunc &getFileStreamCallBack() const;
+    void setGetFileStreamCallBack(const GetFileStreamFunc &newGetFileStreamCallBack);
+
+    const RequestEvalTipFunc &requestEvalTipFunc() const;
+    void setRequestEvalTipFunc(const RequestEvalTipFunc &newRequestEvalTipFunc);
+
+    const EvalTipReadyCallback &evalTipReadyCallback() const;
+    void setEvalTipReadyCallback(const EvalTipReadyCallback &newEvalTipReadyCallback);
+
+    const LoggerFunc &loggerFunc() const;
+    void setLoggerFunc(const LoggerFunc &newLoggerFunc);
+
+    CodeSnippetsManager *codeSnippetsManager() const;
+    void setCodeSnippetsManager(CodeSnippetsManager *newCodeSnippetsManager);
+
+    QFileSystemWatcher *fileSystemWatcher() const;
+    void setFileSystemWatcher(QFileSystemWatcher *newFileSystemWatcher);
+
+    const CanShowEvalTipFunc &canShowEvalTipFunc() const;
+    void setCanShowEvalTipFunc(const CanShowEvalTipFunc &newCanShowEvalTipFunc);
 
 protected:
     // QWidget interface

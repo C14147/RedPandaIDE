@@ -58,7 +58,20 @@ Editor* EditorManager::newEditor(const QString& filename, const QByteArray& enco
 
     // parentPageControl takes the owner ship
     Editor * e = new Editor(parentPageControl);
-    e->setEditorManager(this);
+    e->setGetSharedParserFunc(std::bind(&EditorManager::sharedParser,this,std::placeholders::_1));
+    e->setGetOpennedFunc(std::bind(&EditorManager::getOpenedEditor,this,std::placeholders::_1));
+    e->setGetFileStreamCallBack(std::bind(
+                                    &EditorManager::getContentFromOpenedEditor,this,
+                                    std::placeholders::_1, std::placeholders::_2));
+    e->setCanShowEvalTipFunc(std::bind(&EditorManager::debuggerReadyForEvalTip,this));
+    e->setRequestEvalTipFunc(std::bind(&EditorManager::requestEvalTip,this,
+                                       std::placeholders::_1, std::placeholders::_2));
+    e->setEvalTipReadyCallback(std::bind(&EditorManager::onEditorTipEvalValueReady,
+                                         this, std::placeholders::_1));
+
+    e->setCodeSnippetsManager(pMainWindow->codeSnippetManager());
+    e->setFileSystemWatcher(pMainWindow->fileSystemWatcher());
+    e->applySettings();
     e->setEncodingOption(encoding);
     e->setFilename(filename);
     if (!newFile) {
@@ -68,9 +81,6 @@ Editor* EditorManager::newEditor(const QString& filename, const QByteArray& enco
     }
     e->setProject(pProject);
 
-    e->applySettings();
-
-    e->setDebugger(pMainWindow->debugger());
     if (!newFile) {
         e->resetBookmarks(pMainWindow->bookmarkModel());
         e->resetBreakpoints(pMainWindow->debugger()->breakpointModel().get());
@@ -113,6 +123,7 @@ Editor* EditorManager::newEditor(const QString& filename, const QByteArray& enco
     connect(e, &Editor::linesInserted, this, &EditorManager::onEditorLinesInserted);
     connect(e, &Editor::lineMoved, this, &EditorManager::onEditorLineMoved);
     connect(e, &Editor::statusChanged, this, &EditorManager::onEditorStatusChanged);
+    connect(e, &Editor::fontSizeChangedByWheel, this, &EditorManager::onEditorFontSizeChangedByWheel);
 
     connect(e, &Editor::syntaxCheckRequested, pMainWindow, &MainWindow::checkSyntaxInBack);
     connect(e, &Editor::parseTodoRequested, pMainWindow->todoParser().get(), &TodoParser::parseFile);
@@ -122,6 +133,7 @@ Editor* EditorManager::newEditor(const QString& filename, const QByteArray& enco
     connect(e, &Editor::hideOccured, pMainWindow, &MainWindow::removeInfosForEditor);
     connect(e, &QWidget::customContextMenuRequested, pMainWindow, &MainWindow::onEditorContextMenu);
     connect(e, &Editor::openFileRequested, pMainWindow, &MainWindow::onOpenFileRequested);
+    connect(e, &Editor::symbolChoosed, pMainWindow->symbolUsageManager(), &SymbolUsageManager::updateUsage);
 
     if (!pMainWindow->openingFiles()
             && !pMainWindow->openingProject()) {
@@ -271,19 +283,16 @@ void EditorManager::onEditorShown(Editor *e)
 void EditorManager::onFileSaving(Editor *e, const QString &filename)
 {
     Q_UNUSED(e);
-    pMainWindow->fileSystemWatcher()->removePath(filename);
+    Q_UNUSED(filename);
 }
 
 void EditorManager::onFileSaved(Editor *e, const QString &filename)
 {
-    pMainWindow->fileSystemWatcher()->addPath(filename);
     pMainWindow->onFileSaved(filename, e->inProject());
 }
 
 void EditorManager::onFileRenamed(Editor *e, const QString &oldFilename, const QString &newFilename)
 {
-    pMainWindow->fileSystemWatcher()->removePath(oldFilename);
-    pMainWindow->fileSystemWatcher()->addPath(newFilename);
     pMainWindow->getOJProblemSetModel()->updateProblemAnswerFilename(oldFilename, newFilename);
     if (!e->inProject()) {
         pMainWindow->bookmarkModel()->renameBookmarkFile(oldFilename,newFilename,false);
@@ -294,8 +303,8 @@ void EditorManager::onFileRenamed(Editor *e, const QString &oldFilename, const Q
 void EditorManager::onFileSaveError(Editor *e, const QString& filename, const QString& reason)
 {
     Q_UNUSED(e);
-    pMainWindow->fileSystemWatcher()->addPath(filename);
-    QMessageBox::critical(pMainWindow,tr("Save Error"), reason);
+    Q_UNUSED(reason);
+    Q_UNUSED(filename);
 }
 
 void EditorManager::onEditorLinesInserted(int startLine, int count)
@@ -358,9 +367,37 @@ void EditorManager::onEditorStatusChanged(QSynedit::StatusChanges changes)
     }
 }
 
+void EditorManager::onEditorFontSizeChangedByWheel(int newSize)
+{
+    pSettings->editor().setFontSize(newSize);
+    pSettings->editor().save();
+    pMainWindow->updateEditorSettings();
+}
+
+
 QTabWidget *EditorManager::rightPageWidget() const
 {
     return mRightPageWidget;
+}
+
+PCppParser EditorManager::sharedParser(ParserLanguage language)
+{
+    PCppParser parser;
+    if (mSharedParsers.contains(language)) {
+        parser=mSharedParsers[language].lock();
+    }
+    if (!parser) {
+        parser = std::make_shared<CppParser>();
+        parser->setLanguage(language);
+        parser->setOnGetFileStream(
+                    std::bind(
+                        &EditorManager::getContentFromOpenedEditor,this,
+                        std::placeholders::_1, std::placeholders::_2));
+        resetCppParser(parser);
+        parser->setEnabled(true);
+        mSharedParsers.insert(language,parser);
+    }
+    return parser;
 }
 
 QTabWidget *EditorManager::leftPageWidget() const
@@ -607,18 +644,23 @@ void EditorManager::selectPreviousPage()
     }
 }
 
-void EditorManager::showCriticalError(const QString &title, const QString &reason)
-{
-    QMessageBox::critical(pMainWindow,title,reason);
-}
-
 void EditorManager::activeEditor(Editor *e, bool focus)
 {
+    if (e==nullptr)
+        return;
     QTabWidget * pageControl = findPageControlForEditor(e);
     if (pageControl!=nullptr) {
         pageControl->setCurrentWidget(e);
         if (focus)
             e->setFocus();
+    }
+}
+
+void EditorManager::activeEditorAndSetCaret(Editor *e, QSynedit::CharPos pos)
+{
+    if (e) {
+        e->setCaretPosition(pos);
+        activeEditor(e,true);
     }
 }
 
@@ -682,7 +724,7 @@ void EditorManager::forceCloseEditor(Editor *editor)
     emit editorClosed();
 }
 
-Editor* EditorManager::getOpenedEditorByFilename(QString filename) const
+Editor* EditorManager::getOpenedEditor(const QString &filename) const
 {
     if (filename.isEmpty())
         return nullptr;
@@ -713,7 +755,7 @@ bool EditorManager::getContentFromOpenedEditor(const QString &filename, QStringL
         });
         if (pMainWindow->isQuitting())
             return false;
-        Editor * e= getOpenedEditorByFilename(filename);
+        Editor * e= getOpenedEditor(filename);
         if (!e)
             return false;
         buffer = e->content();
@@ -786,6 +828,11 @@ void EditorManager::updateEditorBreakpoints()
         Editor * e = static_cast<Editor*>(mRightPageWidget->widget(i));
         e->resetBreakpoints(pMainWindow->debugger()->breakpointModel().get());
     }
+}
+
+bool EditorManager::debuggerReadyForEvalTip()
+{
+    return (pMainWindow->debugger()->executing() && !pMainWindow->debugger()->inferiorRunning());
 }
 
 bool EditorManager::requestEvalTip(Editor *e, const QString &s)
