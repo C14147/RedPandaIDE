@@ -456,7 +456,10 @@ MainWindow::MainWindow(QWidget *parent)
     mStatementColors = std::make_shared<QHash<StatementKind, PColorSchemeItem> >();
     mCompletionPopup = new CodeCompletionPopup(this);
     mCompletionPopup->setColors(mStatementColors);
+    mCompletionPopup->setSymbolUsageManager(mSymbolUsageManager);
+    mCompletionPopup->setShowEditorCaretFunc(std::bind(&EditorManager::showActiveEditorCaret,mEditorManager));
     mHeaderCompletionPopup = new HeaderCompletionPopup(this);
+    mHeaderCompletionPopup->setShowEditorCaretFunc(std::bind(&EditorManager::showActiveEditorCaret,mEditorManager));
     mFunctionTip = new FunctionTooltipWidget(this);
 
     mClassBrowserModel->setColors(mStatementColors);
@@ -542,7 +545,7 @@ MainWindow::~MainWindow()
 void MainWindow::updateForEncodingInfo(const Editor* editor) {
     if (mQuitting)
         return;
-    if (editor!=nullptr) {
+    if (editor!=nullptr && editor->isVisible()) {
         if (editor->encodingOption() != editor->fileEncoding()) {
             mFileEncodingStatus->setText(
                         QString(" %1(%2) ")
@@ -847,7 +850,7 @@ void MainWindow::updateCompileActions(const Editor *e)
         bool canDebug = false;
         bool canCompile = false;
         bool canGenerateAssembly=false;
-        Settings::PCompilerSet set=pSettings->compilerSets().getSet(mCompilerSet->currentIndex());
+        PCompilerSet set=pSettings->compilerSets().getSet(mCompilerSet->currentIndex());
         if (set) {
             if (e) {
                 if (!e->inProject()) {
@@ -1107,7 +1110,7 @@ void MainWindow::applySettings()
         p->setFont(font);
     }
     if (pSettings->environment().useCustomIconSet()) {
-        QString customIconSetFolder = pSettings->dirs().config(Settings::Dirs::DataType::IconSet);
+        QString customIconSetFolder = pSettings->dirs().config(DirSettings::DataType::IconSet);
         pIconsManager->prepareCustomIconSet(customIconSetFolder);
         pIconsManager->setIconSetsFolder(customIconSetFolder);
     }
@@ -1159,7 +1162,7 @@ void MainWindow::applySettings()
 
 void MainWindow::applyUISettings()
 {
-    const Settings::UI& settings = pSettings->ui();
+    const UISettings& settings = pSettings->ui();
     ui->chkOpenFileInEditors->setChecked(settings.openEditorsWhenReplace());
     restoreGeometry(settings.mainWindowGeometry());
     restoreState(settings.mainWindowState());
@@ -1345,7 +1348,7 @@ void MainWindow::onOpenFileRequested(
 
 void MainWindow::executeTool(PToolItem item)
 {
-    QMap<QString, QString> macros = devCppMacroVariables();
+    QMap<QString, QString> macros = macroVariables();
     QString program = parseMacros(item->program, macros);
     QString workDir = parseMacros(item->workingDirectory, macros);
     QStringList params = parseArguments(item->parameters, macros, true);
@@ -2050,7 +2053,7 @@ void MainWindow::updateCompilerSet(const Editor *e)
     mCompilerSet->clear();
     QIcon errorIcon = pIconsManager->getIcon(IconsManager::ACTION_MISC_CROSS);
     for (size_t i=0;i<pSettings->compilerSets().size();i++) {
-        Settings::PCompilerSet set=pSettings->compilerSets().getSet(i);
+        PCompilerSet set=pSettings->compilerSets().getSet(i);
         if (set->findErrors().isEmpty())
             mCompilerSet->addItem(set->name());
         else
@@ -2341,12 +2344,12 @@ void MainWindow::checkSyntaxInBack(Editor *e)
     CompileTarget target =getCompileTarget();
     if (target ==CompileTarget::Project) {
         int index = mProject->options().compilerSet;
-        Settings::PCompilerSet set = pSettings->compilerSets().getSet(index);
+        PCompilerSet set = pSettings->compilerSets().getSet(index);
         if (!set || !CompilerInfoManager::supportSyntaxCheck(set->compilerType()))
             return;
         mCompilerManager->checkSyntax(e->filename(), e->fileEncoding(), e->text(), mProject);
     } else {
-        Settings::PCompilerSet set = pSettings->compilerSets().defaultSet();
+        PCompilerSet set = pSettings->compilerSets().defaultSet();
         if (!set || !CompilerInfoManager::supportSyntaxCheck(set->compilerType()))
             return;
         mCompilerManager->checkSyntax(e->filename(),e->fileEncoding(),e->text(), nullptr);
@@ -2421,23 +2424,23 @@ bool MainWindow::compile(bool rebuild, CppCompileType compileType)
                     return false;
             }
             if (mCompileSuccessionTask) {
-                Settings::PCompilerSet compilerSet=pSettings->compilerSets().defaultSet();
+                PCompilerSet compilerSet=pSettings->compilerSets().defaultSet();
                 if (editor->inProject())
                     compilerSet = pSettings->compilerSets().getSet(mProject->options().compilerSet);
                 if (compilerSet)  {
-                    Settings::CompilerSet::CompilationStage stage;
+                    CompilerSet::CompilationStage stage;
                     switch(compileType) {
                     case CppCompileType::GenerateAssemblyOnly:
-                        stage = Settings::CompilerSet::CompilationStage::CompilationProperOnly;
+                        stage = CompilerSet::CompilationStage::CompilationProperOnly;
                         break;
                     case CppCompileType::GenerateGimpleOnly:
-                        stage = Settings::CompilerSet::CompilationStage::GenerateGimple;
+                        stage = CompilerSet::CompilationStage::GenerateGimple;
                         break;
                     case CppCompileType::PreprocessOnly:
-                        stage = Settings::CompilerSet::CompilationStage::PreprocessingOnly;
+                        stage = CompilerSet::CompilationStage::PreprocessingOnly;
                         break;
                     default:
-                        stage = Settings::CompilerSet::CompilationStage::GenerateExecutable;
+                        stage = CompilerSet::CompilationStage::GenerateExecutable;
                         break;
                     }
                     mCompileSuccessionTask->execName = compilerSet->getOutputFilename(editor->filename(),stage);
@@ -2565,7 +2568,7 @@ void MainWindow::runExecutable(RunType runType)
             }
             QStringList binDirs = getDefaultCompilerSetBinDirs();
             QString exeName;
-            Settings::PCompilerSet compilerSet =pSettings->compilerSets().defaultSet();
+            PCompilerSet compilerSet =pSettings->compilerSets().defaultSet();
             bool isExecutable;
             if (compilerSet) {
                 exeName = compilerSet->getOutputFilename(editor->filename());
@@ -2594,7 +2597,7 @@ void MainWindow::debug()
     if (mCompilerManager->compiling())
         return;
     mCompilerManager->stopPausing();
-    Settings::PCompilerSet compilerSet = pSettings->compilerSets().defaultSet();
+    PCompilerSet compilerSet = pSettings->compilerSets().defaultSet();
     if (!compilerSet) {
         QMessageBox::critical(pMainWindow,
                               tr("No compiler set"),
@@ -2775,7 +2778,7 @@ void MainWindow::debug()
                 }
 
                 // Did we compiled?
-                Settings::PCompilerSet compilerSet =pSettings->compilerSets().defaultSet();
+                PCompilerSet compilerSet =pSettings->compilerSets().defaultSet();
                 bool isExecutable;
                 if (compilerSet) {
                     filePath = compilerSet->getOutputFilename(e->filename());
@@ -3719,7 +3722,7 @@ void MainWindow::newEditor(const QString& suffix)
             filename = QString("untitled%1").arg(getNewFileNumber());
             if (suffix.isEmpty()) {
                 if (pSettings->editor().defaultFileCpp()) {
-                    Settings::PCompilerSet compilerSet = pSettings->compilerSets().defaultSet();
+                    PCompilerSet compilerSet = pSettings->compilerSets().defaultSet();
                     if (compilerSet && !compilerSet->canCompileCPP()) {
                         filename+=".c";
                     } else {
@@ -3853,7 +3856,7 @@ void MainWindow::buildEncodingMenu()
                     if (editor == nullptr)
                         return;
                     try {
-                        editor->setEncodingOption(info->name);
+                        editor->setEditorEncoding(info->name);
                     } catch(FileError e) {
                         QMessageBox::critical(this,tr("Error"),e.reason());
                     }
@@ -5809,7 +5812,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
         if (!mShouldRemoveAllSettings) {
             if (mCPUDialog)
                 mCPUDialog->close();
-            Settings::UI& settings = pSettings->ui();
+            UISettings& settings = pSettings->ui();
             settings.setOpenEditorsWhenReplace(ui->chkOpenFileInEditors->isChecked());
             settings.setMainWindowState(saveState());
             settings.setMainWindowGeometry(saveGeometry());
@@ -5946,7 +5949,7 @@ void MainWindow::showEvent(QShowEvent *)
     //lazy initialize
     mFullInitialized = true;
     applySettings();
-    const Settings::UI& settings = pSettings->ui();
+    const UISettings& settings = pSettings->ui();
     ui->tabMessages->setCurrentIndex(settings.bottomPanelIndex());
     ui->tabExplorer->setCurrentIndex(settings.leftPanelIndex());
     ui->debugViews->setCurrentIndex(settings.debugPanelIndex());
@@ -6520,7 +6523,7 @@ void MainWindow::on_actionEncode_in_ANSI_triggered()
     if (editor == nullptr)
         return;
     try {
-        editor->setEncodingOption(ENCODING_SYSTEM_DEFAULT);
+        editor->setEditorEncoding(ENCODING_SYSTEM_DEFAULT);
     } catch(FileError e) {
         QMessageBox::critical(this,tr("Error"),e.reason());
     }
@@ -6532,7 +6535,7 @@ void MainWindow::on_actionEncode_in_UTF_8_triggered()
     if (editor == nullptr)
         return;
     try {
-        editor->setEncodingOption(ENCODING_UTF8);
+        editor->setEditorEncoding(ENCODING_UTF8);
     } catch(FileError e) {
         QMessageBox::critical(this,tr("Error"),e.reason());
     }
@@ -6543,7 +6546,7 @@ void MainWindow::on_actionAuto_Detect_triggered()
     Editor * editor = mEditorManager->getEditor();
     if (editor == nullptr)
         return;
-    editor->setEncodingOption(ENCODING_AUTO_DETECT);
+    editor->setEditorEncoding(ENCODING_AUTO_DETECT);
 }
 
 void MainWindow::on_actionConvert_to_ANSI_triggered()
@@ -8082,7 +8085,7 @@ void MainWindow::backupMenuForEditor(QMenu *menu, QList<QAction *> &backup)
 
 void MainWindow::validateCompilerSet(int index)
 {
-    Settings::PCompilerSet set = pSettings->compilerSets().getSet(index);
+    PCompilerSet set = pSettings->compilerSets().getSet(index);
     if (set) {
         QStringList errors = set->findErrors();
         if (!errors.isEmpty()) {
@@ -9187,6 +9190,80 @@ MainWindow::CompileSuccessionTaskType MainWindow::runTypeToCompileSuccessionTask
     }
 }
 
+QMap<QString, QString> MainWindow::macroVariables()
+{
+    Editor *e = mEditorManager->getEditor();
+
+    QMap<QString, QString> result = {
+        {"DEFAULT", localizePath(QDir::currentPath())},
+        {"DEVCPP", localizePath(pSettings->dirs().executable())},
+        {"DEVCPPVERSION", REDPANDA_CPP_VERSION},
+        {"EXECPATH", localizePath(pSettings->dirs().appDir())},
+        {"DATE", QDate::currentDate().toString("yyyy-MM-dd")},
+        {"DATETIME", QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")}
+    };
+
+    PCompilerSet compilerSet = pSettings->compilerSets().defaultSet();
+    if (compilerSet) {
+        // Only provide the first cpp include dir
+        if (compilerSet->defaultCppIncludeDirs().count() > 0)
+            result["INCLUDE"] = localizePath(compilerSet->defaultCppIncludeDirs().front());
+        else
+            result["INCLUDE"] = "";
+
+        // Only provide the first lib dir
+        if (compilerSet->defaultLibDirs().count() > 0)
+            result["LIB"] = localizePath(compilerSet->defaultLibDirs().front());
+        else
+            result["LIB"] = "";
+    }
+
+    if (e != nullptr && !e->inProject()) { // Non-project editor macros
+        QString exeSuffix;
+        PCompilerSet compilerSet = pSettings->compilerSets().defaultSet();
+        if (compilerSet) {
+            exeSuffix = compilerSet->executableSuffix();
+        } else {
+            exeSuffix = DEFAULT_EXECUTABLE_SUFFIX;
+        }
+        result["EXENAME"] = extractFileName(changeFileExt(e->filename(), exeSuffix));
+        result["EXEFILE"] = localizePath(changeFileExt(e->filename(), exeSuffix));
+        result["PROJECTNAME"] = extractFileName(e->filename());
+        result["PROJECTFILE"] = localizePath(e->filename());
+        result["PROJECTFILENAME"] = extractFileName(e->filename());
+        result["PROJECTPATH"] = localizePath(extractFileDir(e->filename()));
+    } else if (mProject) {
+        result["EXENAME"] = extractFileName(mProject->outputFilename());
+        result["EXEFILE"] = localizePath(mProject->outputFilename());
+        result["PROJECTNAME"] = mProject->name();
+        result["PROJECTFILE"] = localizePath(mProject->filename());
+        result["PROJECTFILENAME"] = extractFileName(mProject->filename());
+        result["PROJECTPATH"] = localizePath(mProject->directory());
+    } else {
+        result["EXENAME"] = "";
+        result["EXEFILE"] = "";
+        result["PROJECTNAME"] = "";
+        result["PROJECTFILE"] = "";
+        result["PROJECTFILENAME"] = "";
+        result["PROJECTPATH"] = "";
+    }
+
+    // Editor macros
+    if (e != nullptr) {
+        result["SOURCENAME"] = extractFileName(e->filename());
+        result["SOURCEFILE"] = localizePath(e->filename());
+        result["SOURCEPATH"] = localizePath(extractFileDir(e->filename()));
+        result["WORDXY"] = e->wordAtCursor();
+    } else {
+        result["SOURCENAME"] = "";
+        result["SOURCEFILE"] = "";
+        result["SOURCEPATH"] = "";
+        result["WORDXY"] = "";
+    }
+
+    return result;
+}
+
 
 void MainWindow::on_actionTool_Window_Bars_triggered()
 {
@@ -10039,7 +10116,7 @@ void MainWindow::on_actionEncode_in_UTF_8_BOM_triggered()
     if (editor == nullptr)
         return;
     try {
-        editor->setEncodingOption(ENCODING_UTF8_BOM);
+        editor->setEditorEncoding(ENCODING_UTF8_BOM);
     } catch(FileError e) {
         QMessageBox::critical(this,tr("Error"),e.reason());
     }
@@ -10138,7 +10215,7 @@ void MainWindow::on_actionNew_Template_triggered()
     if (dialog.exec()==QDialog::Accepted) {
         QDir folder(
                     includeTrailingPathDelimiter(
-                        pSettings->dirs().config(Settings::Dirs::DataType::Template))
+                        pSettings->dirs().config(DirSettings::DataType::Template))
                     +dialog.getName());
         if (folder.exists()) {
             if (QMessageBox::warning(this,

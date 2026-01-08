@@ -58,6 +58,8 @@ Editor* EditorManager::newEditor(const QString& filename, const QByteArray& enco
 
     // parentPageControl takes the owner ship
     Editor * e = new Editor(parentPageControl);
+    e->setEditorSettings(&pSettings->editor());
+    e->setCodeCompletionSettings(&pSettings->codeCompletion());
     e->setGetSharedParserFunc(std::bind(&EditorManager::sharedParser,this,std::placeholders::_1));
     e->setGetOpennedFunc(std::bind(&EditorManager::getOpenedEditor,this,std::placeholders::_1));
     e->setGetFileStreamCallBack(std::bind(
@@ -68,11 +70,19 @@ Editor* EditorManager::newEditor(const QString& filename, const QByteArray& enco
                                        std::placeholders::_1, std::placeholders::_2));
     e->setEvalTipReadyCallback(std::bind(&EditorManager::onEditorTipEvalValueReady,
                                          this, std::placeholders::_1));
-
+    e->setGetReformatterFunc(std::bind(&EditorManager::createReformatterForEditor,
+                                       this, std::placeholders::_1));
+    e->setGetMacroVarsFunc(std::bind(&MainWindow::macroVariables,
+                                     pMainWindow));
+#ifdef ENABLE_SDCC
+    e->setGetCompilerTypeForEditorFunc(std::bind(
+                                           &EditorManager::getCompilerTypeForEditor,
+                                           this, std::placeholders::_1));
+#endif
     e->setCodeSnippetsManager(pMainWindow->codeSnippetManager());
     e->setFileSystemWatcher(pMainWindow->fileSystemWatcher());
     e->applySettings();
-    e->setEncodingOption(encoding);
+    e->setEditorEncoding(encoding);
     e->setFilename(filename);
     if (!newFile) {
         e->loadFile(filename);
@@ -124,10 +134,12 @@ Editor* EditorManager::newEditor(const QString& filename, const QByteArray& enco
     connect(e, &Editor::lineMoved, this, &EditorManager::onEditorLineMoved);
     connect(e, &Editor::statusChanged, this, &EditorManager::onEditorStatusChanged);
     connect(e, &Editor::fontSizeChangedByWheel, this, &EditorManager::onEditorFontSizeChangedByWheel);
+    connect(e, &Editor::fileEncodingChanged, this, &EditorManager::onEditorFileEncodingChanged);
 
     connect(e, &Editor::syntaxCheckRequested, pMainWindow, &MainWindow::checkSyntaxInBack);
     connect(e, &Editor::parseTodoRequested, pMainWindow->todoParser().get(), &TodoParser::parseFile);
-    connect(e, &Editor::updateEncodingInfoRequested, pMainWindow, &MainWindow::updateForEncodingInfo);
+    connect(e, &Editor::fileEncodingChanged, pMainWindow, &MainWindow::updateForEncodingInfo);
+    connect(e, &Editor::editorEncodingChanged, pMainWindow, &MainWindow::updateForEncodingInfo);
     connect(e, &Editor::focusInOccured, pMainWindow, &MainWindow::refreshInfosForEditor);
     connect(e, &Editor::closeOccured, pMainWindow, &MainWindow::removeInfosForEditor);
     connect(e, &Editor::hideOccured, pMainWindow, &MainWindow::removeInfosForEditor);
@@ -218,6 +230,23 @@ void EditorManager::doRemoveEditor(Editor *e)
     e->setParent(nullptr);
     delete e;
 }
+
+#ifdef ENABLE_SDCC
+CompilerType EditorManager::getCompilerTypeForEditor(Editor *e)
+{
+    if (e) {
+        PCompilerSet pSet;
+        if (e->inProject()) {
+            pSet = pSettings->compilerSets().getSet(pMainWindow->project()->options().compilerSet);
+        } else if (!e->inProject()) {
+            pSet = pSettings->compilerSets().defaultSet();
+        }
+        if (pSet)
+            return pSet->compilerType();
+    }
+    return CompilerType::Unknown;
+}
+#endif
 
 void EditorManager::updateEditorTabCaption(Editor* e)
 {
@@ -374,6 +403,16 @@ void EditorManager::onEditorFontSizeChangedByWheel(int newSize)
     pMainWindow->updateEditorSettings();
 }
 
+void EditorManager::onEditorFileEncodingChanged(Editor *e)
+{
+    if (pMainWindow->project()) {
+        PProjectUnit unit = pMainWindow->project()->findUnit(e);
+        if (unit) {
+            unit->setRealEncoding(e->fileEncoding());
+        }
+    }
+}
+
 
 QTabWidget *EditorManager::rightPageWidget() const
 {
@@ -398,6 +437,14 @@ PCppParser EditorManager::sharedParser(ParserLanguage language)
         mSharedParsers.insert(language,parser);
     }
     return parser;
+}
+
+std::unique_ptr<BaseReformatter> EditorManager::createReformatterForEditor(Editor *)
+{
+    const QString &astyle = pSettings->environment().AStylePath();
+    QStringList args = pSettings->codeFormatter().getArguments();
+    return std::make_unique<AStyleReformatter>(astyle,args,
+                                               std::bind(&MainWindow::logToolsOutput, pMainWindow, std::placeholders::_1));
 }
 
 QTabWidget *EditorManager::leftPageWidget() const
@@ -642,6 +689,13 @@ void EditorManager::selectPreviousPage()
                     (pageControl->currentIndex()+pageControl->count()-1) % pageControl->count()
                     );
     }
+}
+
+void EditorManager::showActiveEditorCaret()
+{
+    Editor *editor = getEditor();
+    if (editor)
+        editor->showCaret();
 }
 
 void EditorManager::activeEditor(Editor *e, bool focus)

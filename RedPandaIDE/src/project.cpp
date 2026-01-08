@@ -132,7 +132,7 @@ QString Project::outputFilename() const
         switch(mOptions.type) {
 #ifdef ENABLE_SDCC
         case ProjectType::MicroController: {
-            Settings::PCompilerSet pSet=pSettings->compilerSets().getSet(mOptions.compilerSet);
+            PCompilerSet pSet=pSettings->compilerSets().getSet(mOptions.compilerSet);
             if (pSet)
                 exeFileName = changeFileExt(extractFileName(mFilename),pSet->executableSuffix());
             else
@@ -791,16 +791,23 @@ bool Project::saveUnits()
     return true;
 }
 
-PProjectUnit Project::findUnit(const QString &filename)
+PProjectUnit Project::findUnit(const QString &filename) const
 {
     return mUnits.value(filename,PProjectUnit());
 }
 
-PProjectUnit Project::findUnit(const Editor *editor)
+PProjectUnit Project::findUnit(const Editor *editor) const
 {
     if (!editor)
         return PProjectUnit();
     return findUnit(editor->filename());
+}
+
+bool Project::inProject(const Editor *editor) const
+{
+    if (!editor)
+        return false;
+    return mUnits.contains(editor->filename());
 }
 
 void Project::associateEditor(Editor *editor)
@@ -844,7 +851,7 @@ void Project::associateEditorToUnit(Editor *editor, PProjectUnit unit)
 
 //bool Project::setCompileOption(const QString &key, int valIndex)
 //{
-//    Settings::PCompilerSet pSet = pSettings->compilerSets().getSet(mOptions.compilerSet);
+//    PCompilerSet pSet = pSettings->compilerSets().getSet(mOptions.compilerSet);
 //    if (!pSet)
 //        return false;
 //    PCompilerOption op = CompilerInfoManager::getCompilerOption(
@@ -868,7 +875,7 @@ void Project::associateEditorToUnit(Editor *editor, PProjectUnit unit)
 
 bool Project::setCompileOption(const QString &key, const QString &value)
 {
-    Settings::PCompilerSet pSet = pSettings->compilerSets().getSet(mOptions.compilerSet);
+    PCompilerSet pSet = pSettings->compilerSets().getSet(mOptions.compilerSet);
     if (!pSet)
         return false;
     PCompilerOption op = CompilerInfoManager::getCompilerOption(
@@ -1156,7 +1163,7 @@ void Project::setEncoding(const QByteArray &encoding)
                 continue;
             Editor * e=unitEditor(unit);
             if (e) {
-                e->setEncodingOption(ENCODING_PROJECT);
+                e->setEditorEncoding(ENCODING_PROJECT);
                 unit->setEncoding(ENCODING_PROJECT);
             }
         }
@@ -2030,7 +2037,7 @@ void Project::loadOptions(SimpleIni& ini)
             saveOptions();
         }
 
-        Settings::PCompilerSet pSet = pSettings->compilerSets().getSet(mOptions.compilerSet);
+        PCompilerSet pSet = pSettings->compilerSets().getSet(mOptions.compilerSet);
         if (pSet) {
             QByteArray oldCompilerOptions = ini.GetValue("Project", "CompilerSettings", "");
             if (!oldCompilerOptions.isEmpty()) {
@@ -2058,11 +2065,11 @@ void Project::loadOptions(SimpleIni& ini)
                     oldCompilerOptions[21]=t;
                 }
                 for (int i=0;i<oldCompilerOptions.length();i++) {
-                    QString key = pSettings->compilerSets().getKeyFromCompilerCompatibleIndex(i);
+                    QString key = CompilerSets::getKeyFromCompilerCompatibleIndex(i);
                     PCompilerOption pOption = CompilerInfoManager::getCompilerOption(
                                 pSet->compilerType(), key);
                     if (pOption) {
-                        int val = Settings::CompilerSet::charToValue(oldCompilerOptions[i]);
+                        int val = CompilerSet::charToValue(oldCompilerOptions[i]);
                         if (pOption->choices.isEmpty()) {
                             if (val>0)
                                 mOptions.compilerOptions.insert(key,COMPILER_OPTION_ON);
@@ -2233,7 +2240,7 @@ void Project::updateFolderNode(PProjectModelNode node)
 
 void Project::updateCompilerSetting()
 {
-    Settings::PCompilerSet defaultSet = pSettings->compilerSets().getSet(mOptions.compilerSet);
+    PCompilerSet defaultSet = pSettings->compilerSets().getSet(mOptions.compilerSet);
     if (defaultSet) {
         mOptions.staticLink = defaultSet->staticLink();
         mOptions.compilerOptions = defaultSet->compileOptions();
@@ -2264,7 +2271,7 @@ QString Project::fileSystemNodeFolderPath(const PProjectModelNode &node)
 QStringList Project::binDirs()
 {
     QStringList lst = options().binDirs;
-    Settings::PCompilerSet compilerSet = pSettings->compilerSets().getSet(options().compilerSet);
+    PCompilerSet compilerSet = pSettings->compilerSets().getSet(options().compilerSet);
     if (compilerSet) {
         lst.append(compilerSet->binDirs());
     }
@@ -2342,8 +2349,8 @@ ProjectUnit::ProjectUnit(Project* parent)
 //    mFileMissing = false;
     mPriority=0;
     mNew = true;
-    mEncoding=ENCODING_PROJECT;
-    mRealEncoding="";
+    mEditorEncoding=ENCODING_PROJECT;
+    mFileEncoding="";
 }
 
 Project *ProjectUnit::parent() const
@@ -2374,12 +2381,12 @@ void ProjectUnit::setNew(bool newNew)
 
 const QByteArray &ProjectUnit::realEncoding() const
 {
-    return mRealEncoding;
+    return mFileEncoding;
 }
 
 void ProjectUnit::setRealEncoding(const QByteArray &newRealEncoding)
 {
-    mRealEncoding = newRealEncoding;
+    mFileEncoding = newRealEncoding;
 }
 
 const QString &ProjectUnit::folder() const
@@ -2458,17 +2465,17 @@ void ProjectUnit::setPriority(int newPriority)
 
 const QByteArray &ProjectUnit::encoding() const
 {
-    return mEncoding;
+    return mEditorEncoding;
 }
 
 void ProjectUnit::setEncoding(const QByteArray &newEncoding)
 {
-    if (mEncoding != newEncoding) {
+    if (mEditorEncoding != newEncoding) {
         Editor * editor=mParent->unitEditor(this);
         if (editor) {
-            editor->setEncodingOption(newEncoding);
+            editor->setEditorEncoding(newEncoding);
         }
-        mEncoding = newEncoding;
+        mEditorEncoding = newEncoding;
     }
 }
 

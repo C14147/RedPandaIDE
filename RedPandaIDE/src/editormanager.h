@@ -23,6 +23,7 @@
 #include <QRecursiveMutex>
 #include "utils.h"
 #include "editor.h"
+#include "reformatter/astyleformatter.h"
 
 class MainWindow;
 class Project;
@@ -93,6 +94,7 @@ public:
     int pageCount() const;
     void selectNextPage();
     void selectPreviousPage();
+    void showActiveEditorCaret();
 
     Editor* operator[](int index);
 
@@ -102,6 +104,8 @@ public:
 
     PCppParser sharedParser(ParserLanguage language);
 
+    std::unique_ptr<BaseReformatter> createReformatterForEditor(Editor *);
+
 signals:
     void editorClosed();
     void editorOpenned();
@@ -110,6 +114,9 @@ private:
     QTabWidget* getFocusedPageControl() const;
     void showLayout(LayoutShowType layout);
     void doRemoveEditor(Editor* e);
+#ifdef ENABLE_SDCC
+    CompilerType getCompilerTypeForEditor(Editor *e);
+#endif
 private slots:
     void updateEditorTabCaption(Editor* e);
     void onBreakpointAdded(const Editor* e, int line);
@@ -125,6 +132,7 @@ private slots:
     void onEditorLineMoved(int fromLine, int toLine);
     void onEditorStatusChanged(QSynedit::StatusChanges changes);
     void onEditorFontSizeChangedByWheel(int newSize);
+    void onEditorFileEncodingChanged(Editor *e);
 private:
     LayoutShowType mLayout;
     QTabWidget *mLeftPageWidget;
