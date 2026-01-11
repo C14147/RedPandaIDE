@@ -50,13 +50,15 @@
 #include "syntaxermanager.h"
 #include "iconsmanager.h"
 #include <QDebug>
-#include "project.h"
 #include <qt_utils/charsetinfo.h>
 #include "utils/escape.h"
 #include "widgets/functiontooltipwidget.h"
 #include "widgets/bookmarkmodel.h"
 #include "codesnippetsmanager.h"
 #include "debugger/debuggermodels.h"
+#include "settings/editorsettings.h"
+#include "settings/codecompletionsettings.h"
+#include "colorscheme.h"
 
 using QSynedit::CharPos;
 
@@ -88,8 +90,8 @@ Editor::Editor(QWidget *parent):
 {
     mEditorEncoding = ENCODING_UTF8;
     mFileEncoding = ENCODING_ASCII;
-    mProject = nullptr;
     mIsNew = true;
+    mInProject = false;
     mCodeCompletionEnabled = false;
 
     mCodeSnippetsManager = nullptr;
@@ -102,11 +104,13 @@ Editor::Editor(QWidget *parent):
     mEvalTipReadyCallback = nullptr;
     mGetReformatterFunc = nullptr;
     mGetMacroVarsFunc = nullptr;
+    mGetCppParserFunc = nullptr;
 #ifdef ENABLE_SDCC
     mGetCompilerTypeForEditorFunc = nullptr;
 #endif
     mFileSystemWatcher = nullptr;
 
+    mColorManager = nullptr;
     mCodeCompletionSettings = nullptr;
     mEditorSettings = nullptr;
 
@@ -166,7 +170,7 @@ Editor::~Editor() {
     cleanAutoBackup();
 }
 
-void Editor::loadFile(QString filename) {
+void Editor::loadFile(QString filename, bool parse) {
     if (filename.isEmpty()) {
         filename=mFilename;
         // save backup
@@ -191,31 +195,45 @@ void Editor::loadFile(QString filename) {
     }
 
     //FileError should by catched by the caller of loadFile();
-    loadContent(filename);
-    setStatusChanged(QSynedit::StatusChange::Custom);
+    QByteArray oldEditorEncoding = mEditorEncoding;
+    QByteArray oldFileEncoding = mFileEncoding;
+    loadFromFile(filename,mEditorEncoding,mFileEncoding);
+    if (mEditorEncoding==ENCODING_AUTO_DETECT) {
+        if (mFileEncoding==ENCODING_ASCII)
+            mEditorEncoding=mEditorSettings->defaultEncoding();
+        else
+            mEditorEncoding=mFileEncoding;
+    }
+    if (oldEditorEncoding!=mEditorEncoding)
+        emit editorEncodingChanged(this);
+    if (oldFileEncoding!=mFileEncoding)
+        emit fileEncodingChanged(this);
+
+    applyColorScheme(mEditorSettings->colorScheme());
+    mIsNew = false;
+    saveAutoBackup();
+    setStatusChanged(QSynedit::StatusChange::Custom0);
 
     if (shouldOpenInReadonly()) {
         this->setModified(false);
         setReadOnly(true);
     }
-//    applyColorScheme(mEditorSettings->colorScheme());
-    if (!inProject()) {
-        initParser();
-        reparse(false);
-    }
-    reparseTodo();
-    if (mEditorSettings->syntaxCheckWhenLineChanged()) {
+    if (parse) {
+        setCppParser();
+        reparse();
+        reparseTodo();
         checkSyntaxInBack();
     }
 }
 
 void Editor::saveFile(QString filename) {
+    Q_ASSERT(mEditorEncoding!=ENCODING_AUTO_DETECT);
+    Q_ASSERT(mEditorEncoding!=ENCODING_PROJECT);
     QFile file(filename);
-    QByteArray encoding = mEditorEncoding;
-    this->document()->saveToFile(file,encoding,
-                              mEditorSettings->defaultEncoding(),
-                              mFileEncoding);
-    emit fileEncodingChanged(this);
+    QByteArray oldFileEncoding = mFileEncoding;
+    this->document()->saveToFile(file, mEditorEncoding, mFileEncoding);
+    if (oldFileEncoding != mFileEncoding)
+        emit fileEncodingChanged(this);
 }
 
 void Editor::convertToEncoding(const QByteArray &encoding)
@@ -225,13 +243,6 @@ void Editor::convertToEncoding(const QByteArray &encoding)
     mEditorEncoding = encoding;
     setModified(true);
     save();
-    if (mProject) {
-        PProjectUnit unit = mProject->findUnit(this);
-        if (unit) {
-            unit->setEncoding(mEditorEncoding);
-            unit->setRealEncoding(mFileEncoding);
-        }
-    }
     emit editorEncodingChanged(this);
 }
 
@@ -257,7 +268,7 @@ bool Editor::save(bool force, bool doReparse) {
             mFileSystemWatcher->addPath(mFilename);
         setModified(false);
         mIsNew = false;
-        setStatusChanged(QSynedit::StatusChange::Custom);
+        setStatusChanged(QSynedit::StatusChange::Custom0);
     } catch (FileError& exception) {
         if (mFileSystemWatcher)
             mFileSystemWatcher->addPath(mFilename);
@@ -267,7 +278,7 @@ bool Editor::save(bool force, bool doReparse) {
     }
 
     if (doReparse && isVisible()) {
-        reparse(false);
+        reparse();
         if (mEditorSettings->syntaxCheckWhenSave())
             checkSyntaxInBack();
         reparseTodo();
@@ -276,7 +287,7 @@ bool Editor::save(bool force, bool doReparse) {
     return true;
 }
 
-bool Editor::saveAs(const QString &name, bool fromProject){
+bool Editor::saveAs(const QString &name){
     QString newName = name;
     QString oldName = mFilename;
     if (name.isEmpty()) {
@@ -334,12 +345,6 @@ bool Editor::saveAs(const QString &name, bool fromProject){
         return false;
     }
     // Update project information
-    if (mProject && !fromProject) {
-        PProjectUnit unit = mProject->findUnit(newName);
-        if (!unit) {
-            setProject(nullptr);
-        }
-    }
 
     clearSyntaxIssues();
     if (mCodeCompletionEnabled && mParser && !inProject()) {
@@ -352,26 +357,22 @@ bool Editor::saveAs(const QString &name, bool fromProject){
         trimTrailingSpaces();
     }
     mFilename = newName;
-    if (mProject && !fromProject) {
-        mProject->associateEditor(this);
-    }
     setFileType(getFileType(mFilename));
     if (!syntaxer() || syntaxer()->language() != QSynedit::ProgrammingLanguage::CPP) {
         mSyntaxIssues.clear();
     }
-    reparse(false);
+    reparse();
     if (mEditorSettings->syntaxCheckWhenSave())
         checkSyntaxInBack();
     if (!shouldOpenInReadonly()) {
         setReadOnly(false);
     }
-    setStatusChanged(QSynedit::StatusChange::Custom);
-
-
-    emit fileRenamed(this, mFilename, newName);
+    setStatusChanged(QSynedit::StatusChange::Custom0);
 
     if (mFileSystemWatcher)
         mFileSystemWatcher->removePath(oldName);
+
+    emit fileSaveAsed(this, oldName, newName);
 
     try {
         // must emit fileSaving/fileSaved signal out of saveFile(),
@@ -384,7 +385,7 @@ bool Editor::saveAs(const QString &name, bool fromProject){
             mFileSystemWatcher->addPath(mFilename);
         mIsNew = false;
         setModified(false);
-        setStatusChanged(QSynedit::StatusChange::Custom);
+        setStatusChanged(QSynedit::StatusChange::Custom0);
     }  catch (FileError& exception) {
         if (mFileSystemWatcher)
             mFileSystemWatcher->addPath(mFilename);
@@ -397,7 +398,7 @@ bool Editor::saveAs(const QString &name, bool fromProject){
     return true;
 }
 
-void Editor::setFilename(const QString &newName)
+void Editor::rename(const QString &newName)
 {
     if (mFilename == newName)
         return;
@@ -405,13 +406,7 @@ void Editor::setFilename(const QString &newName)
         return;
     }
     QString oldName = mFilename;
-    // Update project information
-    if (mProject) {
-        PProjectUnit unit = mProject->findUnit(oldName);
-        if (unit) {
-            mProject->renameUnit(unit, newName);
-        }
-    }
+
 
     clearSyntaxIssues();
     if (mCodeCompletionEnabled && mParser && !inProject()) {
@@ -419,29 +414,29 @@ void Editor::setFilename(const QString &newName)
     }
 
     mFilename = newName;
-    if (mProject) {
-        mProject->associateEditor(this);
-    }
     setFileType(getFileType(mFilename));
-    if (!mIsNew) {
-        if (!syntaxer() || syntaxer()->language() != QSynedit::ProgrammingLanguage::CPP) {
-            mSyntaxIssues.clear();
-        }
-        if (mEditorSettings->syntaxCheckWhenSave())
-            checkSyntaxInBack();
-
-        if (mFileSystemWatcher) {
-            mFileSystemWatcher->removePath(oldName);
-            mFileSystemWatcher->addPath(newName);
-        }
-        emit fileRenamed(this, oldName, newName);
-
-        initAutoBackup();
+    if (!syntaxer() || syntaxer()->language() != QSynedit::ProgrammingLanguage::CPP) {
+        mSyntaxIssues.clear();
     }
+    if (mEditorSettings->syntaxCheckWhenSave())
+        checkSyntaxInBack();
+
+    if (mFileSystemWatcher) {
+        mFileSystemWatcher->removePath(oldName);
+        mFileSystemWatcher->addPath(newName);
+    }
+    emit fileRenamed(this, oldName, newName);
+
+    initAutoBackup();
     return;
 }
 
-const QByteArray& Editor::encodingOption() const noexcept{
+void Editor::setFilename(const QString &newName)
+{
+    mFilename = newName;
+}
+
+const QByteArray& Editor::editorEncoding() const noexcept{
     return mEditorEncoding;
 }
 
@@ -449,12 +444,10 @@ void Editor::setEditorEncoding(const QByteArray& encoding) noexcept{
     if (encoding.isEmpty())
         return;
     QByteArray newEncoding=encoding;
-    if (mProject && encoding==ENCODING_PROJECT)
-        newEncoding=mProject->options().encoding;
+    Q_ASSERT(encoding!=ENCODING_PROJECT);
     if (mEditorEncoding == newEncoding)
         return;
     mEditorEncoding = newEncoding;
-    emit editorEncodingChanged(this);
     if (!isNew()) {
         if (modified()) {
             if (QMessageBox::warning(this,tr("Confirm Reload File"),
@@ -471,14 +464,7 @@ void Editor::setEditorEncoding(const QByteArray& encoding) noexcept{
                                   e.reason());
         }
     }
-    resolveAutoDetectEncodingOption();
-    if (mProject) {
-        PProjectUnit unit = mProject->findUnit(this);
-        if (unit) {
-            unit->setEncoding(mEditorEncoding);
-            unit->setRealEncoding(mFileEncoding);
-        }
-    }
+    emit editorEncodingChanged(this);
 }
 const QByteArray& Editor::fileEncoding() const noexcept{
     return mFileEncoding;
@@ -487,8 +473,9 @@ const QString& Editor::filename() const noexcept{
     return mFilename;
 }
 bool Editor::inProject() const noexcept{
-    return mProject!=nullptr;
+    return mInProject;
 }
+
 bool Editor::isNew() const noexcept {
     return mIsNew;
 }
@@ -1450,8 +1437,8 @@ void Editor::copyAsHTML()
     exporter.setFont(font());
     QSynedit::PSyntaxer hl = syntaxer();
     if (!mEditorSettings->copyHTMLUseEditorColor()) {
-        hl = syntaxerManager.copy(syntaxer());
-        syntaxerManager.applyColorScheme(hl,mEditorSettings->copyHTMLColorScheme());
+        hl = SyntaxerManager::copy(syntaxer());
+        mColorManager->applySchemeToSyntaxer(hl,mEditorSettings->copyHTMLColorScheme());
     }
     exporter.setSyntaxer(hl);
     exporter.setOnFormatToken(std::bind(&Editor::onExportedFormatToken,
@@ -1612,7 +1599,7 @@ void Editor::onStatusChanged(QSynedit::StatusChanges changes)
             && !changes.testFlag(QSynedit::StatusChange::ReadOnlyChanged)
             && changes.testFlag(QSynedit::StatusChange::CaretY))) {
         mCurrentLineModified = false;
-        reparse(false);
+        reparse();
         if (mEditorSettings->syntaxCheckWhenLineChanged())
             checkSyntaxInBack();
         reparseTodo();
@@ -1949,6 +1936,33 @@ void Editor::onParseFinished()
     invalidate();
 }
 
+void Editor::setCppParser()
+{
+    if (mGetCppParserFunc)
+        setCppParser(mGetCppParserFunc(this));
+}
+
+void Editor::setCppParser(PCppParser parser)
+{
+    if (parser == mParser)
+        return;
+    if (mParser) {
+        disconnect(mParser.get(),
+                &CppParser::parseFinished,
+                this,
+                &Editor::onParseFinished);
+        mParser->invalidateFile(mFilename);
+    }
+    mParser = parser;
+    if (mParser) {
+        connect(mParser.get(),
+                &CppParser::parseFinished,
+                this,
+                &Editor::onParseFinished);
+    }
+    //todo:
+}
+
 bool Editor::completionPopupVisible() const
 {
     return mCompletionPopup && mCompletionPopup->isVisible();
@@ -1966,21 +1980,7 @@ bool Editor::functionTooltipVisible() const
 
 void Editor::loadContent(const QString& filename)
 {
-    loadFromFile(filename,mEditorEncoding,mFileEncoding);
-    applyColorScheme(mEditorSettings->colorScheme());
-    mIsNew = false;
-    emit fileEncodingChanged(this);
-    saveAutoBackup();
-}
 
-void Editor::resolveAutoDetectEncodingOption()
-{
-    if (mEditorEncoding==ENCODING_AUTO_DETECT) {
-        if (mFileEncoding==ENCODING_ASCII)
-            mEditorEncoding=mEditorSettings->defaultEncoding();
-        else
-            mEditorEncoding=mFileEncoding;
-    }
 }
 
 bool Editor::isBraceChar(QChar ch) const
@@ -2876,35 +2876,7 @@ bool Editor::handleCodeCompletion(QChar key)
     return false;
 }
 
-void Editor::initParser()
-{
-    if (mCodeCompletionEnabled
-        && (isC_CPPHeaderFile(mFileType) || isC_CPPSourceFile(mFileType))
-            && !mFilename.isEmpty()) {
-        if (isC_CPPHeaderFile(mFileType) && !mContextFile.isEmpty()
-                && mGetOpennedEditorFunc) {
-            Editor * e = mGetOpennedEditorFunc(mContextFile);
-            if (e) {
-                mParser = e->parser();
-                return;
-            }
-        }
-        if (mCodeCompletionSettings->shareParser() && mGetSharedParserFunc) {
-            mParser = mGetSharedParserFunc(calcParserLanguage());
-            return;
-        } else if (syntaxer()->language() == QSynedit::ProgrammingLanguage::CPP) {
-            mParser = std::make_shared<CppParser>();
-            mParser->setLanguage(calcParserLanguage());
-            mParser->setOnGetFileStream(mGetFileStreamFunc);
-            resetCppParser(mParser);
-            mParser->setEnabled(true);
-            return;
-        }
-    }
-    mParser = nullptr;
-}
-
-ParserLanguage Editor::calcParserLanguage()
+ParserLanguage Editor::calcParserLanguage() const
 {
 #ifdef ENABLE_SDCC
     if (mGetCompilerTypeForEditorFunc && mGetCompilerTypeForEditorFunc(this) == CompilerType::SDCC)
@@ -2923,11 +2895,10 @@ ParserLanguage Editor::calcParserLanguage()
         else if (contextFileType == FileType::CSource)
             return ParserLanguage::C;
     }
-        break;
+        return (mEditorSettings->defaultFileCpp())?ParserLanguage::CPlusPlus:ParserLanguage::C;
     default:
-        break;
+        return ParserLanguage::None;
     }
-    return (mEditorSettings->defaultFileCpp())?ParserLanguage::CPlusPlus:ParserLanguage::C;
 }
 
 Editor::QuoteStatus Editor::getQuoteStatus()
@@ -2962,51 +2933,27 @@ Editor::QuoteStatus Editor::getQuoteStatus()
     return Result;
 }
 
-void Editor::reparse(bool resetParser)
+void Editor::reparse()
 {
     if (!mInited)
         return;
     if (!mCodeCompletionEnabled)
         return;
-    if (syntaxer()->language() != QSynedit::ProgrammingLanguage::CPP
-             && syntaxer()->language() != QSynedit::ProgrammingLanguage::GLSL)
-        return;
     if (!mParser)
         return;
+    Q_ASSERT(syntaxer()->language() == QSynedit::ProgrammingLanguage::CPP);
     if (!mParser->enabled())
         return;
 //    qDebug()<<"reparse "<<mFilename;
     //mParser->setEnabled(mCodeCompletionSettings->enabled());
-    if (!inProject()) {
-        ParserLanguage language = calcParserLanguage();
-        if (mCodeCompletionSettings->shareParser()) {
-            if (language!=mParser->language()) {
-                mParser->invalidateFile(mFilename);
-                initParser();
-            }
-        } else {
-            if (language!=mParser->language()) {
-                mParser->setLanguage(language);
-                resetCppParser(mParser);
-            } else if (resetParser) {
-                resetCppParser(mParser);
-            }
-        }
-    }
     parseFileNonBlocking(mParser,mFilename, inProject(), mContextFile);
 }
 
 void Editor::reparseIfNeeded()
 {
     if (needReparse()) {
-        reparse(false);
+        reparse();
     }
-}
-
-void Editor::resetParserIfNeeded()
-{
-    if (needReparse())
-        resetCppParser(mParser);
 }
 
 void Editor::reparseTodo()
@@ -3136,8 +3083,8 @@ void Editor::print()
     exporter.setFont(font());
     QSynedit::PSyntaxer hl = syntaxer();
     if (!mEditorSettings->copyHTMLUseEditorColor()) {
-        hl = syntaxerManager.copy(syntaxer());
-        syntaxerManager.applyColorScheme(hl,mEditorSettings->copyHTMLColorScheme());
+        hl = SyntaxerManager::copy(syntaxer());
+        mColorManager->applySchemeToSyntaxer(hl,mEditorSettings->copyHTMLColorScheme());
     }
     exporter.setSyntaxer(hl);
     exporter.setOnFormatToken(std::bind(&Editor::onExportedFormatToken,
@@ -3170,8 +3117,8 @@ void Editor::exportAsRTF(const QString &rtfFilename)
     exporter.setFont(font());
     QSynedit::PSyntaxer hl = syntaxer();
     if (!mEditorSettings->copyRTFUseEditorColor()) {
-        hl = syntaxerManager.copy(syntaxer());
-        syntaxerManager.applyColorScheme(hl,mEditorSettings->copyRTFColorScheme());
+        hl = SyntaxerManager::copy(syntaxer());
+        mColorManager->applySchemeToSyntaxer(hl,mEditorSettings->copyRTFColorScheme());
     }
     exporter.setSyntaxer(hl);
     exporter.setOnFormatToken(std::bind(&Editor::onExportedFormatToken,
@@ -3194,8 +3141,8 @@ void Editor::exportAsHTML(const QString &htmlFilename)
     exporter.setFont(font());
     QSynedit::PSyntaxer hl = syntaxer();
     if (!mEditorSettings->copyHTMLUseEditorColor()) {
-        hl = syntaxerManager.copy(syntaxer());
-        syntaxerManager.applyColorScheme(hl,mEditorSettings->copyHTMLColorScheme());
+        hl = SyntaxerManager::copy(syntaxer());
+        mColorManager->applySchemeToSyntaxer(hl,mEditorSettings->copyHTMLColorScheme());
     }
     exporter.setSyntaxer(hl);
     exporter.setOnFormatToken(std::bind(&Editor::onExportedFormatToken,
@@ -3313,6 +3260,9 @@ void Editor::showCompletion(const QString& preWord,bool autoComplete, CodeComple
             }
             break;
 #endif
+        case ParserLanguage::None:
+            Q_ASSERT(false); // shouldn't happen here
+            break;
         }
         if (mEditorSettings->enableCustomCTypeKeywords()) {
             foreach (const QString& keyword, mEditorSettings->customCTypeKeywords()) {
@@ -3401,7 +3351,7 @@ void Editor::showCompletion(const QString& preWord,bool autoComplete, CodeComple
     }
 
     // Filter the whole statement list
-    if (mCompletionPopup->search(word, autoComplete)) { //only one suggestion and it's not input while typing
+    if (mCompletionPopup->search(word, autoComplete, mEditorSettings->colorScheme())) { //only one suggestion and it's not input while typing
         completionInsert(mCodeCompletionSettings->appendFunc());
     }
 }
@@ -3468,7 +3418,7 @@ void Editor::showHeaderCompletion(bool autoComplete, bool forceShow)
     mHeaderCompletionPopup->prepareSearch(word, mFilename);
 
     // Filter the whole statement list
-    if (mHeaderCompletionPopup->search(word, autoComplete)) //only one suggestion and it's not input while typing
+    if (mHeaderCompletionPopup->search(word, autoComplete, mEditorSettings->colorScheme())) //only one suggestion and it's not input while typing
         headerCompletionInsert(); // if only have one suggestion, just use it
 }
 
@@ -3703,7 +3653,7 @@ bool Editor::onCompletionKeyPressed(QKeyEvent *event)
         if (phrase.isEmpty()) {
             mCompletionPopup->hide();
         } else {
-            mCompletionPopup->search(phrase, false);
+            mCompletionPopup->search(phrase, false, mEditorSettings->colorScheme());
         }
         return true;
     case Qt::Key_Escape:
@@ -3731,7 +3681,7 @@ bool Editor::onCompletionKeyPressed(QKeyEvent *event)
             phrase = getWordAtPosition(this,caretXY(),
                                             pBeginPos,pEndPos,
                                             purpose);
-        mCompletionPopup->search(phrase, false);
+        mCompletionPopup->search(phrase, false, mEditorSettings->colorScheme());
         return true;
     } else {
         //stop completion
@@ -3758,7 +3708,7 @@ bool Editor::onHeaderCompletionKeyPressed(QKeyEvent *event)
         phrase = getWordAtPosition(this,caretXY(),
                                    pBeginPos,pEndPos,
                                    WordPurpose::wpHeaderCompletion);
-        mHeaderCompletionPopup->search(phrase, false);
+        mHeaderCompletionPopup->search(phrase, false, mEditorSettings->colorScheme());
         return true;
     case Qt::Key_Escape:
         mHeaderCompletionPopup->hide();
@@ -3787,7 +3737,7 @@ bool Editor::onHeaderCompletionKeyPressed(QKeyEvent *event)
         phrase = getWordAtPosition(this,caretXY(),
                                             pBeginPos,pEndPos,
                                             WordPurpose::wpHeaderCompletion);
-        mHeaderCompletionPopup->search(phrase, false);
+        mHeaderCompletionPopup->search(phrase, false, mEditorSettings->colorScheme());
         return true;
     } else {
         //stop completion
@@ -3806,7 +3756,7 @@ bool Editor::onCompletionInputMethod(QInputMethodEvent *event)
     QString s=event->commitString();
     if (mCompletionPopup && mParser && !s.isEmpty()) {
         QString phrase = getWordForCompletionSearch(caretXY(),mCompletionPopup->memberOperator()=="::");
-        mCompletionPopup->search(phrase, false);
+        mCompletionPopup->search(phrase, false, mEditorSettings->colorScheme());
         return true;
     }
     return processed;
@@ -4317,33 +4267,28 @@ FileType Editor::fileType() const
     return mFileType;
 }
 
-void Editor::setFileType(FileType newFileType)
+void Editor::setFileType(FileType newFileType, bool parse)
 {
     if (newFileType == FileType::None)
         newFileType = getFileType(mFilename);
     if (mFileType==newFileType)
         return;
-    doSetFileType(newFileType);
-    applyColorScheme(mEditorSettings->colorScheme());
-    if (!inProject())
-        initParser();
-    reparse(false);
-    reparseTodo();
-    emit statusChanged(QSynedit::StatusChange::Custom);
-}
-
-void Editor::doSetFileType(FileType newFileType)
-{
+    ParserLanguage oldLanguage = calcParserLanguage();
+    QSynedit::PSyntaxer oldSyntaxer = syntaxer();
     mFileType = newFileType;
-
-    QSynedit::PSyntaxer syntaxer{syntaxerManager.getSyntaxer(mFileType)};
-    setSyntaxer(syntaxer);
-    if (syntaxer) {
-        setFormatter(syntaxerManager.getFormatter(syntaxer->language()));
-        setUseCodeFolding(true);
-    } else {
-        setUseCodeFolding(false);
+    setSyntaxer(SyntaxerManager::getSyntaxer(mFileType));
+    setFormatter(SyntaxerManager::getFormatter(syntaxer()->language()));
+    setUseCodeFolding(syntaxer()->supportFolding());
+    applyColorScheme(mEditorSettings->colorScheme());
+    if (parse && oldLanguage!=calcParserLanguage()) {
+        setCppParser();
+        reparse();
     }
+    if (parse && syntaxer()->language() != oldSyntaxer->language()) {
+        reparseTodo();
+        checkSyntaxInBack();
+    }
+    emit statusChanged(QSynedit::StatusChange::Custom0);
 }
 
 void Editor::openFileInContext(const QString &filename, const CharPos& caretPos)
@@ -4364,7 +4309,7 @@ void Editor::openFileInContext(const QString &filename, const CharPos& caretPos)
     emit openFileRequested(filename, fileType,contextFile, caretPos);
 }
 
-bool Editor::needReparse()
+bool Editor::needReparse() const
 {
     return mParser && ((isC_CPPHeaderFile(mFileType)
                         && !mContextFile.isEmpty()
@@ -4404,6 +4349,31 @@ int Editor::previousIdChars(const CharPos &pos)
             return pos.ch - start;
     }
     return 0;
+}
+
+ColorManager *Editor::colorManager() const
+{
+    return mColorManager;
+}
+
+void Editor::setColorManager(ColorManager *newColorManager)
+{
+    mColorManager = newColorManager;
+}
+
+const GetCppParserFunc &Editor::getCppParserFunc() const
+{
+    return mGetCppParserFunc;
+}
+
+void Editor::setGetCppParserFunc(const GetCppParserFunc &newGetCppParserFunc)
+{
+    mGetCppParserFunc = newGetCppParserFunc;
+}
+
+bool Editor::codeCompletionEnabled() const
+{
+    return mCodeCompletionEnabled;
 }
 
 const GetMacroVarsFunc &Editor::getMacroVarsFunc() const
@@ -4578,24 +4548,16 @@ const QString &Editor::contextFile() const
     return mContextFile;
 }
 
-void Editor::setContextFile(const QString &newContextFile)
+void Editor::setContextFile(const QString &newContextFile, bool parse)
 {
     QString s = newContextFile.trimmed();
     if (mContextFile == s)
         return;
+    ParserLanguage oldLanguage = calcParserLanguage();
     mContextFile = s;
-    if (isC_CPPHeaderFile(mFileType)) {
-        doSetFileType(mFileType);
-        applyColorScheme(mEditorSettings->colorScheme());
-        if (mCodeCompletionEnabled
-                && !mCodeCompletionSettings->shareParser()
-                && !mContextFile.isEmpty()
-                && mGetOpennedEditorFunc) {
-            Editor * e = mGetOpennedEditorFunc(mContextFile);
-            if (e)
-                mParser = e->parser();
-        }
-        reparse(false);
+    if (parse && oldLanguage!=calcParserLanguage()) {
+        setCppParser();
+        reparse();
     }
 }
 
@@ -4634,27 +4596,14 @@ void Editor::setStatementColors(const std::shared_ptr<QHash<StatementKind, std::
     mStatementColors = newStatementColors;
 }
 
-void Editor::setProject(Project *pProject)
+void Editor::setInProject(bool newInProject, bool parse)
 {
-    if (mProject == pProject)
+    if (mInProject == newInProject)
         return;
-    mProject = pProject;
-    if (mProject) {
-        if (syntaxer()->language() == QSynedit::ProgrammingLanguage::CPP) {
-            mParser = mProject->cppParser();
-            if (isVisible()) {
-                if (mParser && mParser->parsing()) {
-                    connect(mParser.get(),
-                            &CppParser::parseFinished,
-                            this,
-                            &Editor::onParseFinished);
-                } else {
-                    invalidate();
-                }
-            }
-        }
-    } else {
-        initParser();
+    mInProject = newInProject;
+    if (parse) {
+        setCppParser();
+        reparse();
     }
 }
 
@@ -5134,7 +5083,7 @@ void Editor::replaceContent(const QString &newContent, bool doReparse)
     endEditing();
 
     if (doReparse) {
-        reparse(true);
+        reparse();
         checkSyntaxInBack();
         reparseTodo();
     }
@@ -5384,8 +5333,8 @@ void Editor::applySettings()
     endInternalChanges();
 }
 
-static QSynedit::PTokenAttribute createRainbowAttribute(const QString& attrName, const QString& schemeName, const QString& schemeItemName) {
-    PColorSchemeItem item = pColorManager->getItem(schemeName,schemeItemName);
+static QSynedit::PTokenAttribute createRainbowAttribute(ColorManager *colorManager, const QString& attrName, const QString& schemeName, const QString& schemeItemName) {
+    PColorSchemeItem item = colorManager->getItem(schemeName,schemeItemName);
     if (item) {
         QSynedit::PTokenAttribute attr = std::make_shared<QSynedit::TokenAttribute>(attrName,
                                                                                                 QSynedit::TokenType::Default);
@@ -5405,48 +5354,49 @@ void Editor::applyColorScheme(const QString& schemeName)
     setOptions(options);
     codeFolding().rainbowIndentGuides = mEditorSettings->rainbowIndentGuides();
     codeFolding().rainbowIndents = mEditorSettings->rainbowIndents();
-    syntaxerManager.applyColorScheme(syntaxer(),schemeName);
+    Q_ASSERT(mColorManager!=nullptr);
+    mColorManager->applySchemeToSyntaxer(syntaxer(),schemeName);
     if (mEditorSettings->rainbowParenthesis()) {
-        QSynedit::PTokenAttribute attr0 =createRainbowAttribute(SYNS_AttrSymbol,
+        QSynedit::PTokenAttribute attr0 =createRainbowAttribute(mColorManager, SYNS_AttrSymbol,
                                                                schemeName,COLOR_SCHEME_BRACE_1);
-        QSynedit::PTokenAttribute attr1 =createRainbowAttribute(SYNS_AttrSymbol,
+        QSynedit::PTokenAttribute attr1 =createRainbowAttribute(mColorManager,SYNS_AttrSymbol,
                                                                schemeName,COLOR_SCHEME_BRACE_2);
-        QSynedit::PTokenAttribute attr2 =createRainbowAttribute(SYNS_AttrSymbol,
+        QSynedit::PTokenAttribute attr2 =createRainbowAttribute(mColorManager,SYNS_AttrSymbol,
                                                                schemeName,COLOR_SCHEME_BRACE_3);
-        QSynedit::PTokenAttribute attr3 =createRainbowAttribute(SYNS_AttrSymbol,
+        QSynedit::PTokenAttribute attr3 =createRainbowAttribute(mColorManager,SYNS_AttrSymbol,
                                                                schemeName,COLOR_SCHEME_BRACE_4);
         setRainbowAttrs(attr0,attr1,attr2,attr3);
     }
-    PColorSchemeItem item = pColorManager->getItem(schemeName,COLOR_SCHEME_ACTIVE_LINE);
+    PColorSchemeItem item = mColorManager->getItem(schemeName,COLOR_SCHEME_ACTIVE_LINE);
     if (item) {
         setActiveLineColor(item->background());
     }
-    item = pColorManager->getItem(schemeName,COLOR_SCHEME_GUTTER);
+    item = mColorManager->getItem(schemeName,COLOR_SCHEME_GUTTER);
     if (item) {
         gutter().setTextColor(item->foreground());
         gutter().setColor(alphaBlend(palette().color(QPalette::Base), item->background()));
     }
-    item = pColorManager->getItem(schemeName,COLOR_SCHEME_GUTTER_ACTIVE_LINE);
+    item = mColorManager->getItem(schemeName,COLOR_SCHEME_GUTTER_ACTIVE_LINE);
     if (item) {
         gutter().setActiveLineTextColor(item->foreground());
     }
-    item = pColorManager->getItem(schemeName,COLOR_SCHEME_FOLD_LINE);
+    item = mColorManager->getItem(schemeName,COLOR_SCHEME_FOLD_LINE);
     if (item) {
         codeFolding().folderBarLinesColor = item->foreground();
     }
-    item = pColorManager->getItem(schemeName,COLOR_SCHEME_INDENT_GUIDE_LINE);
+    item = mColorManager->getItem(schemeName,COLOR_SCHEME_INDENT_GUIDE_LINE);
     if (item) {
         codeFolding().indentGuidesColor = item->foreground();
     }
-    item = pColorManager->getItem(schemeName,COLOR_SCHEME_ERROR);
+    item = mColorManager->getItem(schemeName,COLOR_SCHEME_ERROR);
     if (item) {
         this->mSyntaxErrorColor = item->foreground();
     }
-    item = pColorManager->getItem(schemeName,COLOR_SCHEME_WARNING);
+    item = mColorManager->getItem(schemeName,COLOR_SCHEME_WARNING);
     if (item) {
         this->mSyntaxWarningColor = item->foreground();
     }
-    item = pColorManager->getItem(schemeName,COLOR_SCHEME_SELECTION);
+    item = mColorManager->getItem(schemeName,COLOR_SCHEME_SELECTION);
     if (item) {
         setSelectedForeground(item->foreground());
         setSelectedBackground(item->background());
@@ -5454,17 +5404,17 @@ void Editor::applyColorScheme(const QString& schemeName)
         this->setForegroundColor(palette().color(QPalette::HighlightedText));
         this->setBackgroundColor(palette().color(QPalette::Highlight));
     }
-    item = pColorManager->getItem(schemeName,COLOR_SCHEME_ACTIVE_BREAKPOINT);
+    item = mColorManager->getItem(schemeName,COLOR_SCHEME_ACTIVE_BREAKPOINT);
     if (item) {
         this->mActiveBreakpointForegroundColor = item->foreground();
         this->mActiveBreakpointBackgroundColor = item->background();
     }
-    item = pColorManager->getItem(schemeName,COLOR_SCHEME_BREAKPOINT);
+    item = mColorManager->getItem(schemeName,COLOR_SCHEME_BREAKPOINT);
     if (item) {
         this->mBreakpointForegroundColor = item->foreground();
         this->mBreakpointBackgroundColor = item->background();
     }
-    item = pColorManager->getItem(schemeName,COLOR_SCHEME_TEXT);
+    item = mColorManager->getItem(schemeName,COLOR_SCHEME_TEXT);
     if (item) {
         this->setForegroundColor(item->foreground());
         this->setBackgroundColor(alphaBlend(palette().color(QPalette::Base), item->background()));
@@ -5472,7 +5422,7 @@ void Editor::applyColorScheme(const QString& schemeName)
         this->setForegroundColor(palette().color(QPalette::Text));
         this->setBackgroundColor(palette().color(QPalette::Base));
     }
-    item = pColorManager->getItem(schemeName,COLOR_SCHEME_CURRENT_HIGHLIGHTED_WORD);
+    item = mColorManager->getItem(schemeName,COLOR_SCHEME_CURRENT_HIGHLIGHTED_WORD);
     if (item) {
         mCurrentHighlighWordForeground = item->foreground();
         mCurrentHighlighWordBackground = item->background();

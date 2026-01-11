@@ -1,8 +1,8 @@
+
+# RedPandaIDE #
+
 add_executable(RedPandaIDE WIN32 MACOSX_BUNDLE)
 
-target_sources(RedPandaIDE PRIVATE
-    src/utils/types.h
-    )
 target_qt_plain_cpp(RedPandaIDE
     src/autolinkmanager
     src/colorscheme
@@ -46,7 +46,9 @@ target_qt_plain_cpp(RedPandaIDE
     src/utils/escape
     src/utils/font
     src/utils/parsearg
-    src/utils/parsemacros)
+    src/utils/parser
+    src/utils/parsemacros
+    )
 
 target_moc_classes(RedPandaIDE
     src/caretlist
@@ -210,7 +212,75 @@ target_link_options(RedPandaIDE PRIVATE
 # test-editor       #
 #####################
 
+#add_executable(test-editor test/test-editor-main.cpp)
 
+#target_qt_plain_cpp(test-editor
+#    #settings
+#    src/settings/basesettings
+#    src/settings/dirsettings
+#    src/settings/editorsettings
+#    src/settings/codecompletionsettings
+
+#    src/parser/cppparser
+#    src/parser/cpppreprocessor
+#    src/parser/cpptokenizer
+#    src/parser/parserutils
+#    src/parser/statementmodel
+
+#    # utils
+#    src/utils/escape
+#    src/utils/font
+#    src/utils/parsearg
+#    src/utils/parsemacros
+#    src/colorscheme
+#    src/syntaxermanager
+#    src/iconsmanager
+#    src/systemconsts
+#    src/compiler/compilerinfo
+#    src/reformatter/basereformatter
+#    )
+
+#target_moc_classes(test-editor
+#    src/editor
+
+#    src/widgets/codecompletionlistview
+#    src/widgets/codecompletionpopup
+#    src/widgets/headercompletionpopup
+
+#    #test
+#    test/test_editor
+#)
+#target_include_directories(test-editor PRIVATE
+#    ${CMAKE_CURRENT_SOURCE_DIR})
+
+#target_link_libraries(test-editor PRIVATE
+#        Qt::Core
+#        Qt::Gui
+#        Qt::PrintSupport
+#        Qt::Svg
+#        Qt::Test
+#        Qt::Widgets
+#        Qt::Xml
+#        qsynedit
+#        redpanda_qt_utils)
+
+
+#add_custom_command(
+#    TARGET test-editor POST_BUILD
+#    COMMAND ${CMAKE_COMMAND} -E copy_directory
+#        "$<TARGET_PROPERTY:test-editor,SOURCE_DIR>/test/resources"
+#        "$<TARGET_PROPERTY:test-editor,BINARY_DIR>/resources")
+
+#target_compile_definitions(test-editor PUBLIC
+#    ${GLOBAL_COMPILE_DEFINITIONS}
+#    ARCH_X86_64=1
+#    ARCH_X86=1)
+
+#add_test(
+#    NAME test-editor
+#    COMMAND test-editor)
+
+#add_dependencies(all-test-targets test-editor)
 #####################
 # Platform-specific #
 #####################
@@ -232,8 +302,11 @@ if(MACOS)
 endif()
 
 if(LINUX AND QT_FEATURE_static)
-    target_qt_plain_cpp(RedPandaIDE
-        resources/linux_static_ime_plugin)
+    qt_import_plugins(RedPandaIDE
+        INCLUDE
+            Qt::QComposePlatformInputContextPlugin
+            Qt::QFcitx5PlatformInputContextPlugin
+            Qt::QIbusPlatformInputContextPlugin)
 endif()
 
 if(XDG)

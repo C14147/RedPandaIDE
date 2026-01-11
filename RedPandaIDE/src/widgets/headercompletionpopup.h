@@ -97,14 +97,15 @@ private:
     float mLineHeightFactor;
 };
 
+class ColorManager;
 class HeaderCompletionPopup : public QWidget
 {
     Q_OBJECT
 public:
-    HeaderCompletionPopup(QWidget* parent=nullptr);
+    HeaderCompletionPopup(ColorManager *colorManager,QWidget* parent=nullptr);
     ~HeaderCompletionPopup();
     void prepareSearch(const QString& phrase, const QString& fileName);
-    bool search(const QString& phrase, bool autoHideOnSingleResult);
+    bool search(const QString& phrase, bool autoHideOnSingleResult, const QString& schemeName);
     void setKeypressedCallback(const KeyPressedCallback &newKeypressedCallback);
     void setShowEditorCaretFunc(const ShowEditorCaretFunc &newShowEditorCaretFunc);
     void setSuggestionColor(const QColor& localColor,
@@ -129,6 +130,7 @@ private:
     QHash<QString,int> mHeaderUsageCounts;
     int mShowCount;
     QSet<QString> mAddedFileNames;
+    ColorManager *mColorManager;
 
     PCppParser mParser;
     QString mPhrase;

@@ -44,7 +44,7 @@ public:
 
     Editor* newEditor(const QString& filename, const QByteArray& encoding,
                       FileType fileType, const QString& contextFile,
-                     Project *pProject, bool newFile,
+                     bool inProject, bool newFile,
                      QTabWidget* page=nullptr);
 
     Editor* getEditor(int index=-1, QTabWidget* tabsWidget=nullptr) const;
@@ -104,6 +104,8 @@ public:
 
     PCppParser sharedParser(ParserLanguage language);
 
+    PCppParser createParserForEditor(Editor *editor);
+
     std::unique_ptr<BaseReformatter> createReformatterForEditor(Editor *);
 
 signals:
@@ -115,7 +117,7 @@ private:
     void showLayout(LayoutShowType layout);
     void doRemoveEditor(Editor* e);
 #ifdef ENABLE_SDCC
-    CompilerType getCompilerTypeForEditor(Editor *e);
+    CompilerType getCompilerTypeForEditor(const Editor *e) const;
 #endif
 private slots:
     void updateEditorTabCaption(Editor* e);
@@ -126,6 +128,7 @@ private slots:
     void onFileSaving(Editor *e, const QString& filename);
     void onFileSaved(Editor *e, const QString& filename);
     void onFileRenamed(Editor *e, const QString &oldFilename, const QString &newFilename);
+    void onFileSaveAsed(Editor *e, const QString &oldFilename, const QString &newFilename);
     void onFileSaveError(Editor *e, const QString& filename, const QString& reason);
     void onEditorLinesInserted(int startLine, int count);
     void onEditorLinesRemoved(int startLine, int count);

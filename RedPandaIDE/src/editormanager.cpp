@@ -25,6 +25,7 @@
 #include "systemconsts.h"
 #include "visithistorymanager.h"
 #include "debugger/debugger.h"
+#include "utils/parser.h"
 #include <QApplication>
 
 EditorManager::EditorManager(QTabWidget* leftPageWidget,
@@ -45,7 +46,7 @@ EditorManager::EditorManager(QTabWidget* leftPageWidget,
 
 Editor* EditorManager::newEditor(const QString& filename, const QByteArray& encoding,
                               FileType fileType, const QString& contextFile,
-                              Project *pProject, bool newFile,
+                              bool inProject, bool newFile,
                               QTabWidget* page) {
     QTabWidget * parentPageControl = nullptr;
     if (page == nullptr)
@@ -60,6 +61,7 @@ Editor* EditorManager::newEditor(const QString& filename, const QByteArray& enco
     Editor * e = new Editor(parentPageControl);
     e->setEditorSettings(&pSettings->editor());
     e->setCodeCompletionSettings(&pSettings->codeCompletion());
+    e->setColorManager(pMainWindow->colorManager());
     e->setGetSharedParserFunc(std::bind(&EditorManager::sharedParser,this,std::placeholders::_1));
     e->setGetOpennedFunc(std::bind(&EditorManager::getOpenedEditor,this,std::placeholders::_1));
     e->setGetFileStreamCallBack(std::bind(
@@ -74,6 +76,8 @@ Editor* EditorManager::newEditor(const QString& filename, const QByteArray& enco
                                        this, std::placeholders::_1));
     e->setGetMacroVarsFunc(std::bind(&MainWindow::macroVariables,
                                      pMainWindow));
+    e->setGetCppParserFunc(std::bind(&EditorManager::createParserForEditor,
+                                     this, std::placeholders::_1));
 #ifdef ENABLE_SDCC
     e->setGetCompilerTypeForEditorFunc(std::bind(
                                            &EditorManager::getCompilerTypeForEditor,
@@ -84,12 +88,16 @@ Editor* EditorManager::newEditor(const QString& filename, const QByteArray& enco
     e->applySettings();
     e->setEditorEncoding(encoding);
     e->setFilename(filename);
+    e->setInProject(inProject, false);
+    e->setFileType(fileType, false);
+    e->setContextFile(contextFile, false);
     if (!newFile) {
-        e->loadFile(filename);
-        e->setFileType(fileType);
-        e->setContextFile(contextFile);
+        e->loadFile(filename, false);
+        e->checkSyntaxInBack();
+        e->reparseTodo();
     }
-    e->setProject(pProject);
+    e->setCppParser();
+    e->reparse();
 
     if (!newFile) {
         e->resetBookmarks(pMainWindow->bookmarkModel());
@@ -128,6 +136,7 @@ Editor* EditorManager::newEditor(const QString& filename, const QByteArray& enco
     connect(e, &Editor::showOccured, this, &EditorManager::onEditorShown);
     connect(e, &Editor::fileSaving, this, &EditorManager::onFileSaving);
     connect(e, &Editor::fileSaved, this, &EditorManager::onFileSaved);
+    connect(e, &Editor::fileSaveAsed, this, &EditorManager::onFileSaveAsed);
     connect(e, &Editor::fileRenamed, this, &EditorManager::onFileRenamed);
     connect(e, &Editor::linesDeleted, this, &EditorManager::onEditorLinesRemoved);
     connect(e, &Editor::linesInserted, this, &EditorManager::onEditorLinesInserted);
@@ -150,7 +159,7 @@ Editor* EditorManager::newEditor(const QString& filename, const QByteArray& enco
     if (!pMainWindow->openingFiles()
             && !pMainWindow->openingProject()) {
         if (e->inProject()) {
-            e->reparse(false);
+            e->reparse();
             e->reparseTodo();
         }
         //checkSyntaxInBack();
@@ -232,7 +241,7 @@ void EditorManager::doRemoveEditor(Editor *e)
 }
 
 #ifdef ENABLE_SDCC
-CompilerType EditorManager::getCompilerTypeForEditor(Editor *e)
+CompilerType EditorManager::getCompilerTypeForEditor(const Editor *e) const
 {
     if (e) {
         PCompilerSet pSet;
@@ -286,7 +295,8 @@ void EditorManager::onEditorShown(Editor *e)
             if (pSettings->codeCompletion().clearWhenEditorHidden()
                 && pSettings->codeCompletion().shareParser()
                 && !e->inProject()) {
-                e->resetParserIfNeeded();
+                if (e->needReparse())
+                    resetCppParser(e->parser());
             }
             e->reparseIfNeeded();
         }
@@ -321,6 +331,15 @@ void EditorManager::onFileSaved(Editor *e, const QString &filename)
 }
 
 void EditorManager::onFileRenamed(Editor *e, const QString &oldFilename, const QString &newFilename)
+{
+    pMainWindow->getOJProblemSetModel()->updateProblemAnswerFilename(oldFilename, newFilename);
+    if (!e->inProject()) {
+        pMainWindow->bookmarkModel()->renameBookmarkFile(oldFilename,newFilename,false);
+        pMainWindow->debugger()->breakpointModel()->renameBreakpointFilenames(oldFilename,newFilename,false);
+    }
+}
+
+void EditorManager::onFileSaveAsed(Editor *e, const QString &oldFilename, const QString &newFilename)
 {
     pMainWindow->getOJProblemSetModel()->updateProblemAnswerFilename(oldFilename, newFilename);
     if (!e->inProject()) {
@@ -379,14 +398,14 @@ void EditorManager::onEditorStatusChanged(QSynedit::StatusChanges changes)
     }
     if (changes.testFlag(QSynedit::StatusChange::ModifyChanged)
             || changes.testFlag(QSynedit::StatusChange::ReadOnlyChanged)
-            || changes.testFlag(QSynedit::StatusChange::Custom)) {
+            || changes.testFlag(QSynedit::StatusChange::Custom0)) {
         updateEditorTabCaption(e);
     }
     if (changes.testFlag(QSynedit::StatusChange::ModifyChanged)
         || changes.testFlag(QSynedit::StatusChange::Modified)
         || changes.testFlag(QSynedit::StatusChange::Selection)
         || changes.testFlag(QSynedit::StatusChange::ReadOnlyChanged)
-            || changes.testFlag(QSynedit::StatusChange::Custom)) {
+            || changes.testFlag(QSynedit::StatusChange::Custom0)) {
         pMainWindow->updateEditorActions(e);
     }
 
@@ -413,7 +432,6 @@ void EditorManager::onEditorFileEncodingChanged(Editor *e)
     }
 }
 
-
 QTabWidget *EditorManager::rightPageWidget() const
 {
     return mRightPageWidget;
@@ -427,6 +445,7 @@ PCppParser EditorManager::sharedParser(ParserLanguage language)
     }
     if (!parser) {
         parser = std::make_shared<CppParser>();
+        parser->setSharedByFiles(true);
         parser->setLanguage(language);
         parser->setOnGetFileStream(
                     std::bind(
@@ -437,6 +456,37 @@ PCppParser EditorManager::sharedParser(ParserLanguage language)
         mSharedParsers.insert(language,parser);
     }
     return parser;
+}
+
+PCppParser EditorManager::createParserForEditor(Editor *editor)
+{
+    Q_ASSERT(editor!=nullptr);
+    Q_ASSERT(editor->syntaxer()!=nullptr);
+    if (editor->syntaxer()->language() != QSynedit::ProgrammingLanguage::CPP)
+        return nullptr;
+    if (pMainWindow->project() && pMainWindow->project()->inProject(editor)) {
+        return pMainWindow->project()->cppParser();
+    }
+    if (editor->codeCompletionEnabled()) {
+        if (!editor->contextFile().isEmpty())  {
+            Editor * e = getOpenedEditor(editor->contextFile());
+            if (e)
+                return e->parser();
+        }
+        if (pSettings->codeCompletion().shareParser()) {
+            return sharedParser(editor->calcParserLanguage());
+        } else if (editor->syntaxer()->language() == QSynedit::ProgrammingLanguage::CPP) {
+            PCppParser parser = std::make_shared<CppParser>();
+            parser->setSharedByFiles(false);
+            parser->setLanguage(editor->calcParserLanguage());
+            parser->setOnGetFileStream(std::bind(&EditorManager::getContentFromOpenedEditor,
+                                                 this, std::placeholders::_1, std::placeholders::_2));
+            resetCppParser(parser);
+            parser->setEnabled(true);
+            return parser;
+        }
+    }
+    return nullptr;
 }
 
 std::unique_ptr<BaseReformatter> EditorManager::createReformatterForEditor(Editor *)
@@ -501,7 +551,7 @@ bool EditorManager::closeEditor(Editor* editor, bool transferFocus, bool force) 
             PProjectUnit unit = pMainWindow->project()->findUnit(editor);
             pMainWindow->project()->closeUnit(unit);
         } else {
-            editor->setProject(nullptr);
+            editor->setInProject(false,false);
         }
     } else {
         if (!editor->isNew() && pMainWindow->visitHistoryManager()->addFile(editor->filename())) {
