@@ -19,7 +19,7 @@
 #include <QFile>
 #include <QDebug>
 #include <QMessageBox>
-#include "../utils.h"
+#include <qt_utils/utils.h>
 
 CppPreprocessor::CppPreprocessor()
 {
@@ -257,8 +257,6 @@ QString CppPreprocessor::getNextPreprocessor()
     // Assemble whole line, convert newlines to space
     QString result = mBuffer[mIndex];
     mResult.append("");// defines resolve into empty files, except #define and #include
-    // Step over
-    mIndex++;
     return result;
 }
 
@@ -790,8 +788,8 @@ void CppPreprocessor::openInclude(QString fileName)
     // Process it
     mIndex = parsedFile->index;
     mFileName = parsedFile->fileName;
-    removeLastBackSlash(parsedFile->buffer);
-    removeComments(parsedFile->buffer);
+    combineLinesEndingWithBackslash(parsedFile->buffer);
+    replaceCommentsBySpaceChar(parsedFile->buffer);
     mBuffer = parsedFile->buffer;
 
 //    for (int i=0;i<mBuffer.count();i++) {
@@ -819,7 +817,7 @@ void CppPreprocessor::closeInclude()
     PParsedFile parsedFile = mIncludeStack.back();
 
     // Continue where we left off
-    mIndex = parsedFile->index;
+    mIndex = parsedFile->index+1;
     mFileName = parsedFile->fileName;
     // Point to previous buffer and start past the include we walked into
     mBuffer = parsedFile->buffer;
@@ -924,7 +922,7 @@ void CppPreprocessor::parseArgs(PDefine define)
     define->formatValue.squeeze();
 }
 
-void CppPreprocessor::removeLastBackSlash(QStringList &text)
+void CppPreprocessor::combineLinesEndingWithBackslash(QStringList &text)
 {
     if (text.isEmpty())
         return;
@@ -1018,23 +1016,38 @@ QList<PDefineArgToken> CppPreprocessor::tokenizeValue(const QString &value)
     return tokens;
 }
 
-void CppPreprocessor::removeComments(QStringList &text)
+void CppPreprocessor::replaceCommentsBySpaceChar(QStringList &text)
 {
     ContentType currentType = ContentType::Other;
     QString delimiter;
-
+    int blockCommentBegin = -1;
     for (int lineIdx = 0; lineIdx < text.length(); lineIdx++) {
         const QString& line = text[lineIdx];
         int pos = 0;
         int lineLen=line.length();
+        int currentLineIdx = lineIdx;
         QString s;
         s.reserve(line.length());
+        // String & Char Literal can't to next line
+        if (currentType == ContentType::Character
+                || currentType ==  ContentType::String
+                || currentType ==  ContentType::EscapeSequence)
+            currentType = ContentType::Other;
+        if (currentType == ContentType::AnsiCComment) {
+            Q_ASSERT(blockCommentBegin>=0);
+            Q_ASSERT(lineIdx>=blockCommentBegin);
+            currentLineIdx = blockCommentBegin;
+            s = text[blockCommentBegin];
+        }
         while (pos<lineLen) {
             QChar ch =line[pos];
             if (currentType == ContentType::AnsiCComment) {
                 if (ch=='*' && (pos+1<lineLen) && line[pos+1]=='/') {
                     pos+=2;
                     currentType = ContentType::Other;
+                    Q_ASSERT(blockCommentBegin>=0);
+                    Q_ASSERT(lineIdx>=blockCommentBegin);
+                    blockCommentBegin = -1;
                 } else {
                     pos+=1;
                 }
@@ -1104,13 +1117,14 @@ void CppPreprocessor::removeComments(QStringList &text)
                 if (currentType == ContentType::Other) {
                     if (pos+1<lineLen && line[pos+1]=='/') {
                         // line comment
-                        pos = lineLen+1; // skip current line
+                        pos = lineLen+1; // skip chars left in the current line
                         break;
                     } else if (pos+1<lineLen && line[pos+1]=='*') {
                         /* ansi c comment */
                         s+=' '; // replace comments with a space
                         pos++;
                         currentType = ContentType::AnsiCComment;
+                        blockCommentBegin = currentLineIdx;
                         break;
                     }
                 }
@@ -1136,7 +1150,9 @@ void CppPreprocessor::removeComments(QStringList &text)
             }
             pos++;
         }
-        text[lineIdx] = s;
+        text[currentLineIdx] = s;
+        if (currentLineIdx!=lineIdx)
+            text[lineIdx].clear();
     }
 }
 
@@ -1152,6 +1168,8 @@ void CppPreprocessor::preprocessBuffer()
                     handlePreprocessor(s);
                 }
             }
+            // Step over
+            mIndex++;
         } while (!s.isEmpty());
         closeInclude();
     }

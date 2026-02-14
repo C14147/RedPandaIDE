@@ -20,15 +20,15 @@
 #include "../iconsmanager.h"
 #include "../systemconsts.h"
 #include "../compiler/executablerunner.h"
-#include "../utils.h"
 #include "../utils/escape.h"
 #include "../utils/font.h"
+#include "../utils/terminal.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
 
-EnvironmentProgramsWidget::EnvironmentProgramsWidget(const QString& name, const QString& group, QWidget *parent) :
-    SettingsWidget(name,group,parent),
+EnvironmentProgramsWidget::EnvironmentProgramsWidget(const QString& name, const QString& group, IconsManager *iconsManager, QWidget *parent) :
+    SettingsWidget(name,group,iconsManager, parent),
     ui(new Ui::EnvironmentProgramsWidget)
 {
     ui->setupUi(this);
@@ -46,7 +46,7 @@ EnvironmentProgramsWidget::~EnvironmentProgramsWidget()
 auto EnvironmentProgramsWidget::resolveExecArguments(const QString &terminalPath, const QString &argsPattern)
     -> std::tuple<QString, QStringList, PNonExclusiveTemporaryFileOwner>
 {
-    return wrapCommandForTerminalEmulator(terminalPath, argsPattern, platformCommandForTerminalArgsPreview());
+    return wrapCommandForTerminalEmulator(terminalPath, argsPattern, platformCommandForTerminalArgsPreview(),&pSettings->dirs());
 }
 
 void EnvironmentProgramsWidget::updateCommandPreview(const QString &terminalPath, const QString &argsPattern)
@@ -92,9 +92,9 @@ void EnvironmentProgramsWidget::doSave()
 
 void EnvironmentProgramsWidget::updateIcons(const QSize &)
 {
-    pIconsManager->setIcon(ui->btnChooseTerminal,IconsManager::ACTION_FILE_OPEN_FOLDER);
-    pIconsManager->setIcon(ui->btnAutoDetectArgsPattern,IconsManager::ACTION_EDIT_SEARCH);
-    pIconsManager->setIcon(ui->btnTest,IconsManager::ACTION_RUN_RUN);
+    iconsManager()->setIcon(ui->btnChooseTerminal,IconsManager::ACTION_FILE_OPEN_FOLDER);
+    iconsManager()->setIcon(ui->btnAutoDetectArgsPattern,IconsManager::ACTION_EDIT_SEARCH);
+    iconsManager()->setIcon(ui->btnTest,IconsManager::ACTION_RUN_RUN);
 }
 
 void EnvironmentProgramsWidget::on_btnChooseTerminal_clicked()

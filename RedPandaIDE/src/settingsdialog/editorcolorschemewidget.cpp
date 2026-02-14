@@ -27,8 +27,10 @@
 #include <QFileDialog>
 #include <qsynedit/document.h>
 
-EditorColorSchemeWidget::EditorColorSchemeWidget(ColorManager *colorManager, const QString& name, const QString& group, QWidget *parent) :
-    SettingsWidget(name,group,parent),
+EditorColorSchemeWidget::EditorColorSchemeWidget(ColorManager *colorManager, const QString& name,
+                                                 const QString& group, IconsManager *iconsManager,
+                                                 QWidget *parent) :
+    SettingsWidget(name,group,iconsManager, parent),
     ui(new Ui::EditorColorSchemeWidget)
 {
     ui->setupUi(this);
@@ -74,6 +76,7 @@ EditorColorSchemeWidget::EditorColorSchemeWidget(ColorManager *colorManager, con
             &EditorColorSchemeWidget::onSettingChanged);
     ui->editDemo->setEditorSettings(&pSettings->editor());
     ui->editDemo->setColorManager(mColorManager);
+    ui->editDemo->setIconsManager(iconsManager);
     ui->editDemo->applySettings();
     ui->editDemo->setUseCodeFolding(true);
     ui->editDemo->setContent(
@@ -102,7 +105,7 @@ EditorColorSchemeWidget::EditorColorSchemeWidget(ColorManager *colorManager, con
     ui->editDemo->toggleBookmark(8);
     ui->editDemo->addSyntaxIssues(12, 8, 13, CompileIssueType::Error, "[Error] 'Total' was not declared in this scope; did you mean 'total'?");
     ui->editDemo->addSyntaxIssues(7, 8, 15, CompileIssueType::Warning, "[Warning] variable 'numbers' set but not used [-Wunused-but-set-variable]");
-    ui->editDemo->setActiveBreakpointFocus(10,false);
+    ui->editDemo->setActiveBreakpoint(10);
     ui->editDemo->setCaretXY(QSynedit::CharPos{0,0});
     ui->editDemo->setFileType(FileType::CppSource);
     //ui->editDemo->reparseDocument();

@@ -18,13 +18,14 @@
 #include "ui_environmentfileassociationwidget.h"
 #include "../systemconsts.h"
 #include "../settings.h"
+#include "../utils/os.h"
 
 #include <QMessageBox>
 #include <windows.h>
 #include <shlwapi.h>
 
-EnvironmentFileAssociationWidget::EnvironmentFileAssociationWidget(const QString& name, const QString& group, QWidget *parent) :
-    SettingsWidget(name,group,parent),
+EnvironmentFileAssociationWidget::EnvironmentFileAssociationWidget(const QString& name, const QString& group,IconsManager *iconsManager, QWidget *parent) :
+    SettingsWidget(name,group,iconsManager,parent),
     ui(new Ui::EnvironmentFileAssociationWidget)
 {
     ui->setupUi(this);

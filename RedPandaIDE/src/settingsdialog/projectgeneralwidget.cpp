@@ -22,6 +22,7 @@
 #include "../systemconsts.h"
 #include "../iconsmanager.h"
 #include "qt_utils/charsetinfo.h"
+#include "../utils/file.h"
 
 #include <QFileDialog>
 #include <QIcon>
@@ -29,8 +30,8 @@
 #include <QImageWriter>
 #include <QMessageBox>
 
-ProjectGeneralWidget::ProjectGeneralWidget(const QString &name, const QString &group, QWidget *parent) :
-    SettingsWidget(name,group,parent),
+ProjectGeneralWidget::ProjectGeneralWidget(const QString &name, const QString &group, IconsManager *iconsManager, QWidget *parent) :
+    SettingsWidget(name,group,iconsManager,parent),
     ui(new Ui::ProjectGeneralWidget)
 {
     ui->setupUi(this);
@@ -229,8 +230,8 @@ void ProjectGeneralWidget::init()
 
 void ProjectGeneralWidget::updateIcons(const QSize &)
 {
-    pIconsManager->setIcon(ui->btnBrowse,IconsManager::ACTION_FILE_OPEN_FOLDER);
-    pIconsManager->setIcon(ui->btnRemove, IconsManager::ACTION_MISC_CROSS);
+    iconsManager()->setIcon(ui->btnBrowse,IconsManager::ACTION_FILE_OPEN_FOLDER);
+    iconsManager()->setIcon(ui->btnRemove, IconsManager::ACTION_MISC_CROSS);
 }
 
 

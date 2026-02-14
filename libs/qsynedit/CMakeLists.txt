@@ -107,11 +107,13 @@ target_qt_plain_cpp(test-qsynedit
 target_moc_classes(test-qsynedit
     ${QSYNEDIT_MOC_CLASSES}
     test/test_charpos
+    test/test_cppsyntaxer
     test/test_document
     test/test_qsynedit_base
     test/test_qsynedit_cpp
     test/test_qsynedit_cpp_search_replace
-    test/test_qsynedit_emoji)
+    test/test_qsynedit_emoji
+    test/test_utils)
 
 target_include_directories(test-qsynedit PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR})
@@ -128,17 +130,33 @@ if (QT_FEATURE_static)
         INCLUDE Qt::QOffscreenIntegrationPlugin)
 endif()
 
-add_custom_command(
-    TARGET test-qsynedit POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "$<TARGET_PROPERTY:test-qsynedit,SOURCE_DIR>/test/resources"
-        "$<TARGET_PROPERTY:test-qsynedit,BINARY_DIR>/resources")
+#add_custom_command(
+#    TARGET test-qsynedit POST_BUILD
+#    COMMAND ${CMAKE_COMMAND} -E copy_directory
+#        "$<TARGET_PROPERTY:test-qsynedit,SOURCE_DIR>/test/resources"
+#        "$<TARGET_PROPERTY:test-qsynedit,BINARY_DIR>/resources")
 
-target_compile_definitions(test-qsynedit PUBLIC
+add_custom_target(
+    copy_test_qsynedit_resources
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/test/resources
+    ${CMAKE_CURRENT_BINARY_DIR}/resources
+    COMMENT "Copying test-qsynedit resources"
+)
+
+add_dependencies(test-qsynedit copy_test_qsynedit_resources)
+
+target_compile_definitions(test-qsynedit PRIVATE
     ${GLOBAL_COMPILE_DEFINITIONS}
     QSYNEDIT_TEST
     ARCH_X86_64=1
     ARCH_X86=1)
+
+
+if (CMAKE_HOST_LINUX AND CMAKE_COMPILER_IS_GNUCXX)
+    target_compile_options(test-qsynedit PRIVATE "-fsanitize=undefined" "-fno-omit-frame-pointer")
+    target_link_options(test-qsynedit PRIVATE "-fsanitize=undefined")
+endif()
 
 add_test(
     NAME test-qsynedit

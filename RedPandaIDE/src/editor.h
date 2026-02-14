@@ -18,6 +18,7 @@
 #define EDITOR_H
 
 #include <QObject>
+#include "utils/file.h"
 #include "utils/types.h"
 #include "utils/parsemacros.h"
 #include "qsynedit/qsynedit.h"
@@ -44,6 +45,7 @@ class CodeSnippetsManager;
 class EditorSettings;
 class CodeCompletionSettings;
 class ColorManager;
+class IconsManager;
 struct TabStop {
     int x;
     int endX;
@@ -105,7 +107,7 @@ public:
         DoubleQuoteEscape,
         RawString,
         RawStringNoEscape,
-        RawStringEnd
+        RawStringEnd,
     };
 
     enum class WordPurpose {
@@ -142,7 +144,7 @@ public:
     using SyntaxIssueList = QVector<PSyntaxIssue>;
     using PSyntaxIssueList = std::shared_ptr<SyntaxIssueList>;
 
-    explicit Editor(QWidget *parent);
+    explicit Editor(QWidget *parent=nullptr);
 
     ~Editor();
 
@@ -196,8 +198,8 @@ public:
     void removeBookmark(int line);
     bool hasBookmark(int line) const;
     void clearBookmarks();
-    void removeBreakpointFocus();
-    void setActiveBreakpointFocus(int Line, bool setFocus=true);
+    void removeActiveBreakpoint();
+    void setActiveBreakpoint(int Line);
     QString getPreviousWordAtPositionForSuggestion(const QSynedit::CharPos& p,
                                                    QSynedit::TokenType &tokenType);
     QString getPreviousWordAtPositionForCompleteFunctionDefinition(const QSynedit::CharPos& p) const;
@@ -374,18 +376,20 @@ private:
     QChar getCurrentChar();
     bool handleSymbolCompletion(QChar key);
     bool handleParentheseCompletion();
-    bool handleParentheseSkip();
+    bool handleParentheseCompletionForSelection();
+    bool handleParentheseSkip(QuoteStatus status);
     bool handleBracketCompletion();
-    bool handleBracketSkip();
-    bool handleMultilineCommentCompletion();
-    bool handleBraceCompletion();
-    bool handleBraceSkip();
-    bool handleSemiColonSkip();
-    bool handlePeriodSkip();
-    bool handleSingleQuoteCompletion();
-    bool handleDoubleQuoteCompletion();
-    bool handleGlobalIncludeCompletion();
-    bool handleGlobalIncludeSkip();
+    bool handleBracketCompletionForSelection();
+    bool handleBracketSkip(QuoteStatus status);
+    bool handleMultilineCommentCompletion(QuoteStatus status);
+    bool handleBraceCompletion(QuoteStatus status);
+    bool handleBraceSkip(QuoteStatus status);
+    bool handleSemiColonSkip(QuoteStatus status);
+    bool handlePeriodSkip(QuoteStatus status);
+    bool handleSingleQuoteCompletion(QuoteStatus status);
+    bool handleDoubleQuoteCompletion(QuoteStatus status);
+    bool handleGlobalIncludeCompletion(QuoteStatus status);
+    bool handleGlobalIncludeSkip(QuoteStatus status);
 
     bool handleCodeCompletion(QChar key);
     void undoSymbolCompletion(const QSynedit::CharPos &pos);
@@ -517,6 +521,7 @@ private:
     QFileSystemWatcher *mFileSystemWatcher;
 
     ColorManager *mColorManager;
+    IconsManager *mIconsManager;
     const EditorSettings *mEditorSettings;
     const CodeCompletionSettings *mCodeCompletionSettings;
 
@@ -538,6 +543,9 @@ public:
 
     ColorManager *colorManager() const;
     void setColorManager(ColorManager *newColorManager);
+
+    IconsManager *iconsManager() const;
+    void setIconsManager(IconsManager *newIconsManager);
 
 protected:
     // QWidget interface

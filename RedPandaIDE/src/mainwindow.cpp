@@ -57,6 +57,7 @@
 #include "utils/escape.h"
 #include "utils/parsearg.h"
 #include "utils/parser.h"
+#include "utils/ui.h"
 #include "widgets/cpudialog.h"
 #include "widgets/filepropertiesdialog.h"
 #include "widgets/filenameeditdelegate.h"
@@ -184,6 +185,8 @@ MainWindow::MainWindow(QWidget *parent)
     mProject = nullptr;
 
     mColorManager = std::make_unique<ColorManager>(&pSettings->dirs());
+    mIconsManager = std::make_unique<IconsManager>(&pSettings->dirs(), pSettings->environment().language());
+    mFileSystemModelIconProvider = std::make_unique<CustomFileIconProvider>(mIconsManager.get());
     //delete in the destructor
     mProjectProxyModel = new ProjectModelSortFilterProxy();
     QItemSelectionModel *m=ui->projectView->selectionModel();
@@ -305,7 +308,7 @@ MainWindow::MainWindow(QWidget *parent)
             this, &MainWindow::onDebugMemoryAddressInput);
 
     mTodoParser = std::make_shared<TodoParser>();
-    mSymbolUsageManager = new SymbolUsageManager{this};
+    mSymbolUsageManager = new SymbolUsageManager{&pSettings->dirs(),this};
     try {
         mSymbolUsageManager->load();
     } catch (FileError &e) {
@@ -314,7 +317,7 @@ MainWindow::MainWindow(QWidget *parent)
                          e.reason());
     }
 
-    mCodeSnippetManager = new CodeSnippetsManager{this};
+    mCodeSnippetManager = new CodeSnippetsManager{&pSettings->dirs(), this};
     try {
         mCodeSnippetManager->load();
     } catch (FileError &e) {
@@ -373,7 +376,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->lstProblemSet->setModel(mOJProblemSetModel);
     delete m;
 
-    mOJProblemModel = new OJProblemModel{this};
+    mOJProblemModel = new OJProblemModel{mIconsManager.get(), this};
     m=ui->tblProblemCases->selectionModel();
     ui->tblProblemCases->setModel(mOJProblemModel);
     delete m;
@@ -412,6 +415,7 @@ MainWindow::MainWindow(QWidget *parent)
                              e.reason());
     }
 
+
     //files view
     mFileSystemModel = new CustomFileSystemModel{this};
     m=ui->treeFiles->selectionModel();
@@ -424,7 +428,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(mFileSystemModel, &QFileSystemModel::fileRenamed,
             this, &MainWindow::onFileRenamedInFileSystemModel);
     mFileSystemModel->setReadOnly(false);
-    mFileSystemModel->setIconProvider(&mFileSystemModelIconProvider);
+    mFileSystemModel->setIconProvider(mFileSystemModelIconProvider.get());
 
     mFileSystemModel->setNameFilters(pSystemConsts->defaultFileNameFilters());
     mFileSystemModel->setNameFilterDisables(true);
@@ -457,7 +461,7 @@ MainWindow::MainWindow(QWidget *parent)
             this, &MainWindow::onDirChanged);
 
     mStatementColors = std::make_shared<QHash<StatementKind, PColorSchemeItem> >();
-    mCompletionPopup = new CodeCompletionPopup(mColorManager.get(), this);
+    mCompletionPopup = new CodeCompletionPopup(mColorManager.get(), mIconsManager.get(), this);
     mCompletionPopup->setColors(mStatementColors);
     mCompletionPopup->setSymbolUsageManager(mSymbolUsageManager);
     mCompletionPopup->setShowEditorCaretFunc(std::bind(&EditorManager::showActiveEditorCaret,mEditorManager));
@@ -575,7 +579,7 @@ void MainWindow::updateForEncodingInfo(const Editor* editor) {
 
 void MainWindow::updateEditorSettings()
 {
-    pIconsManager->updateEditorGutterIcons(
+    mIconsManager->updateEditorGutterIcons(
                 pSettings->environment().iconSet(),
                 calIconSize(pSettings->editor().fontName(),pSettings->editor().fontSize())
                 );
@@ -1114,10 +1118,10 @@ void MainWindow::applySettings()
     }
     if (pSettings->environment().useCustomIconSet()) {
         QString customIconSetFolder = pSettings->dirs().config(DirSettings::DataType::IconSet);
-        pIconsManager->prepareCustomIconSet(customIconSetFolder);
-        pIconsManager->setIconSetsFolder(customIconSetFolder);
+        mIconsManager->prepareCustomIconSet(customIconSetFolder);
+        mIconsManager->setIconSetsFolder(customIconSetFolder);
     }
-    pIconsManager->updateParserIcons(
+    mIconsManager->updateParserIcons(
                 pSettings->environment().iconSet(),
                 calIconSize(
                     pSettings->environment().interfaceFont(),
@@ -1149,7 +1153,7 @@ void MainWindow::applySettings()
     updateActionIcons();
 
     //icon sets for files view
-    pIconsManager->updateFileSystemIcons(
+    mIconsManager->updateFileSystemIcons(
                 pSettings->environment().iconSet(),
                 calIconSize(
                     pSettings->environment().interfaceFont(),
@@ -1157,7 +1161,7 @@ void MainWindow::applySettings()
     if (!mFileSystemModel->rootPath().isEmpty() && mFileSystemModel->rootPath()!=".")
         setFilesViewRoot(pSettings->environment().currentFolder());
 //    for (int i=0;i<ui->cbFilesPath->count();i++) {
-//        ui->cbFilesPath->setItemIcon(i,pIconsManager->getIcon(IconsManager::FILESYSTEM_GIT));
+//        ui->cbFilesPath->setItemIcon(i,mIconsManager->getIcon(IconsManager::FILESYSTEM_GIT));
 //    }
     stretchExplorerPanel(!ui->tabExplorer->isShrinked());
     stretchMessagesPanel(!ui->tabMessages->isShrinked());
@@ -1239,25 +1243,19 @@ void MainWindow::removeActiveBreakpoints()
 {
     for (int i=0;i<mEditorManager->pageCount();i++) {
         Editor* e= (*mEditorManager)[i];
-        e->removeBreakpointFocus();
+        e->removeActiveBreakpoint();
     }
 }
 
-void MainWindow::setActiveBreakpoint(QString fileName, int line, bool setFocus)
+void MainWindow::setActiveBreakpoint(QString fileName, int line)
 {
     removeActiveBreakpoints();
     // Then active the current line in the current file
     Editor *e = openFile(fileName, false);
     if (e!=nullptr) {
-        e->setActiveBreakpointFocus(line,setFocus);
-        if (setFocus)
-            mEditorManager->activeEditorAndSetCaret(e,QSynedit::CharPos{0,line});
-        else
-            e->setCaretPosition(QSynedit::CharPos{0,line});
-
-        if (setFocus) {
-            activateWindow();
-        }
+        e->setActiveBreakpoint(line);
+        mEditorManager->activeEditorAndSetCaret(e,QSynedit::CharPos{0,line});
+        activateWindow();
     } else {
         showHideMessagesTab(ui->tabDebug, true);
         ui->debugViews->setCurrentWidget(ui->tabStackTrace);
@@ -1943,7 +1941,7 @@ void MainWindow::openProject(QString filename, bool openFiles)
 
     // Only update class browser once
     mClassBrowserModel->beginUpdate();
-    mProject = Project::load(filename,mEditorManager,&mFileSystemWatcher);
+    mProject = Project::load(filename,mEditorManager,mIconsManager.get(), &mFileSystemWatcher);
     updateProjectView();
     ui->projectView->expand(
                 mProjectProxyModel->mapFromSource(
@@ -2001,7 +1999,7 @@ void MainWindow::openProject(QString filename, bool openFiles)
 
 void MainWindow::changeOptions(const QString &widgetName, const QString &groupName)
 {
-    PSettingsDialog settingsDialog = SettingsDialog::optionDialog(mColorManager.get(), this);
+    PSettingsDialog settingsDialog = SettingsDialog::optionDialog(mColorManager.get(), mIconsManager.get(), this);
     if (!groupName.isEmpty()) {
         settingsDialog->setCurrentWidget(widgetName, groupName);
     }
@@ -2033,7 +2031,7 @@ void MainWindow::changeProjectOptions(const QString &widgetName, const QString &
     if (!mProject)
         return;
 //    int oldCompilerSet = mProject->options().compilerSet;
-    PSettingsDialog dialog = SettingsDialog::projectOptionDialog(this);
+    PSettingsDialog dialog = SettingsDialog::projectOptionDialog(mIconsManager.get(), this);
     if (!groupName.isEmpty()) {
         dialog->setCurrentWidget(widgetName, groupName);
     }
@@ -2050,7 +2048,7 @@ void MainWindow::updateCompilerSet(const Editor *e)
 {
     mCompilerSet->blockSignals(true);
     mCompilerSet->clear();
-    QIcon errorIcon = pIconsManager->getIcon(IconsManager::ACTION_MISC_CROSS);
+    QIcon errorIcon = mIconsManager->getIcon(IconsManager::ACTION_MISC_CROSS);
     for (size_t i=0;i<pSettings->compilerSets().size();i++) {
         PCompilerSet set=pSettings->compilerSets().getSet(i);
         if (set->findErrors().isEmpty())
@@ -2103,7 +2101,7 @@ void MainWindow::updateActionIcons()
     int size = calIconSize(
                 pSettings->environment().interfaceFont(),
                 pSettings->environment().interfaceFontSize())*pSettings->environment().iconZoomFactor();
-    pIconsManager->updateActionIcons(pSettings->environment().iconSet(), size);
+    mIconsManager->updateActionIcons(pSettings->environment().iconSet(), size);
     QSize iconSize(size,size);
     ui->toolbarMain->setIconSize(iconSize);
     ui->toolbarCode->setIconSize(iconSize);
@@ -2125,7 +2123,7 @@ void MainWindow::updateActionIcons()
 
     for(int i=0;i<mCompilerSet->count();i++) {
         if (!mCompilerSet->itemIcon(i).isNull()) {
-            mCompilerSet->setItemIcon(i, pIconsManager->getIcon(IconsManager::ACTION_MISC_CROSS));
+            mCompilerSet->setItemIcon(i, mIconsManager->getIcon(IconsManager::ACTION_MISC_CROSS));
         }
     }
 
@@ -2134,172 +2132,172 @@ void MainWindow::updateActionIcons()
     ui->EditorTabsLeft->setIconSize(iconSize);
     ui->EditorTabsRight->setIconSize(iconSize);
 
-    ui->actionNew->setIcon(pIconsManager->getIcon(IconsManager::ACTION_FILE_NEW));
-    ui->actionNew_Project->setIcon(pIconsManager->getIcon(IconsManager::ACTION_PROJECT_NEW));
-    ui->actionOpen->setIcon(pIconsManager->getIcon(IconsManager::ACTION_FILE_OPEN));
-    ui->actionOpen_Folder->setIcon(pIconsManager->getIcon(IconsManager::ACTION_FILE_OPEN_FOLDER));
-    ui->actionSave->setIcon(pIconsManager->getIcon(IconsManager::ACTION_FILE_SAVE));
-    ui->actionSaveAs->setIcon(pIconsManager->getIcon(IconsManager::ACTION_FILE_SAVE_AS));
-    ui->actionSaveAll->setIcon(pIconsManager->getIcon(IconsManager::ACTION_FILE_SAVE_ALL));
-    ui->actionClose->setIcon(pIconsManager->getIcon(IconsManager::ACTION_FILE_CLOSE));
-    ui->actionClose_Project->setIcon(pIconsManager->getIcon(IconsManager::ACTION_PROJECT_CLOSE));
-    ui->actionClose_All->setIcon(pIconsManager->getIcon(IconsManager::ACTION_FILE_CLOSE_ALL));
-    ui->actionClose_Others->setIcon(pIconsManager->getIcon(IconsManager::ACTION_FILE_CLOSE_ALL));
-    ui->actionPrint->setIcon(pIconsManager->getIcon(IconsManager::ACTION_FILE_PRINT));
+    ui->actionNew->setIcon(mIconsManager->getIcon(IconsManager::ACTION_FILE_NEW));
+    ui->actionNew_Project->setIcon(mIconsManager->getIcon(IconsManager::ACTION_PROJECT_NEW));
+    ui->actionOpen->setIcon(mIconsManager->getIcon(IconsManager::ACTION_FILE_OPEN));
+    ui->actionOpen_Folder->setIcon(mIconsManager->getIcon(IconsManager::ACTION_FILE_OPEN_FOLDER));
+    ui->actionSave->setIcon(mIconsManager->getIcon(IconsManager::ACTION_FILE_SAVE));
+    ui->actionSaveAs->setIcon(mIconsManager->getIcon(IconsManager::ACTION_FILE_SAVE_AS));
+    ui->actionSaveAll->setIcon(mIconsManager->getIcon(IconsManager::ACTION_FILE_SAVE_ALL));
+    ui->actionClose->setIcon(mIconsManager->getIcon(IconsManager::ACTION_FILE_CLOSE));
+    ui->actionClose_Project->setIcon(mIconsManager->getIcon(IconsManager::ACTION_PROJECT_CLOSE));
+    ui->actionClose_All->setIcon(mIconsManager->getIcon(IconsManager::ACTION_FILE_CLOSE_ALL));
+    ui->actionClose_Others->setIcon(mIconsManager->getIcon(IconsManager::ACTION_FILE_CLOSE_ALL));
+    ui->actionPrint->setIcon(mIconsManager->getIcon(IconsManager::ACTION_FILE_PRINT));
 
-    ui->actionUndo->setIcon(pIconsManager->getIcon(IconsManager::ACTION_EDIT_UNDO));
-    ui->actionRedo->setIcon(pIconsManager->getIcon(IconsManager::ACTION_EDIT_REDO));
-    ui->actionCut->setIcon(pIconsManager->getIcon(IconsManager::ACTION_EDIT_CUT));
-    ui->actionCopy->setIcon(pIconsManager->getIcon(IconsManager::ACTION_EDIT_COPY));
-    ui->actionPaste->setIcon(pIconsManager->getIcon(IconsManager::ACTION_EDIT_PASTE));
-    ui->actionIndent->setIcon(pIconsManager->getIcon(IconsManager::ACTION_EDIT_INDENT));
-    ui->actionUnIndent->setIcon(pIconsManager->getIcon(IconsManager::ACTION_EDIT_UNINDENT));
+    ui->actionUndo->setIcon(mIconsManager->getIcon(IconsManager::ACTION_EDIT_UNDO));
+    ui->actionRedo->setIcon(mIconsManager->getIcon(IconsManager::ACTION_EDIT_REDO));
+    ui->actionCut->setIcon(mIconsManager->getIcon(IconsManager::ACTION_EDIT_CUT));
+    ui->actionCopy->setIcon(mIconsManager->getIcon(IconsManager::ACTION_EDIT_COPY));
+    ui->actionPaste->setIcon(mIconsManager->getIcon(IconsManager::ACTION_EDIT_PASTE));
+    ui->actionIndent->setIcon(mIconsManager->getIcon(IconsManager::ACTION_EDIT_INDENT));
+    ui->actionUnIndent->setIcon(mIconsManager->getIcon(IconsManager::ACTION_EDIT_UNINDENT));
 
-    ui->actionFind->setIcon(pIconsManager->getIcon(IconsManager::ACTION_EDIT_SEARCH));
-    ui->actionReplace->setIcon(pIconsManager->getIcon(IconsManager::ACTION_EDIT_REPLACE));
-    ui->actionFind_in_files->setIcon(pIconsManager->getIcon(IconsManager::ACTION_EDIT_SEARCH_IN_FILES));
+    ui->actionFind->setIcon(mIconsManager->getIcon(IconsManager::ACTION_EDIT_SEARCH));
+    ui->actionReplace->setIcon(mIconsManager->getIcon(IconsManager::ACTION_EDIT_REPLACE));
+    ui->actionFind_in_files->setIcon(mIconsManager->getIcon(IconsManager::ACTION_EDIT_SEARCH_IN_FILES));
 
-    ui->actionBack->setIcon(pIconsManager->getIcon(IconsManager::ACTION_CODE_BACK));
-    ui->actionForward->setIcon(pIconsManager->getIcon(IconsManager::ACTION_CODE_FORWARD));
-    ui->actionToggle_Bookmark->setIcon(pIconsManager->getIcon(IconsManager::ACTION_CODE_ADD_BOOKMARK));
-    ui->actionReformat_Code->setIcon(pIconsManager->getIcon(IconsManager::ACTION_CODE_REFORMAT));
+    ui->actionBack->setIcon(mIconsManager->getIcon(IconsManager::ACTION_CODE_BACK));
+    ui->actionForward->setIcon(mIconsManager->getIcon(IconsManager::ACTION_CODE_FORWARD));
+    ui->actionToggle_Bookmark->setIcon(mIconsManager->getIcon(IconsManager::ACTION_CODE_ADD_BOOKMARK));
+    ui->actionReformat_Code->setIcon(mIconsManager->getIcon(IconsManager::ACTION_CODE_REFORMAT));
 
-    ui->actionProject_New_File->setIcon(pIconsManager->getIcon(IconsManager::ACTION_PROJECT_NEW_FILE));
-    ui->actionAdd_to_project->setIcon(pIconsManager->getIcon(IconsManager::ACTION_PROJECT_ADD_FILE));
-    ui->actionRemove_from_project->setIcon(pIconsManager->getIcon(IconsManager::ACTION_PROJECT_REMOVE_FILE));
-    ui->actionProject_Open_Folder_In_Explorer->setIcon(pIconsManager->getIcon(IconsManager::ACTION_MISC_FOLDER));
-    ui->actionProject_Open_In_Terminal->setIcon(pIconsManager->getIcon(IconsManager::ACTION_MISC_TERM));
-    ui->actionMakeClean->setIcon(pIconsManager->getIcon(IconsManager::ACTION_MISC_CLEAN));
-    ui->actionProject_options->setIcon(pIconsManager->getIcon(IconsManager::ACTION_PROJECT_PROPERTIES));
+    ui->actionProject_New_File->setIcon(mIconsManager->getIcon(IconsManager::ACTION_PROJECT_NEW_FILE));
+    ui->actionAdd_to_project->setIcon(mIconsManager->getIcon(IconsManager::ACTION_PROJECT_ADD_FILE));
+    ui->actionRemove_from_project->setIcon(mIconsManager->getIcon(IconsManager::ACTION_PROJECT_REMOVE_FILE));
+    ui->actionProject_Open_Folder_In_Explorer->setIcon(mIconsManager->getIcon(IconsManager::ACTION_MISC_FOLDER));
+    ui->actionProject_Open_In_Terminal->setIcon(mIconsManager->getIcon(IconsManager::ACTION_MISC_TERM));
+    ui->actionMakeClean->setIcon(mIconsManager->getIcon(IconsManager::ACTION_MISC_CLEAN));
+    ui->actionProject_options->setIcon(mIconsManager->getIcon(IconsManager::ACTION_PROJECT_PROPERTIES));
 
 
-    ui->actionCompile->setIcon(pIconsManager->getIcon(IconsManager::ACTION_RUN_COMPILE));
-    ui->actionRun->setIcon(pIconsManager->getIcon(IconsManager::ACTION_RUN_RUN));
-    ui->actionRebuild->setIcon(pIconsManager->getIcon(IconsManager::ACTION_RUN_REBUILD));
-    ui->actionRun_Parameters->setIcon(pIconsManager->getIcon(IconsManager::ACTION_RUN_OPTIONS));
-    ui->actionDebug->setIcon(pIconsManager->getIcon(IconsManager::ACTION_RUN_DEBUG));
-    ui->actionInterrupt->setIcon(pIconsManager->getIcon(IconsManager::ACTION_RUN_INTERRUPT));
-    ui->actionStep_Over->setIcon(pIconsManager->getIcon(IconsManager::ACTION_RUN_STEP_OVER));
-    ui->actionStep_Into->setIcon(pIconsManager->getIcon(IconsManager::ACTION_RUN_STEP_INTO));
-    ui->actionStep_Out->setIcon(pIconsManager->getIcon(IconsManager::ACTION_RUN_STEP_OUT));
-    ui->actionRun_To_Cursor->setIcon(pIconsManager->getIcon(IconsManager::ACTION_RUN_RUN_TO_CURSOR));
-    ui->actionContinue->setIcon(pIconsManager->getIcon(IconsManager::ACTION_RUN_CONTINUE));
-    ui->actionStop_Execution->setIcon(pIconsManager->getIcon(IconsManager::ACTION_RUN_STOP));
-    ui->actionAdd_Watch->setIcon(pIconsManager->getIcon(IconsManager::ACTION_RUN_ADD_WATCH));
-    ui->actionRemove_Watch->setIcon(pIconsManager->getIcon(IconsManager::ACTION_RUN_REMOVE_WATCH));
-    ui->actionRemove_All_Watches->setIcon(pIconsManager->getIcon(IconsManager::ACTION_MISC_CLEAN));
-    ui->actionCompiler_Options->setIcon(pIconsManager->getIcon(IconsManager::ACTION_RUN_COMPILE_OPTIONS));
+    ui->actionCompile->setIcon(mIconsManager->getIcon(IconsManager::ACTION_RUN_COMPILE));
+    ui->actionRun->setIcon(mIconsManager->getIcon(IconsManager::ACTION_RUN_RUN));
+    ui->actionRebuild->setIcon(mIconsManager->getIcon(IconsManager::ACTION_RUN_REBUILD));
+    ui->actionRun_Parameters->setIcon(mIconsManager->getIcon(IconsManager::ACTION_RUN_OPTIONS));
+    ui->actionDebug->setIcon(mIconsManager->getIcon(IconsManager::ACTION_RUN_DEBUG));
+    ui->actionInterrupt->setIcon(mIconsManager->getIcon(IconsManager::ACTION_RUN_INTERRUPT));
+    ui->actionStep_Over->setIcon(mIconsManager->getIcon(IconsManager::ACTION_RUN_STEP_OVER));
+    ui->actionStep_Into->setIcon(mIconsManager->getIcon(IconsManager::ACTION_RUN_STEP_INTO));
+    ui->actionStep_Out->setIcon(mIconsManager->getIcon(IconsManager::ACTION_RUN_STEP_OUT));
+    ui->actionRun_To_Cursor->setIcon(mIconsManager->getIcon(IconsManager::ACTION_RUN_RUN_TO_CURSOR));
+    ui->actionContinue->setIcon(mIconsManager->getIcon(IconsManager::ACTION_RUN_CONTINUE));
+    ui->actionStop_Execution->setIcon(mIconsManager->getIcon(IconsManager::ACTION_RUN_STOP));
+    ui->actionAdd_Watch->setIcon(mIconsManager->getIcon(IconsManager::ACTION_RUN_ADD_WATCH));
+    ui->actionRemove_Watch->setIcon(mIconsManager->getIcon(IconsManager::ACTION_RUN_REMOVE_WATCH));
+    ui->actionRemove_All_Watches->setIcon(mIconsManager->getIcon(IconsManager::ACTION_MISC_CLEAN));
+    ui->actionCompiler_Options->setIcon(mIconsManager->getIcon(IconsManager::ACTION_RUN_COMPILE_OPTIONS));
 
-    ui->actionOptions->setIcon(pIconsManager->getIcon(IconsManager::ACTION_MISC_GEAR));
+    ui->actionOptions->setIcon(mIconsManager->getIcon(IconsManager::ACTION_MISC_GEAR));
 
-    ui->actionMaximize_Editor->setIcon(pIconsManager->getIcon(IconsManager::ACTION_VIEW_MAXIMUM));
-    ui->actionNext_Editor->setIcon(pIconsManager->getIcon(IconsManager::ACTION_MISC_FORWARD));
-    ui->actionPrevious_Editor->setIcon(pIconsManager->getIcon(IconsManager::ACTION_MISC_BACK));
+    ui->actionMaximize_Editor->setIcon(mIconsManager->getIcon(IconsManager::ACTION_VIEW_MAXIMUM));
+    ui->actionNext_Editor->setIcon(mIconsManager->getIcon(IconsManager::ACTION_MISC_FORWARD));
+    ui->actionPrevious_Editor->setIcon(mIconsManager->getIcon(IconsManager::ACTION_MISC_BACK));
 
-    ui->actionAbout->setIcon(pIconsManager->getIcon(IconsManager::ACTION_HELP_ABOUT));
+    ui->actionAbout->setIcon(mIconsManager->getIcon(IconsManager::ACTION_HELP_ABOUT));
 
     //editor context menu
-    ui->actionOpen_Containing_Folder->setIcon(pIconsManager->getIcon(IconsManager::ACTION_MISC_FOLDER));
-    ui->actionOpen_Terminal->setIcon(pIconsManager->getIcon(IconsManager::ACTION_MISC_TERM));
-    ui->actionFile_Properties->setIcon(pIconsManager->getIcon(IconsManager::ACTION_FILE_PROPERTIES));
-    ui->actionLocate_in_Files_View->setIcon(pIconsManager->getIcon(IconsManager::ACTION_FILE_LOCATE));
+    ui->actionOpen_Containing_Folder->setIcon(mIconsManager->getIcon(IconsManager::ACTION_MISC_FOLDER));
+    ui->actionOpen_Terminal->setIcon(mIconsManager->getIcon(IconsManager::ACTION_MISC_TERM));
+    ui->actionFile_Properties->setIcon(mIconsManager->getIcon(IconsManager::ACTION_FILE_PROPERTIES));
+    ui->actionLocate_in_Files_View->setIcon(mIconsManager->getIcon(IconsManager::ACTION_FILE_LOCATE));
 
     //bookmark context menu
-    mBookmark_Remove->setIcon(pIconsManager->getIcon(IconsManager::ACTION_CODE_REMOVE_BOOKMARK));
-    mBookmark_RemoveAll->setIcon(pIconsManager->getIcon(IconsManager::ACTION_MISC_CLEAN));
+    mBookmark_Remove->setIcon(mIconsManager->getIcon(IconsManager::ACTION_CODE_REMOVE_BOOKMARK));
+    mBookmark_RemoveAll->setIcon(mIconsManager->getIcon(IconsManager::ACTION_MISC_CLEAN));
 
     //issues context menu
-    mTableIssuesCopyAction->setIcon(pIconsManager->getIcon(IconsManager::ACTION_EDIT_COPY));
-    mTableIssuesClearAction->setIcon(pIconsManager->getIcon(IconsManager::ACTION_MISC_CLEAN));
+    mTableIssuesCopyAction->setIcon(mIconsManager->getIcon(IconsManager::ACTION_EDIT_COPY));
+    mTableIssuesClearAction->setIcon(mIconsManager->getIcon(IconsManager::ACTION_MISC_CLEAN));
 
     //search context menu
-    mSearchViewClearAction->setIcon(pIconsManager->getIcon(IconsManager::ACTION_MISC_CROSS));
-    mSearchViewClearAllAction->setIcon(pIconsManager->getIcon(IconsManager::ACTION_MISC_CLEAN));
+    mSearchViewClearAction->setIcon(mIconsManager->getIcon(IconsManager::ACTION_MISC_CROSS));
+    mSearchViewClearAllAction->setIcon(mIconsManager->getIcon(IconsManager::ACTION_MISC_CLEAN));
 
     //breakpoint context menu
     //mBreakpointViewPropertyAction
-    mBreakpointViewRemoveAllAction->setIcon(pIconsManager->getIcon(IconsManager::ACTION_MISC_CLEAN));
-    mBreakpointViewRemoveAction->setIcon(pIconsManager->getIcon(IconsManager::ACTION_MISC_CROSS));
+    mBreakpointViewRemoveAllAction->setIcon(mIconsManager->getIcon(IconsManager::ACTION_MISC_CLEAN));
+    mBreakpointViewRemoveAction->setIcon(mIconsManager->getIcon(IconsManager::ACTION_MISC_CROSS));
 
     //Tools Output
 
     //classbrowser
-    mClassBrowser_Sort_By_Name->setIcon(pIconsManager->getIcon(IconsManager::ACTION_EDIT_SORT_BY_NAME));
-    mClassBrowser_Sort_By_Type->setIcon(pIconsManager->getIcon(IconsManager::ACTION_EDIT_SORT_BY_TYPE));
-    mClassBrowser_Show_Inherited->setIcon(pIconsManager->getIcon(IconsManager::ACTION_EDIT_SHOW_INHERITED));
+    mClassBrowser_Sort_By_Name->setIcon(mIconsManager->getIcon(IconsManager::ACTION_EDIT_SORT_BY_NAME));
+    mClassBrowser_Sort_By_Type->setIcon(mIconsManager->getIcon(IconsManager::ACTION_EDIT_SORT_BY_TYPE));
+    mClassBrowser_Show_Inherited->setIcon(mIconsManager->getIcon(IconsManager::ACTION_EDIT_SHOW_INHERITED));
 
     //debug console
-    mDebugConsole_Copy->setIcon(pIconsManager->getIcon(IconsManager::ACTION_EDIT_COPY));
-    mDebugConsole_Paste->setIcon(pIconsManager->getIcon(IconsManager::ACTION_EDIT_PASTE));
-    mDebugConsole_Clear->setIcon(pIconsManager->getIcon(IconsManager::ACTION_MISC_CLEAN));
+    mDebugConsole_Copy->setIcon(mIconsManager->getIcon(IconsManager::ACTION_EDIT_COPY));
+    mDebugConsole_Paste->setIcon(mIconsManager->getIcon(IconsManager::ACTION_EDIT_PASTE));
+    mDebugConsole_Clear->setIcon(mIconsManager->getIcon(IconsManager::ACTION_MISC_CLEAN));
 
     //file view
-    mFilesView_Open->setIcon(pIconsManager->getIcon(IconsManager::ACTION_FILE_OPEN));
-    mFilesView_OpenInTerminal->setIcon(pIconsManager->getIcon(IconsManager::ACTION_MISC_TERM));
-    mFilesView_OpenInExplorer->setIcon(pIconsManager->getIcon(IconsManager::ACTION_MISC_FOLDER));
-    ui->actionFilesView_Hide_Non_Support_Files->setIcon(pIconsManager->getIcon(IconsManager::ACTION_MISC_FILTER));
+    mFilesView_Open->setIcon(mIconsManager->getIcon(IconsManager::ACTION_FILE_OPEN));
+    mFilesView_OpenInTerminal->setIcon(mIconsManager->getIcon(IconsManager::ACTION_MISC_TERM));
+    mFilesView_OpenInExplorer->setIcon(mIconsManager->getIcon(IconsManager::ACTION_MISC_FOLDER));
+    ui->actionFilesView_Hide_Non_Support_Files->setIcon(mIconsManager->getIcon(IconsManager::ACTION_MISC_FILTER));
 
     //problem view
-    mProblemSet_New->setIcon(pIconsManager->getIcon(IconsManager::ACTION_PROBLEM_SET));
-    mProblemSet_AddProblem->setIcon(pIconsManager->getIcon(IconsManager::ACTION_MISC_ADD));
-    mProblemSet_RemoveProblem->setIcon(pIconsManager->getIcon(IconsManager::ACTION_MISC_CROSS));
-    mProblemSet_Save->setIcon(pIconsManager->getIcon(IconsManager::ACTION_FILE_SAVE));
-    mProblemSet_SaveAs->setIcon(pIconsManager->getIcon(IconsManager::ACTION_FILE_SAVE_AS));
-    mProblemSet_Load->setIcon(pIconsManager->getIcon(IconsManager::ACTION_FILE_OPEN_FOLDER));
-    mProblemSet_ImportFPS->setIcon(pIconsManager->getIcon(IconsManager::ACTION_CODE_BACK));
-    mProblemSet_ExportFPS->setIcon(pIconsManager->getIcon(IconsManager::ACTION_CODE_FORWARD));
+    mProblemSet_New->setIcon(mIconsManager->getIcon(IconsManager::ACTION_PROBLEM_SET));
+    mProblemSet_AddProblem->setIcon(mIconsManager->getIcon(IconsManager::ACTION_MISC_ADD));
+    mProblemSet_RemoveProblem->setIcon(mIconsManager->getIcon(IconsManager::ACTION_MISC_CROSS));
+    mProblemSet_Save->setIcon(mIconsManager->getIcon(IconsManager::ACTION_FILE_SAVE));
+    mProblemSet_SaveAs->setIcon(mIconsManager->getIcon(IconsManager::ACTION_FILE_SAVE_AS));
+    mProblemSet_Load->setIcon(mIconsManager->getIcon(IconsManager::ACTION_FILE_OPEN_FOLDER));
+    mProblemSet_ImportFPS->setIcon(mIconsManager->getIcon(IconsManager::ACTION_CODE_BACK));
+    mProblemSet_ExportFPS->setIcon(mIconsManager->getIcon(IconsManager::ACTION_CODE_FORWARD));
 
-    mProblem_AddCase->setIcon(pIconsManager->getIcon(IconsManager::ACTION_MISC_ADD));
-    mProblem_RemoveCases->setIcon(pIconsManager->getIcon(IconsManager::ACTION_MISC_REMOVE));
-    mProblem_OpenAnswer->setIcon(pIconsManager->getIcon(IconsManager::ACTION_PROBLEM_EDIT_SOURCE));
-    mProblem_RunAllCases->setIcon(pIconsManager->getIcon(IconsManager::ACTION_PROBLEM_RUN_CASES));
-    mProblem_CaseValidationOptions->setIcon(pIconsManager->getIcon(IconsManager::ACTION_MISC_GEAR));
+    mProblem_AddCase->setIcon(mIconsManager->getIcon(IconsManager::ACTION_MISC_ADD));
+    mProblem_RemoveCases->setIcon(mIconsManager->getIcon(IconsManager::ACTION_MISC_REMOVE));
+    mProblem_OpenAnswer->setIcon(mIconsManager->getIcon(IconsManager::ACTION_PROBLEM_EDIT_SOURCE));
+    mProblem_RunAllCases->setIcon(mIconsManager->getIcon(IconsManager::ACTION_PROBLEM_RUN_CASES));
+    mProblem_CaseValidationOptions->setIcon(mIconsManager->getIcon(IconsManager::ACTION_MISC_GEAR));
 
-    pIconsManager->setIcon(ui->btnProblemCaseClearInputFileName, IconsManager::ACTION_MISC_CLEAN);
-    pIconsManager->setIcon(ui->btnProblemCaseInputFileName, IconsManager::ACTION_MISC_FOLDER);
-    pIconsManager->setIcon(ui->btnProblemCaseClearExpectedOutputFileName, IconsManager::ACTION_MISC_CLEAN);
-    pIconsManager->setIcon(ui->btnProblemCaseExpectedOutputFileName, IconsManager::ACTION_MISC_FOLDER);
+    mIconsManager->setIcon(ui->btnProblemCaseClearInputFileName, IconsManager::ACTION_MISC_CLEAN);
+    mIconsManager->setIcon(ui->btnProblemCaseInputFileName, IconsManager::ACTION_MISC_FOLDER);
+    mIconsManager->setIcon(ui->btnProblemCaseClearExpectedOutputFileName, IconsManager::ACTION_MISC_CLEAN);
+    mIconsManager->setIcon(ui->btnProblemCaseExpectedOutputFileName, IconsManager::ACTION_MISC_FOLDER);
 
-    mProblem_Properties->setIcon(pIconsManager->getIcon(IconsManager::ACTION_PROBLEM_PROPERTIES));
+    mProblem_Properties->setIcon(mIconsManager->getIcon(IconsManager::ACTION_PROBLEM_PROPERTIES));
 
     int idx = ui->tabExplorer->indexOf(ui->tabWatch);
     if (idx>=0)
-        ui->tabExplorer->setTabIcon(idx,pIconsManager->getIcon(IconsManager::ACTION_RUN_ADD_WATCH));
+        ui->tabExplorer->setTabIcon(idx,mIconsManager->getIcon(IconsManager::ACTION_RUN_ADD_WATCH));
     idx = ui->tabExplorer->indexOf(ui->tabProject);
     if (idx>=0)
-        ui->tabExplorer->setTabIcon(idx,pIconsManager->getIcon(IconsManager::ACTION_PROJECT_NEW));
+        ui->tabExplorer->setTabIcon(idx,mIconsManager->getIcon(IconsManager::ACTION_PROJECT_NEW));
     idx = ui->tabExplorer->indexOf(ui->tabFiles);
     if (idx>=0)
-        ui->tabExplorer->setTabIcon(idx,pIconsManager->getIcon(IconsManager::ACTION_VIEW_FILES));
+        ui->tabExplorer->setTabIcon(idx,mIconsManager->getIcon(IconsManager::ACTION_VIEW_FILES));
     idx = ui->tabExplorer->indexOf(ui->tabStructure);
     if (idx>=0)
-        ui->tabExplorer->setTabIcon(idx,pIconsManager->getIcon(IconsManager::ACTION_VIEW_CLASSBROWSER));
+        ui->tabExplorer->setTabIcon(idx,mIconsManager->getIcon(IconsManager::ACTION_VIEW_CLASSBROWSER));
     idx = ui->tabExplorer->indexOf(ui->tabProblemSet);
     if (idx>=0)
-        ui->tabExplorer->setTabIcon(idx,pIconsManager->getIcon(IconsManager::ACTION_PROBLEM_SET));
+        ui->tabExplorer->setTabIcon(idx,mIconsManager->getIcon(IconsManager::ACTION_PROBLEM_SET));
 
     idx = ui->tabMessages->indexOf(ui->tabIssues);
     if (idx>=0)
-        ui->tabMessages->setTabIcon(idx,pIconsManager->getIcon(IconsManager::ACTION_RUN_COMPILE));
+        ui->tabMessages->setTabIcon(idx,mIconsManager->getIcon(IconsManager::ACTION_RUN_COMPILE));
     idx = ui->tabMessages->indexOf(ui->tabDebug);
     if (idx>=0)
-        ui->tabMessages->setTabIcon(idx,pIconsManager->getIcon(IconsManager::ACTION_RUN_DEBUG));
+        ui->tabMessages->setTabIcon(idx,mIconsManager->getIcon(IconsManager::ACTION_RUN_DEBUG));
     idx = ui->tabMessages->indexOf(ui->tabSearch);
     if (idx>=0)
-        ui->tabMessages->setTabIcon(idx,pIconsManager->getIcon(IconsManager::ACTION_EDIT_SEARCH));
+        ui->tabMessages->setTabIcon(idx,mIconsManager->getIcon(IconsManager::ACTION_EDIT_SEARCH));
     idx = ui->tabMessages->indexOf(ui->tabToolsOutput);
     if (idx>=0)
-        ui->tabMessages->setTabIcon(idx,pIconsManager->getIcon(IconsManager::ACTION_VIEW_COMPILELOG));
+        ui->tabMessages->setTabIcon(idx,mIconsManager->getIcon(IconsManager::ACTION_VIEW_COMPILELOG));
     idx = ui->tabMessages->indexOf(ui->tabTODO);
     if (idx>=0)
-        ui->tabMessages->setTabIcon(idx,pIconsManager->getIcon(IconsManager::ACTION_VIEW_TODO));
+        ui->tabMessages->setTabIcon(idx,mIconsManager->getIcon(IconsManager::ACTION_VIEW_TODO));
     idx = ui->tabMessages->indexOf(ui->tabBookmark);
     if (idx>=0)
-        ui->tabMessages->setTabIcon(idx,pIconsManager->getIcon(IconsManager::ACTION_VIEW_BOOKMARK));
+        ui->tabMessages->setTabIcon(idx,mIconsManager->getIcon(IconsManager::ACTION_VIEW_BOOKMARK));
 
     idx = ui->tabMessages->indexOf(ui->tabProblem);
     if (idx>=0)
-        ui->tabMessages->setTabIcon(idx,pIconsManager->getIcon(IconsManager::ACTION_PROBLEM_PROBLEM));
+        ui->tabMessages->setTabIcon(idx,mIconsManager->getIcon(IconsManager::ACTION_PROBLEM_PROBLEM));
 }
 
 void MainWindow::checkSyntaxInBack(Editor *e)
@@ -3479,7 +3477,7 @@ void MainWindow::scanActiveProject(bool parse)
     if (parse) {
         resetCppParser(mProject->cppParser(), mProject->options().compilerSet);
         mProject->resetParserProjectFiles();
-        parseFileListNonBlocking(mProject->cppParser());
+        CppParser::parseFileListNonBlocking(mProject->cppParser());
     } else {
         mProject->resetParserProjectFiles();
     };
@@ -7297,7 +7295,7 @@ void MainWindow::on_actionProject_options_triggered()
         return;
 //    int oldCompilerSet = mProject->options().compilerSet;
     //QString oldName = mProject->name();
-    PSettingsDialog dialog = SettingsDialog::projectOptionDialog(this);
+    PSettingsDialog dialog = SettingsDialog::projectOptionDialog(mIconsManager.get(),this);
     dialog->exec();
     updateCompilerSet();
 //    if (oldCompilerSet != mProject->options().compilerSet)
@@ -7307,7 +7305,7 @@ void MainWindow::on_actionProject_options_triggered()
 
 void MainWindow::on_actionNew_Project_triggered()
 {
-    NewProjectDialog dialog;
+    NewProjectDialog dialog{mIconsManager.get()};
     if (dialog.exec() == QDialog::Accepted) {
         if (dialog.makeDefaultLanguage()) {
             pSettings->editor().setDefaultFileCpp(dialog.isCppProject());
@@ -7386,6 +7384,7 @@ void MainWindow::on_actionNew_Project_triggered()
 
         mProject = Project::create(s,dialog.getProjectName(),
                                              mEditorManager,
+                                             mIconsManager.get(),
                                              &mFileSystemWatcher,
                                    dialog.getTemplate(),dialog.isCppProject());
         if (!mProject) {
@@ -7485,7 +7484,7 @@ void MainWindow::on_actionAdd_to_project_triggered()
         }
         mProject->saveAll();
         updateProjectView();
-        parseFileListNonBlocking(mProject->cppParser());
+        CppParser::parseFileListNonBlocking(mProject->cppParser());
     }
 }
 
@@ -7767,7 +7766,7 @@ void MainWindow::newProjectUnitFile(const QString& suffix)
         if (!modelTypeNode) {
              modelTypeNode = mProject->rootNode();
         }
-        NewProjectUnitDialog newProjectUnitDialog;
+        NewProjectUnitDialog newProjectUnitDialog(mIconsManager.get());
         if (!suffix.isEmpty()) {
             newProjectUnitDialog.setSuffix(suffix);
         } else {
@@ -7838,7 +7837,7 @@ void MainWindow::newProjectUnitFile(const QString& suffix)
 
     mProject->saveAll();
 
-    parseFileListNonBlocking(mProject->cppParser());
+    CppParser::parseFileListNonBlocking(mProject->cppParser());
     Editor * editor = mProject->openUnit(newUnit, false);
     mEditorManager->activeEditor(editor,true);
 #ifdef ENABLE_VCS
@@ -8104,7 +8103,7 @@ void MainWindow::validateCompilerSet(int index)
     if (set) {
         QStringList errors = set->findErrors();
         if (!errors.isEmpty()) {
-            mCompilerSet->setItemIcon(index, pIconsManager->getIcon(IconsManager::ACTION_MISC_CROSS));
+            mCompilerSet->setItemIcon(index, mIconsManager->getIcon(IconsManager::ACTION_MISC_CROSS));
             QMessageBox::warning(this,
                                  tr("Error in Compiler Set"),
                                  tr("Current Compiler set has the following critical error: \n\n")
@@ -8189,7 +8188,7 @@ void MainWindow::onProjectUnitRenamed(const QString &oldFilename, const QString 
     mProject->cppParser()->invalidateFile(oldFilename);
     mProject->cppParser()->removeProjectFile(oldFilename);
     mProject->cppParser()->addProjectFile(newFilename,true);
-    parseFileListNonBlocking(mProject->cppParser());
+    CppParser::parseFileListNonBlocking(mProject->cppParser());
     if (pSettings->editor().parseTodos()) {
         mTodoModel->removeTodosForFile(oldFilename);
         mTodoParser->parseFile(newFilename,true);
@@ -8439,7 +8438,7 @@ void MainWindow::on_actionRename_Symbol_triggered()
             Editor * e=(*mEditorManager)[i];
             if (e->modified())  {
                 //here we must reparse the file in sync, or rename may fail
-                parseFileBlocking(mProject->cppParser(), editor->filename(), editor->inProject(), editor->contextFile(), false, false);
+                CppParser::parseFileBlocking(mProject->cppParser(), editor->filename(), editor->inProject(), editor->contextFile(), false, false);
             }
         }
 
@@ -8502,7 +8501,7 @@ void MainWindow::on_actionRename_Symbol_triggered()
 
     if (!editor->inProject() && editor->modified() ) {
         //here we must reparse the file in sync, or rename may fail
-        parseFileBlocking(editor->parser(), editor->filename(), editor->inProject(), editor->contextFile(), false, false);
+        CppParser::parseFileBlocking(editor->parser(), editor->filename(), editor->inProject(), editor->contextFile(), false, false);
     }
     CppRefacter refactor(this);
 
@@ -8530,8 +8529,8 @@ void MainWindow::showSearchReplacePanel(bool show)
 
 void MainWindow::setFilesViewRoot(const QString &path, bool setOpenFolder)
 {
-    mFileSystemModelIconProvider.setRootFolder(path);
-    mFileSystemModel->setIconProvider(&mFileSystemModelIconProvider);
+    mFileSystemModelIconProvider->setRootFolder(path);
+    mFileSystemModel->setIconProvider(mFileSystemModelIconProvider.get());
     mFileSystemModel->setRootPath(path);
     ui->treeFiles->setRootIndex(mFileSystemModel->index(path));
     pSettings->environment().setCurrentFolder(path);
@@ -9487,7 +9486,7 @@ void MainWindow::on_actionNew_Header_triggered()
 {
     if (!mProject)
         return;
-    NewHeaderDialog dialog;
+    NewHeaderDialog dialog{mIconsManager.get()};
     dialog.setPath(mProject->folder());
     QString newFileName;
     int i=1;
@@ -9526,7 +9525,7 @@ void MainWindow::on_actionNew_Header_triggered()
         PProjectUnit newUnit=mProject->addUnit(headerFilename,mProject->rootNode());
         mProject->saveAll();
 
-        parseFileListNonBlocking(mProject->cppParser());
+        CppParser::parseFileListNonBlocking(mProject->cppParser());
         setProjectViewCurrentUnit(newUnit);
         updateProjectView();
 
@@ -9541,7 +9540,7 @@ void MainWindow::on_actionNew_Class_triggered()
 {
     if (!mProject)
         return;
-    NewClassDialog dialog(mProject->cppParser());
+    NewClassDialog dialog(mProject->cppParser(), mIconsManager.get());
     dialog.setPath(mProject->folder());
     if (dialog.exec()==QDialog::Accepted) {
         QDir dir(dialog.path());
@@ -9603,7 +9602,7 @@ void MainWindow::on_actionNew_Class_triggered()
         newUnit=mProject->addUnit(sourceFilename,mProject->rootNode());
         setProjectViewCurrentUnit(newUnit);
         mProject->saveAll();
-        parseFileListNonBlocking(mProject->cppParser());
+        CppParser::parseFileListNonBlocking(mProject->cppParser());
         updateProjectView();
 
         openFile(headerFilename);
@@ -9622,7 +9621,7 @@ void MainWindow::on_actionGit_Create_Repository_triggered()
         //update files view;
         int pos = ui->cbFilesPath->findText(pSettings->environment().currentFolder());
         if (pos>=0) {
-            ui->cbFilesPath->setItemIcon(pos, pIconsManager->getIcon(IconsManager::FILESYSTEM_GIT));
+            ui->cbFilesPath->setItemIcon(pos, mIconsManager->getIcon(IconsManager::FILESYSTEM_GIT));
         }
         mFileSystemModelIconProvider.setRootFolder(pSettings->environment().currentFolder());
         mFileSystemModel->setIconProvider(&mFileSystemModelIconProvider);
@@ -9652,7 +9651,7 @@ void MainWindow::on_actionGit_Create_Repository_triggered()
             //update files view;
             int pos = ui->cbFilesPath->findText(pSettings->environment().currentFolder());
             if (pos>=0) {
-                ui->cbFilesPath->setItemIcon(pos, pIconsManager->getIcon(IconsManager::FILESYSTEM_GIT));
+                ui->cbFilesPath->setItemIcon(pos, mIconsManager->getIcon(IconsManager::FILESYSTEM_GIT));
             }
             mFileSystemModelIconProvider.update();
             mFileSystemModel->setIconProvider(&mFileSystemModelIconProvider);
@@ -10783,6 +10782,11 @@ void MainWindow::on_actionNASM_triggered()
     if (editor) {
         editor->setFileType(FileType::NASM);
     }
+}
+
+IconsManager*MainWindow::iconsManager() const
+{
+    return mIconsManager.get();
 }
 
 ColorManager* MainWindow::colorManager() const

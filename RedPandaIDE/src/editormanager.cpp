@@ -62,6 +62,7 @@ Editor* EditorManager::newEditor(const QString& filename, const QByteArray& enco
     e->setEditorSettings(&pSettings->editor());
     e->setCodeCompletionSettings(&pSettings->codeCompletion());
     e->setColorManager(pMainWindow->colorManager());
+    e->setIconsManager(pMainWindow->iconsManager());
     e->setGetSharedParserFunc(std::bind(&EditorManager::sharedParser,this,std::placeholders::_1));
     e->setGetOpennedFunc(std::bind(&EditorManager::getOpenedEditor,this,std::placeholders::_1));
     e->setGetFileStreamCallBack(std::bind(
@@ -245,7 +246,7 @@ CompilerType EditorManager::getCompilerTypeForEditor(const Editor *e) const
 {
     if (e) {
         PCompilerSet pSet;
-        if (e->inProject()) {
+        if (e->inProject() && pMainWindow->project()) {
             pSet = pSettings->compilerSets().getSet(pMainWindow->project()->options().compilerSet);
         } else if (!e->inProject()) {
             pSet = pSettings->compilerSets().defaultSet();

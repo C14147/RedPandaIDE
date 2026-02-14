@@ -20,17 +20,20 @@
 #include "../settings.h"
 #include <QFileDialog>
 #include <algorithm>
+#include "../utils/file.h"
 
-NewClassDialog::NewClassDialog(PCppParser parser, QWidget *parent) :
+NewClassDialog::NewClassDialog(PCppParser parser, IconsManager *iconsManager, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::NewClassDialog),
     mModel(parser)
 {
+    Q_ASSERT(iconsManager!=nullptr);
     setWindowFlag(Qt::WindowContextHelpButtonHint,false);
     ui->setupUi(this);
+    mIconsManager = iconsManager;
     resize(pSettings->ui().newClassDialogWidth(),pSettings->ui().newClassDialogHeight());
     onUpdateIcons();
-    connect(pIconsManager,&IconsManager::actionIconsUpdated,
+    connect(mIconsManager,&IconsManager::actionIconsUpdated,
             this, &NewClassDialog::onUpdateIcons);
     ui->txtClassName->setFocus();
     ui->cbBaseClass->setModel(&mModel);
@@ -88,7 +91,7 @@ void NewClassDialog::on_btnCreate_clicked()
 
 void NewClassDialog::onUpdateIcons()
 {
-    pIconsManager->setIcon(ui->btnBrowsePath, IconsManager::ACTION_FILE_OPEN_FOLDER);
+    mIconsManager->setIcon(ui->btnBrowsePath, IconsManager::ACTION_FILE_OPEN_FOLDER);
 }
 
 

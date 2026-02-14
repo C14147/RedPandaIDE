@@ -232,6 +232,8 @@ public:
     CharPos nextWordEnd(const CharPos &pos) const;
     CharPos fileBegin() const { return CharPos{0,0}; }
     CharPos fileEnd() const;
+    CharPos lineBegin(int line) const;
+    CharPos lineEnd(int line) const;
 
     //Caret
     void showCaret();
@@ -408,7 +410,6 @@ public:
     bool findLineTextBySeq(size_t lineSeq, QString& text) const;
 
     const std::shared_ptr<const Document> document() const;
-    bool empty();
 
     void loadFromFile(const QString& filename, const QByteArray& encoding, QByteArray& realEncoding);
     void setContent(const QString& text);
@@ -487,7 +488,7 @@ public:
     const QColor &backgroundColor() const;
     void setBackgroundColor(const QColor &newBackgroundColor);
 
-    bool isEmpty();
+    bool empty() const;
 
     int mouseSelectionScrollSpeed() const;
     void setMouseSelectionScrollSpeed(int newMouseSelectionScrollSpeed);
@@ -628,7 +629,7 @@ private:
     void calcEffectiveFromToLine(const CharPos &beginPos, const CharPos &endPos, int &fromLine, int &toLine);
 
     int calcIndentSpaces(int line, const QString& lineText, bool addIndent);
-
+    bool shouldRecalcIndent(int line);
     void processGutterClick(QMouseEvent* event);
 
     void clearUndo();

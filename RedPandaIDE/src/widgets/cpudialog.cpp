@@ -23,6 +23,8 @@
 #include "../settings.h"
 #include "../colorscheme.h"
 #include "../iconsmanager.h"
+#include "../utils/ui.h"
+
 
 CPUDialog::CPUDialog(ColorManager *colorManager, QWidget *parent) :
     QDialog(parent),
@@ -75,7 +77,7 @@ CPUDialog::CPUDialog(ColorManager *colorManager, QWidget *parent) :
     resize(pSettings->ui().CPUDialogWidth(),pSettings->ui().CPUDialogHeight());
 
     onUpdateIcons();
-    connect(pIconsManager,&IconsManager::actionIconsUpdated,
+    connect(pMainWindow->iconsManager(),&IconsManager::actionIconsUpdated,
             this, &CPUDialog::onUpdateIcons);
 }
 
@@ -217,8 +219,8 @@ void CPUDialog::on_btnStepIntoInstruction_clicked()
 
 void CPUDialog::onUpdateIcons()
 {
-    pIconsManager->setIcon(ui->btnStepIntoInstruction, IconsManager::ACTION_RUN_STEP_INTO_INSTRUCTION);
-    pIconsManager->setIcon(ui->btnStepOverInstruction, IconsManager::ACTION_RUN_STEP_OVER_INSTRUCTION);
+    pMainWindow->iconsManager()->setIcon(ui->btnStepIntoInstruction, IconsManager::ACTION_RUN_STEP_INTO_INSTRUCTION);
+    pMainWindow->iconsManager()->setIcon(ui->btnStepOverInstruction, IconsManager::ACTION_RUN_STEP_OVER_INSTRUCTION);
 }
 
 void CPUDialog::showEvent(QShowEvent *event)
