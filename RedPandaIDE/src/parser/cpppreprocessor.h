@@ -50,6 +50,7 @@ class CppPreprocessor
 {
     enum class ContentType {
         AnsiCComment,
+        AnsiCCommentInDefine,
         CppComment,
         String,
         Character,
@@ -68,7 +69,7 @@ public:
 
     void clearTempResults();
     void getDefineParts(const QString& input, QString &name, QString &args, QString &value);
-    void addHardDefineByLine(const QString& line) { addDefineByLine(line,true); }
+    void addHardDefineByLine(const QString& line);
     void setScanOptions(bool parseSystem, bool parseLocal) {
         mParseSystem = parseSystem;
         mParseLocal=parseLocal;
@@ -93,8 +94,9 @@ public:
         return mDefines.value(name,PDefine());
     }
 
-    QString expandMacros(const QString& text, QSet<QString> usedMacros) const;
-    void expandMacro(const QString &text, QString &newText, const QString &word, int &i, QSet<QString> usedMacros) const;
+    QString expandMacros(QString text) const;
+    QString expandMacros(QString text, const QSet<QString> macrosToBeIgnored) const;
+    QString expandMacro(const QString &text, const QString &word, int &i, const QSet<QString> &macrosToBeIgnored, QSet<QString> &macrosUsed) const;
 
     const QStringList& result() const{
         return mResult;
@@ -143,17 +145,28 @@ private:
         parentIsFalse
     };
 
-    static QString expandFunction(PDefine define,const QString &args);
+    bool supportCPP23() const;
+
+    QString expandFunctionLikeMacro(PDefine define,const QString &args, const QSet<QString> &macrosToBeIgnored) const;
     void preprocessBuffer();
     void skipToPreprocessor();
     QString getNextPreprocessor();
-    void handleBranch(const QString& line);
-    void handleDefine(const QString& line);
-    void handleInclude(const QString& line, bool fromNext=false);
-    void handlePreprocessor(const QString& value);
-    void handleUndefine(const QString& line);
-    QString expandMacros();
-    void expandMacro(QString &newLine, const QString &word, int& i, QSet<QString> usedMacros);
+
+    void handleDefine(const QString& tokens);
+    void handleUndefine(const QString& tokens);
+    void handleIf(const QString& tokens);
+    void handleIfdef(const QString& tokens);
+    void handleIfndef(const QString& tokens);
+    void handleElif(const QString& tokens);
+    void handleElifdef(const QString& tokens);
+    void handleElifndef(const QString& tokens);
+    void handleElse(const QString& tokens);
+    void handleEndif(const QString& tokens);
+    void handleInclude(const QString&tokens);
+    void handleIncludeNext(const QString& tokens);
+
+    void handleInclude(const QString& line, bool fromNext);
+    void handlePreprocessor(const QString& command, const QString& tokens);
     QString removeGCCAttributes(const QString& line);
     void removeGCCAttribute(const QString&line, QString& newLine, int &i, const QString& word);
 
@@ -172,6 +185,7 @@ private:
             return BranchResult::isTrue;
     }
     BranchResult calcElseBranchResult(BranchResult oldResult);
+    BranchResult calcUnsupportedElseBranchResult(BranchResult oldResult);
     bool sameResultWithCurrentBranch(BranchResult value) {
         return (getCurrentBranch()==BranchResult::isTrue && value == BranchResult::isTrue)
                 || (getCurrentBranch()!=BranchResult::isTrue && value != BranchResult::isTrue);
@@ -297,8 +311,11 @@ private:
     //{ List of current compiler set's include path}
     QSet<QString> mIncludePaths;
 
+    QMap<QString, std::function<void(const QString&)>> mPreprocessorHandlers;
+
     bool mParseSystem;
     bool mParseLocal;
+    bool mSupportCPP23;
 
     GetFileStreamFunc mOnGetFileStream;
 };

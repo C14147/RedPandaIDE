@@ -32,12 +32,6 @@ public:
     bool enabled() const;
     void setEnabled(bool newEnabled);
 
-    bool parseLocalHeaders() const;
-    void setParseLocalHeaders(bool newParseLocalHeaders);
-
-    bool parseGlobalHeaders() const;
-    void setParseGlobalHeaders(bool newParseGlobalHeaders);
-
     bool showCompletionWhileInput() const;
     void setShowCompletionWhileInput(bool newShowCompletionWhileInput);
 
@@ -78,8 +72,6 @@ private:
     int mWidthInColumns;
     int mHeightInLines;
     bool mEnabled;
-    bool mParseLocalHeaders;
-    bool mParseGlobalHeaders;
     bool mShowCompletionWhileInput;
     bool mRecordUsage;
     bool mSortByScope;

@@ -39,9 +39,6 @@ void EditorCodeCompletionWidget::doLoad()
 {
     ui->grpEnabled->setChecked(pSettings->codeCompletion().enabled());
 
-    ui->chkParseLocalFiles->setChecked(pSettings->codeCompletion().parseLocalHeaders());
-    ui->chkParseSystemFiles->setChecked(pSettings->codeCompletion().parseGlobalHeaders());
-
     ui->spinWidth->setValue(pSettings->codeCompletion().widthInColumns());
     ui->spinHeight->setValue(pSettings->codeCompletion().heightInLines());
 
@@ -64,9 +61,6 @@ void EditorCodeCompletionWidget::doSave()
 {
     //font
     pSettings->codeCompletion().setEnabled(ui->grpEnabled->isChecked());
-
-    pSettings->codeCompletion().setParseLocalHeaders(ui->chkParseLocalFiles->isChecked());
-    pSettings->codeCompletion().setParseGlobalHeaders(ui->chkParseSystemFiles->isChecked());
 
     pSettings->codeCompletion().setWidthInColumns(ui->spinWidth->value());
     pSettings->codeCompletion().setHeightInLines(ui->spinHeight->value());

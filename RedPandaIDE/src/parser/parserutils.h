@@ -56,6 +56,7 @@ struct Define {
     QString filename;
     bool hardCoded;// if true, don't free memory (points to hard defines)
     QList<bool> argUsed;
+    QList<bool> argNotExpand;
     int varArgIndex;
     QString formatValue; // format template to format values
 };

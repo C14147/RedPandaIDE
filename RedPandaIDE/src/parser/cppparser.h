@@ -144,12 +144,6 @@ public:
 
     const QString &serialId() const;
 
-    bool parseLocalHeaders() const;
-    void setParseLocalHeaders(bool newParseLocalHeaders);
-
-    bool parseGlobalHeaders() const;
-    void setParseGlobalHeaders(bool newParseGlobalHeaders);
-
     const QSet<QString>& includePaths();
     const QSet<QString>& projectIncludePaths();
 
@@ -723,7 +717,7 @@ private:
     void parseCommandTypeAndArgs(QString& command,
                                  QString& typeSuffix,
                                  QString& args) const;
-    QString expandMacro(const QString& text) const;
+    QString expandMacros(const QString& text) const;
     static QStringList splitExpression(const QString& expr);
 private:
     int mParserId;
@@ -756,8 +750,6 @@ private:
     QSet<QString> mFilesToScan; // list of base files to scan
     int mFilesScannedCount; // count of files that have been scanned
     int mFilesToScanCount; // count of files and files included in files that have to be scanned
-    bool mParseLocalHeaders;
-    bool mParseGlobalHeaders;
     bool mIsProjectFile;
     int mLockCount; // lock(don't reparse) when we need to find statements in a batch
     bool mParsing;

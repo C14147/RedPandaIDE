@@ -96,29 +96,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="groupBox">
-        <property name="title">
-         <string>Engine options</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
-         <item>
-          <widget class="QCheckBox" name="chkParseLocalFiles">
-           <property name="text">
-            <string>Scan local header files</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="chkParseSystemFiles">
-           <property name="text">
-            <string>Scan system header files</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
        <widget class="QCheckBox" name="chkShowKeywords">
         <property name="text">
          <string>Show keywords in suggestions</string>
@@ -301,8 +278,6 @@
   <tabstop>chkEditorShareCodeParser</tabstop>
   <tabstop>chkClearWhenEditorHidden</tabstop>
   <tabstop>chkShowSuggestionWhileTyping</tabstop>
-  <tabstop>chkParseLocalFiles</tabstop>
-  <tabstop>chkParseSystemFiles</tabstop>
   <tabstop>chkShowKeywords</tabstop>
   <tabstop>chkShowCodeIns</tabstop>
   <tabstop>chkAppendFunc</tabstop>

@@ -142,26 +142,6 @@ void CodeCompletionSettings::setShowCompletionWhileInput(bool newShowCompletionW
     mShowCompletionWhileInput = newShowCompletionWhileInput;
 }
 
-bool CodeCompletionSettings::parseGlobalHeaders() const
-{
-    return mParseGlobalHeaders;
-}
-
-void CodeCompletionSettings::setParseGlobalHeaders(bool newParseGlobalHeaders)
-{
-    mParseGlobalHeaders = newParseGlobalHeaders;
-}
-
-bool CodeCompletionSettings::parseLocalHeaders() const
-{
-    return mParseLocalHeaders;
-}
-
-void CodeCompletionSettings::setParseLocalHeaders(bool newParseLocalHeaders)
-{
-    mParseLocalHeaders = newParseLocalHeaders;
-}
-
 bool CodeCompletionSettings::enabled() const
 {
     return mEnabled;
@@ -197,8 +177,6 @@ void CodeCompletionSettings::doSave()
     saveValue("widthInColumns",mWidthInColumns);
     saveValue("heightInLines",mHeightInLines);
     saveValue("enabled",mEnabled);
-    saveValue("parse_local_headers",mParseLocalHeaders);
-    saveValue("parse_global_headers",mParseGlobalHeaders);
     saveValue("show_completion_while_input",mShowCompletionWhileInput);
     saveValue("record_usage",mRecordUsage);
     saveValue("sort_by_scope",mSortByScope);
@@ -220,8 +198,6 @@ void CodeCompletionSettings::doLoad()
     mWidthInColumns = intValue("widthInColumns",30);
     mHeightInLines = intValue("heightInLines",8);
     mEnabled = boolValue("enabled",true);
-    mParseLocalHeaders = boolValue("parse_local_headers",true);
-    mParseGlobalHeaders = boolValue("parse_global_headers",true);
     mShowCompletionWhileInput = boolValue("show_completion_while_input",true);
     mRecordUsage = boolValue("record_usage",true);
     mSortByScope = boolValue("sort_by_scope",true);

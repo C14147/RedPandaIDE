@@ -13,6 +13,13 @@ public:
 private slots:
     void test_combine_lines_ending_with_backslash();
     void test_replace_comments_with_space_char();
+    void test_macro_replace_1();
+    void test_macro_replace_2();
+    void test_macro_replace_3();
+    void test_macro_replace_4();
+    void test_macro_replace_5();
+private:
+    static QStringList filterIncludes(const QStringList& text);
 };
 
 #endif

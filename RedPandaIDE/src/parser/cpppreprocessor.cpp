@@ -19,10 +19,25 @@
 #include <QFile>
 #include <QDebug>
 #include <QMessageBox>
+#include <QMultiHash>
 #include <qt_utils/utils.h>
 
 CppPreprocessor::CppPreprocessor()
 {
+    mPreprocessorHandlers.insert("if",[this](const QString& tokens){ handleIf(tokens);});
+    mPreprocessorHandlers.insert("ifdef",[this](const QString& tokens){ handleIfdef(tokens);});
+    mPreprocessorHandlers.insert("ifndef",[this](const QString& tokens){ handleIfndef(tokens);});
+    mPreprocessorHandlers.insert("elif",[this](const QString& tokens){ handleElif(tokens);});
+    mPreprocessorHandlers.insert("elifdef",[this](const QString& tokens){ handleElifdef(tokens);});
+    mPreprocessorHandlers.insert("elifndef",[this](const QString& tokens){ handleElifndef(tokens);});
+    mPreprocessorHandlers.insert("else",[this](const QString& tokens){ handleElse(tokens);});
+    mPreprocessorHandlers.insert("endif",[this](const QString& tokens){ handleEndif(tokens);});
+    mPreprocessorHandlers.insert("define",[this](const QString& tokens){ handleDefine(tokens);});
+    mPreprocessorHandlers.insert("undef",[this](const QString& tokens){ handleUndefine(tokens);});
+    mPreprocessorHandlers.insert("include",[this](const QString& tokens){ handleInclude(tokens);});
+    mPreprocessorHandlers.insert("include_next",[this](const QString& tokens){ handleIncludeNext(tokens);});
+    mParseLocal = true;
+    mParseSystem = true;
 }
 
 void CppPreprocessor::clear()
@@ -48,6 +63,7 @@ void CppPreprocessor::clear()
     mProjectIncludePathList.clear();
     //{ List of current compiler set's include path}
     mIncludePaths.clear();
+    mSupportCPP23=false;
 }
 
 void CppPreprocessor::clearTempResults()
@@ -80,6 +96,11 @@ void CppPreprocessor::addDefineByParts(const QString &name, const QString &args,
     if (hardCoded) {
         mHardDefines.insert(name,define);
         mDefines.insert(name,define);
+        if (name == "__cplusplus") {
+            bool ok;
+            int version = value.toLong(&ok);
+            mSupportCPP23 = (ok && version >=202302);
+        }
     } else {
         PDefineMap defineMap = mFileDefines.value(mFileName,PDefineMap());
         if (!defineMap) {
@@ -137,6 +158,12 @@ void CppPreprocessor::getDefineParts(const QString &input, QString &name, QStrin
     name.squeeze();
     value.squeeze();
     args.squeeze();
+}
+
+void CppPreprocessor::addHardDefineByLine(const QString &line)
+{
+    Q_ASSERT(line.startsWith('#'));
+    addDefineByLine(line.mid(1),true);
 }
 
 void CppPreprocessor::addDefineByLine(const QString &line, bool hardCoded)
@@ -245,6 +272,12 @@ void CppPreprocessor::removeScannedFile(const QString &filename)
     mFileUndefines.remove(filename);
 }
 
+QString CppPreprocessor::expandMacros(QString text) const
+{
+    QSet<QString> dummySet;
+    return expandMacros(text, dummySet);
+}
+
 QString CppPreprocessor::getNextPreprocessor()
 {
     skipToPreprocessor(); // skip until # at start of line
@@ -260,86 +293,19 @@ QString CppPreprocessor::getNextPreprocessor()
     return result;
 }
 
-void CppPreprocessor::handleBranch(const QString &line)
-{
-    if (line.startsWith("ifdef")) {
-//        // if a branch that is not at our level is false, current branch is false too;
-//        for (int i=0;i<=mBranchResults.count()-2;i++) {
-//            if (!mBranchResults[i]) {
-//                setCurrentBranch(false);
-//                return;
-//            }
-//        }
-        if (getCurrentBranch()!=BranchResult::isTrue) {
-            setCurrentBranch(BranchResult::parentIsFalse);
-        } else {
-            constexpr int IFDEF_LEN = 5; //length of ifdef;
-            QString name = line.mid(IFDEF_LEN).trimmed();
-            setCurrentBranch( getDefine(name)!=nullptr?(BranchResult::isTrue):(BranchResult::isFalse) );
-
-        }
-    } else if (line.startsWith("ifndef")) {
-//        // if a branch that is not at our level is false, current branch is false too;
-//        for (int i=0;i<=mBranchResults.count()-2;i++) {
-//            if (!mBranchResults[i]) {
-//                setCurrentBranch(false);
-//                return;
-//            }
-//        }
-        if (getCurrentBranch()!=BranchResult::isTrue) {
-            setCurrentBranch(BranchResult::parentIsFalse);
-        } else {
-            constexpr int IFNDEF_LEN = 6; //length of ifndef;
-            QString name = line.mid(IFNDEF_LEN).trimmed();
-            setCurrentBranch( getDefine(name)==nullptr?(BranchResult::isTrue):(BranchResult::isFalse) );
-        }
-    } else if (line.startsWith("if")) {
-        //        // if a branch that is not at our level is false, current branch is false too;
-        //        for (int i=0;i<=mBranchResults.count()-2;i++) {
-        //            if (!mBranchResults[i]) {
-        //                setCurrentBranch(false);
-        //                return;
-        //            }
-        //        }
-        if (getCurrentBranch()!=BranchResult::isTrue) {// we are already inside an if that is NOT being taken
-            setCurrentBranch(BranchResult::parentIsFalse);// so don't take this one either
-        } else {
-            constexpr int IF_LEN = 2; //length of if;
-            QString ifLine = line.mid(IF_LEN).trimmed();
-
-            bool testResult = evaluateIf(ifLine);
-            setCurrentBranch(testResult?(BranchResult::isTrue):(BranchResult::isFalse));
-        }
-    } else if (line.startsWith("else")) {
-        BranchResult oldResult = getCurrentBranch(); // take either if or else
-        removeCurrentBranch();
-        setCurrentBranch(calcElseBranchResult(oldResult));
-    } else if (line.startsWith("elif")) {
-        BranchResult oldResult = getCurrentBranch(); // take either if or else
-        removeCurrentBranch();
-        BranchResult elseResult = calcElseBranchResult(oldResult);
-        if (elseResult == BranchResult::isTrue) { // don't take this one, if  previous has been taken
-            constexpr int ELIF_LEN = 4; //length of if;
-            QString ifLine = line.mid(ELIF_LEN).trimmed();
-            bool testResult = evaluateIf(ifLine);
-            setCurrentBranch(testResult?(BranchResult::isTrue):(BranchResult::isFalse));
-        } else {
-            setCurrentBranch(elseResult);
-        }
-    } else if (line.startsWith("endif")) {
-        removeCurrentBranch();
-    }
-}
-
-void CppPreprocessor::handleDefine(const QString &line)
+void CppPreprocessor::handleDefine(const QString &tokens)
 {
     if (getCurrentBranch() == BranchResult::isTrue) {
-        addDefineByLine(line, false);
-        mResult[mPreProcIndex] = '#' + line; // add define to result file so the parser can handle it
+        QString name,args,value;
+        getDefineParts(tokens, name, args, value);
+
+        // Add to the list
+        addDefineByParts(name, args, value, false);
+        mResult[mPreProcIndex] = "#define " + tokens; // add define to result file so the parser can handle it
     }
 }
 
-void CppPreprocessor::handleInclude(const QString &line, bool fromNext)
+void CppPreprocessor::handleInclude(const QString &tokens, bool fromNext)
 {
     if (getCurrentBranch()!=BranchResult::isTrue) // we're skipping due to a branch failure
         return;
@@ -370,23 +336,10 @@ void CppPreprocessor::handleInclude(const QString &line, bool fromNext)
         projectIncludes = mProjectIncludePathList;
     }
 
-    int i=1; // skip '#'
-    int len=line.length();
-    //skip spaces
-    while (i<len && isSpaceChar(line[i]))
-        i++;
-    //skip 'include'
-    while (i<len && isIdentChar(line[i]))
-        i++;
-    //skip spaces
-    while (i<len && isSpaceChar(line[i]))
-        i++;
-    if (i>=line.length())
-        return;
-    QString s=line.mid(i);
+    QString s=tokens;
     QSet<QString> usedMacros;
     if (!s.startsWith('<') && !s.startsWith('\"'))
-        s = expandMacros(s, usedMacros);
+        s = expandMacros(s);
 
     fileName = getHeaderFilename(
                 file->fileName,
@@ -401,37 +354,19 @@ void CppPreprocessor::handleInclude(const QString &line, bool fromNext)
     openInclude(fileName);
 }
 
-void CppPreprocessor::handlePreprocessor(const QString &value)
+void CppPreprocessor::handlePreprocessor(const QString& command, const QString& tokens)
 {
-    switch(value[0].unicode()) {
-    case 'd':
-        if (value.startsWith("define"))
-            handleDefine(value);
-        break;
-    case 'e':
-        if (value.startsWith("else") || value.startsWith("elif")
-            || value.startsWith("endif"))
-            handleBranch(value);
-        break;
-    case 'i':
-        if (value.startsWith("if"))
-            handleBranch(value);
-        else if (value.startsWith("include"))
-            handleInclude(value, value.startsWith("include_next"));
-        break;
-    case 'u':
-        if (value.startsWith("undef"))
-            handleUndefine(value);
-        break;
-
-    }
+    std::function<void(const QString& tokens)> handler = mPreprocessorHandlers.value(command);
+    if (handler)
+        handler(tokens);
 }
 
-void CppPreprocessor::handleUndefine(const QString &line)
+void CppPreprocessor::handleUndefine(const QString& tokens)
 {
+    if (getCurrentBranch() != BranchResult::isTrue)
+        return;
     // Remove undef
-    constexpr int UNDEF_LEN = 5;
-    QString name = line.mid(UNDEF_LEN).trimmed();
+    QString name = tokens.trimmed();
 
 //    //may be defined many times
 //    while (true) {
@@ -456,80 +391,251 @@ void CppPreprocessor::handleUndefine(const QString &line)
                 undefineMap->insert(name, define);
         }
     }
+    mResult[mPreProcIndex] = "#undef " + name; // add define to result file so the parser can handle it
+
 }
 
-QString CppPreprocessor::expandMacros(const QString &text, QSet<QString> usedMacros) const
+void CppPreprocessor::handleIf(const QString &tokens)
 {
-    QString word;
+    if (getCurrentBranch()!=BranchResult::isTrue) {// we are already inside an if that is NOT being taken
+        setCurrentBranch(BranchResult::parentIsFalse);// so don't take this one either
+    } else {
+        bool testResult = evaluateIf(tokens);
+        setCurrentBranch(testResult?(BranchResult::isTrue):(BranchResult::isFalse));
+    }
+}
+
+void CppPreprocessor::handleIfdef(const QString &tokens)
+{
+        if (getCurrentBranch()!=BranchResult::isTrue) {
+            setCurrentBranch(BranchResult::parentIsFalse);
+        } else {
+            QString name = tokens.trimmed();
+            setCurrentBranch( getDefine(name)!=nullptr?(BranchResult::isTrue):(BranchResult::isFalse) );
+        }
+}
+
+void CppPreprocessor::handleIfndef(const QString &tokens)
+{
+    if (getCurrentBranch()!=BranchResult::isTrue) {
+        setCurrentBranch(BranchResult::parentIsFalse);
+    } else {
+        QString name = tokens.trimmed();
+        setCurrentBranch( getDefine(name)==nullptr?(BranchResult::isTrue):(BranchResult::isFalse) );
+    }
+}
+
+void CppPreprocessor::handleElif(const QString &tokens)
+{
+    BranchResult oldResult = getCurrentBranch(); // take either if or else
+    removeCurrentBranch();
+    BranchResult elseResult = calcElseBranchResult(oldResult);
+    if (elseResult == BranchResult::isTrue) { // don't take this one, if  previous has been taken
+        bool testResult = evaluateIf(tokens);
+        setCurrentBranch(testResult?(BranchResult::isTrue):(BranchResult::isFalse));
+    } else {
+        setCurrentBranch(elseResult);
+    }
+}
+
+void CppPreprocessor::handleElifdef(const QString &tokens)
+{
+    if (supportCPP23()) {
+        BranchResult oldResult = getCurrentBranch(); // take either if or else
+        removeCurrentBranch();
+        BranchResult elseResult = calcElseBranchResult(oldResult);
+        if (elseResult == BranchResult::isTrue) { // don't take this one, if  previous has been taken
+            QString name = tokens.trimmed();
+            setCurrentBranch( getDefine(name)!=nullptr?(BranchResult::isTrue):(BranchResult::isFalse) );
+        } else {
+            setCurrentBranch(elseResult);
+        }
+    }
+}
+
+void CppPreprocessor::handleElifndef(const QString &tokens)
+{
+    if (supportCPP23()) {
+        BranchResult oldResult = getCurrentBranch(); // take either if or else
+        removeCurrentBranch();
+        BranchResult elseResult = calcElseBranchResult(oldResult);
+        if (elseResult == BranchResult::isTrue) { // don't take this one, if  previous has been taken
+            QString name = tokens.trimmed();
+            setCurrentBranch( getDefine(name)==nullptr?(BranchResult::isTrue):(BranchResult::isFalse) );
+        } else {
+            setCurrentBranch(elseResult);
+        }
+    }
+}
+
+void CppPreprocessor::handleElse(const QString &tokens)
+{
+    BranchResult oldResult = getCurrentBranch(); // take either if or else
+    removeCurrentBranch();
+    setCurrentBranch(calcElseBranchResult(oldResult));
+}
+
+void CppPreprocessor::handleEndif(const QString &tokens)
+{
+    removeCurrentBranch();
+}
+
+void CppPreprocessor::handleInclude(const QString &tokens)
+{
+    handleInclude(tokens,false);
+}
+
+void CppPreprocessor::handleIncludeNext(const QString &tokens)
+{
+    handleInclude(tokens,true);
+}
+
+QString CppPreprocessor::expandMacros(QString text, const QSet<QString> macrosToBeIgnored) const
+{
+
     QString newLine;
+    ContentType currentType = ContentType::Other;
     int lenLine = text.length();
+    int prevI = 0;
     int i=0;
-    while (i< lenLine) {
-        QChar ch=text[i];
-        if (isWordChar(ch)) {
-            word += ch;
-        } else {
-            if (!word.isEmpty()) {
-                expandMacro(text,newLine,word,i,usedMacros);
-            }
-            word = "";
-            if (i< lenLine) {
-                newLine += text[i];
-            }
-        }
-        i++;
-    }
-    if (!word.isEmpty()) {
-        expandMacro(text,newLine,word,i, usedMacros);
-    }
-    return newLine;
-}
-
-QString CppPreprocessor::expandMacros()
-{
-    //prevent infinit recursion
+    int wordStart = 0;
     QString word;
-    QString newLine;
-    QString line = mBuffer[mIndex];
-    QSet<QString> usedMacros;
-    int i=0;
-    while (mIndex < mBuffer.size() && i<line.length()) {
-        QChar ch=line[i];
-        if (isWordChar(ch)) {
+    QString delimiter;
+    QMultiHash<int,QString> tempIngoreMacros; // endLine, name
+    while (i< lenLine) {
+        for(int t=prevI;t<i;t++)
+            tempIngoreMacros.remove(t);
+        prevI = i;
+        QChar ch=text[i];
+        if (currentType == ContentType::Other && isWordChar(ch)) {
+            if (word.isEmpty())
+                wordStart = i;
             word += ch;
         } else {
             if (!word.isEmpty()) {
-                expandMacro(newLine,word,i,usedMacros);
-                if (mIndex>=mBuffer.length())
-                    return newLine;
-                line = mBuffer[mIndex];
+                QSet<QString> macrosUsed;
+                QSet<QString> ignores=macrosToBeIgnored;
+                foreach(const QString& name, tempIngoreMacros)
+                    ignores.insert(name);
+                QString newWord = expandMacro(text,word,i,ignores,macrosUsed);
+                if (!macrosUsed.isEmpty()) {
+                    //adjust ignore macro list
+                    QMultiHash<int,QString> tempMacros2 = tempIngoreMacros;
+                    tempIngoreMacros.clear();
+                    int diff = newWord.length()-word.length();
+                    foreach(int idx, tempMacros2.uniqueKeys()) {
+                        QList<QString> names = tempMacros2.values(idx);
+                        foreach(const QString& name, names)
+                            tempIngoreMacros.insert(idx+diff,name);
+                    }
+                    //rescan (see ISO/IEC 9899:1999 6.10.3.4 Rescanning and futher replacement)
+                    foreach(const QString& name, macrosUsed) {
+                        tempIngoreMacros.insert(wordStart+newWord.length(), name);
+                    }
+                    text = text.left(wordStart)+newWord+text.mid(i);
+                    i = wordStart;
+                    lenLine = text.length();
+                    word = "";
+                    continue;
+                } else
+                    newLine += newWord;
+                word = "";
             }
-            word = "";
-            if (i< line.length()) {
-                newLine += line[i];
+            if (i<lenLine) {
+                ch = text[i];
+                newLine += text[i];
+                switch (ch.unicode()) {
+                case '"':
+                    switch (currentType) {
+                    case ContentType::String:
+                        currentType=ContentType::Other;
+                        break;
+                    case ContentType::RawString:
+                        if (QStringView(text.constData(),i).endsWith(')'+delimiter))
+                            currentType = ContentType::Other;
+                        break;
+                    case ContentType::Other:
+                        currentType=ContentType::String;
+                        break;
+                    case ContentType::RawStringPrefix:
+                        delimiter+=ch;
+                        break;
+                    default:
+                        break;
+                    }
+                    break;
+                case '\'':
+                    switch (currentType) {
+                    case ContentType::Character:
+                        currentType=ContentType::Other;
+                        break;
+                    case ContentType::Other:
+                        currentType=ContentType::Character;
+                        break;
+                    case ContentType::RawStringPrefix:
+                        delimiter+=ch;
+                        break;
+                    default:
+                        break;
+                    }
+                    break;
+                case 'R':
+                    if (currentType == ContentType::Other && i+1<lenLine && text[i+1]=='"') {
+                        i++;
+                        newLine += text[i];
+                        currentType=ContentType::RawStringPrefix;
+                        delimiter = "";
+                    }
+                    break;
+                case '(':
+                    switch(currentType) {
+                    case ContentType::RawStringPrefix:
+                        currentType = ContentType::RawString;
+                        break;
+                    default:
+                        break;
+                    }
+                    break;
+                case '\\':
+                    switch (currentType) {
+                    case ContentType::String:
+                    case ContentType::Character:
+                        i++;
+                        newLine += text[i];
+                        break;
+                    default:
+                        break;
+                    }
+                    break;
+                }
             }
         }
+        Q_ASSERT(currentType==ContentType::Other || word.isEmpty());
         i++;
     }
     if (!word.isEmpty()) {
-        expandMacro(newLine,word,i,usedMacros);
+        QSet<QString> macrosUsed;
+        QString newWord = expandMacro(text,word,i,macrosToBeIgnored,macrosUsed);
+        if (!macrosUsed.isEmpty())
+            newWord = expandMacros(newWord, macrosToBeIgnored+macrosUsed); //rescan
+        newLine += newWord;
     }
     return newLine;
 }
 
-void CppPreprocessor::expandMacro(const QString &text, QString &newText, const QString &word, int &i, QSet<QString> usedMacros) const
+QString CppPreprocessor::expandMacro(const QString &text, const QString &word, int &i, const QSet<QString> &macrosToBeIgnored, QSet<QString> &macrosUsed) const
 {
-    if (usedMacros.contains(word))
-        return;
+    if (macrosToBeIgnored.contains(word)) {
+        return word;
+    }
     int lenLine = text.length();
     PDefine define = getDefine(word);
     if (define && define->args=="" ) {
-        usedMacros.insert(word);
-        if (define->value != word ) {
-            newText += expandMacros(define->value,usedMacros);
-        } else
-            newText += word;
+        macrosUsed.insert(word);
+        return define->value;
     } else if (define && (define->args!="")) {
+        int oldI = i;
+        //skip spaces;
         while ((i<lenLine) && (text[i] == ' ' || text[i]=='\t'))
             i++;
         int argStart=-1;
@@ -562,111 +668,14 @@ void CppPreprocessor::expandMacro(const QString &text, QString &newText, const Q
             if (level==0) {
                 argEnd = i-2;
                 QString args = text.mid(argStart,argEnd-argStart+1).trimmed();
-                QString formattedValue = expandFunction(define,args);
-                usedMacros.insert(word);
-                newText += expandMacros(formattedValue,usedMacros);
+                QString formattedValue = expandFunctionLikeMacro(define,args,macrosToBeIgnored);
+                macrosUsed.insert(word);
+                return formattedValue;
             }
         }
-    } else {
-        newText += word;
+        i=oldI;
     }
-    //    }
-}
-
-void CppPreprocessor::expandMacro(QString &newLine, const QString &word, int &i, QSet<QString> usedMacros)
-{
-    if (usedMacros.contains(word))
-        return;
-    QString line = mBuffer[mIndex];
-    PDefine define = getDefine(word);
-    if (define && define->args=="" ) {
-        usedMacros.insert(word);
-        if (define->value != word )
-            newLine += expandMacros(define->value,usedMacros);
-        else
-            newLine += word;
-    } else if (define && (define->args!="")) {
-        int origI=i;
-        int origIndex=mIndex;
-        while(true) {
-            while ((i<line.length()) && (line[i] == ' ' || line[i]=='\t'))
-                i++;
-            if (i<line.length())
-                break;
-            mIndex++;
-            if (mIndex>=mBuffer.length())
-                return;
-            line = mBuffer[mIndex];
-            i=0;
-        }
-        int argStart=-1;
-        int argEnd=-1;
-        int argLineStart=mIndex;
-        int argLineEnd=mIndex;
-        if ((i<line.length()) && (line[i]=='(')) {
-            argStart =i+1;
-            int level=0;
-            bool inString=false;
-            while (true) {
-                while (i<line.length()) {
-                    switch(line[i].unicode()) {
-                        case '\\':
-                            if (inString)
-                                i++;
-                        break;
-                        case '"':
-                            inString = !inString;
-                        break;
-                        case '(':
-                            if (!inString)
-                                level++;
-                        break;
-                        case ')':
-                            if (!inString)
-                                level--;
-                        break;
-                    }
-                    i++;
-                    if (level==0)
-                        break;
-                }
-                if (level==0)
-                    break;
-                mIndex++;
-                i=0;
-                if (mIndex>=mBuffer.length())
-                    break;
-                line = mBuffer[mIndex];
-                if (!inString && line.startsWith('#')) {
-                    break;
-                }
-            } ;
-            if (level==0) {
-                argEnd = i-1;
-                argLineEnd = mIndex;
-                QString args;
-                if (argLineStart==argLineEnd) {
-                    args = line.mid(argStart,argEnd-argStart).trimmed();
-                    //qDebug()<<"--"<<args;
-                } else {
-                    args = mBuffer[argLineStart].mid(argStart);
-                    for (int i=argLineStart+1;i<argLineEnd;i++) {
-                        args += mBuffer[i];
-                    }
-                    args += mBuffer[argLineEnd].left(argEnd);
-                }
-                QString formattedValue = expandFunction(define,args);
-                usedMacros.insert(word);
-                newLine += expandMacros(formattedValue,usedMacros);
-            }
-        } else {
-            newLine+=word;
-            i=origI;
-            mIndex=origIndex;
-        }
-    } else {
-        newLine += word;
-    }
+    return word;
 }
 
 QString CppPreprocessor::removeGCCAttributes(const QString &line)
@@ -847,6 +856,18 @@ CppPreprocessor::BranchResult CppPreprocessor::calcElseBranchResult(BranchResult
     return BranchResult::isFalse;
 }
 
+CppPreprocessor::BranchResult CppPreprocessor::calcUnsupportedElseBranchResult(BranchResult oldResult)
+{
+    switch(oldResult) {
+    case BranchResult::isTrue: return BranchResult::isFalse_but_trued;
+    case BranchResult::isFalse: return BranchResult::isFalse;
+    case BranchResult::isFalse_but_trued: return BranchResult::isFalse_but_trued;
+    case BranchResult::parentIsFalse: return BranchResult::parentIsFalse;
+    }
+    Q_ASSERT( false ); //We should fail here.
+    return BranchResult::isFalse;
+}
+
 void CppPreprocessor::addDefinesInFile(const QString &fileName)
 {
     if (mProcessed.contains(fileName))
@@ -879,6 +900,7 @@ void CppPreprocessor::parseArgs(PDefine define)
     for (int i=0;i<argList.size();i++) {
         argList[i]=argList[i].trimmed();
         define->argUsed.append(false);
+        define->argNotExpand.append(false);
     }
     QList<PDefineArgToken> tokens = tokenizeValue(define->value);
 
@@ -898,8 +920,14 @@ void CppPreprocessor::parseArgs(PDefine define)
                 define->argUsed[index] = true;
                 if (lastTokenType == DefineArgTokenType::Sharp) {
                     formatStr+= "\"%"+QString("%1").arg(index+1)+"\"";
+                    define->argNotExpand[index] = true;
                     break;
                 } else {
+                    if (lastTokenType == DefineArgTokenType::DSharp) {
+                        define->argNotExpand[index] = true;
+                        if (index>0)
+                            define->argNotExpand[index-1] = true;
+                    }
                     formatStr+= "%"+QString("%1").arg(index+1);
                     break;
                 }
@@ -1026,6 +1054,8 @@ void CppPreprocessor::replaceCommentsBySpaceChar(QStringList &text)
         int pos = 0;
         int lineLen=line.length();
         int currentLineIdx = lineIdx;
+        bool isDefineLine = (currentType == ContentType::AnsiCCommentInDefine)
+                || ((currentType == ContentType::Other) && line.startsWith("#"));
         QString s;
         s.reserve(line.length());
         // String & Char Literal can't to next line
@@ -1033,7 +1063,8 @@ void CppPreprocessor::replaceCommentsBySpaceChar(QStringList &text)
                 || currentType ==  ContentType::String
                 || currentType ==  ContentType::EscapeSequence)
             currentType = ContentType::Other;
-        if (currentType == ContentType::AnsiCComment) {
+        // Really treat Ansi C Style Comment as a space (and merge lines) only when it's used to define macros.
+        if (currentType == ContentType::AnsiCCommentInDefine) {
             Q_ASSERT(blockCommentBegin>=0);
             Q_ASSERT(lineIdx>=blockCommentBegin);
             currentLineIdx = blockCommentBegin;
@@ -1041,7 +1072,7 @@ void CppPreprocessor::replaceCommentsBySpaceChar(QStringList &text)
         }
         while (pos<lineLen) {
             QChar ch =line[pos];
-            if (currentType == ContentType::AnsiCComment) {
+            if (currentType == ContentType::AnsiCComment || currentType == ContentType::AnsiCCommentInDefine) {
                 if (ch=='*' && (pos+1<lineLen) && line[pos+1]=='/') {
                     pos+=2;
                     currentType = ContentType::Other;
@@ -1123,7 +1154,7 @@ void CppPreprocessor::replaceCommentsBySpaceChar(QStringList &text)
                         /* ansi c comment */
                         s+=' '; // replace comments with a space
                         pos++;
-                        currentType = ContentType::AnsiCComment;
+                        currentType = (isDefineLine)?ContentType::AnsiCCommentInDefine:ContentType::AnsiCComment;
                         blockCommentBegin = currentLineIdx;
                         break;
                     }
@@ -1156,6 +1187,11 @@ void CppPreprocessor::replaceCommentsBySpaceChar(QStringList &text)
     }
 }
 
+bool CppPreprocessor::supportCPP23() const
+{
+    return mSupportCPP23;
+}
+
 void CppPreprocessor::preprocessBuffer()
 {
     while (mIncludeStack.count() > 0) {
@@ -1163,9 +1199,29 @@ void CppPreprocessor::preprocessBuffer()
         do {
             s = getNextPreprocessor();
             if (s.startsWith('#')) {
-                s = s.mid(1).trimmed(); // remove #
-                if (!s.isEmpty()) {
-                    handlePreprocessor(s);
+                QString command;
+                command.reserve(s.length());
+                QString tokens;
+                tokens.reserve(s.length());
+                auto it=s.constBegin();
+                ++it; // skip  '#'
+                while(it!=s.constEnd() && (*it==' ' || *it=='\t'))
+                    ++it; // skip spaces;
+                while(it!=s.constEnd()) {
+                    if (*it>='a' && *it<='z')
+                        command.append(*it);
+                    else
+                        break;
+                    ++it;
+                }
+                while(it!=s.constEnd() && (*it==' ' || *it=='\t'))
+                    ++it; // skip spaces;
+                while(it!=s.constEnd()) {
+                    tokens.append(*it);
+                    ++it; // skip spaces;
+                }
+                if (!command.isEmpty()) {
+                    handlePreprocessor(command, tokens);
                 }
             }
             // Step over
@@ -1182,7 +1238,7 @@ void CppPreprocessor::skipToPreprocessor()
     while ((mIndex < bufferCount) && !mBuffer[mIndex].startsWith('#')) {
         if (getCurrentBranch()==BranchResult::isTrue) { // if not skipping, expand current macros
             int startIndex = mIndex;
-            QString expanded = expandMacros();
+            QString expanded = expandMacros(mBuffer[mIndex]);
             mResult.append(expanded);
             for (int i=startIndex;i<mIndex;i++) {
                 mResult.append("");
@@ -1296,7 +1352,7 @@ QString CppPreprocessor::expandDefines(QString line)
                                 insertValue = "0";
                             } else {
                                 QString args = line.mid(head+1,tail-head-1);
-                                insertValue = expandFunction(define,args);
+                                insertValue = expandFunctionLikeMacro(define,args, QSet<QString>());
                             }
                             nameEnd = tail+1;
                         } else {
@@ -1338,7 +1394,7 @@ bool CppPreprocessor::skipParenthesis(const QString &line, int &index, int step)
     return false;
 }
 
-QString CppPreprocessor::expandFunction(PDefine define, const QString &args)
+QString CppPreprocessor::expandFunctionLikeMacro(PDefine define, const QString &args, const QSet<QString> &macrosToBeIgnored) const
 {
     // Replace function by this string
     QString result = define->formatValue;
@@ -1348,10 +1404,7 @@ QString CppPreprocessor::expandFunction(PDefine define, const QString &args)
 //    }
 
     if (define->argUsed.length()==0) {
-        // do nothing
-    } else if (define->argUsed.length()==1) {
-        if (define->argUsed[0])
-            result=result.arg(args);
+        result = define->formatValue;
     } else {
         QStringList argValues;
         int i=0;
@@ -1409,12 +1462,16 @@ QString CppPreprocessor::expandFunction(PDefine define, const QString &args)
                 && argValues.length()>0) {
             QStringList varArgs;
             for (int i=0;i<argValues.length();i++) {
+                QString argValue = argValues[i];
                 if (define->varArgIndex != -1
                      && i >= define->varArgIndex ) {
-                    varArgs.append(argValues[i].trimmed());
+                    if (!define->argNotExpand[define->varArgIndex])
+                        argValue = expandMacros(argValue,macrosToBeIgnored);
+                    varArgs.append(argValue.trimmed());
                 } else if (i<define->argUsed.length()
-                            && define->argUsed[i]) {
-                    QString argValue = argValues[i];
+                            && define->argUsed[i]) {                    
+                    if (!define->argNotExpand[i])
+                        argValue = expandMacros(argValue,macrosToBeIgnored);
                     result=result.arg(argValue.trimmed());
                 }
             }
