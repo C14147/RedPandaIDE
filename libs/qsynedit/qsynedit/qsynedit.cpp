@@ -2904,7 +2904,7 @@ void QSynEdit::endMergeCaretAndSelectionStatusChange()
 {
     --mMergeCaretStatusChangeLock;
     if (mMergeCaretStatusChangeLock == 0) {
-        ensureCaretVisible();
+        //ensureCaretVisible();
         if (mCaretBeforeMerging.ch != mCaretX)
             setStatusChanged(StatusChange::CaretX);
         if (mCaretBeforeMerging.line != mCaretY)

@@ -510,7 +510,6 @@ signals:
     void changed();
     void gutterClicked(Qt::MouseButton button, int x, int y, int line);
     void statusChanged(QSynedit::StatusChanges changes);
-    void fontChanged();
     void tabSizeChanged();
 #ifdef QSYNEDIT_TEST
     void foldsRescaned(); // for test

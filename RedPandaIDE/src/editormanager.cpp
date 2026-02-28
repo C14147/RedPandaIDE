@@ -105,24 +105,26 @@ Editor* EditorManager::newEditor(const QString& filename, const QByteArray& enco
         e->resetBreakpoints(pMainWindow->debugger()->breakpointModel().get());
     }
     e->setStatementColors(pMainWindow->statementColors());
-    QString fileTemplate;
-    switch (e->fileType()) {
-    case FileType::CSource:
-        fileTemplate = pMainWindow->codeSnippetManager()->newCFileTemplate();
-        break;
-    case FileType::CppSource:
-        fileTemplate = pMainWindow->codeSnippetManager()->newCppFileTemplate();
-        break;
-    case FileType::ATTASM:
-        fileTemplate = pMainWindow->codeSnippetManager()->newGASFileTemplate();
-        break;
-    default:
-        break;
-    }
-    if (!fileTemplate.isEmpty()) {
-        e->insertCodeSnippet(fileTemplate);
-        e->setCaretPosition(e->fileBegin());
-        e->setModified(false);
+    if (newFile) {
+        QString fileTemplate;
+        switch (e->fileType()) {
+        case FileType::CSource:
+            fileTemplate = pMainWindow->codeSnippetManager()->newCFileTemplate();
+            break;
+        case FileType::CppSource:
+            fileTemplate = pMainWindow->codeSnippetManager()->newCppFileTemplate();
+            break;
+        case FileType::ATTASM:
+            fileTemplate = pMainWindow->codeSnippetManager()->newGASFileTemplate();
+            break;
+        default:
+            break;
+        }
+        if (!fileTemplate.isEmpty()) {
+            e->insertCodeSnippet(fileTemplate);
+            e->setCaretPosition(e->fileBegin());
+            e->setModified(false);
+        }
     }
     e->setAutoBackupEnabled(true);
     parentPageControl->addTab(e, e->caption());
