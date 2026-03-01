@@ -639,7 +639,7 @@ void Editor::keyPressEvent(QKeyEvent *event)
                     if (sLine=="*/") {
                         CharPos p = caretXY();
                         p.ch = lineText().length();
-                        setSelBeginEnd(p, CharPos{lineText().length(), p.line});
+                        setSelBeginEnd(p, CharPos{(int)lineText().length(), p.line});
                         setSelText("");
                     }
                     handled = true;
@@ -1451,6 +1451,7 @@ void Editor::cutToClipboard()
 
 void Editor::copyAsHTML()
 {
+    Q_ASSERT(mColorManager!=nullptr);
     if (!selAvail()) {
         doSelectLine();
     }
@@ -2138,8 +2139,6 @@ QStringList Editor::getExpressionAtPosition(
         const QSynedit::CharPos &pos)
 {
     QStringList result;
-    if (!parser())
-        return result;
     int line = pos.line;
     int ch = pos.ch;
     int symbolMatchingLevel = 0;
@@ -3040,6 +3039,7 @@ void Editor::insertCodeSnippet(const QString &code)
 
 void Editor::print()
 {
+    Q_ASSERT(mColorManager!=nullptr);
     QPrinter printer;
 
     QPrintDialog dialog(&printer, this);
@@ -3090,6 +3090,8 @@ void Editor::print()
 
 void Editor::exportAsRTF(const QString &rtfFilename)
 {
+    Q_ASSERT(mColorManager!=nullptr);
+
     QSynedit::RTFExporter exporter(tabSize(), pCharsetInfoManager->getDefaultSystemEncoding());
     exporter.setTitle(extractFileName(rtfFilename));
     exporter.setUseBackground(mEditorSettings->copyRTFUseBackground());
@@ -3114,6 +3116,8 @@ void Editor::exportAsRTF(const QString &rtfFilename)
 
 void Editor::exportAsHTML(const QString &htmlFilename)
 {
+    Q_ASSERT(mColorManager!=nullptr);
+
     QSynedit::HTMLExporter exporter(tabSize(), pCharsetInfoManager->getDefaultSystemEncoding());
     exporter.setTitle(extractFileName(htmlFilename));
     exporter.setUseBackground(mEditorSettings->copyHTMLUseBackground());
@@ -3164,9 +3168,10 @@ void Editor::showCompletion(const QString& preWord,bool autoComplete, CodeComple
     QString s;
     QSynedit::PTokenAttribute attr;
     CharPos pBeginPos, pEndPos;
+    int start;
     if (getTokenAttriAtRowCol(
                 CharPos{caretX() - 1,
-                caretY()}, s, attr)) {
+                caretY()}, s,start, attr)) {
         if (attr->tokenType() == QSynedit::TokenType::Preprocessor) {//Preprocessor
             word = getWordAtPosition(this,caretXY(),pBeginPos,pEndPos, WordPurpose::wpDirective);
             if (!word.startsWith('#')) {
@@ -3497,10 +3502,23 @@ void Editor::completionInsert(bool appendFunc)
 
 // delete the part of the word that's already been typed ...
     CharPos caretPos = caretXY();
-    CharPos pEnd = getTokenEnd(caretXY());
-    CharPos pStart = prevWordBegin(caretXY());
-    if (caretPos == pStart && caretPos.ch>0)
-        pStart = getTokenBegin(CharPos{caretPos.ch-1,caretPos.line});
+    CharPos pStart;
+    CharPos pEnd;
+    if (caretPos.ch == 0)
+        pStart = caretPos;
+    else {
+        CharPos p{caretPos.ch-1,caretPos.line};
+        if (syntaxer()->isIdentChar(charAt(p))) {
+            pStart = getTokenBegin(p);
+        } else
+            pStart = caretPos;
+    }
+    if (syntaxer()->isIdentChar(charAt(caretPos))) {
+        pEnd = getTokenEnd(caretPos);
+    } else
+        pEnd = caretPos;
+//    if (caretPos == pStart && caretPos.ch>0)
+//        pStart = getTokenBegin(CharPos{caretPos.ch-1,caretPos.line});
     setCaretAndSelection(pStart,pStart,pEnd);
 
     // if we are inserting a function,
@@ -5341,6 +5359,8 @@ static QSynedit::PTokenAttribute createRainbowAttribute(ColorManager *colorManag
 
 void Editor::applyColorScheme(const QString& schemeName)
 {
+    if (mColorManager==nullptr)
+        return;
     QSynedit::EditorOptions options = getOptions();
     options.setFlag(QSynedit::EditorOption::ShowRainbowColor,
                     mEditorSettings->rainbowParenthesis()
@@ -5348,7 +5368,6 @@ void Editor::applyColorScheme(const QString& schemeName)
     setOptions(options);
     codeFolding().rainbowIndentGuides = mEditorSettings->rainbowIndentGuides();
     codeFolding().rainbowIndents = mEditorSettings->rainbowIndents();
-    Q_ASSERT(mColorManager!=nullptr);
     mColorManager->applySchemeToSyntaxer(syntaxer(),schemeName);
     if (mEditorSettings->rainbowParenthesis()) {
         QSynedit::PTokenAttribute attr0 =createRainbowAttribute(mColorManager, SYNS_AttrSymbol,

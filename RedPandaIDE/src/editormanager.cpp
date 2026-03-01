@@ -340,6 +340,7 @@ void EditorManager::onFileRenamed(Editor *e, const QString &oldFilename, const Q
         pMainWindow->bookmarkModel()->renameBookmarkFile(oldFilename,newFilename,false);
         pMainWindow->debugger()->breakpointModel()->renameBreakpointFilenames(oldFilename,newFilename,false);
     }
+    updateEditorTabCaption(e);
 }
 
 void EditorManager::onFileSaveAsed(Editor *e, const QString &oldFilename, const QString &newFilename)

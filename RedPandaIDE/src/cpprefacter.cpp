@@ -308,6 +308,7 @@ PSearchResultTreeItem CppRefacter::findOccurenceInFile(
     parentItem->parent = nullptr;
     QStringList buffer;
     Editor editor(nullptr);
+    editor.setEditorSettings(&pSettings->editor());
     FileType fileType = getFileType(filename);
     if (!isC_CPPSourceFile(fileType))
         fileType = FileType::CCppHeader;

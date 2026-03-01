@@ -58,6 +58,8 @@ private slots:
     void test_input_string_in_overwrite_mode();
     void test_input_input_chars_undo();
 
+    void test_input_tab_in_empty_file();
+
     void test_replace_line_in_empty_file();
     void test_replace_line_at_file_begin_end();
 

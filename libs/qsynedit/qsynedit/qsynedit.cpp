@@ -2355,12 +2355,8 @@ void QSynEdit::doBreakLine()
 
 void QSynEdit::doTabKey()
 {
-    if (mActiveSelectionMode == SelectionMode::Column) {
-        doInputStr("\t");
-        return;
-    }
     // Provide Visual Studio like block indenting
-    if (mOptions.testFlag(EditorOption::TabIndent) && canDoBlockIndent()) {
+    if (mActiveSelectionMode != SelectionMode::Column && mOptions.testFlag(EditorOption::TabIndent) && canDoBlockIndent()) {
         doBlockIndent();
         return;
     }
@@ -2368,15 +2364,15 @@ void QSynEdit::doTabKey()
     if (selAvail()) {
         doDeleteSelection();
     }
-    QString Spaces;
+    QString spaces;
     if (mOptions.testFlag(EditorOption::TabsToSpaces)) {
         int left = charToGlyphLeft(mCaretY,mCaretX);
         int i = std::ceil( (tabWidth() - (left) % tabWidth() ) / (float) tabSize());
-        Spaces = QString(i,' ');
+        spaces = QString(i,' ');
     } else {
-        Spaces = '\t';
+        spaces = '\t';
     }
-    doSetSelTextPrimitive(QStringList(Spaces));
+    doInputStr(spaces);
     endEditing();
 }
 
@@ -2537,7 +2533,7 @@ void QSynEdit::doBlockIndent()
         QString line=mDocument->getLine(i);
         addChangeToUndo(ChangeReason::Insert,
                 CharPos{0, i},
-                CharPos{(int)spaces.length()-1, i},
+                CharPos{(int)spaces.length(), i},
                 QStringList(),
                 SelectionMode::Normal);
         if (line.isEmpty()) {
@@ -2549,12 +2545,17 @@ void QSynEdit::doBlockIndent()
     }
     //adjust caret and selection
     oldCaretPos.ch = newCaretX;
-    if (blockBegin.ch > 0)
-        blockBegin.ch += spaces.length();
-    if (blockEnd.ch > 0)
-      blockEnd.ch+=spaces.length();
-    setCaretAndSelection(oldCaretPos,
-      blockBegin, blockEnd);
+    if (blockBegin == blockEnd) {
+        setCaretAndSelection(oldCaretPos,
+          oldCaretPos, oldCaretPos);
+    } else {
+        if (blockBegin.ch > 0)
+            blockBegin.ch += spaces.length();
+        if (blockEnd.ch > 0)
+          blockEnd.ch+=spaces.length();
+        setCaretAndSelection(oldCaretPos,
+          blockBegin, blockEnd);
+    }
     endEditing();
 }
 
