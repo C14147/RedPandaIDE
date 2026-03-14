@@ -1131,7 +1131,7 @@ bool QSynEdit::inSelection(const CharPos &pos) const
 CharPos QSynEdit::findNextChar(const CharPos &pos, CharType type) const
 {
     Q_ASSERT(validInDoc(pos));
-    int ch = pos.ch+1;
+    int ch = pos.ch;
     int line = pos.line;
     if (mDocument->count()<=0)
         return CharPos{};
@@ -2737,9 +2737,9 @@ void QSynEdit::doInputStr(const QString& s)
                 if ((lastCh!=0 && isSpaceChar(lastCh)) || isIdentChar(lastCh)) {
                     addGroupUndoBreak();
                 }
-                int oldCaretX=mCaretX;
-                int oldCaretY=mCaretY;
                 internalInputStr(inputStr);
+                int oldCaretX=mCaretX - inputStr.length();
+                int oldCaretY=mCaretY;
                 // auto indent
                 if (mActiveSelectionMode==SelectionMode::Normal
                         && shouldRecalcIndent(oldCaretY)
@@ -5973,6 +5973,12 @@ void QSynEdit::processCommand(EditCommand command, QVariant data,QVariant data2)
         mCaretX = mDocument->getLine(mCaretY).length();
         doBreakLine();
         endEditing();
+        break;
+    case EditCommand::BlockIndent:
+        doBlockIndent();
+        break;
+    case EditCommand::BlockUnindent:
+        doBlockUnindent();
         break;
     case EditCommand::Tab:
         doTabKey();

@@ -12,6 +12,7 @@ private slots:
     void cleanup();
     void loadDemoFile();
 
+    void test_next_char();
     void test_get_token_data();
     void test_get_token();
     void test_token_begin_data();
@@ -50,6 +51,7 @@ private slots:
 
     void test_input_chars_in_empty_file();
     void test_input_chars_in_empty_file_overwrite_mode();
+    void test_input_char_when_select_all();
     void test_input_chars_at_file_begin_end();
     void test_input_chars_at_file_begin_end_overwrite_mode();
     void test_input_chars_in_file();
@@ -59,6 +61,8 @@ private slots:
     void test_input_input_chars_undo();
 
     void test_input_tab_in_empty_file();
+    void test_block_indent();
+    void test_block_unindent();
 
     void test_replace_line_in_empty_file();
     void test_replace_line_at_file_begin_end();
