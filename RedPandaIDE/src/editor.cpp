@@ -1299,10 +1299,13 @@ bool Editor::event(QEvent *event)
     } else if (event->type() == QEvent::HoverLeave) {
         cancelHint();
         return true;
-    } else if (event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease ) {
-        if (!mCurrentWord.isEmpty()) {
-            onTooltipTimer();
-        }
+    } else if (event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease
+               || event->type() == QEvent::MouseMove) {
+        mTooltipTimer.stop();
+        cancelHint();
+//        if (!mCurrentWord.isEmpty()) {
+//            onTooltipTimer();
+//        }
     }
     return QSynEdit::event(event);
 }
@@ -3305,7 +3308,7 @@ void Editor::showCompletion(const QString& preWord,bool autoComplete, CodeComple
                     );
     }
     if (mFunctionTooltip) mFunctionTooltip->hide();
-    mCompletionPopup->show();
+    //mCompletionPopup->show();
 
     if (word.isEmpty()) {
         //word=getWordAtPosition(this,caretXY(),pBeginPos,pEndPos, WordPurpose::wpCompletion);
@@ -3396,7 +3399,7 @@ void Editor::showHeaderCompletion(bool autoComplete, bool forceShow)
         return;
 
     if (mFunctionTooltip) mFunctionTooltip->hide();
-    mHeaderCompletionPopup->show();
+    //mHeaderCompletionPopup->show();
     mHeaderCompletionPopup->setSearchLocal(word.startsWith('"'));
     word.remove(0,1);
 
@@ -3834,7 +3837,7 @@ QString Editor::getParserHint(const QStringList& expression, const CharPos& p)
             || statement->kind == StatementKind::Constructor
             || statement->kind == StatementKind::Destructor) {
           result = getHintForFunction(statement,mFilename,p.line);
-    } else if (statement->line>0) {
+    } else if (statement->line>=0) {
         QFileInfo fileInfo(statement->fileName);
         result = mParser->prettyPrintStatement(statement,mFilename, p.line) + " - "
                 + QString("%1(%2) ").arg(fileInfo.fileName()).arg(statement->line+1)

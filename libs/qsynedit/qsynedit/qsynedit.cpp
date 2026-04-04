@@ -5490,6 +5490,8 @@ void QSynEdit::properInsertLine(int line, const QString &sLineText, bool parseTo
         reparseLines(line,line+1, false);
     emit linesInserted(line, 1);
     updateVScrollbar();
+    //we must invalidate whole editor to properly render contents
+    invalidateLines(line,INT_MAX);
 }
 
 void QSynEdit::properDeleteLines(int line, int count, bool parseToEnd)
@@ -5502,6 +5504,9 @@ void QSynEdit::properDeleteLines(int line, int count, bool parseToEnd)
         onLinesDeleted(line,count);
     emit linesDeleted(line,count);
     updateVScrollbar();
+
+    //we must invalidate whole editor to properly render contents
+    invalidateLines(line,INT_MAX);
 }
 
 void QSynEdit::properInsertLines(int line, int count, bool parseToEnd)
@@ -5516,6 +5521,8 @@ void QSynEdit::properInsertLines(int line, int count, bool parseToEnd)
         reparseLines(line,line+count, false);
     emit linesInserted(line, count);
     updateVScrollbar();
+    //we must invalidate whole editor to properly render contents
+    invalidateLines(line,INT_MAX);
 }
 
 void QSynEdit::properMoveLine(int from, int to, bool parseToEnd)
@@ -5661,11 +5668,11 @@ void QSynEdit::doInsertTextByNormalMode(const CharPos& pos, const QStringList& t
     sLeftSide = line.left(pos.ch);
     sRightSide = line.mid(pos.ch);
     int currentLine=pos.line;
+    // step1: insert the first line of Value into current line
     if (text.length()>1) {
-        // step1: insert the first line of Value into current line
         if (!mUndoing) {
             QString s = text[0];
-            if (sLeftSide.isEmpty() && shouldRecalcIndent(currentLine)) {
+            if (sLeftSide.trimmed().isEmpty() && shouldRecalcIndent(currentLine)) {
                 s=s.trimmed();
                 sLeftSide = genSpaces(calcIndentSpaces(currentLine,s,true));
             }
@@ -5700,7 +5707,15 @@ void QSynEdit::doInsertTextByNormalMode(const CharPos& pos, const QStringList& t
             properSetLine(currentLine, str, i==text.length()-1);
         }
     } else {
-        str = sLeftSide + text[0] + sRightSide;
+        if (!mUndoing) {
+            QString s = text[0];
+            if (sLeftSide.trimmed().isEmpty() && shouldRecalcIndent(currentLine)) {
+                s=s.trimmed();
+                sLeftSide = genSpaces(calcIndentSpaces(currentLine,s,true));
+            }
+            str = sLeftSide + s + sRightSide;
+        } else
+            str = sLeftSide + text[0] + sRightSide;
         properSetLine(currentLine, str, true);
     }
 
