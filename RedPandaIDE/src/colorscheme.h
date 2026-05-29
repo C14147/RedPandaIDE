@@ -166,7 +166,7 @@ public:
     void updateStatementColors(
             std::shared_ptr<QHash<StatementKind, std::shared_ptr<ColorSchemeItem> > > statementColors,
             const QString& schemeName);
-    void applySchemeToSyntaxer(QSynedit::PSyntaxer syntaxer, const QString& schemeName);
+    void applySchemeToSyntaxer(QSynedit::PConstSyntaxer syntaxer, const QString& schemeName);
 
 private:
     QString generateFullPathname(const QString& name, bool isBundled, bool isCustomed);

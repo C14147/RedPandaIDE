@@ -32,16 +32,16 @@ public:
     static const QSet<QString> Directives;
     static const QSet<QString> PreprocessorDirectives;
 private:
-    QSet<QString> mKeywordCache;
+    static QSet<QString> mKeywords;
 protected:
     bool isCommentStartChar(QChar ch) override;
     bool isDirective(const QString& ident) override;
     bool isPreprocessDirective(const QString& ident) override;
 public:
-    QString languageName() override;
-    ProgrammingLanguage language() override;
-    QSet<QString> keywords() override;
-
+    QString languageName() const override;
+    ProgrammingLanguage language() const override;
+    QSet<QString> keywords() const override;
+    virtual PSyntaxer createInstance() const override;
 };
 
 }

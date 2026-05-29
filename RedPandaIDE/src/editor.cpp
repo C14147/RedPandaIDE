@@ -253,7 +253,7 @@ void Editor::saveFile(QString filename) {
     Q_ASSERT(mEditorEncoding!=ENCODING_PROJECT);
     QFile file(filename);
     QByteArray oldFileEncoding = mFileEncoding;
-    this->document()->saveToFile(file, mEditorEncoding, mFileEncoding);
+    saveToFile(file, mEditorEncoding, mFileEncoding);
     if (oldFileEncoding != mFileEncoding)
         emit fileEncodingChanged(this);
 }
@@ -921,7 +921,7 @@ void Editor::keyPressEvent(QKeyEvent *event)
                     return;
                 }
                 if ((idCharPressed==0) && (ch=='%')
-                        && std::dynamic_pointer_cast<QSynedit::GASSyntaxer>(syntaxer())->prefixRegisterNames()) {
+                        && std::dynamic_pointer_cast<const QSynedit::GASSyntaxer>(syntaxer())->prefixRegisterNames()) {
                     processCommand(QSynedit::EditCommand::Input,ch);
                     showCompletion("",false,CodeCompletionType::KeywordsOnly);
                     handled=true;
@@ -1041,7 +1041,7 @@ void Editor::onGutterPaint(QPainter &painter, int aLine, int X, int Y)
 
 void setIncludeUnderline(const QString& lineText, int startPos,
                   const QChar& quoteEndChar,
-                  QSynedit::PSyntaxer syntaxer,
+                  QSynedit::PConstSyntaxer syntaxer,
                   QColor foreColor,
                   QSynedit::EditingAreaList &areaList
                   ) {
@@ -1166,7 +1166,7 @@ void Editor::onPreparePaintHighlightToken(int line, int aChar, const QString &to
                 while (statement && statement->kind == StatementKind::Alias)
                     statement = mParser->findAliasedStatement(statement);
                 if (statement && statement->kind == StatementKind::Constructor) {
-                    QString s=document()->getLine(line);
+                    QString s=lineText(line);
                     int pos  = aChar+token.length();
                     while(pos<s.length() && CppParser::isSpaceChar(s[pos])) {
                         pos++;
@@ -1464,12 +1464,13 @@ void Editor::copyAsHTML()
     exporter.setTitle(QFileInfo(mFilename).fileName());
     exporter.setUseBackground(mEditorSettings->copyHTMLUseBackground());
     exporter.setFont(font());
-    QSynedit::PSyntaxer pSyntaxter = syntaxer();
+    QSynedit::PSyntaxer pSyntaxer = syntaxer()->createInstance();
     if (!mEditorSettings->copyHTMLUseEditorColor()) {
-        pSyntaxter = SyntaxerManager::copy(syntaxer());
-        mColorManager->applySchemeToSyntaxer(pSyntaxter,mEditorSettings->copyHTMLColorScheme());
+        mColorManager->applySchemeToSyntaxer(pSyntaxer,mEditorSettings->copyHTMLColorScheme());
+    } else {
+        mColorManager->applySchemeToSyntaxer(pSyntaxer,mEditorSettings->colorScheme());
     }
-    exporter.setSyntaxer(pSyntaxter);
+    exporter.setSyntaxer(pSyntaxer);
     exporter.setOnFormatToken(std::bind(&Editor::onExportedFormatToken,
                                         this,
                                         std::placeholders::_1,
@@ -2883,7 +2884,7 @@ ParserLanguage Editor::calcParserLanguage() const
 Editor::QuoteStatus Editor::getQuoteStatus()
 {
     if (syntaxer()->language()==QSynedit::ProgrammingLanguage::CPP) {
-        std::shared_ptr<QSynedit::CppSyntaxer> cppSyntaxer = std::dynamic_pointer_cast<QSynedit::CppSyntaxer>(syntaxer());
+        std::shared_ptr<const QSynedit::CppSyntaxer> cppSyntaxer = std::dynamic_pointer_cast<const QSynedit::CppSyntaxer>(syntaxer());
         QSynedit::PSyntaxState state;
 
         //raw string end must be determined with the following '"'
@@ -3064,11 +3065,8 @@ void Editor::print()
     exporter.setUseBackground(mEditorSettings->copyHTMLUseBackground());
 
     exporter.setFont(font());
-    QSynedit::PSyntaxer pSyntaxer = syntaxer();
-    if (!mEditorSettings->copyHTMLUseEditorColor()) {
-        pSyntaxer = SyntaxerManager::copy(syntaxer());
-        mColorManager->applySchemeToSyntaxer(pSyntaxer,mEditorSettings->copyHTMLColorScheme());
-    }
+    QSynedit::PSyntaxer pSyntaxer = syntaxer()->createInstance();
+    mColorManager->applySchemeToSyntaxer(pSyntaxer,mEditorSettings->colorScheme());
     exporter.setSyntaxer(pSyntaxer);
     exporter.setOnFormatToken(std::bind(&Editor::onExportedFormatToken,
                                         this,
@@ -3100,10 +3098,11 @@ void Editor::exportAsRTF(const QString &rtfFilename)
     exporter.setTitle(extractFileName(rtfFilename));
     exporter.setUseBackground(mEditorSettings->copyRTFUseBackground());
     exporter.setFont(font());
-    QSynedit::PSyntaxer pSyntaxer = syntaxer();
-    if (!mEditorSettings->copyRTFUseEditorColor()) {
-        pSyntaxer = SyntaxerManager::copy(syntaxer());
+    QSynedit::PSyntaxer pSyntaxer = syntaxer()->createInstance();
+    if (!mEditorSettings->copyRTFUseEditorColor()) {        
         mColorManager->applySchemeToSyntaxer(pSyntaxer,mEditorSettings->copyRTFColorScheme());
+    } else {
+        mColorManager->applySchemeToSyntaxer(pSyntaxer,mEditorSettings->colorScheme());
     }
     exporter.setSyntaxer(pSyntaxer);
     exporter.setOnFormatToken(std::bind(&Editor::onExportedFormatToken,
@@ -3126,10 +3125,11 @@ void Editor::exportAsHTML(const QString &htmlFilename)
     exporter.setTitle(extractFileName(htmlFilename));
     exporter.setUseBackground(mEditorSettings->copyHTMLUseBackground());
     exporter.setFont(font());
-    QSynedit::PSyntaxer pSyntaxer = syntaxer();
-    if (!mEditorSettings->copyHTMLUseEditorColor()) {
-        pSyntaxer = SyntaxerManager::copy(syntaxer());
+    QSynedit::PSyntaxer pSyntaxer = syntaxer()->createInstance();
+    if (!mEditorSettings->copyHTMLUseEditorColor()) {        
         mColorManager->applySchemeToSyntaxer(pSyntaxer,mEditorSettings->copyHTMLColorScheme());
+    } else {
+        mColorManager->applySchemeToSyntaxer(pSyntaxer,mEditorSettings->colorScheme());
     }
     exporter.setSyntaxer(pSyntaxer);
     exporter.setOnFormatToken(std::bind(&Editor::onExportedFormatToken,
@@ -3192,7 +3192,7 @@ void Editor::showCompletion(const QString& preWord,bool autoComplete, CodeComple
             return;
         } else if (type==CodeCompletionType::KeywordsOnly ) {
             if (syntaxer()->language()==QSynedit::ProgrammingLanguage::GNU_Assembly
-                    && std::dynamic_pointer_cast<QSynedit::GASSyntaxer>(syntaxer())->prefixRegisterNames() )
+                    && std::dynamic_pointer_cast<const QSynedit::GASSyntaxer>(syntaxer())->prefixRegisterNames() )
                 word = getWordAtPosition(this,caretXY(),pBeginPos,pEndPos, WordPurpose::wpATTASMKeywords);
             else if (fileType() == FileType::NASM && attr->tokenType() == QSynedit::TokenType::Preprocessor)
                 word = getWordAtPosition(this,caretXY(),pBeginPos,pEndPos, WordPurpose::wpATTASMKeywords);
@@ -3472,16 +3472,17 @@ bool Editor::testInFunc(const CharPos& pos)
     int x=pos.ch;
     if (syntaxer()->language()!=QSynedit::ProgrammingLanguage::CPP)
         return false;
-    startParseLine(syntaxer().get(), y);
-    QSynedit::PSyntaxState state = syntaxer()->getState();
-    while(!syntaxer()->eol()) {
-        int start = syntaxer()->getTokenPos();
-        QString token = syntaxer()->getToken();
+    QSynedit::PSyntaxer pSyntaxer = syntaxer()->createInstance();
+    startParseLine(pSyntaxer.get(), y);
+    QSynedit::PSyntaxState state = pSyntaxer->getState();
+    while(!pSyntaxer->eol()) {
+        int start = pSyntaxer->getTokenPos();
+        QString token = pSyntaxer->getToken();
         int end = start + token.length();
         if (end>=x)
             break;
-        state = syntaxer()->getState();
-        syntaxer()->next();
+        state = pSyntaxer->getState();
+        pSyntaxer->next();
     }
 //    qDebug()<<state.parenthesisLevel;
     return state->parenthesisLevel>0;
@@ -3946,11 +3947,12 @@ void Editor::updateFunctionTip(bool showTip)
             currentChar = line.length();
         QStringList tokens;
         QList<int> positions;
-        startParseLine(syntaxer().get(), currentLine);
-        while(!syntaxer()->eol()) {
-            int start = syntaxer()->getTokenPos();
-            QString token = syntaxer()->getToken();
-            QSynedit::PTokenAttribute attr = syntaxer()->getTokenAttribute();
+        QSynedit::PSyntaxer pSyntaxer = syntaxer()->createInstance();
+        startParseLine(pSyntaxer.get(), currentLine);
+        while(!pSyntaxer->eol()) {
+            int start = pSyntaxer->getTokenPos();
+            QString token = pSyntaxer->getToken();
+            QSynedit::PTokenAttribute attr = pSyntaxer->getTokenAttribute();
             if (start>=currentChar)
                 break;
 
@@ -3961,7 +3963,7 @@ void Editor::updateFunctionTip(bool showTip)
                 tokens.append(token);
                 positions.append(start);
             }
-            syntaxer()->next();
+            pSyntaxer->next();
         }
         if (!foundFunctionStart) {
             for (int i=tokens.length()-1;i>=0;i--) {
@@ -4280,7 +4282,7 @@ void Editor::setFileType(FileType newFileType, bool parse)
     if (mFileType==newFileType)
         return;
     ParserLanguage oldLanguage = calcParserLanguage();
-    QSynedit::PSyntaxer oldSyntaxer = syntaxer();
+    QSynedit::PConstSyntaxer oldSyntaxer = syntaxer();
     mFileType = newFileType;
     setSyntaxer(SyntaxerManager::getSyntaxer(mFileType));
     setFormatter(SyntaxerManager::getFormatter(syntaxer()->language()));
@@ -4936,7 +4938,7 @@ QString Editor::getPreviousWordAtPositionForSuggestion(const CharPos &p, QSynedi
 
     int line = p.line;
     int ch = p.ch;
-    QSynedit::PSyntaxer pSyntaxer = SyntaxerManager::copy(syntaxer());
+    QSynedit::PSyntaxer pSyntaxer = syntaxer()->createInstance();
     if (line>=lineCount() || line<0)
         return "";
     QStringList tokenList;
@@ -5084,7 +5086,15 @@ void Editor::reformat(bool doReparse)
     }
     if (newContent.isEmpty())
         return;
+    QSet<int> breakpointsBackup = mBreakpointLines;
+    QSet<int> bookmarksBackup = mBookmarkLines;
     replaceContent(newContent, doReparse);
+    foreach(int line, breakpointsBackup) {
+        toggleBreakpoint(line);
+    }
+    foreach(int line, bookmarksBackup) {
+        toggleBookmark(line);
+    }
 }
 
 void Editor::replaceContent(const QString &newContent, bool doReparse)

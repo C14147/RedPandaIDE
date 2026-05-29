@@ -155,6 +155,8 @@ const QSet<QString> LuaSyntaxer::XMakeLibFunctions {
 
 };
 
+QSet<QString> LuaSyntaxer::mKeywordsCache;
+
 
 LuaSyntaxer::LuaSyntaxer(): Syntaxer()
 {
@@ -180,6 +182,15 @@ LuaSyntaxer::LuaSyntaxer(): Syntaxer()
                                                                             TokenType::String);
     addAttribute(mStringEscapeSequenceAttribute);
     LuaSyntaxer::resetState();
+
+    if (mKeywordsCache.isEmpty()) {
+        mKeywordsCache = Keywords;
+        mKeywordsCache.unite(StdLibFunctions);
+        if (mUseXMakeLibs)
+            mKeywordsCache.unite(XMakeLibFunctions);
+        foreach(const QString& s, StdLibTables.keys())
+            mKeywordsCache.insert(s);
+    }
 }
 
 const PTokenAttribute &LuaSyntaxer::invalidAttribute() const
@@ -968,29 +979,34 @@ void LuaSyntaxer::setUseXMakeLibs(bool newUseXMakeLibs)
     }
 }
 
-QString LuaSyntaxer::lineCommentSymbol()
+QString LuaSyntaxer::lineCommentSymbol() const
 {
     return "--";
 }
 
-QString LuaSyntaxer::blockCommentBeginSymbol()
+QString LuaSyntaxer::blockCommentBeginSymbol() const
 {
     return "--[";
 }
 
-QString LuaSyntaxer::blockCommentEndSymbol()
+QString LuaSyntaxer::blockCommentEndSymbol() const
 {
     return "]";
 }
 
-bool LuaSyntaxer::supportFolding()
+bool LuaSyntaxer::supportFolding() const
 {
     return true;
 }
 
-bool LuaSyntaxer::needsLineState()
+bool LuaSyntaxer::needsLineState() const
 {
     return false;
+}
+
+PSyntaxer LuaSyntaxer::createInstance() const
+{
+    return std::make_shared<LuaSyntaxer>();
 }
 
 const QSet<QString> &LuaSyntaxer::customTypeKeywords() const
@@ -1004,12 +1020,12 @@ void LuaSyntaxer::setCustomTypeKeywords(const QSet<QString> &newCustomTypeKeywor
     mKeywordsCache.clear();
 }
 
-bool LuaSyntaxer::supportBraceLevel()
+bool LuaSyntaxer::supportBraceLevel() const
 {
     return true;
 }
 
-QMap<QString, QSet<QString> > LuaSyntaxer::scopedKeywords()
+QMap<QString, QSet<QString> > LuaSyntaxer::scopedKeywords() const
 {
     return StdLibTables;
 }
@@ -1167,12 +1183,12 @@ void LuaSyntaxer::resetState()
     mAsmStart = false;
 }
 
-QString LuaSyntaxer::languageName()
+QString LuaSyntaxer::languageName() const
 {
     return "lua";
 }
 
-ProgrammingLanguage LuaSyntaxer::language()
+ProgrammingLanguage LuaSyntaxer::language() const
 {
     return ProgrammingLanguage::LUA;
 }
@@ -1194,17 +1210,10 @@ bool LuaSyntaxer::isIdentStartChar(const QChar &ch) const
     return ch=='_' || ch.isLetter();
 }
 
-QSet<QString> LuaSyntaxer::keywords() {
-    if (mKeywordsCache.isEmpty()) {
-        mKeywordsCache = Keywords;
-        mKeywordsCache.unite(mCustomTypeKeywords);
-        mKeywordsCache.unite(StdLibFunctions);
-        if (mUseXMakeLibs)
-            mKeywordsCache.unite(XMakeLibFunctions);
-        foreach(const QString& s, StdLibTables.keys())
-            mKeywordsCache.insert(s);
-    }
-    return mKeywordsCache;
+QSet<QString> LuaSyntaxer::keywords() const {
+    QSet<QString> result = mKeywordsCache;
+    result.unite(mCustomTypeKeywords);
+    return result;
 }
 
 QString LuaSyntaxer::foldString(QString endLine)

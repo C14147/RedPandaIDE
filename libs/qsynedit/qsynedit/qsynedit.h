@@ -25,6 +25,7 @@
 #include <QTimer>
 #include <QElapsedTimer>
 #include <QWidget>
+#include <QFile>
 #include "gutter.h"
 #include "codefolding.h"
 #include "types.h"
@@ -394,7 +395,7 @@ public:
     bool modified() const;
     void setModified(bool Value, bool skipUndo=false);
 
-    PSyntaxer syntaxer() const;
+    const PConstSyntaxer syntaxer() const;
     void setSyntaxer(const PSyntaxer &syntaxer);
 
     bool useCodeFolding() const;
@@ -402,10 +403,12 @@ public:
 
     CodeFoldingOptions & codeFolding();
 
+    void saveToFile(QFile &file, const QByteArray& encoding, QByteArray& realEncoding) const;
     QString displayLineText();
     QString lineText() const;
     QString lineText(int line) const;
     size_t lineSeq(int line) const;
+    PSyntaxState lineSyntaxState(int line) const;
 
     bool findLineTextBySeq(size_t lineSeq, QString& text) const;
 

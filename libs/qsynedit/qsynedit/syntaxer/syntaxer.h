@@ -155,25 +155,27 @@ public:
     virtual void setState(const PSyntaxState& rangeState) = 0;
     virtual void setLine(int lineNumber, const QString& newLine, size_t lineSeq) = 0;
     virtual void resetState() = 0;
-    virtual QSet<QString> keywords();
-    QSet<QString> keywords(const QString& prefix);
-    virtual QMap<QString,QSet<QString>> scopedKeywords();
+    virtual QSet<QString> keywords() const;
+    QSet<QString> keywords(const QString& prefix) const;
+    virtual QMap<QString,QSet<QString>> scopedKeywords() const;
 
-    virtual QString languageName() = 0;
-    virtual ProgrammingLanguage language() = 0;
+    virtual QString languageName() const = 0 ;
+    virtual ProgrammingLanguage language() const = 0 ;
 
     virtual QString foldString(QString startLine);
 
-    virtual bool supportBraceLevel();
+    virtual bool supportBraceLevel() const;
     virtual bool isSpaceChar(const QChar& ch) const;
     virtual bool isWordBreakChar(const QChar& ch) const;
     virtual PTokenAttribute getAttribute(const QString& name) const;
-    virtual QString lineCommentSymbol();
-    virtual QString blockCommentBeginSymbol();
-    virtual QString blockCommentEndSymbol();
+    virtual QString lineCommentSymbol() const;
+    virtual QString blockCommentBeginSymbol() const;
+    virtual QString blockCommentEndSymbol() const;
 
-    virtual bool supportFolding() = 0;
-    virtual bool needsLineState() = 0;
+    virtual bool supportFolding() const = 0;
+    virtual bool needsLineState() const = 0;
+
+    virtual std::shared_ptr<Syntaxer> createInstance() const = 0;
 
 
 protected:
@@ -187,15 +189,14 @@ protected:
     void addAttribute(PTokenAttribute attribute) { mAttributes[attribute->name()]=attribute; }
     void clearAttributes() { mAttributes.clear(); }
     virtual int attributesCount() const { return mAttributes.size(); }
-    void resetKeywordsCache() { mFilteredKeywordsCache.clear(); };
 
 private:
     QMap<QString,PTokenAttribute> mAttributes;
     QSet<QChar> mWordBreakChars;
-    QMap<QString, QSet<QString>> mFilteredKeywordsCache;
 };
 
 using PSyntaxer = std::shared_ptr<Syntaxer>;
+using PConstSyntaxer = std::shared_ptr<const Syntaxer>;
 using SyntaxerList = QVector<PSyntaxer>;
 }
 #endif // QSYNEDIT_SYNTAXER_H

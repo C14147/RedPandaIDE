@@ -93,6 +93,11 @@ const PTokenAttribute &ASMSyntaxer::octAttribute() const
     return mOctAttribute;
 }
 
+PSyntaxer ASMSyntaxer::createInstance() const
+{
+    return std::make_shared<ASMSyntaxer>();
+}
+
 const PTokenAttribute &ASMSyntaxer::hexAttribute() const
 {
     return mHexAttribute;
@@ -1546,12 +1551,12 @@ bool ASMSyntaxer::eol() const
     return mTokenID == TokenId::Null;
 }
 
-QString ASMSyntaxer::languageName()
+QString ASMSyntaxer::languageName() const
 {
     return "asm";
 }
 
-ProgrammingLanguage ASMSyntaxer::language()
+ProgrammingLanguage ASMSyntaxer::language() const
 {
     return ProgrammingLanguage::Assembly;
 }
@@ -1712,17 +1717,17 @@ void ASMSyntaxer::resetState()
     mHasTrailingSpaces = false;
 }
 
-bool ASMSyntaxer::supportFolding()
+bool ASMSyntaxer::supportFolding() const
 {
     return false;
 }
 
-bool ASMSyntaxer::needsLineState()
+bool ASMSyntaxer::needsLineState() const
 {
     return true;
 }
 
-QSet<QString> ASMSyntaxer::keywords()
+QSet<QString> ASMSyntaxer::keywords() const
 {
     return InstructionNames;
 }
@@ -1737,18 +1742,18 @@ const PTokenAttribute &ASMSyntaxer::labelAttribute() const
     return mLabelAttribute;
 }
 
-QString ASMSyntaxer::lineCommentSymbol()
+QString ASMSyntaxer::lineCommentSymbol() const
 {
     return "#";
 }
 
 
-QString ASMSyntaxer::blockCommentBeginSymbol()
+QString ASMSyntaxer::blockCommentBeginSymbol() const
 {
     return "/*";
 }
 
-QString ASMSyntaxer::blockCommentEndSymbol()
+QString ASMSyntaxer::blockCommentEndSymbol() const
 {
     return "*/";
 }

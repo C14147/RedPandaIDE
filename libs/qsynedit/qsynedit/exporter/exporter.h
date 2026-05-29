@@ -33,6 +33,8 @@ class Document;
 using PDocument = std::shared_ptr<Document>;
 class Syntaxer;
 using PSyntaxer = std::shared_ptr<Syntaxer>;
+using PConstSyntaxer = std::shared_ptr<const Syntaxer>;
+
 class TokenAttribute;
 using PTokenAttribute = std::shared_ptr<TokenAttribute>;
 

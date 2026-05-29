@@ -78,12 +78,25 @@ const QSet<QString> GASSyntaxer::Directives {
     ".zero",
 };
 
+QSet<QString> GASSyntaxer::mNonprefixedKeywords;
+QSet<QString> GASSyntaxer::mPrefixedKeywords;
+
 GASSyntaxer::GASSyntaxer(): ASMSyntaxer(),
     mDirectiveSyntaxLine{-1},
     mSyntaxMode{SyntaxMode::ATT},
     mPrefixRegisterNames{true},
     mThisLineHasSyntaxDirective{false}
 {
+    if (mPrefixedKeywords.isEmpty()) {
+        mPrefixedKeywords = InstructionNames;
+        mPrefixedKeywords += Directives;
+        mPrefixedKeywords += PrefixedRegisters;
+    }
+    if (mNonprefixedKeywords.isEmpty()) {
+        mNonprefixedKeywords = InstructionNames;
+        mNonprefixedKeywords += Directives;
+        mNonprefixedKeywords += Registers;
+    }
 }
 
 bool GASSyntaxer::isCommentStartChar(QChar ch)
@@ -110,6 +123,11 @@ GASSyntaxer::SyntaxMode GASSyntaxer::syntaxMode() const
 void GASSyntaxer::setSyntaxMode(SyntaxMode newSyntaxMode)
 {
     mSyntaxMode = newSyntaxMode;
+}
+
+PSyntaxer GASSyntaxer::createInstance() const
+{
+    return std::make_shared<GASSyntaxer>();
 }
 
 bool GASSyntaxer::prefixRegisterNames() const
@@ -153,7 +171,6 @@ void GASSyntaxer::setPrefixRegisterNames(bool prefix)
 {
     if (prefix != mPrefixRegisterNames) {
         mPrefixRegisterNames = prefix;
-        resetKeywordsCache();
     }
 }
 
@@ -164,32 +181,22 @@ void GASSyntaxer::setLine(int lineNumber, const QString &newLine, size_t lineSeq
     ASMSyntaxer::setLine(lineNumber, newLine, lineSeq);
 }
 
-QString GASSyntaxer::languageName()
+QString GASSyntaxer::languageName() const
 {
     return "GNU Assembly";
 }
 
-ProgrammingLanguage GASSyntaxer::language()
+ProgrammingLanguage GASSyntaxer::language() const
 {
     return ProgrammingLanguage::GNU_Assembly;
 }
 
-QSet<QString> GASSyntaxer::keywords()
+QSet<QString> GASSyntaxer::keywords() const
 {
     if (mPrefixRegisterNames) {
-        if (mPrefixedKeywordCache.isEmpty()) {
-            mPrefixedKeywordCache = InstructionNames;
-            mPrefixedKeywordCache += Directives;
-            mPrefixedKeywordCache += PrefixedRegisters;
-        }
-        return mPrefixedKeywordCache;
+        return mPrefixedKeywords;
     }
-    if (mNonprefixedKeywordCache.isEmpty()) {
-        mNonprefixedKeywordCache = InstructionNames;
-        mNonprefixedKeywordCache += Directives;
-        mNonprefixedKeywordCache += Registers;
-    }
-    return mNonprefixedKeywordCache;
+    return mNonprefixedKeywords;
 }
 
 }

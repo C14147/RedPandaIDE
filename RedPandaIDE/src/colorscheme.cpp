@@ -755,7 +755,7 @@ void ColorManager::updateStatementColors(std::shared_ptr<QHash<StatementKind, st
     }
 }
 
-void ColorManager::applySchemeToSyntaxer(QSynedit::PSyntaxer syntaxer, const QString &schemeName)
+void ColorManager::applySchemeToSyntaxer(QSynedit::PConstSyntaxer syntaxer, const QString &schemeName)
 {
     if (!syntaxer)
         return;

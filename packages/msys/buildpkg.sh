@@ -13,15 +13,14 @@ mkdir -p "$TMP_FOLDER"
 #   - replace '-' with '.'
 # fallback: 0.0.r3456.g789abcd
 VERSION=$(git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g') || VERSION="0.0.r$(git rev-list HEAD --count).g$(git rev-parse --short HEAD)"
-sed "s/__VERSION__/$VERSION/g" packages/archlinux/PKGBUILD.in >"$TMP_FOLDER/PKGBUILD"
+sed "s/__VERSION__/$VERSION/g" packages/msys/PKGBUILD.in >"$TMP_FOLDER/PKGBUILD"
 
 git archive --prefix="RedPanda-CPP/" -o "$TMP_FOLDER/RedPanda-CPP.tar.gz" HEAD
-cp packages/archlinux/compiler_hint.lua "$TMP_FOLDER/"
 
 (
   cd "$TMP_FOLDER"
-  makepkg -s --noconfirm
+  makepkg-mingw -s --noconfirm
 )
 
 mkdir -p dist
-cp "$TMP_FOLDER"/redpanda-cpp-*.pkg.tar.zst dist/
+cp /tmp/redpanda-cpp/mingw-w64-*-redpanda-cpp-*.pkg.tar.zst dist/

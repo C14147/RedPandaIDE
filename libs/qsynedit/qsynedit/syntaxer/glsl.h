@@ -174,16 +174,17 @@ public:
     void setState(const PSyntaxState& rangeState) override;
     void resetState() override;
 
-    QString languageName() override;
-    ProgrammingLanguage language() override;
+    QString languageName() const override;
+    ProgrammingLanguage language() const override;
     PSyntaxState getState() const override;
-    QSet<QString> keywords() override;
-    bool supportBraceLevel() override;
-    QString lineCommentSymbol() override;
-    QString blockCommentBeginSymbol() override;
-    QString blockCommentEndSymbol() override;
-    bool supportFolding() override;
-    bool needsLineState() override;
+    QSet<QString> keywords() const override;
+    bool supportBraceLevel() const override;
+    QString lineCommentSymbol() const override;
+    QString blockCommentBeginSymbol() const override;
+    QString blockCommentEndSymbol() const override;
+    bool supportFolding() const override;
+    bool needsLineState() const override;
+    virtual PSyntaxer createInstance() const override;
 };
 
 }

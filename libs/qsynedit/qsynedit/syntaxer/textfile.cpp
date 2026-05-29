@@ -54,12 +54,12 @@ bool TextSyntaxer::eol() const
     return mTokenID == TokenId::Null;
 }
 
-QString TextSyntaxer::languageName()
+QString TextSyntaxer::languageName() const
 {
     return "textfile";
 }
 
-ProgrammingLanguage TextSyntaxer::language()
+ProgrammingLanguage TextSyntaxer::language() const
 {
     return ProgrammingLanguage::Textfile;
 }
@@ -140,24 +140,24 @@ void TextSyntaxer::resetState()
     mHasTrailingSpaces = false;
 }
 
-QSet<QString> TextSyntaxer::keywords()
-{
-    return QSet<QString>();
-}
-
-QString TextSyntaxer::lineCommentSymbol()
+QString TextSyntaxer::lineCommentSymbol() const
 {
     return "";
 }
 
-bool TextSyntaxer::supportFolding()
+bool TextSyntaxer::supportFolding() const
 {
     return false;
 }
 
-bool TextSyntaxer::needsLineState()
+bool TextSyntaxer::needsLineState() const
 {
     return false;
+}
+
+PSyntaxer TextSyntaxer::createInstance() const
+{
+    return std::make_shared<TextSyntaxer>();
 }
 
 }

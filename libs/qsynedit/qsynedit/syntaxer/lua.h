@@ -130,7 +130,7 @@ private:
     bool mUseXMakeLibs;
 
     QSet<QString> mCustomTypeKeywords;
-    QSet<QString> mKeywordsCache;
+    static QSet<QString> mKeywordsCache;
 
     PTokenAttribute mInvalidAttribute;
     PTokenAttribute mNumberAttribute;
@@ -153,25 +153,25 @@ public:
     void setState(const PSyntaxState& syntaxState) override;
     void resetState() override;
 
-    QString languageName() override;
-    ProgrammingLanguage language() override;
+    QString languageName() const override;
+    ProgrammingLanguage language() const override;
     PSyntaxState getState() const override;
     bool isIdentChar(const QChar &ch) const override;
     bool isIdentStartChar(const QChar& ch) const override;
-    QSet<QString> keywords() override;
+    QSet<QString> keywords() const override;
     QString foldString(QString startLine) override;
     const QSet<QString> &customTypeKeywords() const;
     void setCustomTypeKeywords(const QSet<QString> &newCustomTypeKeywords);
-    bool supportBraceLevel() override;
-    QMap<QString, QSet<QString> > scopedKeywords() override;
+    bool supportBraceLevel() const override;
+    QMap<QString, QSet<QString> > scopedKeywords() const override;
     bool useXMakeLibs() const;
     void setUseXMakeLibs(bool newUseXMakeLibs);
-    QString lineCommentSymbol() override;
-    QString blockCommentBeginSymbol() override;
-    QString blockCommentEndSymbol() override;
-    bool supportFolding() override;
-    bool needsLineState() override;
-
+    QString lineCommentSymbol() const override;
+    QString blockCommentBeginSymbol() const override;
+    QString blockCommentEndSymbol() const override;
+    bool supportFolding() const override;
+    bool needsLineState() const override;
+    virtual PSyntaxer createInstance() const override;
 };
 
 }

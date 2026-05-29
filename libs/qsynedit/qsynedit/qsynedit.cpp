@@ -251,7 +251,7 @@ int QSynEdit::maxScrollWidth() const
     if (maxWidth < 0)
         return -1;
     if (useCodeFolding())
-        maxWidth += stringWidth(syntaxer()->foldString(""),maxWidth);
+        maxWidth += stringWidth(mSyntaxer->foldString(""),maxWidth);
     if (mOptions.testFlag(EditorOption::ScrollPastEol))
         return std::max(maxWidth-2*mCharWidth, 0);
     else
@@ -288,17 +288,18 @@ bool QSynEdit::getTokenAttriAtRowCol(const CharPos &pos, QString &token, int &st
         lineText = mDocument->getLine(lineIdx);
         chIdx = pos.ch;
         if ((chIdx >= 0) && (chIdx < lineText.length())) {
-            startParseLine(mSyntaxer.get(), lineIdx, lineText);
-            while (!mSyntaxer->eol()) {
-                start = mSyntaxer->getTokenPos();
-                token = mSyntaxer->getToken();
-                syntaxState = mSyntaxer->getState();
+            PSyntaxer syntaxer = mSyntaxer->createInstance();
+            startParseLine(syntaxer.get(), lineIdx, lineText);
+            while (!syntaxer->eol()) {
+                start = syntaxer->getTokenPos();
+                token = syntaxer->getToken();
+                syntaxState = syntaxer->getState();
                 endPos = start + token.length();
                 if ((chIdx >= start) && (chIdx < endPos)) {
-                    attri = mSyntaxer->getTokenAttribute();
+                    attri = syntaxer->getTokenAttribute();
                     return true;
                 }
-                mSyntaxer->next();
+                syntaxer->next();
             }
         }
     }
@@ -313,12 +314,13 @@ void QSynEdit::getTokenAttriList(int line, QStringList &lstToken, QList<int> &ls
     lstToken.clear();
     lstPos.clear();
     lstAttri.clear();
-    startParseLine(mSyntaxer.get(), line);
-    while (!mSyntaxer->eol()) {
-        lstPos.append(mSyntaxer->getTokenPos());
-        lstToken.append(mSyntaxer->getToken());
-        lstAttri.append(mSyntaxer->getTokenAttribute());
-        mSyntaxer->next();
+    PSyntaxer syntaxer = mSyntaxer->createInstance();
+    startParseLine(syntaxer.get(), line);
+    while (!syntaxer->eol()) {
+        lstPos.append(syntaxer->getTokenPos());
+        lstToken.append(syntaxer->getToken());
+        lstAttri.append(syntaxer->getTokenAttribute());
+        syntaxer->next();
     }
 }
 
@@ -328,10 +330,11 @@ QSet<int> QSynEdit::getTokenBorders(int line) const
     QSet<int> result;
     result.insert(0);
     result.insert(mDocument->getLine(line).length());
-    startParseLine(mSyntaxer.get(), line);
-    while (!mSyntaxer->eol()) {
-        result.insert(mSyntaxer->getTokenPos());
-        mSyntaxer->next();
+    PSyntaxer syntaxer = mSyntaxer->createInstance();
+    startParseLine(syntaxer.get(), line);
+    while (!syntaxer->eol()) {
+        result.insert(syntaxer->getTokenPos());
+        syntaxer->next();
     }
     return result;
 }
@@ -416,6 +419,7 @@ CharPos QSynEdit::getMatchingBracket(const CharPos &pos)
     if (!validInDoc(pos))
         return CharPos{-1,-1};
 
+    PSyntaxer syntaxer = mSyntaxer->createInstance();
     // get char at caret
     QChar testCh = charAt(pos);
     // is it one of the recognized brackets?
@@ -432,24 +436,24 @@ CharPos QSynEdit::getMatchingBracket(const CharPos &pos)
             if (i%2==1) {
                 //search backward
                 for (int line = pos.line;line >= 0;line--) {
-                    startParseLine(mSyntaxer.get(), line);
+                    startParseLine(syntaxer.get(), line);
                     QList<QChar> bracketsFound;
                     QList<int> bracketsPos;
-                    while(!mSyntaxer->eol()) {
-                        if (line == pos.line && mSyntaxer->getTokenPos() >= pos.ch) {
+                    while(!syntaxer->eol()) {
+                        if (line == pos.line && syntaxer->getTokenPos() >= pos.ch) {
                             break;
                         }
-                        TokenType tokenType = mSyntaxer->getTokenAttribute()->tokenType();
+                        TokenType tokenType = syntaxer->getTokenAttribute()->tokenType();
                         if ( tokenType != TokenType::String
                              && tokenType != TokenType::Character
                              && tokenType != TokenType::String ) {
-                            if (mSyntaxer->getToken() == bracketOpen
-                                    || mSyntaxer->getToken() == bracketClose) {
-                               bracketsFound.append(mSyntaxer->getToken()[0]);
-                               bracketsPos.append(mSyntaxer->getTokenPos());
+                            if (syntaxer->getToken() == bracketOpen
+                                    || syntaxer->getToken() == bracketClose) {
+                               bracketsFound.append(syntaxer->getToken()[0]);
+                               bracketsPos.append(syntaxer->getTokenPos());
                             }
                         }
-                        mSyntaxer->next();
+                        syntaxer->next();
                     }
                     for (int i=bracketsFound.length()-1;i>=0;i--) {
                         if (bracketsFound[i] == bracketOpen)
@@ -464,30 +468,30 @@ CharPos QSynEdit::getMatchingBracket(const CharPos &pos)
             } else {
                 // search until end of line
                 if (pos.line == 0) {
-                    mSyntaxer->resetState();
+                    syntaxer->resetState();
                 } else {
-                    mSyntaxer->setState(mDocument->getSyntaxState(pos.line-1));
+                    syntaxer->setState(mDocument->getSyntaxState(pos.line-1));
                 }
                 for (int line=pos.line;line<mDocument->count();line++) {
-                    mSyntaxer->setLine(line, mDocument->getLine(line), mDocument->getLineSeq(line));
-                    while(!mSyntaxer->eol()) {
-                        TokenType tokenType = mSyntaxer->getTokenAttribute()->tokenType();
-                        if (line == pos.line && mSyntaxer->getTokenPos() <= pos.ch) {
+                    syntaxer->setLine(line, mDocument->getLine(line), mDocument->getLineSeq(line));
+                    while(!syntaxer->eol()) {
+                        TokenType tokenType = syntaxer->getTokenAttribute()->tokenType();
+                        if (line == pos.line && syntaxer->getTokenPos() <= pos.ch) {
                             goto MOVE_NEXT_2;
                         }
                         if ( tokenType != TokenType::String
                              && tokenType != TokenType::Character
                              && tokenType != TokenType::String ) {
-                            if (mSyntaxer->getToken() == bracketOpen)
+                            if (syntaxer->getToken() == bracketOpen)
                                 ++bracketsLevel;
-                            else if (mSyntaxer->getToken() == bracketClose) {
+                            else if (syntaxer->getToken() == bracketClose) {
                                 --bracketsLevel;
                                 if (bracketsLevel == 0)
-                                    return CharPos{mSyntaxer->getTokenPos(), line};
+                                    return CharPos{syntaxer->getTokenPos(), line};
                             }
                         }
 MOVE_NEXT_2:
-                        mSyntaxer->next();
+                        syntaxer->next();
                     }
                 }
             }
@@ -2928,18 +2932,15 @@ void QSynEdit::endMergeCaretAndSelectionStatusChange()
 PSyntaxState QSynEdit::calcSyntaxStateAtLine(int line, const QString &newLineText, bool handleLastBackSlash) const
 {
     bool oldHandleLastBackSlash = true;
-    if (mSyntaxer->language() == ProgrammingLanguage::CPP) {
-        std::shared_ptr<QSynedit::CppSyntaxer> cppSyntaxer = std::dynamic_pointer_cast<QSynedit::CppSyntaxer>(mSyntaxer);
+    PSyntaxer syntaxer = mSyntaxer->createInstance();
+    if (syntaxer->language() == ProgrammingLanguage::CPP) {
+        std::shared_ptr<QSynedit::CppSyntaxer> cppSyntaxer = std::dynamic_pointer_cast<QSynedit::CppSyntaxer>(syntaxer);
         oldHandleLastBackSlash = cppSyntaxer->handleLastBackSlash();
         cppSyntaxer->setHandleLastBackSlash(handleLastBackSlash);
     }
-    startParseLine(mSyntaxer.get(), line, newLineText);
-    if (mSyntaxer->language() == ProgrammingLanguage::CPP) {
-        std::shared_ptr<QSynedit::CppSyntaxer> cppSyntaxer = std::dynamic_pointer_cast<QSynedit::CppSyntaxer>(mSyntaxer);
-        cppSyntaxer->setHandleLastBackSlash(oldHandleLastBackSlash);
-    }
-    syntaxer()->nextToEol();
-    return syntaxer()->getState();
+    startParseLine(syntaxer.get(), line, newLineText);
+    syntaxer->nextToEol();
+    return syntaxer->getState();
 }
 
 void QSynEdit::invalidateAllNonTempLineWidth()
@@ -4872,6 +4873,11 @@ CodeFoldingOptions &QSynEdit::codeFolding()
     return mCodeFolding;
 }
 
+void QSynEdit::saveToFile(QFile &file, const QByteArray &encoding, QByteArray &realEncoding) const
+{
+    mDocument->saveToFile(file,encoding,realEncoding);
+}
+
 QString QSynEdit::displayLineText()
 {
     return getDisplayStringAtLine(mCaretY);
@@ -4892,6 +4898,11 @@ size_t QSynEdit::lineSeq(int line) const
     return mDocument->getLineSeq(line);
 }
 
+PSyntaxState QSynEdit::lineSyntaxState(int line) const
+{
+    return mDocument->getSyntaxState(line);
+}
+
 bool QSynEdit::findLineTextBySeq(size_t lineSeq,  QString& text) const
 {
     PDocumentLine line = mDocument->findLineBySeq(lineSeq);
@@ -4903,7 +4914,7 @@ bool QSynEdit::findLineTextBySeq(size_t lineSeq,  QString& text) const
     return true;
 }
 
-PSyntaxer QSynEdit::syntaxer() const
+const PConstSyntaxer QSynEdit::syntaxer() const
 {
     return mSyntaxer;
 }
@@ -6848,14 +6859,14 @@ void QSynEdit::internalSetSelEnd(const CharPos &value)
             mSelectionEnd = value;
             invalidateLines(
                         std::min(mSelectionBegin.line, std::min(mSelectionEnd.line, oldBlockEnd.line)),
-                        std::max(mSelectionBegin.line, std::max(mSelectionEnd.line, oldBlockEnd.line)));
+                        std::max(mSelectionBegin.line, std::max(mSelectionEnd.line, oldBlockEnd.line))+1);
         } else {
             CharPos oldBlockEnd = mSelectionEnd;
             mSelectionEnd = value;
             if (mActiveSelectionMode != SelectionMode::Column || mSelectionBegin.ch != mSelectionEnd.ch) {
                 invalidateLines(
                             std::min(mSelectionEnd.line, oldBlockEnd.line),
-                            std::max(mSelectionEnd.line, oldBlockEnd.line));
+                            std::max(mSelectionEnd.line, oldBlockEnd.line)+1);
             }
         }
         setStatusChanged(StatusChange::Selection);

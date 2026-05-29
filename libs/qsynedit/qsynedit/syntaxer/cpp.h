@@ -248,27 +248,28 @@ public:
     void setState(const PSyntaxState& rangeState) override;
     void resetState() override;
 
-    QString languageName() override;
-    ProgrammingLanguage language() override;
+    QString languageName() const override;
+    ProgrammingLanguage language() const override;
 
     PSyntaxState getState() const override;
     bool isIdentChar(const QChar &ch) const override;
     bool isIdentStartChar(const QChar &ch) const override;
-    QSet<QString> keywords() override;
+    QSet<QString> keywords() const override;
     QString foldString(QString startLine) override;
     const QSet<QString> &customTypeKeywords() const;
     void setCustomTypeKeywords(const QSet<QString> &newCustomTypeKeywords);
 
-    bool supportBraceLevel() override;
+    bool supportBraceLevel() const override;
 
-    QString lineCommentSymbol() override;
-    QString blockCommentBeginSymbol() override;
-    QString blockCommentEndSymbol() override;
-    virtual bool supportFolding() override;
-    virtual bool needsLineState() override;
+    QString lineCommentSymbol() const override;
+    QString blockCommentBeginSymbol() const override;
+    QString blockCommentEndSymbol() const override;
+    virtual bool supportFolding() const override;
+    virtual bool needsLineState() const override;
     bool handleLastBackSlash() const;
     void setHandleLastBackSlash(bool newHandleLastBackSlash);
     bool isSpaceChar(const QChar& ch) const override { return ch == ' ' || ch == '\t'; }
+    virtual PSyntaxer createInstance() const override;
 };
 
 }

@@ -104,8 +104,8 @@ protected:
 public:
     bool eol() const override;
 
-    QString languageName() override;
-    ProgrammingLanguage language() override;
+    QString languageName() const override;
+    ProgrammingLanguage language() const override;
     QString getToken() const override;
     const PTokenAttribute &getTokenAttribute() const override;
     int getTokenPos() override;
@@ -118,16 +118,17 @@ public:
     void setState(const PSyntaxState& rangeState) override;
     void resetState() override;
 
-    bool supportFolding() override;
-    bool needsLineState() override;
-    QSet<QString> keywords() override;
+    bool supportFolding() const override;
+    bool needsLineState() const override;
+    QSet<QString> keywords() const override;
 
-    QString lineCommentSymbol() override;
-    QString blockCommentBeginSymbol() override;
-    QString blockCommentEndSymbol() override;
+    QString lineCommentSymbol() const override;
+    QString blockCommentBeginSymbol() const override;
+    QString blockCommentEndSymbol() const override;
     const PTokenAttribute &preprocessDirectiveAttribute() const;
     const PTokenAttribute &hexAttribute() const;
     const PTokenAttribute &octAttribute() const;
+    virtual PSyntaxer createInstance() const override;
 };
 
 }

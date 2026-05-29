@@ -39,8 +39,8 @@ private:
     SyntaxMode mSyntaxMode;
     bool mPrefixRegisterNames;
     bool mThisLineHasSyntaxDirective;
-    QSet<QString> mNonprefixedKeywordCache;
-    QSet<QString> mPrefixedKeywordCache;
+    static QSet<QString> mNonprefixedKeywords;
+    static QSet<QString> mPrefixedKeywords;
 protected:
     bool isCommentStartChar(QChar ch) override;
     void procNull() override;
@@ -50,12 +50,13 @@ protected:
     void setPrefixRegisterNames(bool prefix);
 public:
     void setLine(int lineNumber, const QString &newLine, size_t lineSeq) override;
-    QString languageName() override;
-    ProgrammingLanguage language() override;
-    QSet<QString> keywords() override;
+    QString languageName() const override;
+    ProgrammingLanguage language() const override;
+    QSet<QString> keywords() const override;
     bool prefixRegisterNames() const;
     SyntaxMode syntaxMode() const;
     void setSyntaxMode(SyntaxMode newSyntaxMode);
+    virtual PSyntaxer createInstance() const override;
 };
 
 }

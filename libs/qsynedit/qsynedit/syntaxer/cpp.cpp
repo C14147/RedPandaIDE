@@ -1478,6 +1478,11 @@ void CppSyntaxer::setHandleLastBackSlash(bool newHandleLastBackSlash)
     mHandleLastBackSlash = newHandleLastBackSlash;
 }
 
+PSyntaxer CppSyntaxer::createInstance() const
+{
+    return std::make_shared<CppSyntaxer>();
+}
+
 const QSet<QString> &CppSyntaxer::customTypeKeywords() const
 {
     return mCustomTypeKeywords;
@@ -1488,32 +1493,32 @@ void CppSyntaxer::setCustomTypeKeywords(const QSet<QString> &newCustomTypeKeywor
     mCustomTypeKeywords = newCustomTypeKeywords;
 }
 
-bool CppSyntaxer::supportBraceLevel()
+bool CppSyntaxer::supportBraceLevel() const
 {
     return true;
 }
 
-QString CppSyntaxer::lineCommentSymbol()
+QString CppSyntaxer::lineCommentSymbol() const
 {
     return "//";
 }
 
-QString CppSyntaxer::blockCommentBeginSymbol()
+QString CppSyntaxer::blockCommentBeginSymbol() const
 {
     return "/*";
 }
 
-QString CppSyntaxer::blockCommentEndSymbol()
+QString CppSyntaxer::blockCommentEndSymbol() const
 {
     return "*/";
 }
 
-bool CppSyntaxer::supportFolding()
+bool CppSyntaxer::supportFolding() const
 {
     return true;
 }
 
-bool CppSyntaxer::needsLineState()
+bool CppSyntaxer::needsLineState() const
 {
     return true;
 }
@@ -1818,12 +1823,12 @@ void CppSyntaxer::resetState()
     mRange.stateBeforeLastToken = RangeState::rsUnknown;
 }
 
-QString CppSyntaxer::languageName()
+QString CppSyntaxer::languageName() const
 {
     return "cpp";
 }
 
-ProgrammingLanguage CppSyntaxer::language()
+ProgrammingLanguage CppSyntaxer::language() const
 {
     return ProgrammingLanguage::CPP;
 }
@@ -1847,7 +1852,7 @@ bool CppSyntaxer::isIdentStartChar(const QChar &ch) const
     return ch=='_' || ch.isLetter();
 }
 
-QSet<QString> CppSyntaxer::keywords()
+QSet<QString> CppSyntaxer::keywords() const
 {
     QSet<QString> set=Keywords;
     set.unite(mCustomTypeKeywords);

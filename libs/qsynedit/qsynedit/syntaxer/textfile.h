@@ -63,8 +63,8 @@ private:
 public:
     bool eol() const override;
 
-    QString languageName() override;
-    ProgrammingLanguage language() override;
+    QString languageName() const override;
+    ProgrammingLanguage language() const override;
     QString getToken() const override;
     const PTokenAttribute &getTokenAttribute() const override;
     int getTokenPos() override;
@@ -75,11 +75,10 @@ public:
     PSyntaxState getState() const override;
     void setState(const PSyntaxState& rangeState) override;
     void resetState() override;
-    QSet<QString> keywords() override;
-    QString lineCommentSymbol() override;
-    bool supportFolding() override;
-    bool needsLineState() override;
-
+    QString lineCommentSymbol() const override;
+    bool supportFolding() const override;
+    bool needsLineState() const override;
+    virtual PSyntaxer createInstance() const override;
 };
 
 }

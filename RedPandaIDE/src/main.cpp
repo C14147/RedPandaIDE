@@ -131,7 +131,7 @@ bool WindowLogoutEventFilter::nativeEventFilter(const QByteArray & /*eventType*/
             sharedMemory.detach();
         }
         return true;
-    }
+        }
     }
     return false;
 }
@@ -163,10 +163,8 @@ bool sendFilesToInstance() {
 
 BlockWheelEventFiler::BlockWheelEventFiler(QObject* parent):QObject(parent) {}
 
-BlockWheelEventFiler::~BlockWheelEventFiler()
-{
+BlockWheelEventFiler::~BlockWheelEventFiler() {}
 
-} ;
 bool BlockWheelEventFiler::eventFilter(QObject *watched, QEvent *event)
 {
     //Prevent QComboBox wheel event
@@ -182,7 +180,7 @@ bool BlockWheelEventFiler::eventFilter(QObject *watched, QEvent *event)
 QString getSettingFilename(const QString& filepath, bool& firstRun) {
     QString filename;
     if (filepath.isEmpty()) {
-        if (isGreenEdition()) {
+        if (usePortableConfigPath()) {
             filename = includeTrailingPathDelimiter(QApplication::applicationDirPath()) +
                     "config/"  + APP_SETTSINGS_FILENAME;
         } else {
@@ -259,6 +257,9 @@ int main(int argc, char *argv[])
 #endif
 
     QApplication app(argc, argv);
+#if QT_VERSION_MAJOR >= 6
+    app.setAttribute(Qt::AA_DontUseNativeDialogs);
+#endif
 #if QT_VERSION_MAJOR < 6
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif
@@ -304,7 +305,7 @@ int main(int argc, char *argv[])
     QTranslator trans,transQt,transUtils;
     bool firstRun;
     QString settingFilename = getSettingFilename(QString(), firstRun);
-    if (!isGreenEdition()) {
+    if (!usePortableConfigPath()) {
         QStringList documentLocations = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
         QDir::setCurrent(documentLocations.first());
     }

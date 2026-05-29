@@ -1399,12 +1399,12 @@ void GLSLSyntaxer::resetState()
     mRange.hasTrailingSpaces = false;
 }
 
-QString GLSLSyntaxer::languageName()
+QString GLSLSyntaxer::languageName() const
 {
     return "glsl";
 }
 
-ProgrammingLanguage GLSLSyntaxer::language()
+ProgrammingLanguage GLSLSyntaxer::language() const
 {
     return ProgrammingLanguage::GLSL;
 }
@@ -1416,38 +1416,43 @@ PSyntaxState GLSLSyntaxer::getState() const
     return pSyntaxState;
 }
 
-QSet<QString> GLSLSyntaxer::keywords()
+QSet<QString> GLSLSyntaxer::keywords() const
 {
     return Keywords;
 }
 
-bool GLSLSyntaxer::supportBraceLevel()
+bool GLSLSyntaxer::supportBraceLevel() const
 {
     return true;
 }
 
-QString GLSLSyntaxer::lineCommentSymbol()
+QString GLSLSyntaxer::lineCommentSymbol() const
 {
     return "//";
 }
 
-QString GLSLSyntaxer::blockCommentBeginSymbol()
+QString GLSLSyntaxer::blockCommentBeginSymbol() const
 {
     return "/*";
 }
 
-QString GLSLSyntaxer::blockCommentEndSymbol()
+QString GLSLSyntaxer::blockCommentEndSymbol() const
 {
     return "*/";
 }
 
-bool GLSLSyntaxer::supportFolding()
+bool GLSLSyntaxer::supportFolding() const
 {
     return true;
 }
 
-bool GLSLSyntaxer::needsLineState()
+bool GLSLSyntaxer::needsLineState() const
 {
     return true;
+}
+
+PSyntaxer GLSLSyntaxer::createInstance() const
+{
+    return std::make_shared<GLSLSyntaxer>();
 }
 }

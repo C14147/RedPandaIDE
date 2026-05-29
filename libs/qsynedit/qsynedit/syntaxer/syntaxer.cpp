@@ -52,25 +52,22 @@ void Syntaxer::nextToEol()
         next();
 }
 
-QSet<QString> Syntaxer::keywords()
+QSet<QString> Syntaxer::keywords() const
 {
     return QSet<QString>();
 }
 
-QSet<QString> Syntaxer::keywords(const QString &prefix)
+QSet<QString> Syntaxer::keywords(const QString &prefix) const
 {
-    if (mFilteredKeywordsCache.contains(prefix))
-        return mFilteredKeywordsCache[prefix];
     QSet<QString> result;
     foreach(const QString& w, keywords()) {
         if (w.startsWith(prefix))
             result.insert(w);
     }
-    mFilteredKeywordsCache.insert(prefix, result);
     return result;
 }
 
-QMap<QString, QSet<QString> > Syntaxer::scopedKeywords()
+QMap<QString, QSet<QString> > Syntaxer::scopedKeywords() const
 {
     return QMap<QString, QSet<QString> >();
 }
@@ -80,7 +77,7 @@ QString Syntaxer::foldString(QString /*startLine*/)
     return " ... }";
 }
 
-bool Syntaxer::supportBraceLevel()
+bool Syntaxer::supportBraceLevel() const
 {
     return false;
 }
@@ -144,17 +141,17 @@ PTokenAttribute Syntaxer::getAttribute(const QString& name) const
     return mAttributes.value(name,PTokenAttribute());
 }
 
-QString Syntaxer::lineCommentSymbol()
+QString Syntaxer::lineCommentSymbol() const
 {
     return QString();
 }
 
-QString Syntaxer::blockCommentBeginSymbol()
+QString Syntaxer::blockCommentBeginSymbol() const
 {
     return QString();
 }
 
-QString Syntaxer::blockCommentEndSymbol()
+QString Syntaxer::blockCommentEndSymbol() const
 {
     return QString();
 }

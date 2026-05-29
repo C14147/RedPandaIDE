@@ -419,12 +419,12 @@ bool MakefileSyntaxer::eol() const
     return mTokenID == TokenId::Null;
 }
 
-QString MakefileSyntaxer::languageName()
+QString MakefileSyntaxer::languageName() const
 {
     return "makefile";
 }
 
-ProgrammingLanguage MakefileSyntaxer::language()
+ProgrammingLanguage MakefileSyntaxer::language() const
 {
     return ProgrammingLanguage::Makefile;
 }
@@ -683,24 +683,29 @@ void MakefileSyntaxer::resetState()
     mHasTrailingSpaces = false;
 }
 
-QSet<QString> MakefileSyntaxer::keywords()
+QSet<QString> MakefileSyntaxer::keywords() const
 {
     return Directives;
 }
 
-QString MakefileSyntaxer::lineCommentSymbol()
+QString MakefileSyntaxer::lineCommentSymbol() const
 {
     return "#";
 }
 
-bool MakefileSyntaxer::supportFolding()
+bool MakefileSyntaxer::supportFolding() const
 {
     return false;
 }
 
-bool MakefileSyntaxer::needsLineState()
+bool MakefileSyntaxer::needsLineState() const
 {
     return true;
+}
+
+PSyntaxer MakefileSyntaxer::createInstance() const
+{
+    return std::make_shared<MakefileSyntaxer>();
 }
 
 }

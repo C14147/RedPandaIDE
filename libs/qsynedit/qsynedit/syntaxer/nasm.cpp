@@ -53,10 +53,16 @@ const QSet<QString> NASMSyntaxer::PreprocessorDirectives {
     "%error","%fatal","%warning","%note","%pragma","%line","%clear"
 };
 
+QSet<QString> NASMSyntaxer::mKeywords;
 
 
 NASMSyntaxer::NASMSyntaxer():ASMSyntaxer()
 {
+    if (mKeywords.isEmpty()) {
+        mKeywords = InstructionNames;
+        mKeywords += Directives;
+        mKeywords += Registers;
+    }
 }
 
 bool NASMSyntaxer::isCommentStartChar(QChar ch)
@@ -74,24 +80,24 @@ bool NASMSyntaxer::isPreprocessDirective(const QString &ident)
     return PreprocessorDirectives.contains(ident);
 }
 
-QString NASMSyntaxer::languageName()
+QString NASMSyntaxer::languageName() const
 {
     return "NASM";
 }
 
-ProgrammingLanguage NASMSyntaxer::language()
+ProgrammingLanguage NASMSyntaxer::language() const
 {
     return ProgrammingLanguage::NetwideAssembly;
 }
 
-QSet<QString> NASMSyntaxer::keywords()
+QSet<QString> NASMSyntaxer::keywords() const
 {
-    if (mKeywordCache.isEmpty()) {
-        mKeywordCache = InstructionNames;
-        mKeywordCache += Directives;
-        mKeywordCache += Registers;
-    }
-    return mKeywordCache;
+    return mKeywords;
+}
+
+PSyntaxer NASMSyntaxer::createInstance() const
+{
+    return std::make_shared<NASMSyntaxer>();
 }
 
 }
