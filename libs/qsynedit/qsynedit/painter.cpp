@@ -1173,8 +1173,7 @@ void QSynEditPainter::paintLines()
                 getBraceColorAttr(mEdit->mSyntaxer->getState()->braceLevel,attr);
             } else {
                 // Draw LineBreak glyph.
-                if (mEdit->mOptions.testFlag(EditorOption::ShowLineBreaks)
-                        && (mEdit->mDocument->lineWidth(vLine-1) < mRight)) {
+                if (mEdit->mOptions.testFlag(EditorOption::ShowLineBreaks)) {
                     addOnStr = LineBreakGlyph;
                     attr = mEdit->mSyntaxer->whitespaceAttribute();
                 }
