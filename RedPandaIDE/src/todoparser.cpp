@@ -22,8 +22,12 @@
 
 #include <QRegularExpression>
 
+Q_GLOBAL_STATIC_WITH_ARGS(
+    QRegularExpression,
+    todoReg,
+    (QString("\\b(todo|fixme)\\b"), QRegularExpression::CaseInsensitiveOption)
+)
 
-static QRegularExpression todoReg("\\b(todo|fixme)\\b", QRegularExpression::CaseInsensitiveOption);
 TodoParser::TodoParser(QObject *parent) : QObject(parent),
     mMutex()
 {
@@ -147,7 +151,7 @@ void TodoThread::doParseFile(const QString &filename)
             attr = syntaxer->getTokenAttribute();
             if (attr && attr->tokenType() == QSynedit::TokenType::Comment) {
                 QString token = syntaxer->getToken();
-                int pos = token.indexOf(todoReg);
+                int pos = token.indexOf(*todoReg);
                 if (pos>=0) {
                     emit todoFound(
                                 filename,
