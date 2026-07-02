@@ -79,7 +79,7 @@ void CppTokenizer::tokenize(const QStringList &buffer)
         addToken(")",mCurrentLine,TokenType::RightParenthesis);
     }
 }
-
+#ifdef QT_DEBUG
 void CppTokenizer::dumpTokens(const QString &fileName)
 {
     QFile file(fileName);
@@ -91,6 +91,7 @@ void CppTokenizer::dumpTokens(const QString &fileName)
         }
     }
 }
+#endif
 
 void CppTokenizer::addToken(const QString &sText, int iLine, TokenType tokenType)
 {
@@ -213,6 +214,20 @@ QString CppTokenizer::getNextToken(TokenType *pTokenType)
 //            countLines();
 //            result = getArguments();
 //            done = (result != "");
+        } else if (isRawString()) {
+            countLines();
+            result = "\"\"";
+            done = true;
+            skipRawString();
+        } else if (isU8StringOrChar()) {
+            countLines();
+            done = true;
+            mCurrent+=2; // skip 'u8';
+            if (*mCurrent == '\"')
+                result = "\"\"";
+            else
+                result = "\'\'";
+            advance();
         } else if (isWord()) {
             countLines();
             result = getWord();
@@ -407,8 +422,25 @@ QString CppTokenizer::getNextToken(TokenType *pTokenType)
                     result = "\"\"";
                     mCurrent+=2;
                     done = true;
-                } else
-                    advance();
+                } else {
+                    countLines();
+                    result = "\"\"";
+                    done = true;
+                    skipDoubleQuotes();
+                }
+                break;
+            case 'R':
+                Q_ASSERT(*(mCurrent + 1) == '\"');
+                countLines();
+                result = "\"\"";
+                done = true;
+                advance();
+                break;
+            case '\'':
+                countLines();
+                result = "\'\'";
+                done = true;
+                skipSingleQuote();
                 break;
             default:
                 advance();
@@ -512,6 +544,8 @@ QString CppTokenizer::getWord()
             mCurrent+=2;
         } else
             break;
+        //skip spaces
+        skipToNextToken();
     }
 
     return result;
@@ -594,13 +628,13 @@ void CppTokenizer::simplifyArgs(QString &output)
 void CppTokenizer::skipDoubleQuotes()
 {
     mCurrent++;
-    while (!(*mCurrent=='"' || *mCurrent == 0)) {
+    while (!(*mCurrent=='"' || *mCurrent == 0 || *mCurrent == '\r' || *mCurrent == '\n')) {
         if (*mCurrent == '\\')
             mCurrent+=2; // skip escaped char
         else
             mCurrent++;
     }
-    if (*mCurrent!=0) {
+    if (*mCurrent=='"') {
         mCurrent++;
     }
 }
@@ -620,7 +654,7 @@ void CppTokenizer::skipPair(const QChar &cStart, const QChar cEnd)
         } else if (*mCurrent == cEnd) {
             mCurrent++; // skip over end
             break;
-        } else if ((*mCurrent == 'R') && (*(mCurrent+1) == '"')) {
+        } else if (isRawString()) {
             if (cStart != '\'' && cStart!='\"')
                 skipRawString(); // don't do it inside AnsiString!
             else
@@ -712,7 +746,8 @@ bool CppTokenizer::skipAngleBracketPair()
 
 void CppTokenizer::skipRawString()
 {
-    mCurrent++; //skip R
+    while (*mCurrent!='\"')
+        mCurrent++; //skip R / LR / uR / UR / u8R
     bool noEscape = false;
     bool findDCharSeq = true;
     QString dCharSeq;
@@ -758,22 +793,15 @@ void CppTokenizer::skipRawString()
 void CppTokenizer::skipSingleQuote()
 {
     mCurrent++;
-    while (!(*mCurrent=='\'' || *mCurrent == 0)) {
+    while (!(*mCurrent=='\'' || *mCurrent == 0 || *mCurrent == '\r' || *mCurrent == '\n')) {
         if (*mCurrent == '\\')
             mCurrent+=2; // skip escaped char
         else
             mCurrent++;
     }
-    if (*mCurrent!=0) {
+    if (*mCurrent=='\'') {
         mCurrent++;
     }
-}
-
-void CppTokenizer::skipSplitLine()
-{
-    mCurrent++; // skip '\'
-    while ( isLineChar(*mCurrent)) // skip newline
-        mCurrent++;
 }
 
 void CppTokenizer::skipTemplateArgs()
@@ -838,18 +866,6 @@ void CppTokenizer::advance()
         break;
     case '\'':
         skipSingleQuote();
-        break;
-    case '\\':
-        if (isLineChar(*(mCurrent + 1)))
-            skipSplitLine();
-        else
-            mCurrent++;
-        break;
-    case 'R':
-        if (*(mCurrent+1) == '"')
-            skipRawString();
-        else
-            mCurrent++;
         break;
     default:
         mCurrent++;
