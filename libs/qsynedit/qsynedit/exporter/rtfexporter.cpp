@@ -81,6 +81,7 @@ void RTFExporter::formatAttributeDone(bool , bool , FontStyles fontStyles)
 
 void RTFExporter::formatAttributeInit(bool backgroundChanged, bool foregroundChanged, FontStyles fontStyles)
 {
+    mAttributesChanged = false;
     // background color
     if (backgroundChanged) {
         addData(QString("\\chshdng0\\chcbpat%1\\cb%2\\highlight%3 ")
@@ -95,26 +96,24 @@ void RTFExporter::formatAttributeInit(bool backgroundChanged, bool foregroundCha
         mAttributesChanged = true;
     }
     // font styles
-    // nothing to do about the color, but reset the font style
     if (fontStyles.testFlag(FontStyle::fsBold)) {
         mAttributesChanged = true;
-        addData("\\b0");
+        addData("\\b");
     }
     if (fontStyles.testFlag(FontStyle::fsItalic)) {
         mAttributesChanged = true;
-        addData("\\i0");
+        addData("\\i");
     }
     if (fontStyles.testFlag(FontStyle::fsUnderline)) {
         mAttributesChanged = true;
-        addData("\\ul0");
+        addData("\\ul");
     }
     if (fontStyles.testFlag(FontStyle::fsStrikeOut)) {
         mAttributesChanged = true;
-        addData("\\strike0");
+        addData("\\strike");
     }
     if (mAttributesChanged) {
         addData(" ");
-        mAttributesChanged = false;
     }
 }
 
