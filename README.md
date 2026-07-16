@@ -1,55 +1,111 @@
-# RedPanda C++
+# RedPandaIDE
 
-Red Panda C++ (Old name: Red Panda Dev-C++ 7) is an fast ,lightweight, open source, and cross platform C/C++/GNU Assembly IDE.
+[![GitHub release](https://img.shields.io/github/v/release/C14147/RedPandaIDE?include_prereleases&style=flat-square)](https://github.com/C14147/RedPandaIDE/releases)
+[![License](https://img.shields.io/github/license/C14147/RedPandaIDE?style=flat-square)](https://github.com/C14147/RedPandaIDE/blob/master/LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/C14147/RedPandaIDE?style=flat-square)](https://github.com/C14147/RedPandaIDE/stargazers)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey?style=flat-square)](https://github.com/C14147/RedPandaIDE)
+[![C++](https://img.shields.io/badge/C%2B%2B-17-blue?style=flat-square)](https://isocpp.org/)
 
-Simplified Chinese Website: [http://royqh.net/redpandacpp](http://royqh.net/redpandacpp)
+> **Faster, stronger, and more modern fork of Red Panda C++** — a lightweight cross-platform IDE for competitive programmers and C/C++ developers.
 
-English Website: [https://sourceforge.net/projects/redpanda-cpp](https://sourceforge.net/projects/redpanda-cpp)
+RedPandaIDE is an aggressive improvement fork of [royqh1979/RedPanda-CPP](https://github.com/royqh1979/RedPanda-CPP). While keeping the original’s lightweight, fast, and cross‑platform nature, it introduces experimental features and performance enhancements.
 
-[Donate to this project](https://ko-fi.com/royqh1979)
+---
 
-**New Features (Compared with Red Panda Dev-C++ 6):**
+## ✨ Features
 
-* Cross Platform (Windows/Linux/MacOS)
-* Problem Set (run and test program against predefined input / expected output data)
-* Competitive Companion support ( It's an chrome/firefox extension that can fetch problems from OJ websites)
-* Edit/compile/run/debug Assembly language programs ( GNU Assember / NASM ).
-* Find symbol occurrences
-* Memory View for debugging
-* TODO View
-* Support SDCC Compiler
+### 🚀 Highlights
 
-**UI Improvements:**
+- **🌍 Cross‑platform** — Windows / Linux / macOS
+- **📦 Problem Set** — Automate testing with predefined input/expected output data
+- **🕹️ Competitive Companion** — Fetch problems from OJ websites with a browser extension
+- **⚙️ Assembler Support** — Edit, compile, run, and debug GNU Assembler and NASM programs
+- **🔍 Symbol Reference Lookup** — Quickly locate symbol occurrences
+- **🧠 Memory View** — Inspect memory contents while debugging
+- **✅ TODO View** — Centralised management of code todos
+- **📟 SDCC Compiler** — Support for more compilation scenarios
 
-* Full high-dpi support, including fonts and icons
-* Better dark theme support
-* Better editor color scheme support
-* Redesigned Find/Replace in Files UI
-* Redesigned bookmark UI
+### 🎨 UI Improvements
 
-**Editing Improvements:**
+- Full High‑DPI support (fonts & icons)
+- Improved dark theme
+- More editor colour schemes
+- Redesigned “Find/Replace in Files” interface
+- Redesigned bookmark UI
 
-* Enhanced auto indent
-* Enhanced code completion
-* Better code folding support
+### ✍️ Editing Enhancements
 
-**Debugging Improvements:**
+- Enhanced auto‑indentation
+- Enhanced code completion
+- Better code folding
 
-* Use gdb/mi interface
-* Enhanced watch
-* gdbserver mode
+### 🐛 Debugging Upgrades
 
-**Code Intellisense Improvements:**
+- Uses GDB/MI interface
+- Enhanced watch expressions
+- gdbserver mode support
 
-* Better support identifiers for complex expressions
-* Support UTF-8 identifiers
-* Support C++ 14 using type alias
-* Support C-Style enum variable definitions
-* Support MACRO with arguments
-* Support C++ lambdas
+### 🧠 Code Intelligence
 
-And many other improvements and bug fixes. See NEWS.md for full information.
+- Better identifier recognition in complex expressions
+- UTF‑8 identifier support
+- C++14 type alias support
+- C‑style enum variable definitions
+- Macro support with arguments
+- C++ lambda expression support
 
-## Acknowledgement
+> Full changelog can be found in [NEWS.md](https://github.com/C14147/RedPandaIDE/blob/master/NEWS.md)
 
-[Lua](https://www.lua.org/) 5.4.6 ([source mirror](https://github.com/lua/lua/tree/v5.4.6)) is used as add-on runtime.
+---
+
+## 🚀 Quick Start
+
+### Download & Install
+
+Grab the latest version from the [Releases page](https://github.com/C14147/RedPandaIDE/releases):
+
+- **Windows** – `.exe` installer
+- **Linux** – AppImage or package for your distro
+- **macOS** – `.dmg` image
+
+### Build from Source
+
+```bash
+git clone https://github.com/C14147/RedPandaIDE.git
+cd RedPandaIDE
+# Build instructions — see BUILD.md (Qt 6 required)
+```
+
+---
+
+## 📖 Documentation
+
+- 🌐 Chinese official site: [http://royqh.net/redpandacpp](http://royqh.net/redpandacpp)
+- 🌐 English page: [https://sourceforge.net/projects/redpanda-cpp](https://sourceforge.net/projects/redpanda-cpp)
+- 📝 Project blog: [redpandaide.wordpress.com](https://redpandaide.wordpress.com/)
+
+---
+
+## 🤝 Contributing
+
+All contributions are welcome — bug reports, PRs, or documentation improvements.
+
+1. Fork the repo
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+## 🙏 Acknowledgements
+
+- [Lua](https://www.lua.org/) 5.4.6 – used as the plugin runtime
+- Original project [royqh1979/RedPanda-CPP](https://github.com/royqh1979/RedPanda-CPP) by royqh1979
+
+---
+
+## 📄 License
+
+This project is licensed under the **GPL-3.0** License.
+

@@ -263,6 +263,9 @@ int main(int argc, char *argv[])
 #if QT_VERSION_MAJOR < 6
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif
+    SplashScreen splashScreen;
+    splashScreen.show();
+
     QDir startupDir = QDir::current();
     ExternalResource resource;
 
@@ -408,6 +411,8 @@ int main(int argc, char *argv[])
         pMainWindow = &mainWindow;
         if (mainWindow.screen())
             setScreenDPI(mainWindow.screen()->logicalDotsPerInch());
+
+        splashScreen.quit();
 
         mainWindow.show();
 
