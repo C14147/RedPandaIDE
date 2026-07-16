@@ -357,7 +357,7 @@ int main(int argc, char *argv[])
         //load settings
         pSettings = settings.get();
         if (firstRun) {
-            pSettings->compilerSets().findSets();
+            pSettings->compilerSets().findSets(true);
             pSettings->compilerSets().saveSets();
         }
         pSettings->load();
@@ -381,6 +381,12 @@ int main(int argc, char *argv[])
             }
 
             pSettings->editor().setDefaultFileCpp(themeDialog.language()==ChooseThemeDialog::Language::CPlusPlus);
+            if (themeDialog.shareParser()) {
+                pSettings->codeCompletion().setShareParser(true);
+                pSettings->codeCompletion().setClearWhenEditorHidden(true);
+            } else {
+                pSettings->codeCompletion().setShareParser(false);
+            }
             pSettings->editor().save();
 
             //auto detect git in path

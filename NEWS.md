@@ -28,8 +28,22 @@ Red Panda C++ Version 3.5
   - fix: Parser crash in debug mode, when char literal is not correctly closed.
   - enhancement: Greatly optimized "Copy as HTML" / "Export to HTML" processes.
   - fix: Font style not correct in exported RTF.
+  - fix: Printed text doesn't have color.
+  - enhancement: Release Compiler set add "-DNDEBUG" parameter when compiling by default.
+  - enhancement: Show progress when finding in files / finding compiler sets / find occurences in project.
+  - fix: Can't correctly parse "std::views" in <ranges>
+  - fix: Induced type of auto var is not correct.
+  - enhancement: Parsing structured binding of struct instance.
+  - fix: Can't parse non-const structured binding.\
+  - enhancement: Filtering project files to be searched by name in "search in files" dialog.
+  - enhancement: Detect if mingw32-make.exe is utf8 manifestoed, and auto generate utf8 encoded makefile for it.
+  - fix: Goto block start / end doesn't work correctly.
+  - fix: Matching braces doesn't correctly work if there are '{'/'}' in comments.
+  - fix: Scroll by CTRL+arrow work too slow.
+  - change: Remove option "Clear symbol table when editor is hidden".
+  - change: Redesin first time startup dialog.
+  - fix: Option "Search subfolders" doesn't work in the search-in-files dialog.
 
->>>>>>> 9f096f2814ab480e3738b03f51830b106dbb0613
 Red Panda C++ Version 3.4
   - enhancement: Auto hide option "Auto clear parsed symbols when editor hidden" if "editors share one parser" is unchecked.
   - fix: Syntax color doesn't work in the code snippet option page.

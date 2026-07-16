@@ -23,6 +23,7 @@
 #include <QCompleter>
 #include <QStack>
 #include <QFileDialog>
+#include <QButtonGroup>
 #include <qsynedit/document.h>
 #include <qsynedit/searcher/basicsearcher.h>
 #include <qsynedit/searcher/regexsearcher.h>
@@ -42,7 +43,15 @@ SearchInFileDialog::SearchInFileDialog(QWidget *parent) :
     mBasicSearchEngine= std::make_shared<QSynedit::BasicSearcher>();
     mRegexSearchEngine= std::make_shared<QSynedit::RegexSearcher>();
     ui->cbFind->completer()->setCaseSensitivity(Qt::CaseSensitive);
-    on_rbFolder_toggled(false);
+    connect(ui->rbCurrentFile, &QRadioButton::toggled,
+            this, &SearchInFileDialog::onSearchTypeChanged);
+    connect(ui->rbProject, &QRadioButton::toggled,
+            this, &SearchInFileDialog::onSearchTypeChanged);
+    connect(ui->rbOpenFiles, &QRadioButton::toggled,
+            this, &SearchInFileDialog::onSearchTypeChanged);
+    connect(ui->rbFolder, &QRadioButton::toggled,
+            this, &SearchInFileDialog::onSearchTypeChanged);
+    onSearchTypeChanged(true);
 }
 
 SearchInFileDialog::~SearchInFileDialog()
@@ -80,11 +89,12 @@ void SearchInFileDialog::findInFiles(const QString &keyword,
         break;
     case SearchFileScope::wholeProject:
         ui->rbProject->setChecked(true);
+        ui->txtFilters->setText(filters);
         break;
     case SearchFileScope::Folder:
         ui->txtFolder->setText(folder);
         ui->txtFilters->setText(filters);
-        ui->cbSearchSubFolders->setChecked(searchSubfolders);
+        ui->chkSearchSubFolders->setChecked(searchSubfolders);
         ui->rbFolder->setChecked(true);
         break;
     }
@@ -128,6 +138,9 @@ void SearchInFileDialog::doSearch(bool replace)
     }
     close();
 
+    if (ui->txtFilters->text().trimmed().isEmpty())
+        ui->txtFilters->setText("*.*");
+
     // int findCount=0;
     int fileSearched = 0;
     int fileHitted = 0;
@@ -152,11 +165,10 @@ void SearchInFileDialog::doSearch(bool replace)
                 //findCount+=t;
                 if (t>0) {
                     fileHitted++;
-                    results->results.append(parentItem);
+                    pMainWindow->searchResultModel()->addResultToSearchResults(results,parentItem);
                 }
             }
         }
-        pMainWindow->searchResultModel()->notifySearchResultsUpdated();
     } else if (ui->rbFolder->isChecked()) {
         PSearchResults results = pMainWindow->searchResultModel()->addSearchResults(
                     keyword,
@@ -165,7 +177,7 @@ void SearchInFileDialog::doSearch(bool replace)
                     SearchFileScope::Folder,
                     ui->txtFolder->text(),
                     ui->txtFilters->text(),
-                    ui->cbSearchSubFolders
+                    ui->chkSearchSubFolders->isChecked()
                     );
         if (ui->txtFilters->text().trimmed().isEmpty()) {
             ui->txtFilters->setText("*.*");
@@ -173,13 +185,15 @@ void SearchInFileDialog::doSearch(bool replace)
         QDir rootDir(ui->txtFolder->text());
         // loop through editors, add results to message control
         QProgressDialog progressDlg(
-                    tr("Searching..."),
+                    tr("Calculating files for searching..."),
                     tr("Abort"),
                     0,
                     1,
                     pMainWindow);
 
         progressDlg.setWindowModality(Qt::WindowModal);
+        progressDlg.show();
+        QCoreApplication::processEvents();
         QStack<QDir> dirs;
         QSet<QString> searched;
         QList<QFileInfo> files;
@@ -190,17 +204,21 @@ void SearchInFileDialog::doSearch(bool replace)
         while (!dirs.isEmpty()) {
             QDir dir=dirs.back();
             dirs.pop_back();
-            foreach(const QFileInfo& entry, dir.entryInfoList(QDir::NoSymLinks | QDir::Dirs)) {
-                if (entry.fileName()==".." || entry.fileName()==".")
-                    continue;
-                if (!searched.contains(entry.absoluteFilePath())) {
-                    dirs.push_back(QDir(entry.absoluteFilePath()));
-                    searched.insert(entry.absoluteFilePath());
+            if (ui->chkSearchSubFolders->isChecked()) {
+                foreach(const QFileInfo& entry, dir.entryInfoList(QDir::NoSymLinks | QDir::Dirs)) {
+                    if (entry.fileName()==".." || entry.fileName()==".")
+                        continue;
+                    if (!searched.contains(entry.absoluteFilePath())) {
+                        dirs.push_back(QDir(entry.absoluteFilePath()));
+                        searched.insert(entry.absoluteFilePath());
+                    }
                 }
             }
             foreach(const QFileInfo& entry, dir.entryInfoList(ui->txtFilters->text().split(";"), filterOptions)) {
                 files.append(entry);
             }
+            progressDlg.setLabelText(tr("Calculating files for searching (%1)...").arg(files.count()));
+            QCoreApplication::processEvents();
         }
         progressDlg.setMaximum(files.count());
         int i=0;
@@ -208,8 +226,8 @@ void SearchInFileDialog::doSearch(bool replace)
             QString curFilename =  info.absoluteFilePath();
             i++;
             progressDlg.setValue(i);
-            progressDlg.setLabelText(tr("Searching...")+"<br/>"+curFilename);
-
+            progressDlg.setLabelText(tr("Searching %1/%2...").arg(i).arg(files.count())+"<br/>"+curFilename);
+            QCoreApplication::processEvents();
             if (progressDlg.wasCanceled())
                 break;
             Editor * e = pMainWindow->editorManager()->getOpenedEditor(curFilename);
@@ -223,11 +241,13 @@ void SearchInFileDialog::doSearch(bool replace)
                 //findCount+=t;
                 if (t>0) {
                     fileHitted++;
-                    results->results.append(parentItem);
+                    pMainWindow->searchResultModel()->addResultToSearchResults(results,parentItem);
                 }
             } else if (fileExists(curFilename)) {
                 QSynedit::QSynEdit editor;
                 QByteArray realEncoding;
+                if (searchOptions.testFlag(QSynedit::ssoWholeWord))
+                    editor.setSyntaxer(SyntaxerManager::getSyntaxer(getFileType(curFilename)));
                 try{
                     editor.loadFromFile(curFilename,ENCODING_AUTO_DETECT, realEncoding);
                 } catch (QSynedit::BinaryFileError e) {
@@ -244,11 +264,10 @@ void SearchInFileDialog::doSearch(bool replace)
                 //findCount+=t;
                 if (t>0) {
                     fileHitted++;
-                    results->results.append(parentItem);
+                    pMainWindow->searchResultModel()->addResultToSearchResults(results,parentItem);
                 }
             }
         }
-        pMainWindow->searchResultModel()->notifySearchResultsUpdated();
     } else if (ui->rbCurrentFile->isChecked()) {
         PSearchResults results = pMainWindow->searchResultModel()->addSearchResults(
                     keyword,
@@ -267,10 +286,9 @@ void SearchInFileDialog::doSearch(bool replace)
             //findCount+=t;
             if (t>0) {
                 fileHitted++;
-                results->results.append(parentItem);
+                pMainWindow->searchResultModel()->addResultToSearchResults(results,parentItem);
             }
         }
-        pMainWindow->searchResultModel()->notifySearchResultsUpdated();
     } else if (ui->rbProject->isChecked()) {
         if (!pMainWindow->project())
             return;
@@ -280,6 +298,7 @@ void SearchInFileDialog::doSearch(bool replace)
                     useRegex,
                     SearchFileScope::wholeProject
                     );
+        results->setFilters(ui->txtFilters->text());
         QByteArray projectEncoding = pMainWindow->project()->options().encoding;
         QProgressDialog progressDlg(
                     tr("Searching..."),
@@ -289,14 +308,20 @@ void SearchInFileDialog::doSearch(bool replace)
                     pMainWindow);
 
         progressDlg.setWindowModality(Qt::WindowModal);
+        progressDlg.show();
         int i=0;
         foreach (PProjectUnit unit, pMainWindow->project()->unitList()) {
             i++;
             progressDlg.setValue(i);
             progressDlg.setLabelText(tr("Searching...")+"<br/>"+unit->fileName());
-
+            QCoreApplication::processEvents();
             if (progressDlg.wasCanceled())
                 break;
+            QFileInfo info{unit->fileName()};
+            if (!QDir::match(ui->txtFilters->text(), info.fileName())) {
+                qDebug()<<info.fileName();
+                continue;
+            }
             Editor * e = pMainWindow->project()->unitEditor(unit);
             QString curFilename =  unit->fileName();
             if (e) {
@@ -309,7 +334,7 @@ void SearchInFileDialog::doSearch(bool replace)
                 //findCount+=t;
                 if (t>0) {
                     fileHitted++;
-                    results->results.append(parentItem);
+                    pMainWindow->searchResultModel()->addResultToSearchResults(results,parentItem);
                 }
             } else if (fileExists(curFilename)) {
                 QSynedit::QSynEdit editor;
@@ -317,6 +342,8 @@ void SearchInFileDialog::doSearch(bool replace)
                 if (encoding==ENCODING_PROJECT)
                     encoding = projectEncoding;
                 QByteArray realEncoding;
+                if (searchOptions.testFlag(QSynedit::ssoWholeWord))
+                    editor.setSyntaxer(SyntaxerManager::getSyntaxer(getFileType(curFilename)));
                 try {
                     editor.loadFromFile(curFilename,encoding, realEncoding);
                 } catch (QSynedit::BinaryFileError e) {
@@ -333,11 +360,10 @@ void SearchInFileDialog::doSearch(bool replace)
                 //findCount+=t;
                 if (t>0) {
                     fileHitted++;
-                    results->results.append(parentItem);
+                    pMainWindow->searchResultModel()->addResultToSearchResults(results,parentItem);
                 }
             }
         }
-        pMainWindow->searchResultModel()->notifySearchResultsUpdated();
     }
     pMainWindow->showSearchPanel(replace);
 
@@ -434,15 +460,18 @@ void SearchInFileDialog::on_btnReplace_clicked()
 }
 
 
-void SearchInFileDialog::on_rbFolder_toggled(bool checked)
+void SearchInFileDialog::onSearchTypeChanged(bool checked)
 {
+    if (!checked)
+        return;
 //    ui->lblFilters->setVisible(checked);
-    ui->txtFilters->setEnabled(checked);
+    ui->txtFilters->setEnabled(ui->rbFolder->isChecked()
+                               || ui->rbProject->isChecked());
 //    ui->lblFolder->setVisible(checked);
-    ui->txtFolder->setEnabled(checked);
-    ui->btnChangeFolder->setEnabled(checked);
-    ui->cbSearchSubFolders->setEnabled(checked);
-    if (checked) {
+    ui->txtFolder->setEnabled(ui->rbFolder->isChecked());
+    ui->btnChangeFolder->setEnabled(ui->rbFolder->isChecked());
+    ui->chkSearchSubFolders->setEnabled(ui->rbFolder->isChecked());
+    if (ui->rbFolder->isChecked()) {
         if (!directoryExists(ui->txtFolder->text()))
             ui->txtFolder->setText(pSettings->environment().currentFolder());
     }
@@ -456,4 +485,3 @@ void SearchInFileDialog::on_btnChangeFolder_clicked()
     if (directoryExists(folder))
         ui->txtFolder->setText(folder);
 }
-

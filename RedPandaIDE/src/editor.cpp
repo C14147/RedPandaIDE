@@ -50,6 +50,7 @@
 #include "syntaxermanager.h"
 #include "iconsmanager.h"
 #include <QDebug>
+#include <QProgressDialog>
 #include <qt_utils/charsetinfo.h>
 #include "utils/escape.h"
 #include "utils/ui.h"
@@ -60,6 +61,7 @@
 #include "settings/editorsettings.h"
 #include "settings/codecompletionsettings.h"
 #include "colorscheme.h"
+#include <QAbstractTextDocumentLayout>
 
 using QSynedit::CharPos;
 
@@ -117,7 +119,6 @@ Editor::Editor(QWidget *parent):
 
     mCodeSnippetsManager = nullptr;
 
-    mGetSharedParserFunc = nullptr;
     mGetOpennedEditorFunc  = nullptr;
     mGetFileStreamFunc = nullptr;
     mCanShowEvalTipFunc = nullptr;
@@ -270,7 +271,7 @@ void Editor::convertToEncoding(const QByteArray &encoding)
 
 bool Editor::save(bool force, bool doReparse) {
     if (this->mIsNew && !force) {
-        return saveAs();
+        return saveAs("", doReparse);
     }    
     try {
         if (mEditorSettings->autoFormatWhenSaved()) {
@@ -309,7 +310,7 @@ bool Editor::save(bool force, bool doReparse) {
     return true;
 }
 
-bool Editor::saveAs(const QString &name){
+bool Editor::saveAs(const QString &name, bool doCheckSyntax){
     QString newName = name;
     QString oldName = mFilename;
     if (name.isEmpty()) {
@@ -384,8 +385,11 @@ bool Editor::saveAs(const QString &name){
         mSyntaxIssues.clear();
     }
     reparse();
-    if (mEditorSettings->syntaxCheckWhenSave())
-        checkSyntaxInBack();
+    if (doCheckSyntax) {
+        if (mEditorSettings->syntaxCheckWhenSave())
+            checkSyntaxInBack();
+    }
+    reparseTodo();
     if (!shouldOpenInReadonly()) {
         setReadOnly(false);
     }
@@ -1459,44 +1463,54 @@ void Editor::copyAsHTML()
     if (!selAvail()) {
         doSelectLine();
     }
-    QSynedit::HTMLExporter exporter(tabSize(), pCharsetInfoManager->getDefaultSystemEncoding());
-
-    exporter.setTitle(QFileInfo(mFilename).fileName());
-    exporter.setUseBackground(mEditorSettings->copyHTMLUseBackground());
-    exporter.setFont(font());
-    QSynedit::PSyntaxer pSyntaxer = syntaxer()->createInstance();
-    if (!mEditorSettings->copyHTMLUseEditorColor()) {
-        mColorManager->applySchemeToSyntaxer(pSyntaxer,mEditorSettings->copyHTMLColorScheme());
-    } else {
-        mColorManager->applySchemeToSyntaxer(pSyntaxer,mEditorSettings->colorScheme());
-    }
-    exporter.setSyntaxer(pSyntaxer);
-    exporter.setOnFormatToken(std::bind(&Editor::onExportedFormatToken,
-                                        this,
-                                        std::placeholders::_1,
-                                        std::placeholders::_2,
-                                        std::placeholders::_3,
-                                        std::placeholders::_4,
-                                        std::placeholders::_5
-                                        ));
-    exporter.setCreateHTMLFragment(true);
-
-    if (mEditorSettings->copyHTMLWithLineNumber()) {
-        exporter.setExportLineNumber(true);
-        exporter.setRecalcLineNumber(mEditorSettings->copyHTMLRecalcLineNumber());
-        exporter.setLineNumberStartFromZero(mEditorSettings->gutterLineNumbersStartZero());
-        exporter.setLineNumberColor(gutter().textColor());
-        exporter.setLineNumberBackgroundColor(gutter().color());
-    }
-    exporter.exportRange(document(),selBegin(),selEnd());
-
     //clipboard takes the owner ship
     QMimeData * mimeData = new QMimeData;
+    if (syntaxer()->language() != QSynedit::ProgrammingLanguage::Textfile) {
+        QSynedit::HTMLExporter exporter(tabSize(), pCharsetInfoManager->getDefaultSystemEncoding());
 
-    //sethtml will convert buffer to QString , which will cause encoding trouble
-    mimeData->setData(exporter.clipboardFormat(),exporter.buffer());
+        exporter.setTitle(QFileInfo(mFilename).fileName());
+        if (mEditorSettings->copyHTMLUseEditorColor())
+            exporter.setBackgroundColor(backgroundColor());
+        else
+            exporter.setBackgroundColor(mEditorSettings->copyHTMLBackgroundColor());
+
+        exporter.setUseBackground(true);
+        exporter.setFont(font());
+        QSynedit::PSyntaxer pSyntaxer = syntaxer()->createInstance();
+        if (mEditorSettings->copyHTMLUseEditorColor()) {
+            mColorManager->applySchemeToSyntaxer(pSyntaxer,mEditorSettings->colorScheme());
+        } else {
+            mColorManager->applySchemeToSyntaxer(pSyntaxer,mEditorSettings->copyHTMLColorScheme());
+        }
+        exporter.setSyntaxer(pSyntaxer);
+        exporter.setOnFormatToken(std::bind(&Editor::onExportedFormatToken,
+                                            this,
+                                            std::placeholders::_1,
+                                            std::placeholders::_2,
+                                            std::placeholders::_3,
+                                            std::placeholders::_4,
+                                            std::placeholders::_5
+                                            ));
+        exporter.setCreateHTMLFragment(true);
+
+        if (mEditorSettings->copyHTMLWithLineNumber()) {
+            exporter.setExportLineNumber(true);
+            exporter.setRecalcLineNumber(mEditorSettings->copyHTMLRecalcLineNumber());
+            exporter.setLineNumberStartFromZero(mEditorSettings->gutterLineNumbersStartZero());
+            if (mEditorSettings->copyHTMLUseEditorColor()) {
+                exporter.setLineNumberColor(gutter().textColor());
+                exporter.setLineNumberBackgroundColor(gutter().color());
+            } else {
+                exporter.setLineNumberColor(mEditorSettings->copyHTMLForegroundColor());
+                exporter.setLineNumberBackgroundColor(mEditorSettings->copyHTMLBackgroundColor());
+            }
+        }
+        exporter.exportRange(document(),selBegin(),selEnd());
+        //sethtml will convert buffer to QString , which will cause encoding trouble
+        mimeData->setData(exporter.clipboardFormat(),exporter.buffer());
+    }
+
     mimeData->setText(selText());
-
     QGuiApplication::clipboard()->clear();
     QGuiApplication::clipboard()->setMimeData(mimeData);
 }
@@ -3074,11 +3088,16 @@ void Editor::print()
     QSynedit::QtSupportedHtmlExporter exporter(tabSize(), pCharsetInfoManager->getDefaultSystemEncoding());
 
     exporter.setTitle(QFileInfo(mFilename).fileName());
-    exporter.setUseBackground(mEditorSettings->copyHTMLUseBackground());
+    if (mEditorSettings->copyHTMLUseEditorColor())
+        exporter.setBackgroundColor(backgroundColor());
+    else
+        exporter.setBackgroundColor(mEditorSettings->copyHTMLBackgroundColor());
+
+    exporter.setUseBackground(true);
 
     exporter.setFont(font());
     QSynedit::PSyntaxer pSyntaxer = syntaxer()->createInstance();
-    mColorManager->applySchemeToSyntaxer(pSyntaxer,mEditorSettings->colorScheme());
+    mColorManager->applySchemeToSyntaxer(pSyntaxer,mEditorSettings->copyHTMLColorScheme());
     exporter.setSyntaxer(pSyntaxer);
     exporter.setOnFormatToken(std::bind(&Editor::onExportedFormatToken,
                                         this,
@@ -3097,9 +3116,42 @@ void Editor::print()
     QString html = exporter.text();
     QTextDocument doc;
 
-    doc.setDefaultFont(font());
     doc.setHtml(html);
-    doc.print(&printer);
+    doc.setDefaultFont(font());
+    QPainter painter(&printer);
+    if (!painter.isActive()) return;
+
+    // 手动分页绘制，而不是调用 doc.print()
+    // 先计算总页数
+    QSize pageSize = printer.pageLayout().paintRectPixels(printer.resolution()).size();
+    doc.setPageSize(pageSize);
+    int pageCount = doc.pageCount();
+
+    QProgressDialog progress(tr("Printing..."), tr("Cancel"), 0, pageCount, this);
+    progress.setWindowTitle(tr("Printing..."));
+    progress.setWindowModality(Qt::WindowModal);
+    progress.setMinimumDuration(500);
+    progress.setValue(0);
+    progress.show();
+
+    for (int i = 0; i < pageCount; ++i) {
+        if (i > 0) printer.newPage();
+        progress.setValue(i + 1);
+        progress.setLabelText(tr("Printing Page %1 / %2")
+                              .arg(i + 1).arg(pageCount));
+        QCoreApplication::processEvents();
+
+        if (progress.wasCanceled()) {
+            break;
+        }
+        painter.save();
+        painter.translate(0, -i * doc.pageSize().height());
+        QRectF clipRect(0, i * doc.pageSize().height(),
+                        doc.pageSize().width(), doc.pageSize().height());
+        doc.drawContents(&painter, clipRect);
+        painter.restore();
+    }
+    painter.end();
 }
 
 void Editor::exportAsRTF(const QString &rtfFilename)
@@ -3108,13 +3160,17 @@ void Editor::exportAsRTF(const QString &rtfFilename)
 
     QSynedit::RTFExporter exporter(tabSize(), pCharsetInfoManager->getDefaultSystemEncoding());
     exporter.setTitle(extractFileName(rtfFilename));
-    exporter.setUseBackground(mEditorSettings->copyRTFUseBackground());
+    if (mEditorSettings->copyRTFUseEditorColor())
+        exporter.setBackgroundColor(backgroundColor());
+    else
+        exporter.setBackgroundColor(mEditorSettings->copyRTFBackgroundColor());
+    exporter.setUseBackground(true);
     exporter.setFont(font());
     QSynedit::PSyntaxer pSyntaxer = syntaxer()->createInstance();
-    if (!mEditorSettings->copyRTFUseEditorColor()) {        
-        mColorManager->applySchemeToSyntaxer(pSyntaxer,mEditorSettings->copyRTFColorScheme());
-    } else {
+    if (mEditorSettings->copyRTFUseEditorColor()) {
         mColorManager->applySchemeToSyntaxer(pSyntaxer,mEditorSettings->colorScheme());
+    } else {
+        mColorManager->applySchemeToSyntaxer(pSyntaxer,mEditorSettings->copyRTFColorScheme());
     }
     exporter.setSyntaxer(pSyntaxer);
     exporter.setOnFormatToken(std::bind(&Editor::onExportedFormatToken,
@@ -3135,13 +3191,18 @@ void Editor::exportAsHTML(const QString &htmlFilename)
 
     QSynedit::HTMLExporter exporter(tabSize(), pCharsetInfoManager->getDefaultSystemEncoding());
     exporter.setTitle(extractFileName(htmlFilename));
-    exporter.setUseBackground(mEditorSettings->copyHTMLUseBackground());
+    if (mEditorSettings->copyHTMLUseEditorColor())
+        exporter.setBackgroundColor(backgroundColor());
+    else
+        exporter.setBackgroundColor(mEditorSettings->copyHTMLBackgroundColor());
+
+    exporter.setUseBackground(true);
     exporter.setFont(font());
     QSynedit::PSyntaxer pSyntaxer = syntaxer()->createInstance();
-    if (!mEditorSettings->copyHTMLUseEditorColor()) {        
-        mColorManager->applySchemeToSyntaxer(pSyntaxer,mEditorSettings->copyHTMLColorScheme());
-    } else {
+    if (mEditorSettings->copyHTMLUseEditorColor()) {
         mColorManager->applySchemeToSyntaxer(pSyntaxer,mEditorSettings->colorScheme());
+    } else {
+        mColorManager->applySchemeToSyntaxer(pSyntaxer,mEditorSettings->copyHTMLColorScheme());
     }
     exporter.setSyntaxer(pSyntaxer);
     exporter.setOnFormatToken(std::bind(&Editor::onExportedFormatToken,
@@ -3156,8 +3217,13 @@ void Editor::exportAsHTML(const QString &htmlFilename)
         exporter.setExportLineNumber(true);
         exporter.setRecalcLineNumber(false);
         exporter.setLineNumberStartFromZero(mEditorSettings->gutterLineNumbersStartZero());
-        exporter.setLineNumberColor(gutter().textColor());
-        exporter.setLineNumberBackgroundColor(gutter().color());
+        if (mEditorSettings->copyHTMLUseEditorColor()) {
+            exporter.setLineNumberColor(gutter().textColor());
+            exporter.setLineNumberBackgroundColor(gutter().color());
+        } else {
+            exporter.setLineNumberColor(mEditorSettings->copyHTMLForegroundColor());
+            exporter.setLineNumberBackgroundColor(mEditorSettings->copyHTMLBackgroundColor());
+        }
     }
     exporter.exportAll(document());
     exporter.saveToFile(htmlFilename);
@@ -4519,16 +4585,6 @@ const GetOpennedEditorFunc &Editor::getOpennedEditorFunc() const
 void Editor::setGetOpennedFunc(const GetOpennedEditorFunc &newOpennedEditorProviderCallBack)
 {
     mGetOpennedEditorFunc = newOpennedEditorProviderCallBack;
-}
-
-const GetSharedParserrFunc &Editor::getSharedParserFunc() const
-{
-    return mGetSharedParserFunc;
-}
-
-void Editor::setGetSharedParserFunc(const GetSharedParserrFunc &newSharedParserProviderCallBack)
-{
-    mGetSharedParserFunc = newSharedParserProviderCallBack;
 }
 
 CodeCompletionPopup *Editor::completionPopup() const
