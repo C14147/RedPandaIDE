@@ -15,6 +15,7 @@
         <file>images/associations/rc.ico</file>
         <file>images/associations/template.ico</file>
         <file>images/dark-close.svg</file>
+        <file>images/SplashScreen.png</file>
     </qresource>
     <qresource prefix="/demos">
         <file alias="dark.png">images/demos/dark.png</file>

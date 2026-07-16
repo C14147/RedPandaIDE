@@ -1,35 +1,39 @@
 #include "splashscreen.h"
 #include <QApplication>
+#include <QScreen>
+#include <QGuiApplication>
 
 SplashScreen::SplashScreen(QWidget* parent)
     : m_splash(nullptr)
 {
-    QPixmap pixmap(":/images/SplashScreen.png");
+    m_splash = new QSplashScreen();
+    m_splash->setParent(parent);
+
+    QScreen* _s = QGuiApplication::primaryScreen();
+    int h = _s->geometry().height() / 2;
+    int w = h / 3 * 4;
+    QPixmap pixmap = QPixmap(":/icons/images/SplashScreen.png").scaled(w,h);
     if (pixmap.isNull()) {
-        // Fallback to a default empty pixmap or handle error
-        // For simplicity, create a 1x1 transparent pixmap
         pixmap = QPixmap(1, 1);
         pixmap.fill(Qt::transparent);
     }
-    m_splash = new QSplashScreen(parent, pixmap);
+    m_splash->setPixmap(pixmap);
 }
 
 void SplashScreen::show()
 {
     if (m_splash) {
         // Set window flag to stay on top
-        m_splash->setWindowFlags(m_splash->windowFlags() | Qt::WindowStaysOnTopHint);
         m_splash->show();
         // Optionally raise to ensure on top
         m_splash->raise();
     }
 }
 
-void StartUp::quit()
+void SplashScreen::quit()
 {
     if (m_splash) {
         m_splash->close();
         delete m_splash;
-        m_splash = nullptr;
     }
 }

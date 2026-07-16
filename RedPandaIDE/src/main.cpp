@@ -16,6 +16,7 @@
  */
 #include "main.h"
 #include "utils/os.h"
+#include "splashscreen/splashscreen.h"
 
 #ifdef Q_OS_WIN
 static_assert(WM_APP_OPEN_FILE < 0xc000);

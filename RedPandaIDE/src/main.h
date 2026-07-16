@@ -44,7 +44,6 @@
 #include "thememanager.h"
 #include "utils/font.h"
 #include "problems/ojproblemset.h"
-#include "splashscreen/splashscreen.h"
 
 #ifdef Q_OS_WIN
 #include <QTemporaryFile>

@@ -1,7 +1,9 @@
 
 # RedPandaIDE #
 
-add_executable(RedPandaIDE WIN32)
+add_executable(RedPandaIDE WIN32
+    src/splashscreen/splashscreen.cpp
+    src/splashscreen/splashscreen.h)
 
 target_qt_plain_cpp(RedPandaIDE
     src/autolinkmanager
