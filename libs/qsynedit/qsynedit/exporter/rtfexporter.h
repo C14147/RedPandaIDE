@@ -28,8 +28,8 @@ public:
     RTFExporter(const RTFExporter&)=delete;
     RTFExporter& operator=(const RTFExporter&)=delete;
 private:
-    bool mAttributesChanged;
     QList<QColor> mListColors;
+    QMap<int,int> mColorIdx;
     QString colorToRTF(const QColor& AColor) const;
     int getColorIndex(const QColor& AColor);
     QString getFontTable();
@@ -44,6 +44,9 @@ protected:
     QString getFooter() override;
     QString getFormatName() override;
     QString getHeader() override;
+
+private:
+    bool mAttributesChanged;
 };
 
 }

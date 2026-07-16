@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <QCoreApplication>
 #include <QFile>
 #include <QMessageBox>
 #include <QProgressDialog>
@@ -63,7 +64,6 @@ bool CppRefacter::findOccurence(Editor *editor, const CharPos &pos)
             doFindOccurenceInEditor(statement,editor,editor->parser());
         }
     }
-    mMainWindow->searchResultModel()->notifySearchResultsUpdated();
     return true;
 }
 
@@ -90,7 +90,6 @@ bool CppRefacter::findOccurence(Editor * editor, const QString &statementFullnam
             doFindOccurenceInEditor(statement,editor,editor->parser());
         }
     }
-    mMainWindow->searchResultModel()->notifySearchResultsUpdated();
     return true;
 }
 
@@ -258,7 +257,7 @@ void CppRefacter::doFindOccurenceInEditor(const PStatement &statement , Editor *
                 statement,
                 parser);
     if (item && !(item->results.isEmpty())) {
-        results->results.append(item);
+        mMainWindow->searchResultModel()->addResultToSearchResults(results,item);
     }
 }
 
@@ -276,13 +275,15 @@ void CppRefacter::doFindOccurenceInProject(const PStatement &statement, std::sha
                 mMainWindow->project()->unitList().count(),
                 mMainWindow);
     progressDlg.setWindowModality(Qt::WindowModal);
+    progressDlg.setMinimumDuration(500);
+    progressDlg.show();
     int i=0;
     foreach (const PProjectUnit& unit, project->unitList()) {
         i++;
         if (isCFile(unit->fileName()) || isHFile(unit->fileName())) {
             progressDlg.setValue(i);
             progressDlg.setLabelText(tr("Searching...")+"<br/>"+unit->fileName());
-
+            QCoreApplication::processEvents();
             if (progressDlg.wasCanceled())
                 break;
             PSearchResultTreeItem item = findOccurenceInFile(
@@ -291,7 +292,7 @@ void CppRefacter::doFindOccurenceInProject(const PStatement &statement, std::sha
                         statement,
                         parser);
             if (item && !(item->results.isEmpty())) {
-                results->results.append(item);
+                mMainWindow->searchResultModel()->addResultToSearchResults(results,item);
             }
         }
     }

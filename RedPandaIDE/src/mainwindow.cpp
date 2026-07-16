@@ -348,21 +348,20 @@ MainWindow::MainWindow(QWidget *parent)
     delete m;
 
     mSearchResultModel = new SearchResultModel{this};
-    mSearchResultTreeModel = new SearchResultTreeModel{mSearchResultModel, this};
-    mSearchResultListModel = new SearchResultListModel{mSearchResultModel, this};
-    mSearchViewDelegate = new SearchResultTreeViewDelegate{mSearchResultTreeModel, this};
-
-    ui->cbSearchHistory->setModel(mSearchResultListModel);
+    mSearchViewDelegate = new SearchResultTreeViewDelegate{mSearchResultModel->treeModel(), this};
+    connect(mSearchResultModel, &SearchResultModel::currentIndexChanged,
+            this, &MainWindow::onSearchResultsModelCurrentIndexChanged);
+    ui->cbSearchHistory->setModel(mSearchResultModel);
 
     m=ui->searchView->selectionModel();
-    ui->searchView->setModel(mSearchResultTreeModel);
+    ui->searchView->setModel(mSearchResultModel->treeModel());
     delete m;
     ui->searchView->setItemDelegate(mSearchViewDelegate);
     m=ui->tableTODO->selectionModel();
     mTodoModel = new TodoModel{this};
     ui->tableTODO->setModel(mTodoModel);
     delete m;
-    connect(mSearchResultTreeModel, &QAbstractItemModel::modelReset,
+    connect(mSearchResultModel->treeModel(), &QAbstractItemModel::modelReset,
             ui->searchView,&QTreeView::expandAll);
     ui->replacePanel->setVisible(false);
     ui->tabProblem->setEnabled(false);
@@ -1880,6 +1879,7 @@ Editor* MainWindow::openFile(QString filename, bool activate, FileType fileType,
 
         if (activate) {
             mEditorManager->activeEditor(editor,true);
+            editor->reparseIfNeeded();
         } else {
             updateEditorActions();
         }
@@ -3664,14 +3664,18 @@ void MainWindow::loadLastOpens()
         mEditorManager->updateEditorBookmarks();
         mEditorManager->updateEditorBreakpoints();
     }
-
+    Editor *e = mEditorManager->getEditor(-1, mEditorManager->leftPageWidget());
+    if (e)
+        e->reparseIfNeeded();
+    e = mEditorManager->getEditor(-1, mEditorManager->rightPageWidget());
+    if (e)
+        e->reparseIfNeeded();
     if (!focusedEditor) {
         focusedEditor = mEditorManager->getEditor();
     }
     if (focusedEditor) {
         updateEditorActions();
         updateForEncodingInfo(mEditorManager->getEditor());
-        focusedEditor->reparse();
         focusedEditor->checkSyntaxInBack();
         focusedEditor->reparseTodo();
         mEditorManager->activeEditor(focusedEditor,true);
@@ -4037,7 +4041,7 @@ void MainWindow::onSearchViewContextMenu(const QPoint &pos)
     menu.addAction(mSearchViewClearAction);
     menu.addAction(mSearchViewClearAllAction);
     mSearchViewClearAction->setEnabled(ui->cbSearchHistory->currentIndex()>0);
-    mSearchViewClearAction->setEnabled(mSearchResultListModel->rowCount(QModelIndex())>0);
+    mSearchViewClearAction->setEnabled(mSearchResultModel->rowCount(QModelIndex())>0);
     menu.exec(ui->searchHistoryPanel->mapToGlobal(pos));
 }
 
@@ -5252,6 +5256,12 @@ void MainWindow::onTableIssuesCopy()
         QClipboard* clipboard = QApplication::clipboard();
         clipboard->setText(issue->description);
     }
+}
+
+void MainWindow::onSearchResultsModelCurrentIndexChanged()
+{
+    if (ui->cbSearchHistory->currentIndex()!=mSearchResultModel->currentIndex())
+        ui->cbSearchHistory->setCurrentIndex(mSearchResultModel->currentIndex());
 }
 
 void MainWindow::onEditorContextMenu(const QPoint& pos)
@@ -6898,11 +6908,11 @@ void MainWindow::on_cbSearchHistory_currentIndexChanged(int index)
     mSearchResultModel->setCurrentIndex(index);
     PSearchResults results = mSearchResultModel->results(index);
     if (results) {
-        if (results->searchType==SearchType::Search
-                && results->scope==SearchFileScope::wholeProject
+        if (results->searchType()==SearchType::Search
+                && results->scope()==SearchFileScope::wholeProject
                 && pMainWindow->project()==nullptr)
             ui->btnSearchAgain->setEnabled(false);
-        else if (results->searchType == SearchType::FindOccurences) {
+        else if (results->searchType() == SearchType::FindOccurences) {
             ui->btnSearchAgain->setEnabled(true);
         } else
             ui->btnSearchAgain->setEnabled(true);
@@ -6917,20 +6927,20 @@ void MainWindow::on_btnSearchAgain_clicked()
     PSearchResults results=mSearchResultModel->currentResults();
     if (!results)
         return;
-    if (results->searchType == SearchType::Search){
-        if (results->scope==SearchFileScope::wholeProject
+    if (results->searchType() == SearchType::Search){
+        if (results->scope()==SearchFileScope::wholeProject
                 && pMainWindow->project()==nullptr)
             return;
         mSearchInFilesDialog->findInFiles(
-                    results->keyword,
-                    results->scope,
-                    results->options,
-                    results->useRegex,
-                    results->folder,
-                    results->filters,
-                    results->searchSubfolders);
-    } else if (results->searchType == SearchType::FindOccurences) {
-        if (results->scope==SearchFileScope::wholeProject
+                    results->keyword(),
+                    results->scope(),
+                    results->options(),
+                    results->useRegex(),
+                    results->folder(),
+                    results->filters(),
+                    results->searchSubfolders());
+    } else if (results->searchType() == SearchType::FindOccurences) {
+        if (results->scope()==SearchFileScope::wholeProject
                 && pMainWindow->project()==nullptr)
             return;
         CppRefacter refactor(this);
@@ -6939,8 +6949,9 @@ void MainWindow::on_btnSearchAgain_clicked()
 
         if (!editor)
             return;
-        refactor.findOccurence(editor, results->statementFullname, results->scope);
+        refactor.findOccurence(editor, results->symbolFullname(), results->scope());
     }
+    ui->searchView->expandAll();
 }
 
 void MainWindow::on_actionRemove_Watch_triggered()
@@ -7234,7 +7245,7 @@ void MainWindow::on_searchView_doubleClicked(const QModelIndex &index)
     QString filename;
     int line;
     int start;
-    if (mSearchResultTreeModel->getItemFileAndLineChar(
+    if (mSearchResultModel->treeModel()->getItemFileAndLineChar(
                 index,filename,line,start)) {
         Editor *e = openFile(filename);
         if (e) {
@@ -7932,16 +7943,7 @@ void MainWindow::setProjectViewCurrentUnit(std::shared_ptr<ProjectUnit> unit) {
 void MainWindow::reparseNonProjectEditors()
 {
     if (pSettings->codeCompletion().shareParser()) {
-        {
-            PCppParser parser{mEditorManager->sharedParser(ParserLanguage::C)};
-            if (parser)
-                resetCppParser(parser);
-        }
-        {
-            PCppParser parser{mEditorManager->sharedParser(ParserLanguage::CPlusPlus)};
-            if (parser)
-                resetCppParser(parser);
-        }
+        mEditorManager->resetSharedParsers();
     } else {
         for (int i=0;i<mEditorManager->pageCount();i++) {
             Editor* e=(*mEditorManager)[i];
@@ -8525,9 +8527,9 @@ void MainWindow::showSearchReplacePanel(bool show)
     ui->cbSearchHistory->setDisabled(show);
     if (show && mSearchResultModel->currentResults()) {
         ui->cbReplaceInHistory->setCurrentText(
-                    mSearchResultModel->currentResults()->keyword);
+                    mSearchResultModel->currentResults()->keyword());
     }
-    mSearchResultTreeModel->setSelectable(show);
+    mSearchResultModel->treeModel()->setSelectable(show);
 }
 
 void MainWindow::setFilesViewRoot(const QString &path, bool setOpenFolder)
@@ -8666,7 +8668,7 @@ void MainWindow::on_btnReplace_clicked()
         return;
     }
     QString newWord = ui->cbReplaceInHistory->currentText();
-    foreach (const PSearchResultTreeItem& file, results->results) {
+    foreach (const PSearchResultTreeItem& file, results->results()) {
         QVector<PSearchResultTreeItem> selections;
         foreach(const PSearchResultTreeItem& item,file->results) {
             if (item->selected) {
@@ -8711,7 +8713,7 @@ void MainWindow::on_btnReplace_clicked()
             const PSearchResultTreeItem& item = selections.back();
             selections.pop_back();
             QString line = editor->lineText(item->line);
-            if (line.mid(item->start-1,results->keyword.length())!=results->keyword) {
+            if (line.mid(item->start-1,results->keyword().length())!=results->keyword()) {
                 QMessageBox::critical(editor,
                             tr("Replace Error"),
                             tr("Contents has changed since last search!"));
@@ -8719,7 +8721,7 @@ void MainWindow::on_btnReplace_clicked()
                     editor->endEditing();
                 return;
             }
-            line.remove(item->start-1,results->keyword.length());
+            line.remove(item->start-1,results->keyword().length());
             line.insert(item->start-1, newWord);
             editor->replaceLine(item->line,line);
         }
@@ -8782,7 +8784,7 @@ void MainWindow::on_actionExport_As_RTF_triggered()
         editor->exportAsRTF(rtfFile);
     } catch (FileError e) {
         QMessageBox::critical(editor,
-                              "Error",
+                              tr("Error"),
                               e.reason());
     }
 }
@@ -8804,7 +8806,7 @@ void MainWindow::on_actionExport_As_HTML_triggered()
         editor->exportAsHTML(htmlFile);
     } catch (FileError e) {
         QMessageBox::critical(editor,
-                              "Error",
+                              tr("Error"),
                               e.reason());
     }
 }

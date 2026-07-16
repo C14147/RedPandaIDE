@@ -26,6 +26,8 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QMessageBox>
+#include <QProgressDialog>
+#include <QCoreApplication>
 #include "src/addon/luaexecutor.h"
 #include "src/addon/luaruntime.h"
 
@@ -96,6 +98,7 @@ CompilerSet::CompilerSet():
 #ifdef Q_OS_WINDOWS
     , mCompilerIsUtf8Initialized{false}
     , mDebuggerIsUtf8Initialized{false}
+    , mMakerIsUtf8Initialized{false}
     , mGccSupportConvertingCharsetInitialized{false}
 #endif
 {
@@ -118,6 +121,7 @@ CompilerSet::CompilerSet(const QString& compilerFolder, const QString& c_prog):
 #ifdef Q_OS_WINDOWS
     , mCompilerIsUtf8Initialized(false)
     , mDebuggerIsUtf8Initialized{false}
+    , mMakerIsUtf8Initialized{false}
     , mGccSupportConvertingCharsetInitialized(false)
 #endif
 {
@@ -195,6 +199,8 @@ CompilerSet::CompilerSet(const CompilerSet &set):
     , mCompilerIsUtf8Initialized(set.mCompilerIsUtf8Initialized)
     , mDebuggerIsUtf8(set.mDebuggerIsUtf8)
     , mDebuggerIsUtf8Initialized(set.mDebuggerIsUtf8Initialized)
+    , mMakerIsUtf8(set.mMakerIsUtf8)
+    , mMakerIsUtf8Initialized(set.mMakerIsUtf8Initialized)
     , mGccSupportConvertingCharset(set.mGccSupportConvertingCharset)
     , mGccSupportConvertingCharsetInitialized(set.mGccSupportConvertingCharsetInitialized)
 #endif
@@ -245,9 +251,14 @@ CompilerSet::CompilerSet(const QJsonObject &set) :
 #ifdef Q_OS_WINDOWS
     , mCompilerIsUtf8Initialized(false)
     , mDebuggerIsUtf8Initialized(false)
+  , mMakerIsUtf8Initialized{false}
     , mGccSupportConvertingCharsetInitialized(false)
 #endif
 {
+    if constexpr (MAKE_INTERFACE != MAKE_INTERFACE_mingw32) {
+        mMake = findBundledOrSystemTool("make/bin", MAKE_PROGRAM);
+    }
+
     foreach (const QJsonValue &dir, set["binDirs"].toArray())
         mBinDirs.append(dir.toString());
     foreach (const QJsonValue &dir, set["cIncludeDirs"].toArray())
@@ -545,7 +556,12 @@ const QString &CompilerSet::make() const
 
 void CompilerSet::setMake(const QString &name)
 {
-    mMake = name;
+    if (mMake != name) {
+#ifdef Q_OS_WIN
+        mMakerIsUtf8Initialized = false;
+#endif
+        mMake = name;
+    }
 }
 
 const QString &CompilerSet::debugger() const
@@ -1063,7 +1079,11 @@ void CompilerSet::setExecutables()
         mDebugger = findProgramInBinDirs(GDB_PROGRAM);
         mDebugServer = findProgramInBinDirs(GDB_SERVER_PROGRAM);
     }
-    mMake = findProgramInBinDirs(MAKE_PROGRAM);
+    if constexpr (MAKE_INTERFACE == MAKE_INTERFACE_mingw32) {
+        mMake = findProgramInBinDirs(MAKE_PROGRAM);
+    } else {
+        mMake = findBundledOrSystemTool("make/bin", MAKE_PROGRAM);
+    }
 #ifdef Q_OS_WIN
     mResourceCompiler = findProgramInBinDirs(WINDRES_PROGRAM);
 #endif
@@ -1264,7 +1284,7 @@ bool CompilerSet::canCompileCPP() const
 
 bool CompilerSet::canMake() const
 {
-    return fileExists(mMake);
+    return programExists(mMake);
 }
 
 bool CompilerSet::canDebug() const
@@ -1404,6 +1424,14 @@ bool CompilerSet::isCompilerUsingUTF8() const
     }
     return mCompilerIsUtf8;
 }
+
+bool CompilerSet::isMakerUsingUTF8() const{
+    if (!mMakerIsUtf8Initialized) {
+        mMakerIsUtf8 = PortableExecutable(mMake).isUtf8();
+        mMakerIsUtf8Initialized = true;
+    }
+    return mMakerIsUtf8;
+}
 #endif
 
 bool CompilerSet::supportConvertingCharset()
@@ -1533,7 +1561,7 @@ QStringList CompilerSet::findErrors()
     if (!mDebugger.isEmpty() && !fileExists(mDebugger)) {
         errors.append(QObject::tr("Debugger \"%1\" is missing!").arg(mDebugger));
     }
-    if (!mMake.isEmpty() && !fileExists(mMake)) {
+    if (!mMake.isEmpty() && !programExists(mMake)) {
         errors.append(QObject::tr("Make program \"%1\" is missing!").arg(mMake));
     }
     return errors;
@@ -1619,6 +1647,8 @@ static void setReleaseOptions(PCompilerSet pSet) {
 //  pSet->setCompileOption(CC_CMD_OPT_ERROR_UNINITIALIZED, COMPILER_OPTION_ON);
     pSet->setCompileOption(CC_CMD_OPT_ERROR_VLA, COMPILER_OPTION_ON);
     pSet->setStaticLink(true);
+    pSet->setCustomCompileParams("-DNDEBUG");
+    pSet->setUseCustomCompileParams(true);
 }
 
 static void setDebugOptions(PCompilerSet pSet, const QString &sanitizerType = QString()) {
@@ -1640,7 +1670,8 @@ static void setDebugOptions(PCompilerSet pSet, const QString &sanitizerType = QS
     //Some windows gcc don't correctly support this
     //pSet->setCompileOption(CC_CMD_OPT_STACK_PROTECTOR, "-strong");
     pSet->setStaticLink(false);
-
+    pSet->setCustomCompileParams("-D_DEBUG");
+    pSet->setUseCustomCompileParams(true);
 }
 
 bool elfToolchainHasDynamicLibc(const QString &folder, const QString &c_prog)
@@ -1792,7 +1823,7 @@ CompilerSetList CompilerSets::clearSets()
     return persisted;
 }
 
-void CompilerSets::findSets()
+void CompilerSets::findSets(bool showProgress)
 {
     CompilerSetList persisted = clearSets();
     // canonical paths that has been searched.
@@ -1850,7 +1881,19 @@ void CompilerSets::findSets()
             libexecBins.append(binPath);
     }
     pathList = libexecBins + pathList;
-
+    QProgressDialog progressDlg{
+                QObject::tr("Searching for compilers..."),
+                QObject::tr("Abort"),
+                0,
+                1,
+                };
+    if (showProgress) {
+        progressDlg.setMinimumDuration(500);
+        progressDlg.setWindowModality(Qt::WindowModal);
+        progressDlg.setLabelText(QObject::tr("Searching..."));
+        progressDlg.setMaximum(pathList.count());
+        progressDlg.show();
+    }
     QString folder, canonicalFolder;
     for (int i=pathList.count()-1;i>=0;i--) {
         folder = QDir(pathList[i]).absolutePath();
@@ -1866,8 +1909,17 @@ void CompilerSets::findSets()
         // after upgrade:
         //   /opt/gcc-13 -> /opt/gcc-13.2.0
         addSets(folder);
+        if (showProgress) {
+            int idx = pathList.count()-i;
+            progressDlg.setValue(idx);
+            progressDlg.setLabelText(QObject::tr("Searching %1/%2").arg(idx).arg(pathList.count()));
+            QCoreApplication::processEvents();
+            if (progressDlg.wasCanceled())
+                break;
+        }
     }
-
+    if (showProgress)
+        progressDlg.hide();
 #ifdef ENABLE_LUA_ADDON
     if (
         // note that array index starts from 1 in Lua
@@ -1971,7 +2023,7 @@ void CompilerSets::loadSets()
                                  QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes) {
             return;
         }
-        findSets();
+        findSets(true);
         if (size()==0) {
             QMessageBox::warning(
                 nullptr,
@@ -2088,7 +2140,9 @@ void CompilerSets::saveSet(int index)
     savePath("cppcompiler", pSet->cppCompiler());
     savePath("debugger", pSet->debugger());
     savePath("debug_server", pSet->debugServer());
-    savePath("make", pSet->make());
+    if constexpr (MAKE_INTERFACE == MAKE_INTERFACE_mingw32) {
+        savePath("make", pSet->make());
+    }
     savePath("windres", pSet->resourceCompiler());
 
     mPersistor->remove("Options");
@@ -2173,7 +2227,11 @@ PCompilerSet CompilerSets::loadSet(int index)
     pSet->setCppCompiler(loadPath("cppcompiler"));
     pSet->setDebugger(loadPath("debugger"));
     pSet->setDebugServer(loadPath("debug_server"));
-    pSet->setMake(loadPath("make"));
+    if constexpr (MAKE_INTERFACE == MAKE_INTERFACE_mingw32) {
+        pSet->setMake(loadPath("make"));
+    } else {
+        pSet->setMake(findBundledOrSystemTool("make/bin", MAKE_PROGRAM));
+    }
     pSet->setResourceCompiler(loadPath("windres"));
 
     pSet->setDumpMachine(mPersistor->value("DumpMachine").toString());

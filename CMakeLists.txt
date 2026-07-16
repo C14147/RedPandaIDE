@@ -29,18 +29,22 @@ option(WINDOWS_PREFER_OPENCONSOLE "Prefer OpenConsole.exe as terminal emulator" 
 
 if (WIN32)
     set(FILESYSTEM_LAYOUT_DEFAULT flat)
+    set(MAKE_INTERFACE_DEFAULT mingw32)
     set(PORTABLE_CONFIG_DEFAULT registry)
 elseif (MACOS)
     set(FILESYSTEM_LAYOUT_DEFAULT bundle)
+    set(MAKE_INTERFACE_DEFAULT unix)
     set(PORTABLE_CONFIG_DEFAULT non)
 else()
     set(FILESYSTEM_LAYOUT_DEFAULT hierarchy)
+    set(MAKE_INTERFACE_DEFAULT unix)
     set(PORTABLE_CONFIG_DEFAULT non)
 endif()
 
 set(APP_NAME RedPandaCPP CACHE STRING "Subdirectory name to $prefix/share and $prefix/libexec.")
 set(FILESYSTEM_LAYOUT ${FILESYSTEM_LAYOUT_DEFAULT} CACHE STRING "Use 'hierarchy', 'flat', or 'bundle' filesystem layout.")
 set(LIBEXECDIR libexec CACHE STRING "Directory for auxiliary executables, RELATIVE TO prefix.")
+set(MAKE_INTERFACE ${MAKE_INTERFACE_DEFAULT} CACHE STRING "Use make interface of 'unix' (system `make`, SHELL=sh) or 'mingw32' (toolchain `mingw32-make.exe`, SHELL=cmd).")
 set(OVERRIDE_MALLOC "" CACHE STRING "Override malloc implementation, e.g. mimalloc")
 set(PORTABLE_CONFIG ${PORTABLE_CONFIG_DEFAULT} CACHE STRING
     # avoid "yes" "no", they may be treated as boolean values
@@ -77,6 +81,14 @@ if (${QT_VERSION_MAJOR} LESS 6)
     # a phony target that depends on all lupdate targets (Qt 5)
     # the actual lupdate targets will be added in target_embed_translations function
     add_custom_target(update_translations)
+
+    # Qt 5 doesn't define QT5_INSTALL_PREFIX, QT_FEATURE_static for CMake
+    get_target_property(Qt5Core_loc Qt5::Core LOCATION_RELEASE)  # C:/Qt/5.15.15+redpanda0/64-ucrt/lib/libQt5Core.a
+    get_filename_component(QT5_INSTALL_PREFIX "${Qt5Core_loc}/../.." ABSOLUTE)  # C:/Qt/5.15.15+redpanda0/64-ucrt
+    get_target_property(Qt5Core_type Qt5::Core TYPE)
+    if(Qt5Core_type STREQUAL "STATIC_LIBRARY")
+        set(QT_FEATURE_static ON)
+    endif()
 endif()
 
 # read version from "version.json"

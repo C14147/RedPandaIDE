@@ -74,24 +74,25 @@ QString HTMLExporter::getStyleName(PSyntaxer syntaxer, PTokenAttribute attri)
     QString name  = syntaxer->languageName() + '-' + attri->name();
     QString cssName = mCssNames.value(name);
     if (cssName.isEmpty()) {
-        cssName = makeValidName(name);
+        //cssName = makeValidName(name);
+        cssName = QString("c%1").arg(mCssNames.count());
         mCssNames.insert(name,cssName);
     }
     return cssName;
 }
 
-QString HTMLExporter::makeValidName(const QString &name)
-{
-    QString result;
-    for (QChar ch:name) {
-        ch = ch.toLower();
-        if (ch == '.' || ch =='_')
-            result += '-';
-        else if ((ch >='a' && ch <= 'z') || (ch>='0' && ch<='9') || (ch == '-'))
-            result += ch;
-    }
-    return result;
-}
+//QString HTMLExporter::makeValidName(const QString &name)
+//{
+//    QString result;
+//    for (QChar ch:name) {
+//        ch = ch.toLower();
+//        if (ch == '.' || ch =='_')
+//            result += '-';
+//        else if ((ch >='a' && ch <= 'z') || (ch>='0' && ch<='9') || (ch == '-'))
+//            result += ch;
+//    }
+//    return result;
+//}
 
 void HTMLExporter::formatAttributeDone(bool , bool , FontStyles )
 {
@@ -189,9 +190,11 @@ QString HTMLExporter::getHeader()
     if (mCreateHTMLFragment) {
         result += "<!--StartFragment-->";
     }
-    result += QString("<div style=\"font: %1pt %2;\">")
+    result += QString("<div style=\"font: %1pt %2;color: %3; background-color: %4; \">")
             .arg(pixelToPoint(mFont.pixelSize()))
-            .arg(mFont.family());
+            .arg(mFont.family(),
+                  colorToHTML(mForegroundColor),
+                  colorToHTML(mBackgroundColor));
 
     return result;
 }
@@ -206,12 +209,12 @@ QString HTMLExporter::getStartLineNumberString(int startLine, int endLine)
 {
     int maxLineNumbeWidth = (QString("%1").arg(endLine ).length()+1) * pixelToPoint(mFont.pixelSize());
     QString result =
-            QString("<table style='width:100%; border:1px; cellspacing:1px;'><tr><td style=\"width: %1pt; font: %2pt '%3'; color: %4; background-color: %5; text-align: right; padding-right: 0.5em; \">")
+            QString("<table style='width:100%; border:1px; cellspacing:1px;background-color: %1; '><tr><td style=\"width: %2pt; font: %3pt '%4'; color: %5; text-align: right; padding-right: 0.5em; \">")
+            .arg(colorToHTML(mBackgroundColor))
             .arg(maxLineNumbeWidth)
             .arg(pixelToPoint(mFont.pixelSize()))
             .arg(mFont.family(),
-                 colorToHTML(mLineNumberColor),
-                 colorToHTML(mLineNumberBackgroundColor))
+                 colorToHTML(mLineNumberColor))
             +lineBreak();
     for (int i=startLine;i<=endLine;i++)
         result+=QString("<span>%1</span><br/>").arg(i)+lineBreak();
