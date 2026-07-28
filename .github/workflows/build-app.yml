@@ -119,25 +119,25 @@ jobs:
       fail-fast: false
       matrix:
         arch: [x64, arm64, x86]
-        qt_version: ['6.8.3', '5.15.2']
+        qt_version: ['6.11.1', '5.15.19']
         include:
           - { arch: x64,
               qt_host: windows, runner: windows-2022, vs_arch: amd64 }
-          - { arch: x64, qt_version: '6.8.3',
+          - { arch: x64, qt_version: '6.11.1',
               qt_arch: win64_msvc2022_64, qt_dir: msvc2022_64 }
-          - { arch: x64, qt_version: '5.15.2',
+          - { arch: x64, qt_version: '5.15.19',
               qt_arch: win64_msvc2019_64, qt_dir: msvc2019_64 }
           - { arch: arm64,
               qt_host: windows_arm64, runner: windows-11-arm, vs_arch: arm64 }
-          - { arch: arm64, qt_version: '6.8.3',
+          - { arch: arm64, qt_version: '6.11.1',
               qt_arch: win64_msvc2022_arm64, qt_dir: msvc2022_arm64 }
           - { arch: x86,
               qt_host: windows, runner: windows-2022, vs_arch: x86 }
-          - { arch: x86, qt_version: '5.15.2',
+          - { arch: x86, qt_version: '5.15.19',
               qt_arch: win32_msvc2019, qt_dir: msvc2019 }
         exclude:
-          - { arch: arm64, qt_version: '5.15.2' }
-          - { arch: x86, qt_version: '6.8.3' }
+          - { arch: arm64, qt_version: '5.15.19' }
+          - { arch: x86, qt_version: '6.11.1' }
     runs-on: ${{ matrix.runner }}
 
     steps:
