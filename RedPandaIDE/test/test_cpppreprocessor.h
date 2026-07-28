@@ -21,6 +21,11 @@ private slots:
     void test_macro_replace_6();
     void test_macro_replace_7();
     void test_macro_replace_8();
+    void test_replace_macros_in_constant_expression_1();
+    void test_replace_macros_in_constant_expression_2();
+    void test_evaluate_constant_expression_1();
+    void test_evaluate_constant_expression_2();
+    void test_compare_cpp_version();
 private:
     static QStringList filterIncludes(const QStringList& text);
 };

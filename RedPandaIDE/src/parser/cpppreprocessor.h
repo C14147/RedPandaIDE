@@ -50,7 +50,6 @@ class CppPreprocessor
 {
     enum class ContentType {
         AnsiCComment,
-        AnsiCCommentInDefine,
         CppComment,
         String,
         Character,
@@ -59,6 +58,7 @@ class CppPreprocessor
         RawString,
         Other
     };
+    typedef qlonglong NumberType;
 public:
 
     explicit CppPreprocessor();
@@ -137,6 +137,8 @@ public:
     static void replaceCommentsBySpaceChar(QStringList& text);
     bool fileOnlyIncludeOnce() const;
     void setFileOnlyIncludeOnce(bool newFileOnlyIncludeOnce);
+    bool evaluateIf(const QString& line) const;
+    QString expandMacrosInConditioningExpression(QString line) const;
 
 private:
 
@@ -149,14 +151,15 @@ private:
 
     bool supportCPP23() const;
 
-    QString expandFunctionLikeMacro(PDefine define,const QString &args, const QSet<QString> &macrosToBeIgnored);
+    QString expandFunctionLikeMacro(PDefine define,const QString &args, const QSet<QString> &macrosToBeIgnored) const;
     void preprocessBuffer();
     void skipToPreprocessor();
     QString getNextPreprocessor();
 
     QString expandMacros(QString text, bool handleBuffer);
-    QString expandMacros(QString text, bool handleBuffer, const QSet<QString> macrosToBeIgnored);
-    QString expandMacro(QString &text, const QString &word, int &i, bool handleBuffer, const QSet<QString> &macrosToBeIgnored, QSet<QString> &macrosUsed);
+    QString expandMacros(QString text, bool handleBuffer, const QSet<QString>& macrosToBeIgnored);
+    QString expandMacros(QString text, const QSet<QString>& macrosToBeIgnored) const;
+    QString expandMacro(QString &text, const PDefine &define, int &i, bool handleBuffer, const QSet<QString> &macrosToBeIgnored, QSet<QString> &macrosUsed);
 
     void handleDefine(const QString& tokens);
     void handleUndefine(const QString& tokens);
@@ -253,7 +256,7 @@ private:
     /*
      * 'A'..'Z', 'a'..'z', '_'
      */
-    static  bool isMacroIdentChar(const QChar& ch) { return ch.isLetter() || ch == '_'; }
+    static  bool isMacroIdentStartChar(const QChar& ch) { return ch.isLetter() || ch == '_'; }
 
     /*
      * '0'..'9'
@@ -267,26 +270,25 @@ private:
 
     QString lineBreak() { return "\n"; }
 
-    bool evaluateIf(const QString& line);
-    QString expandDefines(QString line);
-    bool skipParenthesis(const QString&line, int& index, int step = 1);
-    bool skipSpaces(const QString &expr, int& pos);
-    bool evalNumber(const QString &expr, int& result, int& pos);
-    bool evalTerm(const QString &expr, int& result, int& pos);
-    bool evalUnaryExpr(const QString &expr, int& result, int& pos);
-    bool evalMulExpr(const QString &expr, int& result, int& pos);
-    bool evalAddExpr(const QString &expr, int& result, int& pos);
-    bool evalShiftExpr(const QString &expr, int& result, int& pos);
-    bool evalRelationExpr(const QString &expr, int& result, int& pos);
-    bool evalEqualExpr(const QString &expr, int& result, int& pos);
-    bool evalBitAndExpr(const QString &expr, int& result, int& pos);
-    bool evalBitXorExpr(const QString &expr, int& result, int& pos);
-    bool evalBitOrExpr(const QString &expr, int& result, int& pos);
-    bool evalLogicAndExpr(const QString &expr, int& result, int& pos);
-    bool evalLogicOrExpr(const QString &expr, int& result, int& pos);
-    bool evalExpr(const QString &expr, int& result, int& pos);
+    bool skipParenthesis(const QString&line, int& index, int step = 1) const;
+    bool skipSpaces(const QString &expr, int& pos) const;
+    bool evalNumber(const QString &expr, NumberType& result, int& pos) const;
+    bool evalTerm(const QString &expr, NumberType& result, int& pos) const;
+    bool evalUnaryExpr(const QString &expr, NumberType& result, int& pos) const;
+    bool evalMulExpr(const QString &expr, NumberType& result, int& pos) const;
+    bool evalAddExpr(const QString &expr, NumberType& result, int& pos) const;
+    bool evalShiftExpr(const QString &expr, NumberType& result, int& pos) const;
+    bool evalRelationExpr(const QString &expr, NumberType& result, int& pos) const;
+    bool evalEqualExpr(const QString &expr, NumberType& result, int& pos) const;
+    bool evalBitAndExpr(const QString &expr, NumberType& result, int& pos) const;
+    bool evalBitXorExpr(const QString &expr, NumberType& result, int& pos) const;
+    bool evalBitOrExpr(const QString &expr, NumberType& result, int& pos) const;
+    bool evalLogicAndExpr(const QString &expr, NumberType& result, int& pos) const;
+    bool evalLogicOrExpr(const QString &expr, NumberType& result, int& pos) const;
+    bool evalConnditionalExpr(const QString &expr, NumberType& result, int& pos) const;
+    bool evalExpr(const QString &expr, NumberType& result, int& pos) const;
 
-    int evaluateExpression(QString line);
+    bool evaluateExpression(QString line) const;
 private:
     //temporary data when preprocessing single file
     int mIndex; // points to current file buffer.
@@ -303,6 +305,7 @@ private:
     bool mFileJustOpenned;
     QString mFileIncludeOnceToken;
     QSet<QString> mFilesCouldRepeatInclude;
+    QHash<QString, QStringList> mFileCache;
     //Result across processings.
     //used by parser even preprocess finished
     QHash<QString, PParsedFileInfo> mFileInfos;
